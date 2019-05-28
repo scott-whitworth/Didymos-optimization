@@ -1,0 +1,174 @@
+%PlotAndWriteToFile takes the relevant information from any run of our
+%program and plots h,phi,radial velocity, and position on 4 graphs.  It
+%also saves those graphs to the local directory with a unique filename and
+%has the ability to write all problem variables and data points to a text
+%file.  It returns the name of the file where it saved the plot from the
+%current run.  That way when we have large groups of data the plots are
+%easily accessable.
+
+%called by FindPath
+function [PlotFileName,Rerror,Thetaerror,Uerror,Herror]=PlotAndWriteToFile(order, direction,phiCoeff,fval,escapeTime,TotalTime,uexhaust,GC_ARF,GC_ATF,GC_AUF,GC_AHF,a0,a0_earth,escapeVelocity,earthEscapeAngle,earthConditions)
+
+%****************************************************************
+%Global Constants
+% global GC_ARF;      %Final radius of asteroid   
+% global GC_AUF;      %Final radial velocity of asteroid
+% global GC_AHF;      %Final H of asteroid
+% global GC_ATF;      %Final Theta of Asteroid
+
+%Global Variables   
+%global Rerror;      %Difference between goal and final radius
+%global Uerror;      %Difference between goal and final radial velocity
+%global Herror;      %Difference between goal and final specific angular momentum
+%global Thetaerror;  %Difference between goal and final angular position
+%************************************************
+
+if strcmpi(direction, 'return')
+    [Tdata,Ydata]=IntegrateShipMotion(phiCoeff,[TotalTime-escapeTime, 0], order, direction, uexhaust, a0, a0_earth, escapeVelocity, earthEscapeAngle, earthConditions);
+elseif strcmpi(direction, 'forward')
+    [Tdata,Ydata]=IntegrateShipMotion(phiCoeff,[escapeTime,TotalTime], order, direction, uexhaust, a0, a0_earth, escapeVelocity, earthEscapeAngle, earthConditions);
+end
+
+%makes variable names more readable 
+finalRadius = Ydata(end,1);
+goalRadius = GC_ARF;
+Rerror = abs(finalRadius-goalRadius);
+finalTheta = Ydata(end,2);
+goalTheta = GC_ATF;
+Thetaerror = abs(finalTheta-goalTheta);
+finalU = Ydata(end,3);
+goalU = GC_AUF;
+Uerror = abs(finalU-goalU);
+finalH = Ydata(end,4);
+goalH = GC_AHF;
+Herror = abs(finalH-goalH);
+
+Rerror
+Thetaerror
+Uerror
+Herror
+
+%The following displays the dimensionalized conditions of the ship and asteroid at the time
+%of landing/takeoff. It calculates the differences between these values and
+%displays them as well. This is done to see how closely the objective
+%function is met
+
+Rocket_rad = finalRadius*Constants.MCONVERSION;
+Asteroid_rad = goalRadius*Constants.MCONVERSION;
+Dif_rad = abs(Asteroid_rad - Rocket_rad);
+
+Dif_circ = Thetaerror*Rocket_rad;
+
+Rocket_U = finalU*(Constants.MCONVERSION/Constants.SCONVERSION); %converts to (m/s);
+Asteroid_U = goalU*(Constants.MCONVERSION/Constants.SCONVERSION);
+Dif_U = abs(Asteroid_U - Rocket_U);
+
+Rocket_h = finalH*(Constants.MCONVERSION^2/Constants.SCONVERSION);%converts to (m^2/s)
+Asteroid_h = goalH*(Constants.MCONVERSION^2/Constants.SCONVERSION);
+Dif_h = abs(Asteroid_h - Rocket_h);
+Dif_v_theta = Dif_h/Rocket_rad;
+
+
+Rocket_rad
+Asteroid_rad
+Dif_rad
+Dif_circ
+Rocket_U
+Asteroid_U
+Dif_U
+Rocket_h
+Asteroid_h
+Dif_h
+Dif_v_theta
+fval
+%We don't pass the entire phiCoeff vector because the last element
+%represents the escape angle from earth and should not be evaluated as part
+%of the fourier series.
+PhiData = EvaluateFourierSeries(direction,phiCoeff(1:(end-1)),Tdata);
+
+%Converts from non-dimensional units to meters and seconds
+Tdata = Tdata.*12; %converts form non-dimensional time to months;
+%radius is not converted because it is already scaled to AU
+Ydata(:,3) = Ydata(:,3).*(Constants.MCONVERSION/Constants.SCONVERSION);
+Ydata(:,4) = Ydata(:,4).*(Constants.MCONVERSION^2/Constants.SCONVERSION);
+
+
+
+%for return trip time is running backwards so ship is moving in opposite
+%direction then in reality
+%if strcmpi(direction, 'return')
+    %PhiData = PhiData + pi;         %reverses thrusting direction
+   % Tdata = TotalTime*12 - Tdata;   %adjusts time so that it is increasing as the ship approaches earth and is 0 at asteroid
+    %Ydata(:,2) = -Ydata(:,2);       %reverses radial velocity
+   % Ydata(:,3) = -Ydata(:,3);       %reverses angular momentum
+%end
+
+%writes data into one table that holds time, radius,theta,u,h,phi in that
+%order.
+%Hdata = fopen('HeliocentricData.txt','w');
+%fprintf(Hdata,'time\tradius\ttheta\tu\th\tphi\n');
+%for i = 1:length(Tdata)
+%   fprintf(Hdata,'%6.12g\t%6.12g\t%6.12g\t%6.12g\t%6.12g\t%6.12g\n',Tdata(i),Ydata(i,1),Ydata(i,4),Ydata(i,2),Ydata(i,3),PhiData(i)); 
+%end
+
+
+%The names are put in the title of each graph 
+aname = num2str(a0);
+uexname = num2str(uexhaust);
+fvalname = num2str(fval);
+rgoalname = num2str(GC_ARF);
+ordername = num2str((length(phiCoeff)-2)/2);
+timename = num2str(TotalTime);
+escapeanglename = num2str(phiCoeff(end));
+name = [' fval ',fvalname,' rf ',rgoalname,' order ',ordername,' time ',timename,' escape angle ',escapeanglename];
+%DataPlot is the handle for the figure containing the graphs
+DataPlot = figure('Name',name,'NumberTitle','off','Color','white');
+%plots phi, radius (polar), radial velocity, and h.
+subplot(2,2,1)
+plot(Tdata,PhiData)
+title('Plot of phi')
+xlabel('Time(months)')
+ylabel('Thrust Angle (rad)')
+%set(a,'Color','black','LineWidth',2)
+
+subplot(2,2,2)
+polar(Ydata(:,2),Ydata(:,1))
+title('Plot of radius (AU)')
+%set(b,'Color','black','LineWidth',2)
+
+subplot(2,2,3)
+plot(Tdata,Ydata(:,3))
+title('Plot of radial Velocity')
+xlabel('Time(months)')
+ylabel('Velocity(m/s)')
+%set(c,'Color','black','LineWidth',2)
+
+subplot(2,2,4)
+plot(Tdata,Ydata(:,4))
+title('Plot of h')
+xlabel('Time(months)')
+ylabel('h(m^2/s)')
+%set(d,'Color','black','LineWidth',2)
+
+
+%FileOut(phiCoeff);%writes all facts from run into a results.txt file
+
+%This section saves the data plot with a unique filename and then returns
+%what that filename is so that it can be accessed later.  It is designed
+%this way because this iteration of the program will be iterated through
+%hundreds of times overnight.  We want to have all the plots available and
+%the reference numbers will be stored along with other data in an Excel
+%spreadsheet
+
+
+%Gets the next free file name
+%File names follow the format 'graph###', where ### is a three-digit number
+PlotFileName = freename('./','Plot',3);
+
+%Saves file with the generated name
+saveas(DataPlot,PlotFileName,'fig');
+
+%Closes the figure
+close(DataPlot);
+
+end

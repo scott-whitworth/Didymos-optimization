@@ -1,0 +1,21 @@
+%CHOOSEPOWERLEVELS Allows user to choose which power levels to evaluate
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Function ChoosePowerLevels allows user to select either one or all power
+%levels to be evaluated
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Called by MultipleRuns
+function [powerStart,powerEnd] = ChoosePowerLevels()
+
+powerChoice = input('Choose engine multiplier: ');
+
+
+    %Set start and end to same value in order iterate over one power level
+    powerStart = powerChoice;
+    powerEnd = powerChoice;
+    
+    
+end
+end
+
