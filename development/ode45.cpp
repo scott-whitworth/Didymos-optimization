@@ -8,6 +8,6 @@ elements k_calc(elements y)
 
 double calc_r(elements y)
 {
-	r = elements.vr;
+	double r = y.vr;
 	return r;
 }
