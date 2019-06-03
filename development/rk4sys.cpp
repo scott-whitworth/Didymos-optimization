@@ -55,7 +55,7 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
     std::vector<elements> y;
     //y.push_back(y0);
     for(int i = 0; i < 6; i++){
-        y[0][i] = y0[i];
+        y[0] = y0;
     }
     
     int np = 0;
@@ -86,10 +86,10 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
 
 
 
-                double phi = (k1 + 2 * (k2 + k3) + k4) / 6;
-                for(int i = 0; i < 6; i++){
-                    y[j+1][i] = y[j][i] + phi * hh;
-                }
+                // double phi = (k1 + 2 * (k2 + k3) + k4) / 6;
+                // for(int i = 0; i < 6; i++){
+                //     y[j+1][i] = y[j][i] + phi * hh;
+                // }
 
                 //counter
                 tt = tt + hh;
