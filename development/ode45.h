@@ -1,9 +1,14 @@
 #ifndef ode45_h
 #define ode45_h
-
 #define constG 6.67430e-11
 #define massSun 1.98847e30
 
+<<<<<<< HEAD
+#define constG 6.67430e-11
+#define massSun 1.98847e30
+
+=======
+>>>>>>> 6a0c486b75147b535e34636d5e90ce2bf7982986
 struct elements {
     double r;
     double theta;
@@ -69,12 +74,21 @@ struct elements {
     }
 };
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 6a0c486b75147b535e34636d5e90ce2bf7982986
 /* Finds the corresponding k for the Runge Kutta computation
  Input: the values of the vector y and the time step
 
  Output: return the k elements for the vector of equations
 */
-elements* k_calc(elements y, double h);
+elements calc_k(elements y, double h);
+
+/*
+*/
+elements calc_ymid(elements y, double h, elements k);
 
 /* Calculates r, from the y vector
  Input: the y vector
