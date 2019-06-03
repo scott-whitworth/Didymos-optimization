@@ -90,8 +90,8 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
 
 
 
-					//add weighted slopes
-					elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
+				//add weighted slopes
+				elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
                 for(int i = 0; i < 6; i++){
                     y[j+1] = y[j] + phi * hh;
                 }
