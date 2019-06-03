@@ -1,5 +1,14 @@
 #include <vector>
 
+struct elements {
+    double r;
+    double theta;
+    double z;
+    double vr;
+    double vtheta;
+    double vz;
+};
+
 /* fourth-order RUnge-Kutta for a system of ODEs
 -integrates a system of ODEs with fourth-order RK method
 
@@ -12,7 +21,7 @@ output:
 tp: independent variables- times
 returns: solutions of dependent variables
 */ 
-std::vector<std::array<double, 6>> rk4sys(std::vector<double> tspan, double y0[6], double stepSize, std::vector<double> *tp){
+std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double stepSize, std::vector<double> *tp){
     // fill a vector with all the times
     std::vector<double> times;
 
@@ -43,7 +52,7 @@ std::vector<std::array<double, 6>> rk4sys(std::vector<double> tspan, double y0[6
     std::vector<double> t; //store the values to be output in tp
     double tt = ti;
 
-    std::vector<std::array<double, 6>> y;
+    std::vector<elements> y;
     //y.push_back(y0);
     for(int i = 0; i < 6; i++){
         y[0][i] = y0[i];
@@ -52,7 +61,7 @@ std::vector<std::array<double, 6>> rk4sys(std::vector<double> tspan, double y0[6
     int np = 0;
     t.push_back(tt);
     
-    std::vector<std::array<double, 6>> yp;
+    std::vector<elements> yp;
     yp.push_back(y[0]);
     int j = 0;
 
@@ -70,7 +79,7 @@ std::vector<std::array<double, 6>> rk4sys(std::vector<double> tspan, double y0[6
                     hh = tend - tt;
 
                 //MATH
-                double k1, k2, k3, k4;
+                elements k1, k2, k3, k4;
                 //k1 =
 
 
