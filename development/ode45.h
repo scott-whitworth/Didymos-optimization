@@ -9,7 +9,11 @@
 
  Output: return the k elements for the vector of equations
 */
-elements* k_calc(elements y, double h);
+elements calc_k(elements y, double h);
+
+/*
+*/
+elements calc_ymid(elements y, double h, elements k);
 
 /* Calculates r, from the y vector
  Input: the y vector
