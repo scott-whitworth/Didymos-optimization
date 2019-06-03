@@ -1,4 +1,5 @@
 #include <vector>
+#include "ode45.h"
 
 struct elements {
     double r;
@@ -8,6 +9,9 @@ struct elements {
     double vtheta;
     double vz;
 };
+
+
+
 
 /* fourth-order RUnge-Kutta for a system of ODEs
 -integrates a system of ODEs with fourth-order RK method
