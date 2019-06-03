@@ -72,8 +72,15 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
                     hh = tend - tt;
 
                 //MATH
-                elements k1, k2, k3, k4;
-                //k1 =
+                elements k1, k2, k3, k4, ymid;
+                
+                k1 = calc_k(y0,hh/2);
+                ymid = calc_ymid(ymid,hh,k1);
+                k2 = calc_k(y0,hh/2);
+                ymid = calc_ymid(ymid,hh,k2);
+                k3 = calc_k(ymid,hh);
+                ymid = calc_ymid(ymid,hh,k3);
+                k4 = calc_k(ymid,hh)
 
 
 
