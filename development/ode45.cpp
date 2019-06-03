@@ -28,7 +28,7 @@ elements calc_ymid(elements y, double h, elements k)
 
 double calc_r(elements y)
 {
-	r = elements.vr;
+	double r = y.vr;
 	return r;
 }
 

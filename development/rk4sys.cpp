@@ -1,17 +1,6 @@
 #include <vector>
 #include "ode45.h"
 
-struct elements {
-    double r;
-    double theta;
-    double z;
-    double vr;
-    double vtheta;
-    double vz;
-};
-
-
-
 
 /* fourth-order RUnge-Kutta for a system of ODEs
 -integrates a system of ODEs with fourth-order RK method
@@ -96,11 +85,11 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
 
 
 
-
-                // double phi = (k1 + 2 * (k2 + k3) + k4) / 6;
-                // for(int i = 0; i < 6; i++){
-                //     y[j+1][i] = y[j][i] + phi * hh;
-                // }
+                //add weighted slopes
+                elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
+                for(int i = 0; i < 6; i++){
+                    y[j+1] = y[j] + phi * hh;
+                }
 
                 //counter
                 tt = tt + hh;
@@ -119,8 +108,4 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
     }
     *tp = t;
     return yp;
-}
-
-int main(){
-
 }
