@@ -1,3 +1,7 @@
+#ifndef rk4sys_cpp
+#define rk4sys_cpp
+
+
 #include <vector>
 #include "ode45.h"
 
@@ -14,7 +18,7 @@ output:
 tp: independent variables- times
 returns: solutions of dependent variables
 */ 
-std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double stepSize, std::vector<double> *tp){
+std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double stepSize/*, std::vector<double> *tp*/){
     // fill a vector with all the times
     std::vector<double> times;
 
@@ -74,19 +78,20 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
                 //MATH
                 elements k1, k2, k3, k4, ymid;
                 
+				ymid = y0;
                 k1 = calc_k(y0,hh/2);
                 ymid = calc_ymid(ymid,hh,k1);
                 k2 = calc_k(y0,hh/2);
                 ymid = calc_ymid(ymid,hh,k2);
                 k3 = calc_k(ymid,hh);
                 ymid = calc_ymid(ymid,hh,k3);
-                k4 = calc_k(ymid,hh)
+				k4 = calc_k(ymid, hh);
 
 
 
 
-                //add weighted slopes
-                elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
+					//add weighted slopes
+					elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
                 for(int i = 0; i < 6; i++){
                     y[j+1] = y[j] + phi * hh;
                 }
@@ -106,6 +111,8 @@ std::vector<elements> rk4sys(std::vector<double> tspan, elements y0, double step
             if(tt >= tf)
                 break;
     }
-    *tp = t;
+    //*tp = t;
     return yp;
 }
+
+#endif // !rk4sys.cpp

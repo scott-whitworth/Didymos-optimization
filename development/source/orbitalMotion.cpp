@@ -11,10 +11,10 @@ y0.vtheta= 16716.9055348804;
 y0.vz= -81.4453413932308;
 std::vector <double> tspan;
 tspan.front()=0;
-tpsan.back()=6.653820100923719e+07;
-h=1.330764020184744e+05;
-std::vector <double> timeArray;
+tspan.back()=6.653820100923719e+07;
+double h=1.330764020184744e+05;
+//std::vector <double> *timeArray;
 
-std::vector<elements> yp=rk4sys(tspan,y0,h,timeArray);
+std::vector<elements> yp=rk4sys(tspan,y0,h);
 
 }
