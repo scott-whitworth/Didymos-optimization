@@ -18,13 +18,15 @@ elements calc_k(elements y, double h)
 elements calc_ymid(elements y, double h, elements k)
 {
 	elements ymid;
+	/*
 	ymid.r = y.r + k.r*h;
 	ymid.theta = y.theta + k.theta*h;
 	ymid.z = y.z + k.z*h;
 	ymid.vr = y.vr + k.vr*h;
 	ymid.vtheta = y.vtheta + k.theta*h;
 	ymid.vz = y.vz + k.vz*h;
-
+*/
+	ymid = y+k*h;
 	return ymid;
 }
 
@@ -54,7 +56,7 @@ double calc_vr(elements y)
 
 double calc_vtheta(elements y)
 {
-	double vtheta = -y.r*y.vtheta / y.r;
+	double vtheta = -y.vr*y.vtheta / y.r;
 	return vtheta;
 }
 

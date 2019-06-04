@@ -37,19 +37,56 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
        
        // Runge-Kutta algorithm
 
+            if(n<4)
+            {
+                std::cout<<"Y state "<<n<<std::endl<<std::endl;
+                std::cout<<"r= "<<y[n].r<<std::endl;
+                std::cout<<"theta= "<<y[n].theta<<std::endl;
+                std::cout<<"vr= "<<y[n].vr<<std::endl;
+                std::cout<<"vtheta= "<<y[n].vtheta<<std::endl<<std::endl;
+            }
             k1 = calc_k(y[n],stepSize/2);
-            ymid = calc_ymid(ymid,stepSize,k1);
-            k2 = calc_k(y0,stepSize/2);
-            ymid = calc_ymid(ymid,stepSize,k2);
+            ymid = calc_ymid(y[n],stepSize/2,k1);
+             if(n<4)
+            {
+                std::cout<<"K1 - loop "<<n<<std::endl<<std::endl;
+                std::cout<<"rmid= "<<ymid.r<<std::endl;
+                std::cout<<"thetamid= "<<ymid.theta<<std::endl;
+                std::cout<<"vrmid= "<<ymid.vr<<std::endl;
+                std::cout<<"vthetamid= "<<ymid.vtheta<<std::endl;
+                std::cout<<"K1-r = "<<k1.r<<std::endl;
+                std::cout<<"K1-theta = "<<k1.theta<<std::endl<<std::endl;
+            }
+            k2 = calc_k(ymid,stepSize/2);
+            ymid = calc_ymid(ymid,stepSize/2,k2);
+            if(n<4)
+            {
+                std::cout<<"K2 - loop "<<n<<std::endl<<std::endl;
+                std::cout<<"rmid= "<<ymid.r<<std::endl;
+                std::cout<<"thetamid= "<<ymid.theta<<std::endl;
+                std::cout<<"vrmid= "<<ymid.vr<<std::endl;
+                std::cout<<"vthetamid= "<<ymid.vtheta<<std::endl;
+                std::cout<<"K2-r = "<<k2.r<<std::endl;
+                std::cout<<"K2-theta = "<<k2.theta<<std::endl<<std::endl;
+            }
             k3 = calc_k(ymid,stepSize);
             ymid = calc_ymid(ymid,stepSize,k3);
+             if(n<4)
+            {
+                std::cout<<"K3 - loop "<<n<<std::endl<<std::endl;
+                std::cout<<"rmid= "<<ymid.r<<std::endl;
+                std::cout<<"thetamid= "<<ymid.theta<<std::endl;
+                std::cout<<"vrmid= "<<ymid.vr<<std::endl;
+                std::cout<<"vthetamid= "<<ymid.vtheta<<std::endl;
+                std::cout<<"K3-r = "<<k3.r<<std::endl;
+                std::cout<<"K3-theta = "<<k3.theta<<std::endl<<std::endl;
+            }
 		    k4 = calc_k(ymid, stepSize);
 
             // Add weighted slopes
 			elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
             y[n+1] = y[n] + phi * stepSize;
-        std::cout<<y[n].r<<std::endl;
-        std::cout<<k1.r<<std::endl;
+        
 
     }
 

@@ -14,5 +14,5 @@ double timeFinal=6.653820100923719e+07;
 double h=1.330764020184744e+05;
 
 elements *yp = rk4sys(timeInitial,timeFinal,y0,h);
-
+delete(yp);
 }
