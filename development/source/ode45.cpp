@@ -48,18 +48,18 @@ double calc_z(elements y)
 
 double calc_vr(elements y)
 {
-	double vr=-constG * massSun * y.r / pow(y.r*y.r + y.z*y.z,3/2) + pow(y.vtheta,2) / y.r;
+	double vr=-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r;
 	return vr;
 }
 
 double calc_vtheta(elements y)
 {
-	double vtheta = -y.r*y.vtheta / y.r;
+	double vtheta = -y.vr*y.vtheta / y.r;
 	return vtheta;
 }
 
 double calc_vz(elements y)
 {
-	double vz = -constG * massSun * y.z / pow(y.r*y.r + y.z*y.z,3/2);
+	double vz = -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2);
 	return vz;
 }

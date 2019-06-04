@@ -6,4 +6,6 @@
 //fourth-order RUnge-Kutta for a system of ODEs
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize);
 
+void testKCalc(elements y0);
+
 #endif
