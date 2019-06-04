@@ -3,6 +3,8 @@
 #define constG 6.67430e-11
 #define massSun 1.98847e30
 
+
+//elements struct holds k values / dependent variable values in rk4sys
 struct elements {
     double r;
     double theta;
