@@ -1,6 +1,3 @@
-#ifndef ode45_cpp
-#define ode45_cpp
-
 
 #include <math.h>
 #include "ode45.h"
@@ -66,5 +63,3 @@ double calc_vz(elements y)
 	double vz = -constG * massSun * y.z / pow(y.r*y.r + y.z*y.z,3/2);
 	return vz;
 }
-
-#endif // !ode45_cpp
