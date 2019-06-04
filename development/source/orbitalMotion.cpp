@@ -11,8 +11,8 @@ y0.vr = 4706.64912336045;//Initial radial velocity of the asteroid (m/s)
 y0.vtheta= 16716.9055348804;//Intial azimuthal velocity of the asteroid (m/s)
 y0.vz= -81.4453413932308;//Initial off-plane velocity of the asteroid (m/s)
 std::vector <double> tspan;
-tspan.front()=0;
-tspan.back()=6.653820100923719e+07;//Orbital period in seconds
+tspan.push_back(0);
+tspan.push_back(6.653820100923719e+07);//Orbital period in seconds
 double deltaT=1.330764020184744e+05;//Time step in seconds
 //std::vector <double> *timeArray;
 
