@@ -2,32 +2,17 @@
 #include <math.h>
 #include "ode45.h"
 
-elements calc_k(elements y, double h)
+elements calc_k(double h, elements y)
 {
 	
 	elements k;
-	k.r = calc_r(y);
-	k.theta = calc_theta(y);
-	k.z = calc_z(y);
-	k.vr = calc_vr(y);
-	k.vtheta = calc_vtheta(y);
-	k.vz = calc_vz(y);
+	k.r = h*calc_r(y);
+	k.theta = h*calc_theta(y);
+	k.z = h*calc_z(y);
+	k.vr = h*calc_vr(y);
+	k.vtheta = h*calc_vtheta(y);
+	k.vz = h*calc_vz(y);
 	return k;
-}
-
-elements calc_ymid(elements y, double h, elements k)
-{
-	elements ymid;
-	/*
-	ymid.r = y.r + k.r*h;
-	ymid.theta = y.theta + k.theta*h;
-	ymid.z = y.z + k.z*h;
-	ymid.vr = y.vr + k.vr*h;
-	ymid.vtheta = y.vtheta + k.theta*h;
-	ymid.vz = y.vz + k.vz*h;
-*/
-	ymid = y+k*h;
-	return ymid;
 }
 
 double calc_r(elements y)

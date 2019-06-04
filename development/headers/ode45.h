@@ -1,8 +1,12 @@
 #ifndef ode45_h
 #define ode45_h
-#define constG 6.67430e-11
-#define massSun 1.98847e30
+#define AU 1.49597870691e11//m
+#define constG 6.67430e-11/(AU*AU*AU) //AU^3/(s^2 * kg)
+#define massSun 1.98847e30//kg
 
+
+#include <ostream>
+#include<iomanip>
 
 //elements struct holds k values / dependent variable values in rk4sys
 struct elements {
@@ -70,18 +74,23 @@ struct elements {
     }
 };
 
-
+//overload the stream output for elements used for writing to a file
+inline std::ostream & operator<<(std::ostream & Str, elements const & e) {
+    Str << std::fixed;
+    Str << std::setprecision(16);
+    Str << e.r << "\t" << e.theta << "\t" << e.z << "\t" << e.vr << "\t" << e.vtheta << "\t" << e.vz << "\n";
+    return Str;
+}
 
 /* Finds the corresponding k for the Runge Kutta computation
  Input: the values of the vector y and the time step
 
  Output: return the k elements for the vector of equations
 */
-elements calc_k(elements y, double h);
+elements calc_k(double h, elements y);
 
-/*
-*/
-elements calc_ymid(elements y, double h, elements k);
+
+elements calc_ymid(double h, elements y, elements k);
 
 /* Calculates r, from the y vector
  Input: the y vector
