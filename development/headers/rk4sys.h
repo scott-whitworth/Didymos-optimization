@@ -8,4 +8,6 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
 
 void testKCalc(elements y0);
 
+void testKCalc(elements y0);
+
 #endif
