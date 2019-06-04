@@ -1,3 +1,4 @@
+development/bin/*
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
