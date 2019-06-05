@@ -1,21 +1,9 @@
-
-#include <vector>
 #include "rk4sys.h"
 #include <iostream>
 
-/* fourth-order RUnge-Kutta for a system of ODEs
--integrates a system of ODEs with fourth-order RK method
-
-Input:
-double timeInitial and double timeFinal; initial and final times for the computation,
-elements y0: initial values of dependent variables
-stepSize: change in time between calculated data points
-
-output:
-returns: y - solutions of dependent variables
-*/ 
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize){
     // Define the max number of iterations
+    // TODO: static_cast<int>(), proper rounding function
     int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
 
     // How to allocate memory in C
@@ -27,27 +15,27 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     
-    for(int n=0;n<nMax-1;n++)
+    for(int n=0;n<nMax-1;n++) // iterate over all time steps 
     {
         // If we required the time
         // time = stepSize*n
 
+        // TODO: more complete, less vague comments
         // Variables for Runge-Kutta
         elements k1, k2, k3, k4;
        
        // Runge-Kutta algorithm
+        k1 = calc_k(stepSize, y[n]); // TODO: insert mathematical eqns for k1-k4
+    
+        k2 = calc_k(stepSize, y[n]+k1/2); 
 
-            k1 = calc_k(stepSize, y[n]); //calculates k1 based off of the inital conditions (r,theta,z,vr,vtheta,vz)
-        
-            k2 = calc_k(stepSize, y[n]+k1/2); //calculates k1 based off of the inital conditions + k1/2
+        k3 = calc_k(stepSize, y[n]+k2/2); 
 
-            k3 = calc_k(stepSize, y[n]+k2/2); //calculates k1 based off of the inital conditions + k2/2
+        k4 = calc_k(stepSize, y[n]+k3); 
 
-            k4 = calc_k(stepSize, y[n]+k3); //calculates k1 based off of the inital conditions + k3
-
-            // Add weighted slopes (k elements)
-			elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y (r,theta,z,vr,vtheta,vz)
-            y[n+1] = y[n] + phi; // calculates the y[n] for the next round of calculations
+        // Add weighted slopes (k elements)
+        elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y
+        y[n+1] = y[n] + phi; // calculates the y[n] for the next round of calculations
     }
     return y;
 }
