@@ -14,7 +14,7 @@
 
 // TODO: move allocation of output array outside of rk4sys()
 
-elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize);
+elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize,int numSteps, elements *y);
 
 // TODO: check if needed
 void testKCalc(elements y0);
