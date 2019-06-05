@@ -3,16 +3,6 @@
 #include "elements.h"
 
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize,int numSteps, elements *y){
-    // Define the max number of iterations
-    // TODO: static_cast<int>(), proper rounding function
-    //int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
-
-    // How to allocate memory in C
-    // elements* y;
-    // y = (elements *)malloc(sizeOf(elements)*nMax);
-    //elements* y;
-    //y = new elements[nMax];
-
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     // k variables for Runge-Kutta calculation of y[n+1]
@@ -21,7 +11,7 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
     for(int n=0;n<numSteps-1;n++) // iterate over all time steps 
     {
         // If we required the time
-        // time = stepSize*n
+        //      t = the number of iterations multiplied by the time interval between points
        
        // Runge-Kutta algorithm
         k1 = calc_k(stepSize, y[n]); //h*y[n]

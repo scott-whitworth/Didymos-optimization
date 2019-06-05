@@ -15,8 +15,6 @@ elements calc_k(double const & h, elements const & y)
 	return k;
 }
 
-// TODO: streamline returns
-
 double calc_r(elements const & y)
 {
 	return y.vr;

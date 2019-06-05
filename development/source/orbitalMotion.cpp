@@ -48,8 +48,7 @@ deltaT = (timeFinal-timeInitial)/numSteps;
 
 //    Output of elasped time
   std::cout << "It took me " << time_span.count() << "seconds." << std::endl;
-
-// TODO: make a binary file 
+ 
 // Output of yp to a text file
   std::ofstream output;
   
