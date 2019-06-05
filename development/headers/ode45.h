@@ -115,7 +115,7 @@ inline std::ostream & operator<<(std::ostream & Str, elements const & e) {
 // Input:
 //       y: current position and velocity conditions
 //       h(time step): time interval between data points (s)
-//Output: returns k1,k2,k3,k4 for y[n+1] calculation
+// Output: returns k1,k2,k3,k4 for y[n+1] calculation
 elements calc_k(double h, elements y);
 
 // Dot = derivative of element with respect to time
