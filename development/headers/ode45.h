@@ -104,58 +104,46 @@ inline std::ostream & operator<<(std::ostream & Str, elements const & e) {
 // TODO: Pull apart elements definition from ODE45 functions into a new header and cpp
 // TODO: Const ref changes
 
+//Calculates the corresponding k for the Runge-Kutta computation
 // Units for k
-// k.r = au
-// k.theta = rad
-// k.z = au
-// k.vr = au/s
-// k.vtheta = rad/s
-// k.z = au/s
-
-/* Calculates the corresponding k for the Runge Kutta computation
- Input: the values of the vector y (r,theta,z,vr,vtheta,vz) and the time step
- Output: return the k elements for the vector of equations (k1,k2,k3,k4)
-*/
+//      k.r = au
+//      k.theta = rad
+//      k.z = au
+//      k.vr = au/s
+//      k.vtheta = rad/s
+//      k.z = au/s
+// Input:
+//       y: current position and velocity conditions
+//       h(time step): time interval between data points (s)
+//Output: returns k1,k2,k3,k4 for y[n+1] calculation
 elements calc_k(double h, elements y);
 
 // Dot = derivative of element with respect to time
-
-// TODO: redo all other comments based on r_calc() and modify k_calc() comments
-
-// Utility of calc_k(), calculates the rDot element from current condition
-// Based on: vr
+// Utilities of calc_k(), calculates the element from current condition
 // Parameter y: complete current condition
+
+// Based on: y.vr
 // Output: rDot
 double calc_r(elements y);
 
-/* Calculates thetaDot, from the y vector
-Input: the y vector
-Output : double thetaDot
-*/
+// Based on: y.vtheta
+// Output: thetaDot
 double calc_theta(elements y);
 
-/* Calculates zDot, from the y vector
-Input: the y vector
-Output : double zDot
-*/
+// Based on: y.vz
+// Output: zDot
 double calc_z(elements y);
 
-/* Calculates vrDot, from the y vector
-Input: the y vector
-Output : double vrDot
-*/
+// Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
+// Output: vrDot
 double calc_vr(elements y);
 
-/* Calculates vthetaDot, from the y vector
-Input: the y vector
-Output : double vthetaDot
-*/
+// Based on: -y.vr*y.vtheta / y.r
+// Output: vrDot
 double calc_vtheta(elements y);
 
-/* Calculates vzDot, from the y vector
-Input: the y vector
-Output : double vzDot
-*/
+// Based on: -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)
+// Output: vrDot
 double calc_vz(elements y);
 
 #endif

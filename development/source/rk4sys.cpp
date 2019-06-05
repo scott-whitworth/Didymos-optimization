@@ -8,7 +8,7 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
 
     // How to allocate memory in C
     // elements* y;
-    //  y = (elements *)malloc(sizeOf(elements)*nMax);
+    // y = (elements *)malloc(sizeOf(elements)*nMax);
     elements* y;
     y = new elements[nMax];
 
@@ -20,18 +20,18 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
         // If we required the time
         // time = stepSize*n
 
-        // TODO: more complete, less vague comments
-        // Variables for Runge-Kutta
+       
+        // k variables for Runge-Kutta calculation of y[n+1]
         elements k1, k2, k3, k4;
        
        // Runge-Kutta algorithm
-        k1 = calc_k(stepSize, y[n]); // TODO: insert mathematical eqns for k1-k4
+        k1 = calc_k(stepSize, y[n]); //h*y[n]
     
-        k2 = calc_k(stepSize, y[n]+k1/2); 
+        k2 = calc_k(stepSize, y[n]+k1/2); //h*(y[n]+k1/2)
 
-        k3 = calc_k(stepSize, y[n]+k2/2); 
+        k3 = calc_k(stepSize, y[n]+k2/2); //h*(y[n]+k2/2)
 
-        k4 = calc_k(stepSize, y[n]+k3); 
+        k4 = calc_k(stepSize, y[n]+k3); //h*(y[n]+k3)
 
         // Add weighted slopes (k elements)
         elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y
