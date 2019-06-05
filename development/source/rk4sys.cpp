@@ -2,28 +2,30 @@
 #include <iostream>
 #include "elements.h"
 
+<<<<<<< HEAD
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double const & stepSize){
+=======
+elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize,int numSteps, elements *y){
+>>>>>>> 85cd1616bc0e96af1ad187359da3b7f6ebceecbb
     // Define the max number of iterations
     // TODO: static_cast<int>(), proper rounding function
-    int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
+    //int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
 
     // How to allocate memory in C
     // elements* y;
     // y = (elements *)malloc(sizeOf(elements)*nMax);
-    elements* y;
-    y = new elements[nMax];
+    //elements* y;
+    //y = new elements[nMax];
 
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
-    
-    for(int n=0;n<nMax-1;n++) // iterate over all time steps 
+    // k variables for Runge-Kutta calculation of y[n+1]
+    elements k1, k2, k3, k4;
+
+    for(int n=0;n<numSteps-1;n++) // iterate over all time steps 
     {
         // If we required the time
         // time = stepSize*n
-
-       
-        // k variables for Runge-Kutta calculation of y[n+1]
-        elements k1, k2, k3, k4;
        
        // Runge-Kutta algorithm
         k1 = calc_k(stepSize, y[n]); //h*y[n]
@@ -35,8 +37,8 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double const
         k4 = calc_k(stepSize, y[n]+k3); //h*(y[n]+k3)
 
         // Add weighted slopes (k elements)
-        elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y
-        y[n+1] = y[n] + phi; // calculates the y[n] for the next round of calculations
+        //elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y
+        y[n+1] = y[n] + (k1 + (k2 + k3) * 2 + k4) / 6; // calculates the y[n] for the next round of calculations
     }
     return y;
 }
