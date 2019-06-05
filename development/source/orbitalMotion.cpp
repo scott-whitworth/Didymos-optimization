@@ -44,14 +44,15 @@ deltaT = (timeFinal-timeInitial)/numSteps;
 
 // TODO: make a binary file 
 // Output of yp to a text file
-  std::ofstream myfile;
+  std::ofstream output;
   
-  myfile.open ("orbitalMotion.txt");
-  for(int i=0; i<numSteps;i++)
+  output.open ("orbitalMotion.bin", std::ios::binary);
+  for(int i=0; i < numSteps; i++)
   {
-    myfile << yp[i];
+    //output << yp[i];
+    output.write((char*)&yp[i], sizeof (elements));
   }
-  myfile.close();
+  output.close();
 
 // cleaning up dynamic yp
 delete [] yp;
