@@ -9,19 +9,21 @@
 Input:
 double timeInitial and double timeFinal; initial and final times for the computation,
 elements y0: initial values of dependent variables
-stepSize: the difference between times
+stepSize: change in time between calculated data points
+
 output:
 returns: y - solutions of dependent variables
 */ 
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize){
     // Define the max number of iterations
-    int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5);
+    int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
 
     // How to allocate memory in C
     // elements* y;
     //  y = (elements *)malloc(sizeOf(elements)*nMax);
     elements* y;
     y = new elements[nMax];
+
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     
@@ -31,21 +33,21 @@ elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepS
         // time = stepSize*n
 
         // Variables for Runge-Kutta
-        elements k1, k2, k3, k4, ymid;
+        elements k1, k2, k3, k4;
        
        // Runge-Kutta algorithm
 
-            k1 = calc_k(stepSize, y[n]);
+            k1 = calc_k(stepSize, y[n]); //calculates k1 based off of the inital conditions (r,theta,z,vr,vtheta,vz)
         
-            k2 = calc_k(stepSize, y[n]+k1/2);
+            k2 = calc_k(stepSize, y[n]+k1/2); //calculates k1 based off of the inital conditions + k1/2
 
-            k3 = calc_k(stepSize, y[n]+k2/2);
+            k3 = calc_k(stepSize, y[n]+k2/2); //calculates k1 based off of the inital conditions + k2/2
 
-            k4 = calc_k(stepSize, y[n]+k3);
+            k4 = calc_k(stepSize, y[n]+k3); //calculates k1 based off of the inital conditions + k3
 
-            // Add weighted slopes
-			elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element
-            y[n+1] = y[n] + phi;
+            // Add weighted slopes (k elements)
+			elements phi = (k1 + (k2 + k3) * 2 + k4) / 6; // calculate phi for each element of y (r,theta,z,vr,vtheta,vz)
+            y[n+1] = y[n] + phi; // calculates the y[n] for the next round of calculations
     }
     return y;
 }

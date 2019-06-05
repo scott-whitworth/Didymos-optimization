@@ -3,7 +3,7 @@
 #include <vector>
 #include "ode45.h"
 
-//fourth-order RUnge-Kutta for a system of ODEs
+//fourth-order Runge-Kutta for a system of ODEs
 elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize);
 
 void testKCalc(elements y0);

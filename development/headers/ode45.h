@@ -10,12 +10,12 @@
 
 //elements struct holds k values / dependent variable values in rk4sys
 struct elements {
-    double r;
-    double theta;
-    double z;
-    double vr;
-    double vtheta;
-    double vz;
+    double r; //radius (in plane of sun)
+    double theta; //angular position (in plane of sun)
+    double z; //axial position (out-of-plane of the sun)
+    double vr; //radial velocity (in plane of sun)
+    double vtheta; //angular velocity (in plane of sun)
+    double vz; // axial velocity (out-of-plane of the sun)
 
     //overload operators to do math on all the elements in the struct seperately
     elements operator+(const elements& e){
@@ -77,54 +77,51 @@ struct elements {
 //overload the stream output for elements used for writing to a file
 inline std::ostream & operator<<(std::ostream & Str, elements const & e) {
     Str << std::fixed;
-    Str << std::setprecision(16);
+    Str << std::setprecision(16); // number of decimals output into text file
     Str << e.r << "\t" << e.theta << "\t" << e.z << "\t" << e.vr << "\t" << e.vtheta << "\t" << e.vz << "\n";
     return Str;
 }
 
-/* Finds the corresponding k for the Runge Kutta computation
- Input: the values of the vector y and the time step
+/* Calculates the corresponding k for the Runge Kutta computation
+ Input: the values of the vector y (r,theta,z,vr,vtheta,vz) and the time step
 
- Output: return the k elements for the vector of equations
+ Output: return the k elements for the vector of equations (k1,k2,k3,k4)
 */
 elements calc_k(double h, elements y);
 
-
-elements calc_ymid(double h, elements y, elements k);
-
-/* Calculates r, from the y vector
+/* Calculates rDot (dot = derivative of r with respect to time), from the y vector
  Input: the y vector
- Output : double r
+ Output : double rDot
 */
 double calc_r(elements y);
 
-/* Calculates theta, from the y vector
+/* Calculates thetaDot, from the y vector
 Input: the y vector
-Output : double theta
+Output : double thetaDot
 */
 double calc_theta(elements y);
 
-/* Calculates z, from the y vector
+/* Calculates zDot, from the y vector
 Input: the y vector
-Output : double z
+Output : double zDot
 */
 double calc_z(elements y);
 
-/* Calculates vr, from the y vector
+/* Calculates vrDot, from the y vector
 Input: the y vector
-Output : double vr
+Output : double vrDot
 */
 double calc_vr(elements y);
 
-/* Calculates vtheta, from the y vector
+/* Calculates vthetaDot, from the y vector
 Input: the y vector
-Output : double vtheta
+Output : double vthetaDot
 */
 double calc_vtheta(elements y);
 
-/* Calculates vz, from the y vector
+/* Calculates vzDot, from the y vector
 Input: the y vector
-Output : double vz
+Output : double vzDot
 */
 double calc_vz(elements y);
 
