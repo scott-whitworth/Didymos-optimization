@@ -24,6 +24,13 @@ double deltaT; // time step
 int numSteps = 500; // number of iterations
 deltaT = (timeFinal-timeInitial)/numSteps;
 
+// Initialize memory
+
+// Initialize memory for the solution vector of the dependant solution
+ elements* y;
+  y = new elements[numSteps];
+
+
  //TODO: verify and/or increase resolution of timing 
 
 // Comparing completion time to MATLAB's time
@@ -31,7 +38,7 @@ deltaT = (timeFinal-timeInitial)/numSteps;
  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
 //    Our output function (yp)
-  elements *yp = rk4sys(timeInitial,timeFinal,y0,deltaT);
+  elements *yp = rk4sys(timeInitial,timeFinal,y0,deltaT,numSteps,y);
   
 //    recording stop time
   std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -49,7 +56,6 @@ deltaT = (timeFinal-timeInitial)/numSteps;
   output.open ("orbitalMotion.bin", std::ios::binary);
   for(int i=0; i < numSteps; i++)
   {
-    //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements));
   }
   output.close();

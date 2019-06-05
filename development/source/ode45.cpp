@@ -1,8 +1,9 @@
 
 #include <math.h>
+
 #include "ode45.h"
 
-elements calc_k(double h, elements y)
+elements calc_k(double const & h, elements const & y)
 {
 	elements k; 
 	k.r = h*calc_r(y); 
@@ -16,38 +17,32 @@ elements calc_k(double h, elements y)
 
 // TODO: streamline returns
 
-double calc_r(elements y)
+double calc_r(elements const & y)
 {
-	double r = y.vr;
-	return r;
+	return y.vr;
 }
 
-double calc_theta(elements y)
+double calc_theta(elements const & y)
 {
-	double theta = y.vtheta / y.r;
-	return theta;
+	return y.vtheta / y.r;
 }
 
-double calc_z(elements y)
+double calc_z(elements const & y)
 {
-	double z = y.vz;
-	return z;
+	return y.vz;
 }
 
-double calc_vr(elements y)
+double calc_vr(elements const & y)
 {
-	double vr=-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r;
-	return vr;
+	return -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r;
 }
 
-double calc_vtheta(elements y)
+double calc_vtheta(elements const & y)
 {
-	double vtheta = -y.vr*y.vtheta / y.r;
-	return vtheta;
+	return -y.vr*y.vtheta / y.r;
 }
 
-double calc_vz(elements y)
+double calc_vz(elements const & y)
 {
-	double vz = -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2);
-	return vz;
+	return -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2);
 }
