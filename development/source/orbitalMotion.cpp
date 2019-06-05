@@ -49,7 +49,6 @@ deltaT = (timeFinal-timeInitial)/numSteps;
   output.open ("orbitalMotion.bin", std::ios::binary);
   for(int i=0; i < numSteps; i++)
   {
-    //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements));
   }
   output.close();

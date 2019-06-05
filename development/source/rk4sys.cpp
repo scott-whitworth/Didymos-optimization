@@ -1,7 +1,8 @@
 #include "rk4sys.h"
 #include <iostream>
+#include "elements.h"
 
-elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize){
+elements* rk4sys(double timeInitial, double timeFinal, elements y0, double const & stepSize){
     // Define the max number of iterations
     // TODO: static_cast<int>(), proper rounding function
     int nMax = (int) (((timeFinal-timeInitial)/stepSize)+0.5); // +0.5 causes the code to round up rather than down
