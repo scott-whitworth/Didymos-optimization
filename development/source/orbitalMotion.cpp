@@ -6,6 +6,7 @@
 #include <ratio>
 
 
+
 int main()
 {
 // setting initial conditions of the asteroid
@@ -17,12 +18,17 @@ y0.vr = 4706.64912336045/AU;// radial velocity (au/s)
 y0.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
 y0.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
 
+double tau = 3./4;
+double gamma = 3./4;
+double accel = 0.0001/AU;
+
 // setting time parameters
 double timeInitial=0; 
 double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
 double deltaT; // time step
-int numSteps = 500; // number of iterations
-deltaT = (timeFinal-timeInitial)/numSteps; // initial guess for time step
+int numSteps = 500; // initial guess for the number of time steps
+deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step
+//deltaT = 1e-3; // initial guess for time step
 
 // seting Runge-Kutta tolerance
 double absTol = 1e-9;
@@ -41,8 +47,8 @@ double absTol = 1e-9;
 
 //    Our output function (yp)
 elements<double> *yp;
-for (int repeat = 0; repeat<1000; repeat++){
-  yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,y,absTol);
+for (int repeat = 0; repeat<1; repeat++){
+  yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,y,absTol,accel,tau,gamma);
 }
 //    recording stop time
   std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -58,7 +64,7 @@ std::cout<<"I am speed" << std::endl;
 // Output of yp to a text file
   std::ofstream output;
   
-  output.open ("orbitalMotion.bin", std::ios::binary);
+  output.open ("orbitalMotion-accel.bin", std::ios::binary);
   for(int i=0; i < numSteps; i++)
   {
     //output << yp[i];
