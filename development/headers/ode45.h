@@ -32,26 +32,26 @@ elements calc_k(double const & h, elements const & y);
 
 // Based on: y.vr
 // Output: rDot
-double calc_r(elements const & y);
+double calcRate_r(elements const & y);
 
 // Based on: y.vtheta
 // Output: thetaDot
-double calc_theta(elements const & y);
+double calcRate_theta(elements const & y);
 
 // Based on: y.vz
 // Output: zDot
-double calc_z(elements const & y);
+double calcRate_z(elements const & y);
 
 // Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
 // Output: vrDot
-double calc_vr(elements const & y);
+double calcRate_vr(elements const & y);
 
 // Based on: -y.vr*y.vtheta / y.r
 // Output: vrDot
-double calc_vtheta(elements const & y);
+double calcRate_vtheta(elements const & y);
 
 // Based on: -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)
 // Output: vrDot
-double calc_vz(elements const & y);
+double calcRate_vz(elements const & y);
 
 #endif
