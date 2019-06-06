@@ -18,7 +18,10 @@ int n=0; // setting the initial iteration number equal to 0
 
      while(t<=timeFinal) // iterate until time is equal to the stop time
     {
+
+//      array of time output as t         
         t += stepSize;
+//      Time of iteration is set to the previous time plus the step size used within that iteration
         times[n+1]=t;
 
 // Runge-Kutta algorithm       
@@ -56,11 +59,7 @@ int n=0; // setting the initial iteration number equal to 0
                 stepSize=(timeFinal-timeInitial)/1000;
 
 //      Calculates the y[n] for the next round of calculations
-        y[n+1] = u; 
-        
-//      Time of iteration is set to the previous time plus the step size used within that iteration
-//      array of time output as t 
-       
+        y[n+1] = u;        
         n++;
     }
     return y;

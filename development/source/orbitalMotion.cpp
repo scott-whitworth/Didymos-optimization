@@ -18,6 +18,7 @@ y0.vr = 4706.64912336045/AU;// radial velocity (au/s)
 y0.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
 y0.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
 
+// conditions for the acceleration components
 double tau = 3./4;
 double gamma = 3./4;
 double accel = 0.0001/AU;
@@ -27,7 +28,7 @@ double timeInitial=0;
 double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
 double deltaT; // time step
 int numSteps = 500; // initial guess for the number of time steps
-deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step
+deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 //deltaT = 1e-3; // initial guess for time step
 
 // seting Runge-Kutta tolerance
