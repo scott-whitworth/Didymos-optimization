@@ -4,34 +4,36 @@
 #include <iostream>
 
 //elements struct holds k values / dependent variable values in rk4sys
-struct elements {
+template <class T> struct elements {
     //all in relation to the plane of the sun in cylindrical coordinates
     //Units are dependent upon context
     //positions
-    double r; //radius (in plane)
-    double theta; //angular position (in plane)
-    double z; //axial position (out-of-plane)
+    T r; //radius (in plane)
+    T theta; //angular position (in plane)
+    T z; //axial position (out-of-plane)
     //velocities
-    double vr; //radial velocity (in plane)
-    double vtheta; //angular velocity (in plane)
-    double vz; // axial velocity (out-of-plane)
+    T vr; //radial velocity (in plane)
+    T vtheta; //angular velocity (in plane)
+    T vz; // axial velocity (out-of-plane)
 
 
     //overload operators to do math on all the elements in the struct seperately
     //Treating each element as a matrix operation
 
     //constructor which takes in an element
-    elements operator+(const elements& e);
-    elements operator-(const elements& e);
-    elements operator*(const elements& e);
-    elements operator/(const elements& e);
+    elements<T> operator+(const elements<T>& e);
+    elements<T> operator-(const elements<T>& e);
+    elements<T> operator*(const elements<T>& e);
+    elements<T> operator/(const elements<T>& e);
 
     //constructor which takes in an scalar
-    elements operator*(const double& i);
-    elements operator/(const double& i);
+    elements<T> operator*(const T& i);
+    elements<T> operator/(const T& i);
 
     //overload the stream output for elements used for writing to a file
-    friend std::ostream & operator<<(std::ostream & Str, elements const & e); 
+    template <class U> friend std::ostream & operator<<(std::ostream & Str, elements<T> const & e); 
 };
+
+#include "elements.cpp"
 
 #endif

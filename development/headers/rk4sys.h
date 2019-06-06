@@ -2,6 +2,7 @@
 #define rk4sys_h
 #include "ode45.h" // Utility functions for calc_k()
 
+
 // Fourth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // Using linear time stepping 
     // If using non-linear time stepping, use two different functions
@@ -14,9 +15,7 @@
 
 // TODO: move allocation of output array outside of rk4sys()
 
-elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize,int numSteps, elements *y);
+template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal, elements<T> y0,T stepSize, int numSteps, elements<T> *y);
 
-// TODO: check if needed
-void testKCalc(elements y0);
-
+#include "rk4sys.cpp"
 #endif

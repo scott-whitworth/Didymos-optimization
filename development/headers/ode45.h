@@ -10,6 +10,7 @@
 #define constG 6.67430e-11/(AU*AU*AU) //units: AU^3/(s^2 * kg); gravitational constant- used to calculate the gravitational force
 #define massSun 1.98847e30//kg
 
+
 // TODO: Const ref changes
 
 //Calculates the corresponding k for the Runge-Kutta computation
@@ -24,7 +25,7 @@
 //       y: current position and velocity conditions
 //       h(time step): time interval between data points (s)
 //Output: returns k1,k2,k3,k4 for y[n+1] calculation
-elements calc_k(double const & h, elements const & y);
+template <class T> elements<T> calc_k(T const & h, elements<T> const & y);
 
 // Dot = derivative of element with respect to time
 // Utilities of calc_k(), calculates the element from current condition
@@ -32,26 +33,28 @@ elements calc_k(double const & h, elements const & y);
 
 // Based on: y.vr
 // Output: rDot
-double calcRate_r(elements const & y);
+template <class T> T calcRate_r(elements<T> const & y);
 
 // Based on: y.vtheta
 // Output: thetaDot
-double calcRate_theta(elements const & y);
+template <class T> T calcRate_theta(elements<T> const & y);
 
 // Based on: y.vz
 // Output: zDot
-double calcRate_z(elements const & y);
+template <class T> T calcRate_z(elements<T> const & y);
 
 // Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
 // Output: vrDot
-double calcRate_vr(elements const & y);
+template <class T> T calcRate_vr(elements<T> const & y);
 
 // Based on: -y.vr*y.vtheta / y.r
 // Output: vrDot
-double calcRate_vtheta(elements const & y);
+template <class T> T calcRate_vtheta(elements<T> const & y);
 
 // Based on: -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)
 // Output: vrDot
-double calcRate_vz(elements const & y);
+template <class T> T calcRate_vz(elements<T> const & y);
+
+#include "ode45.cpp"
 
 #endif

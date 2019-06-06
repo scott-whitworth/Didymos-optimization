@@ -1,12 +1,12 @@
-#include "rk4sys.h"
+//#include "rk4sys.h"
 #include <iostream>
 #include "elements.h"
 
-elements* rk4sys(double timeInitial, double timeFinal, elements y0, double stepSize,int numSteps, elements *y){
+template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal, elements<T> y0, T stepSize, int numSteps, elements<T> *y){
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     // k variables for Runge-Kutta calculation of y[n+1]
-    elements k1, k2, k3, k4;
+    elements<T> k1, k2, k3, k4;
 
     for(int n=0;n<numSteps-1;n++) // iterate over all time steps 
     {
