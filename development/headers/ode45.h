@@ -5,6 +5,8 @@
 #include <iomanip> // setprecision(int)
 
 #include "elements.h"
+#include "coefficients.h"
+#include "calcThrust.h"
 
 #define AU 1.49597870691e11// units: m; used to convert meters to astronomical units
 #define constG 6.67430e-11/(AU*AU*AU) //units: AU^3/(s^2 * kg); gravitational constant- used to calculate the gravitational force
@@ -25,7 +27,7 @@
 //       y: current position and velocity conditions
 //       h(time step): time interval between data points (s)
 //Output: returns k1,k2,k3,k4 for y[n+1] calculation
-template <class T> elements<T> calc_k(T const & h, elements<T> const & y,T accel,T tau, T gamma);
+template <class T> elements<T> calc_k(T const & h, elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t);
 
 // Dot = derivative of element with respect to time
 // Utilities of calc_k(), calculates the element from current condition
@@ -45,15 +47,15 @@ template <class T> T calcRate_z(elements<T> const & y);
 
 // Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
 // Output: vrDot
-template <class T> T calcRate_vr(elements<T> const & y, T accel, T tau, T gamma);
+template <class T> T calcRate_vr(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t);
 
 // Based on: -y.vr*y.vtheta / y.r
 // Output: vrDot
-template <class T> T calcRate_vtheta(elements<T> const & y, T accel, T tau, T gamma);
+template <class T> T calcRate_vtheta(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t);
 
 // Based on: -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)
 // Output: vrDot
-template <class T> T calcRate_vz(elements<T> const & y, T accel, T tau);
+template <class T> T calcRate_vz(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t);
 
 #include "ode45.cpp"
 

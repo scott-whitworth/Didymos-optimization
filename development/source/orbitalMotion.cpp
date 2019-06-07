@@ -1,9 +1,11 @@
 #include "rk4sys.h"
+#include "calcThrust.h"
 #include <iostream>
 #include <fstream>
 #include <ctime>
 #include <chrono>
 #include <ratio>
+#include <array>
 
 
 
@@ -18,10 +20,16 @@ y0.vr = 4706.64912336045/AU;// radial velocity (au/s)
 y0.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
 y0.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
 
-// conditions for the acceleration components
-double tau = 3./4;
-double gamma = 3./4;
-double accel = 0.0001/AU;
+double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+
+// setup of thrust angle calculations
+coefficients<double> coeff;
+for (int i : coeff.gamma){
+  coeff.gamma[i]=1;
+}
+for (int i : coeff.tau){
+  coeff.tau[i]=1;
+}
 
 // setting time parameters
 double timeInitial=0; 
@@ -49,7 +57,7 @@ double absTol = 1e-9;
 //    Our output function (yp)
 elements<double> *yp;
 for (int repeat = 0; repeat<1; repeat++){
-  yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,y,absTol,accel,tau,gamma);
+  yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,y,absTol,coeff,accel);
 }
 //    recording stop time
   std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -61,8 +69,8 @@ for (int repeat = 0; repeat<1; repeat++){
   std::cout << "It took me " << time_span.count() << " seconds." << std::endl;
 if (time_span.count()==0)
 std::cout<<"I am speed" << std::endl;
-// TODO: make a binary file 
-// Output of yp to a text file
+
+// Output of yp to a binary file
   std::ofstream output;
   
   output.open ("orbitalMotion-accel.bin", std::ios::binary);

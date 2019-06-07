@@ -1,9 +1,8 @@
 #include "rk4sys.h"
 #include <iostream>
-#include "elements.h"
 #include <cmath>
 
-template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol,T accel,T tau, T gamma){
+template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel){
     
     std::cout<<"Initial step (s) = "<<stepSize<<std::endl;
 
@@ -26,19 +25,19 @@ int n=0; // setting the initial iteration number equal to 0
 
 // Runge-Kutta algorithm       
 //      k1 = h*f(t, y[n])
-        k1 = calc_k(stepSize, y[n],accel,tau,gamma);        
+        k1 = calc_k(stepSize, y[n], coeff, accel, t);        
 //      k2 = h*f(t+1/5, y[n]+k1*1/5)
-        k2 = calc_k(stepSize, y[n]+k1*1/5,accel,tau,gamma);   
+        k2 = calc_k(stepSize, y[n]+k1*1/5,coeff, accel, t+1/5*stepSize);   
 //      k3 = h*f(t+3/10, y[n]+k1*3/40+k2*9/40)
-        k3 = calc_k(stepSize, y[n]+k1*3/40+k2*9/40,accel,tau,gamma);   
+        k3 = calc_k(stepSize, y[n]+k1*3/40+k2*9/40,coeff, accel, t+3/10*stepSize);   
 //      k4 = h*f(t+4/5, y[n]+k1*44/45+k2*-56/15+k3*32/9)
-        k4 = calc_k(stepSize,y[n]+k1*44/45+k2*-56/15+k3*32/9,accel,tau,gamma);    
+        k4 = calc_k(stepSize,y[n]+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, t+4/5*stepSize);    
 //      k5 = h*f(t+8/9, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
-        k5 = calc_k(stepSize, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,accel,tau,gamma);        
+        k5 = calc_k(stepSize, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, t+8/9*stepSize);        
 //      k6 = h*f(t, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
-        k6 = calc_k(stepSize, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,accel,tau,gamma);        
+        k6 = calc_k(stepSize, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, t+stepSize);        
 //      k7 = h*f(t, y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
-        k7 = calc_k(stepSize,y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,accel,tau,gamma);  
+        k7 = calc_k(stepSize,y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, t+stepSize);  
 
 //      Previous value 
 //      v = y[n] + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
