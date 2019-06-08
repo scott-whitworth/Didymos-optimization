@@ -4,8 +4,6 @@
 
 //overload operators to do math on all the components in the struct seperately
 //Treating each element as a matrix operation
-
-
 //constructor which takes in an scalar
 template <class T> 
 coefficients<T> coefficients<T>::operator*(const T& i){

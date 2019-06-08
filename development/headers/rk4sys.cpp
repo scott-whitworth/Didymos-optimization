@@ -15,9 +15,9 @@ template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elem
 T t = timeInitial; // setting time equal to the start time
 int n=0; // setting the initial iteration number equal to 0
 
-     while(t<=timeFinal) // iterate until time is equal to the stop time
-    {
 
+while(t<=timeFinal) // iterate until time is equal to the stop time
+    {
 //      array of time output as t         
         t += stepSize;
 //      Time of iteration is set to the previous time plus the step size used within that iteration
@@ -49,7 +49,7 @@ int n=0; // setting the initial iteration number equal to 0
 
 //      Alter the step size for the next iteration
         T s = calc_scalingFactor(v,u-v,absTol,stepSize);
-        stepSize = s*stepSize;
+        stepSize = s*stepSize/10;
 
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/10)
@@ -60,7 +60,8 @@ int n=0; // setting the initial iteration number equal to 0
 //      Calculates the y[n] for the next round of calculations
         y[n+1] = u;        
         n++;
-    }
+    }//end of while 
+
     return y;
 }
 

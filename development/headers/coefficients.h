@@ -18,4 +18,5 @@ template <class T> struct coefficients {
     template <class U> friend std::ostream & operator<<(std::ostream & Str, coefficients<T> const & e); 
 };
 
+#include "coefficients.cpp"
 #endif

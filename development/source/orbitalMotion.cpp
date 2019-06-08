@@ -26,16 +26,16 @@ int main()
     double timeInitial=0; 
     double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
     double deltaT; // time step
-    int numSteps = 500; // initial guess for the number of time steps
+    int numSteps = 5000; // initial guess for the number of time steps
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
     coefficients<double> coeff;
-    for (int i : coeff.gamma){
-      coeff.gamma[i]=1;
+    for (int i=1;i<=10;i++){
+      coeff.gamma[i]=0;
     }
-    for (int i : coeff.tau){
-      coeff.tau[i]=1;
+    for (int i=1;i<=5;i++){
+      coeff.tau[i]=0;
     }
 
     // setting Runge-Kutta tolerance
@@ -52,6 +52,7 @@ int main()
     for (int repeat = 0; repeat<1; repeat++){
       yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,yp,absTol,coeff,accel);
     }
+    std::cout<<times[1]<<yp[1]<<std::endl;
 
 // Output of yp to a binary file
   std::ofstream output;
@@ -65,8 +66,7 @@ int main()
   }
   output.close();
 
-    // cleaning up dynamic yp
-    //TODO: SC: What about times? Might want to clean that up too
+  // cleaning up dynamic yp and time
     delete [] yp;
     delete [] times;
 
