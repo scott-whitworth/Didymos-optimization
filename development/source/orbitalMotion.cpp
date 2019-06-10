@@ -19,7 +19,7 @@ int main()
     y0.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
 
 
-    double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
 
     // setting time parameters
@@ -35,11 +35,10 @@ int main()
       coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=3;
+      coeff.tau[i]=1;
     }
-
     // setting Runge-Kutta tolerance
-    double absTol = 1e-9;
+    double absTol = 1e-12;
 
     // Initialize memory for the solution vector of the dependant solution
     elements<double>* yp;
@@ -48,12 +47,18 @@ int main()
     double *times;
     times = new double[numSteps];
 
+    double *gamma;
+    gamma = new double[numSteps];
+
+    double *tau;
+    tau = new double[numSteps];
+
   
     // Recording the start time for performance metric
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,yp,absTol,coeff,accel);
+      yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -70,8 +75,11 @@ int main()
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
     output.write((char*)&times[i], sizeof (double));
+    output.write((char*)&gamma[i], sizeof (double));
+    output.write((char*)&tau[i], sizeof (double));
   }
   output.close();
+
 
   // cleaning up dynamic yp and time
     delete [] yp;

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel){
+template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel,T *gamma, T *tau){
     
 
     // Set the first element of the solution vector to the initial conditions
@@ -17,6 +17,8 @@ int n=0; // setting the initial iteration number equal to 0
 
 while(t<=timeFinal) // iterate until time is equal to the stop time
     {
+        gamma[n] =calc_gamma(coeff,t, timeFinal);
+        tau[n] =calc_tau(coeff,t, timeFinal);  
 //      array of time output as t         
         t += stepSize;
 //      Time of iteration is set to the previous time plus the step size used within that iteration
@@ -24,19 +26,19 @@ while(t<=timeFinal) // iterate until time is equal to the stop time
 
 // Runge-Kutta algorithm       
 //      k1 = h*f(t, y[n])
-        k1 = calc_k(stepSize, y[n], coeff, accel, t);        
+        k1 = calc_k(stepSize, y[n], coeff, accel, t, timeFinal);        
 //      k2 = h*f(t+1/5, y[n]+k1*1/5)
-        k2 = calc_k(stepSize, y[n]+k1*1/5,coeff, accel, t+1/5*stepSize);   
+        k2 = calc_k(stepSize, y[n]+k1*1/5,coeff, accel, t+1/5*stepSize, timeFinal);   
 //      k3 = h*f(t+3/10, y[n]+k1*3/40+k2*9/40)
-        k3 = calc_k(stepSize, y[n]+k1*3/40+k2*9/40,coeff, accel, t+3/10*stepSize);   
+        k3 = calc_k(stepSize, y[n]+k1*3/40+k2*9/40,coeff, accel, t+3/10*stepSize, timeFinal);   
 //      k4 = h*f(t+4/5, y[n]+k1*44/45+k2*-56/15+k3*32/9)
-        k4 = calc_k(stepSize,y[n]+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, t+4/5*stepSize);    
+        k4 = calc_k(stepSize,y[n]+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, t+4/5*stepSize, timeFinal);    
 //      k5 = h*f(t+8/9, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
-        k5 = calc_k(stepSize, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, t+8/9*stepSize);        
+        k5 = calc_k(stepSize, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, t+8/9*stepSize, timeFinal);        
 //      k6 = h*f(t, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
-        k6 = calc_k(stepSize, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, t+stepSize);        
+        k6 = calc_k(stepSize, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, t+stepSize, timeFinal);        
 //      k7 = h*f(t, y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
-        k7 = calc_k(stepSize,y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, t+stepSize);  
+        k7 = calc_k(stepSize,y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, t+stepSize, timeFinal);  
 
 //      Previous value 
 //      v = y[n] + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
@@ -51,8 +53,8 @@ while(t<=timeFinal) // iterate until time is equal to the stop time
         stepSize = s*stepSize;
 
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/10)
-            stepSize=(timeFinal-timeInitial)/10;
+        if (stepSize>(timeFinal-timeInitial)/2)
+            stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<(timeFinal-timeInitial)/1000)
                 stepSize=(timeFinal-timeInitial)/1000;
 
