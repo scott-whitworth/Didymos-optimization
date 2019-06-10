@@ -9,17 +9,33 @@
 
 int main()
 {
-    // setting initial conditions of the asteroid
-    elements<double> y0;
-    y0.r = 3.150802646376772e+11/AU;// radial position (au)
-    y0.theta= -3.081519548404041;// angular position (rad)
-    y0.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    y0.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    y0.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    y0.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
-
-
+    // setting initial conditions of the spacecraft
+    elements<double> spaceCraft;
+    spaceCraft.r = 3.150802646376772e+11/AU;// radial position (au)
+    spaceCraft.theta= -3.081519548404041;// angular position (rad)
+    spaceCraft.z =  1.760293325286572e+10/AU;// off-plane position (au)
+    spaceCraft.vr = 4706.64912336045/AU;// radial velocity (au/s)
+    spaceCraft.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
+    spaceCraft.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
     double accel = 0.00001/AU;// thrust acceleration (au/s^2)
+
+    // setting initial conditions of the asteroid
+    elements<double> asteroid;
+    asteroid.r = 3.150802646376772e+11/AU;// radial position (au)
+    asteroid.theta= -3.081519548404041;// angular position (rad)
+    asteroid.z =  1.760293325286572e+10/AU;// off-plane position (au)
+    asteroid.vr = 4706.64912336045/AU;// radial velocity (au/s)
+    asteroid.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
+    asteroid.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
+
+    // setting initial conditions of earth
+    elements<double> earth;
+    earth.r = 3.150802646376772e+11/AU;// radial position (au)
+    earth.theta= -3.081519548404041;// angular position (rad)
+    earth.z =  1.760293325286572e+10/AU;// off-plane position (au)
+    earth.vr = 4706.64912336045/AU;// radial velocity (au/s)
+    earth.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
+    earth.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
 
 
     // setting time parameters
@@ -58,7 +74,7 @@ int main()
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,yp,absTol,coeff,accel,gamma,tau);
+      yp = rk4sys(timeInitial,timeFinal,times,asteroid,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
