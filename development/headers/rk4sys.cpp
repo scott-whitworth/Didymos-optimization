@@ -4,7 +4,6 @@
 
 template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel){
     
-    std::cout<<"Initial step (s) = "<<stepSize<<std::endl;
 
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
@@ -49,7 +48,7 @@ while(t<=timeFinal) // iterate until time is equal to the stop time
 
 //      Alter the step size for the next iteration
         T s = calc_scalingFactor(v,u-v,absTol,stepSize);
-        stepSize = s*stepSize/10;
+        stepSize = s*stepSize;
 
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/10)

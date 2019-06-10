@@ -4,8 +4,12 @@
 // Utility to calculate the coefficients vector
 //coefficients struct holds acceleration, gamma, and tau values
 template <class T> struct coefficients {
-    T gamma[21]; //in-plane coefficients angle
-    T tau[11]; //out-of-plane coefficients angle
+    //setting the size of gamma
+    const static int gammaSize=21;
+    T gamma[gammaSize]; //in-plane coefficients angle
+    //setting the size of tau
+    const static int tauSize=11;
+    T tau[tauSize]; //out-of-plane coefficients angle
 
     //overload operators to do math on all the components in the struct seperately
     //constructor which takes in an scalar

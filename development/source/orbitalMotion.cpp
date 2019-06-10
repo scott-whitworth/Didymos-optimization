@@ -26,33 +26,40 @@ int main()
     double timeInitial=0; 
     double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
     double deltaT; // time step
-    int numSteps = 5000; // initial guess for the number of time steps
+    int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
     coefficients<double> coeff;
-    for (int i=1;i<=10;i++){
-      coeff.gamma[i]=0;
+    for (int i=0;i<coeff.gammaSize;i++){
+      coeff.gamma[i]=1;
     }
-    for (int i=1;i<=5;i++){
-      coeff.tau[i]=0;
+    for (int i=0;i<coeff.tauSize;i++){
+      coeff.tau[i]=3;
     }
 
     // setting Runge-Kutta tolerance
     double absTol = 1e-9;
 
     // Initialize memory for the solution vector of the dependant solution
-    //TODO: SC: That is *times? Where and why are you using numSteps == 500?
     elements<double>* yp;
     yp = new elements<double>[numSteps];
+    // Initialize memory for the values of the independent variable
     double *times;
     times = new double[numSteps];
 
   
+    // Recording the start time for performance metric
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
     for (int repeat = 0; repeat<1; repeat++){
       yp = rk4sys(timeInitial,timeFinal,times,y0,deltaT,yp,absTol,coeff,accel);
     }
-    std::cout<<times[1]<<yp[1]<<std::endl;
+     // recording stop time
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    // calculating elapsed time of rk4sys() call(s)
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+    std::cout << "rk4sys() call took " << time_span.count() << " seconds." << std::endl;
 
 // Output of yp to a binary file
   std::ofstream output;
