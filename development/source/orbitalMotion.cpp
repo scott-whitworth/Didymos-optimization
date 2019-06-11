@@ -64,6 +64,7 @@ int main()
     double *times;
     times = new double[numSteps];
 
+    //TODO: SC: You introduce gamma and tau (which are different than coeff.gamma / coeff.tau) without updating your documentation
     double *gamma;
     gamma = new double[numSteps];
 
@@ -83,22 +84,22 @@ int main()
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "rk4sys() call took " << time_span.count() << " seconds." << std::endl;
 
-// Output of yp to a binary file
-  std::ofstream output;
-  
-  output.open ("orbitalMotion-accel.bin", std::ios::binary);
-  for(int i=0; i < numSteps; i++)
-  {
-    //output << yp[i];
-    output.write((char*)&yp[i], sizeof (elements<double>));
-    output.write((char*)&times[i], sizeof (double));
-    output.write((char*)&gamma[i], sizeof (double));
-    output.write((char*)&tau[i], sizeof (double));
-  }
-  output.close();
+    // Output of yp to a binary file
+    std::ofstream output;
+
+    output.open ("orbitalMotion-accel.bin", std::ios::binary);
+    for(int i=0; i < numSteps; i++)
+    {
+        //output << yp[i];
+        output.write((char*)&yp[i], sizeof (elements<double>));
+        output.write((char*)&times[i], sizeof (double));
+        output.write((char*)&gamma[i], sizeof (double));
+        output.write((char*)&tau[i], sizeof (double));
+    }
+    output.close();
 
 
-  // cleaning up dynamic yp and time
+    // cleaning up dynamic yp and time
     delete [] yp;
     delete [] times;
     delete [] gamma;
