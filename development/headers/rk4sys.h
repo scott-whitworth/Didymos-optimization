@@ -2,8 +2,6 @@
 #define rk4sys_h
 #include "ode45.h" // Utility functions for calc_k()
 
-// TODO: move allocation of output array outside of rk4sys()
-
 // Fourth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // Using adaptive time stepping  
 // Parameters: 

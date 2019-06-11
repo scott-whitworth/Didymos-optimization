@@ -1,5 +1,5 @@
 #include "coefficients.h"
-#include <iomanip>
+#include <iomanip> // setprecision(int)
 
 
 //overload operators to do math on all the components in the struct seperately

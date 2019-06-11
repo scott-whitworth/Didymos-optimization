@@ -1,11 +1,9 @@
 #include "rk4sys.h"
 #include "calcThrust.h"
-#include <iostream>
-#include <fstream>
-#include <ctime>
-#include <chrono>
-#include <ratio>
-//TODO: SC: Why are we using these? What benefit are they serving?
+#include <iostream> // used for cout
+#include <fstream> // used for stream output 
+#include <ctime> // used for clock
+#include <chrono> // used for clock
 
 int main()
 {
@@ -100,6 +98,8 @@ int main()
   // cleaning up dynamic yp and time
     delete [] yp;
     delete [] times;
+    delete [] gamma;
+    delete [] tau;
 
     return 0;
 }

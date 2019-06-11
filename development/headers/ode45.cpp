@@ -1,5 +1,5 @@
 
-#include <math.h>
+#include <math.h> // used for sine, cosine, and pow functions
 #include "ode45.h"
 
 template <class T> elements<T> calc_k(const T & h, const elements<T>  & y, const coefficients<T> & coeff, const T & accel,  T const  & t, T const & timeFinal)

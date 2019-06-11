@@ -1,5 +1,5 @@
 #include "elements.h"
-#include <iomanip>
+#include <iomanip> // setprecision(int)
 
 
 //overload operators to do math on all the elements in the struct seperately

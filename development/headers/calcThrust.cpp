@@ -1,6 +1,6 @@
 #include "calcThrust.h"
-#include <math.h>
-#include <iostream>
+#include <math.h> // used for sine and cosine functions
+#include <iostream> // used for cout
 
 template <class T> T calc_gamma(coefficients<T> const & coeff,T const & t, T const & timeFinal){
 T gamma = 0;

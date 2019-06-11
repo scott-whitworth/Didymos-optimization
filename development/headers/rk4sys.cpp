@@ -1,6 +1,6 @@
 #include "rk4sys.h"
-#include <iostream>
-#include <cmath>
+#include <iostream> // used for cout
+#include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel,T *gamma, T *tau){
     

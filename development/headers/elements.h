@@ -1,7 +1,7 @@
 #ifndef elements_h
 #define elements_h
 
-#include <iostream>
+#include <iostream> // used for cout
 
 //elements struct holds k values / dependent variable values in rk4sys
 template <class T> struct elements {
