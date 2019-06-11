@@ -4,14 +4,8 @@
 
 template <class T> elements<T> calc_k(const T & h, const elements<T>  & y, const coefficients<T> & coeff, const T & accel,  T const  & t, T const & timeFinal)
 {
-	elements<T> k; 
-	k.r = h*calcRate_r(y); 
-	k.theta = h*calcRate_theta(y); 
-	k.z = h*calcRate_z(y);  
-	k.vr = h*calcRate_vr(y,coeff,accel,t, timeFinal); 
-	k.vtheta = h*calcRate_vtheta(y,coeff,accel,t, timeFinal); 
-	k.vz = h*calcRate_vz(y,coeff,accel,t, timeFinal); 
-	return k;
+	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 
+	h*calcRate_vr(y,coeff,accel,t, timeFinal), h*calcRate_vtheta(y,coeff,accel,t, timeFinal),  h*calcRate_vz(y,coeff,accel,t, timeFinal));
 }
 
 template <class T> T calcRate_r(elements<T> const & y)

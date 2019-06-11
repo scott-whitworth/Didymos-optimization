@@ -16,17 +16,23 @@ template <class T> struct elements {
     T vtheta; //angular velocity (in plane)
     T vz; // axial velocity (out-of-plane)
 
+    //constructor which sets all the components
+    elements<T>(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0);
+
+    //constructor which takes no values and sets everything to zero
+    elements<T>();
+
 
     //overload operators to do math on all the elements in the struct seperately
     //Treating each element as a matrix operation
 
-    //constructor which takes in an element
+    //operator which takes in an element
     elements<T> operator+(const elements<T>& e);
     elements<T> operator-(const elements<T>& e);
     elements<T> operator*(const elements<T>& e);
     elements<T> operator/(const elements<T>& e);
 
-    //constructor which takes in an scalar
+    //operator which takes in an scalar
     elements<T> operator*(const T& i);
     elements<T> operator/(const T& i);
 

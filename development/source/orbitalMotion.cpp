@@ -7,34 +7,25 @@
 
 int main()
 {
-    // setting initial conditions of the spacecraft
-    elements<double> spaceCraft;
-    spaceCraft.r = 3.150802646376772e+11/AU;// radial position (au)
-    spaceCraft.theta= -3.081519548404041;// angular position (rad)
-    spaceCraft.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    spaceCraft.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    spaceCraft.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    spaceCraft.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
     double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
+
+    // setting initial conditions:
+    // constructor takes radial position (au), angular position (rad), off-plane position (au),
+    // radial velocity (au/s), azimuthal velocity (rad / s), off-plane velocity (au / s)
+
+    // setting initial conditions of the spacecraft
+    elements<double> spaceCraft = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
+    4706.64912336045/AU,16716.9055348804/AU,-81.4453413932308/AU);
+
     // setting initial conditions of the asteroid
-    elements<double> asteroid;
-    asteroid.r = 3.150802646376772e+11/AU;// radial position (au)
-    asteroid.theta= -3.081519548404041;// angular position (rad)
-    asteroid.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    asteroid.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    asteroid.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    asteroid.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
+    elements<double> asteroid = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
+    4706.64912336045/AU, 16716.9055348804/AU, -81.4453413932308/AU);
+
 
     // setting initial conditions of earth
-    elements<double> earth;
-    earth.r = 3.150802646376772e+11/AU;// radial position (au)
-    earth.theta= -3.081519548404041;// angular position (rad)
-    earth.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    earth.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    earth.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    earth.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
-
+    elements<double> earth = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
+    4706.64912336045/AU, 16716.9055348804/AU, -81.4453413932308/AU);
 
     // setting time parameters
     double timeInitial=0; 

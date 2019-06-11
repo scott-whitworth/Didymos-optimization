@@ -1,80 +1,62 @@
 #include "elements.h"
 #include <iomanip> // setprecision(int)
 
+// constrctors
+
+// sets starting values as given
+template <class T>
+elements<T>::elements(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0){
+    r = r0;
+    theta = theta0;
+    z = z0;
+    vr = vr0;
+    vtheta = vtheta0;
+    vz = vz0;
+}
+
+// sets values to default of zero
+template <class T>
+elements<T>::elements(){
+    r = (T)0;
+    theta = (T)0;
+    z = (T)0;
+    vr = (T)0;
+    vtheta = (T)0;
+    vz = (T)0;
+}
 
 //overload operators to do math on all the elements in the struct seperately
 //Treating each element as a matrix operation
+
 //constructor which takes in an element
 template <class T> 
 elements<T> elements<T>::operator+(const elements<T>& e){
-    elements<T> newElements;
-    newElements.r = this->r + e.r;
-    newElements.theta = this->theta + e.theta;
-    newElements.z = this->z + e.z;
-    newElements.vr = this->vr + e.vr;
-    newElements.vtheta = this->vtheta + e.vtheta;
-    newElements.vz = this->vz + e.vz;
-    return newElements;
+    return elements<T>(this->r + e.r, this->theta + e.theta, this->z + e.z, this->vr + e.vr, this->vtheta + e.vtheta, this->vz + e.vz);
 }
 
 template <class T> 
 elements<T> elements<T>::operator-(const elements& e){
-    elements<T> newElements;
-    newElements.r = this->r - e.r;
-    newElements.theta = this->theta - e.theta;
-    newElements.z = this->z - e.z;
-    newElements.vr = this->vr - e.vr;
-    newElements.vtheta = this->vtheta - e.vtheta;
-    newElements.vz = this->vz - e.vz;
-    return newElements;
+    return elements<T>(this->r - e.r, this->theta - e.theta, this->z - e.z, this->vr - e.vr, this->vtheta - e.vtheta, this->vz - e.vz);
 }
 
 template <class T> 
 elements<T> elements<T>::operator*(const elements<T>& e){
-    elements<T> newElements;
-    newElements.r = this->r * e.r;
-    newElements.theta = this->theta * e.theta;
-    newElements.z = this->z * e.z;
-    newElements.vr = this->vr * e.vr;
-    newElements.vtheta = this->vtheta * e.vtheta;
-    newElements.vz = this->vz * e.vz;
-    return newElements;
+    return elements<T>(this->r * e.r, this->theta * e.theta, this->z * e.z, this->vr * e.vr, this->vtheta * e.vtheta, this->vz * e.vz);
 }
 
 template <class T> 
 elements<T> elements<T>::operator/(const elements<T>& e){
-    elements<T> newElements;
-    newElements.r = this->r / e.r;
-    newElements.theta = this->theta / e.theta;
-    newElements.z = this->z / e.z;
-    newElements.vr = this->vr / e.vr;
-    newElements.vtheta = this->vtheta / e.vtheta;
-    newElements.vz = this->vz / e.vz;
-    return newElements;
+    return elements<T>(this->r / e.r, this->theta / e.theta, this->z / e.z, this->vr / e.vr, this->vtheta / e.vtheta, this->vz / e.vz);
 }
 
 //constructor which takes in an scalar
 template <class T> 
 elements<T> elements<T>::operator*(const T& i){
-    elements<T> newElements;
-    newElements.r = this->r * i;
-    newElements.theta = this->theta * i;
-    newElements.z = this->z * i;
-    newElements.vr = this->vr * i;
-    newElements.vtheta = this->vtheta * i;
-    newElements.vz = this->vz * i;
-    return newElements;
+    return elements<T>(this->r * i,  this->theta * i, this->z * i, this->vr * i, this->vtheta * i, this->vz * i);
 }
 
 template <class T> elements<T> elements<T>::operator/(const T& i){
-    elements<T> newElements;
-    newElements.r = this->r / i;
-    newElements.theta = this->theta / i;
-    newElements.z = this->z / i;
-    newElements.vr = this->vr / i;
-    newElements.vtheta = this->vtheta / i;
-    newElements.vz = this->vz / i;
-    return newElements;
+    return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
 }
 
 template <class T> std::ostream & operator<<(std::ostream & Str, elements<T> const & e) {
