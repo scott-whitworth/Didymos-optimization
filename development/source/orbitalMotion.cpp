@@ -6,26 +6,25 @@
 #include <chrono> // used for clock
 
 int main()
-{
-    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
+{    // setting the acceleration as a constant (temporary)
+    double accel = 0.0000/AU;// thrust acceleration (au/s^2)
 
+    // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
+    // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
+    // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
 
-    // setting initial conditions:
-    // constructor takes radial position (au), angular position (rad), off-plane position (au),
-    // radial velocity (au/s), azimuthal velocity (rad / s), off-plane velocity (au / s)
+    // setting landing conditions of the asteroid (October 5, 2022)
+    elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+    -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
+
+    // setting landing conditions of earth (October 5, 2022)
+    elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
+    -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
 
     // setting initial conditions of the spacecraft
-    elements<double> spaceCraft = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
-    4706.64912336045/AU,16716.9055348804/AU,-81.4453413932308/AU);
-
-    // setting initial conditions of the asteroid
-    elements<double> asteroid = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
-    4706.64912336045/AU, 16716.9055348804/AU, -81.4453413932308/AU);
-
-
-    // setting initial conditions of earth
-    elements<double> earth = elements<double>(3.150802646376772e+11/AU, -3.081519548404041, 1.760293325286572e+10/AU,
-    4706.64912336045/AU, 16716.9055348804/AU, -81.4453413932308/AU);
+    // not the actual initial conditions, right now just equal to the earth's landing date conditions
+    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,
+    earth.vr, earth.vtheta, earth.vz);
 
     // setting time parameters
     double timeInitial=0; 
@@ -52,6 +51,7 @@ int main()
     double *times;
     times = new double[numSteps];
 
+    //TODO: SC: You introduce gamma and tau (which are different than coeff.gamma / coeff.tau) without updating your documentation
     double *gamma;
     gamma = new double[numSteps];
 
@@ -63,7 +63,7 @@ int main()
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,asteroid,deltaT,yp,absTol,coeff,accel,gamma,tau);
+      yp = rk4sys(timeInitial,timeFinal,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -71,22 +71,22 @@ int main()
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "rk4sys() call took " << time_span.count() << " seconds." << std::endl;
 
-// Output of yp to a binary file
-  std::ofstream output;
-  
-  output.open ("orbitalMotion-accel.bin", std::ios::binary);
-  for(int i=0; i < numSteps; i++)
-  {
-    //output << yp[i];
-    output.write((char*)&yp[i], sizeof (elements<double>));
-    output.write((char*)&times[i], sizeof (double));
-    output.write((char*)&gamma[i], sizeof (double));
-    output.write((char*)&tau[i], sizeof (double));
-  }
-  output.close();
+    // Output of yp to a binary file
+    std::ofstream output;
+
+    output.open ("orbitalMotion-accel.bin", std::ios::binary);
+    for(int i=0; i < numSteps; i++)
+    {
+        //output << yp[i];
+        output.write((char*)&yp[i], sizeof (elements<double>));
+        output.write((char*)&times[i], sizeof (double));
+        output.write((char*)&gamma[i], sizeof (double));
+        output.write((char*)&tau[i], sizeof (double));
+    }
+    output.close();
 
 
-  // cleaning up dynamic yp and time
+    // cleaning up dynamic yp, time, gamma, and tau.
     delete [] yp;
     delete [] times;
     delete [] gamma;

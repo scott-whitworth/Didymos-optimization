@@ -25,21 +25,15 @@ template <class T> T calcRate_z(elements<T> const & y)
 
 template <class T> T calcRate_vr(elements<T> const & y,  coefficients<T> const & coeff, T const & accel,T const & t, T const & timeFinal)
 {
-	// Move this outside to rk4sys to execute less times
-	double gamma =calc_gamma(coeff,t, timeFinal);
-	double tau =calc_tau(coeff,t, timeFinal);
-	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2))) + (pow(y.vtheta,2) / y.r) + (accel*cos(tau)*sin(gamma));
+	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2))) + (pow(y.vtheta,2) / y.r) + (accel*cos(calc_tau(coeff,t, timeFinal))*sin(calc_gamma(coeff,t, timeFinal)));
 }
 
 template <class T> T calcRate_vtheta(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal)
 {
-	double gamma =calc_gamma(coeff,t, timeFinal);
-	double tau =calc_tau(coeff,t, timeFinal);
-	return -y.vr*y.vtheta / y.r + accel*cos(tau)*cos(gamma);
+	return -y.vr*y.vtheta / y.r + accel*cos(calc_tau(coeff,t, timeFinal))*cos(calc_gamma(coeff,t, timeFinal));
 }
 
 template <class T> T calcRate_vz(elements<T> const & y,coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal)
 {
-	double tau = calc_tau(coeff,t, timeFinal);
-	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2)) + accel*sin(tau);
+	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2)) + accel*sin(calc_tau(coeff,t, timeFinal));
 }

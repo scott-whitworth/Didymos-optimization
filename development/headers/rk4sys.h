@@ -2,6 +2,9 @@
 #define rk4sys_h
 #include "ode45.h" // Utility functions for calc_k()
 
+//TODO: SC: This needs to be updated to include information on coeff, gamma and tau
+//TODO: SC: Why are you returning an array of elements? You are also taking in y which is an array of elements?
+
 // Fourth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // Using adaptive time stepping  
 // Parameters: 
@@ -14,6 +17,8 @@
 //      absTol: Sets the error tolerence for Runge-Kutta
 // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel,T *gamma, T *tau);
+
+//TODO: SC: Do these need to be passed by value? It appears they can be passed by reference
 
 // Calculates the scaling factor for the stepSize
 // Parameters:
