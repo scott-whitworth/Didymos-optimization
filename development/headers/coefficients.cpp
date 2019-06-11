@@ -8,7 +8,10 @@
 template <class T> 
 coefficients<T> coefficients<T>::operator*(const T& i){
     coefficients<T> newCoefficients;
-    newCoefficients.gamma = this->gamma * i;
+
+    //TODO: SC: Whoa! This is a huge issue. gamma is an array of T! You cannot treat gamma as a vector your are multiplying with a scalar like in matlab. This *will* cause errors
+    //          A for loop is needed to multiply every value of gamma by i (same for tau)
+    newCoefficients.gamma = this->gamma * i; 
     newCoefficients.tau = this->tau * i;
     return newCoefficients;
 }

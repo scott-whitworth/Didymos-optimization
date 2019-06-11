@@ -3,6 +3,7 @@
 
 // Utility to calculate the coefficients vector
 //coefficients struct holds acceleration, gamma, and tau values
+//TODO: SC: This could use a lot of clarifying comments. At no point do you reference these being a fourier set
 template <class T> struct coefficients {
     //setting the size of gamma
     const static int gammaSize=21;
@@ -13,6 +14,7 @@ template <class T> struct coefficients {
 
     //overload operators to do math on all the components in the struct seperately
     //constructor which takes in an scalar
+    //TODO: Impliment
     //multiplies each component of coefficients by a scalar value
     coefficients<T> operator*(const T& i);
     //divides each component of coefficients by a scalar value
