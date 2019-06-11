@@ -7,33 +7,34 @@
 
 int main()
 {
-    // setting initial conditions of the spacecraft
-    elements<double> spaceCraft;
-    spaceCraft.r = 3.150802646376772e+11/AU;// radial position (au)
-    spaceCraft.theta= -3.081519548404041;// angular position (rad)
-    spaceCraft.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    spaceCraft.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    spaceCraft.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    spaceCraft.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
-    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
-
     // setting initial conditions of the asteroid
     elements<double> asteroid;
-    asteroid.r = 3.150802646376772e+11/AU;// radial position (au)
-    asteroid.theta= -3.081519548404041;// angular position (rad)
-    asteroid.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    asteroid.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    asteroid.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    asteroid.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
+    asteroid.r = 1.02696822710421;// radial position (au)
+    asteroid.theta= 0.238839574416454;// angular position (rad)
+    asteroid.z = -0.0526614832914496;// off-plane position (au)
+    asteroid.vr = -2.05295246185041e-08;// radial velocity (au/s)
+    asteroid.vtheta= 2.29132593453064e-07;// azimuthal velocity (rad/s)
+    asteroid.vz= 8.00663905822009e-09;// off-plane velocity (au/s)
 
     // setting initial conditions of earth
     elements<double> earth;
-    earth.r = 3.150802646376772e+11/AU;// radial position (au)
-    earth.theta= -3.081519548404041;// angular position (rad)
-    earth.z =  1.760293325286572e+10/AU;// off-plane position (au)
-    earth.vr = 4706.64912336045/AU;// radial velocity (au/s)
-    earth.vtheta= 16716.9055348804/AU;// azimuthal velocity (rad/s)
-    earth.vz= -81.4453413932308/AU;// off-plane velocity (au/s)
+    earth.r = 1.00021392223428;// radial position (au)
+    earth.theta= 0.199470650149394;// angular position (rad)
+    earth.z =  -1.54878511585620e-05;// off-plane position (au)
+    earth.vr = -3.32034068725821e-09;// radial velocity (au/s)
+    earth.vtheta= 1.99029138292504e-07;// azimuthal velocity (rad/s)
+    earth.vz= -9.71518257891386e-12;// off-plane velocity (au/s)
+
+    // setting initial conditions of the spacecraft
+    elements<double> spaceCraft;
+    spaceCraft.r = earth.r;// radial position (au)
+    spaceCraft.theta= earth.theta;// angular position (rad)
+    spaceCraft.z = earth.z;// off-plane position (au)
+    spaceCraft.vr = earth.vr;// radial velocity (au/s)
+    spaceCraft.vtheta= earth.vtheta;// azimuthal velocity (rad/s)
+    spaceCraft.vz=earth.vz;// off-plane velocity (au/s)
+
+    double accel = 0.0000/AU;// thrust acceleration (au/s^2)
 
 
     // setting time parameters
@@ -72,7 +73,7 @@ int main()
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,asteroid,deltaT,yp,absTol,coeff,accel,gamma,tau);
+      yp = rk4sys(timeInitial,timeFinal,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
