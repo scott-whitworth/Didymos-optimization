@@ -3,7 +3,7 @@
 
 #include "coefficients.h"
 
-template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & totalTime);
+template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & timeFinal);
 
 // Calculates gamma (in-plane angle) at a specific time using Fourier series coefficients
 // Parameters:
@@ -13,7 +13,7 @@ template <class T> T calc_Series(T series[], const int series_size, const T & cu
 //         t: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and gamma Fourier series
-template <class T> T calc_gamma(coefficients<T> & coeff,const T & t, const T & timeFinal);
+template <class T> T calc_gamma(const coefficients<T> & coeff,const T & curTime, const T & timeFinal);
 
 
 // Calculates tau (out-of-plane angle) at a specific time using Fourier series coefficients
@@ -24,7 +24,7 @@ template <class T> T calc_gamma(coefficients<T> & coeff,const T & t, const T & t
 //         t: current time (s) for calculated tau
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and tau Fourier series
-template <class T> T calc_tau(coefficients<T> & coeff,const T & t, const T & timeFinal);
+template <class T> T calc_tau(const coefficients<T> & coeff,const T & curTime, const T & timeFinal);
 
 #include "calcThrust.cpp"
 #endif

@@ -1,6 +1,7 @@
 #include "elements.h"
 #include <iomanip> // setprecision(int)
 
+
 // constrctors
 
 // sets starting values as given
@@ -14,7 +15,6 @@ elements<T>::elements(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0){
     vz = vz0;
 }
 
-// TODO: change to static cast
 // sets values to default of zero
 template <class T>
 elements<T>::elements(){
@@ -25,6 +25,7 @@ elements<T>::elements(){
     vtheta = static_cast<T>(0);
     vz = static_cast<T>(0);
 }
+
 
 //overload operators to do math on all the elements in the struct seperately
 //Treating each element as a matrix operation

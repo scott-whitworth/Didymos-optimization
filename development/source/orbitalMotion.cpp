@@ -6,7 +6,8 @@
 #include <chrono> // used for clock
 
 int main()
-{    // setting the acceleration as a constant (temporary)
+{
+// setting the acceleration as a constant (temporary)
     double accel = 0.0000/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
@@ -51,7 +52,6 @@ int main()
     double *times;
     times = new double[numSteps];
 
-    //TODO: SC: You introduce gamma and tau (which are different than coeff.gamma / coeff.tau) without updating your documentation
     double *gamma;
     gamma = new double[numSteps];
 
@@ -63,7 +63,7 @@ int main()
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,asteroid,deltaT,yp,absTol,coeff,accel,gamma,tau);
+      rk4sys(timeInitial,timeFinal,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -71,22 +71,22 @@ int main()
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << "rk4sys() call took " << time_span.count() << " seconds." << std::endl;
 
-    // Output of yp to a binary file
-    std::ofstream output;
+// Output of yp to a binary file
+  std::ofstream output;
+  
+  output.open ("orbitalMotion-accel.bin", std::ios::binary);
+  for(int i=0; i < numSteps; i++)
+  {
+    //output << yp[i];
+    output.write((char*)&yp[i], sizeof (elements<double>));
+    output.write((char*)&times[i], sizeof (double));
+    output.write((char*)&gamma[i], sizeof (double));
+    output.write((char*)&tau[i], sizeof (double));
+  }
+  output.close();
 
-    output.open ("orbitalMotion-accel.bin", std::ios::binary);
-    for(int i=0; i < numSteps; i++)
-    {
-        //output << yp[i];
-        output.write((char*)&yp[i], sizeof (elements<double>));
-        output.write((char*)&times[i], sizeof (double));
-        output.write((char*)&gamma[i], sizeof (double));
-        output.write((char*)&tau[i], sizeof (double));
-    }
-    output.close();
 
-
-    // cleaning up dynamic yp, time, gamma, and tau.
+  // cleaning up dynamic yp, time, gamma, and tau.
     delete [] yp;
     delete [] times;
     delete [] gamma;
