@@ -84,8 +84,8 @@ template <class T> T calc_scalingFactor(elements<T> previous, elements<T> differ
     //TODO: SC: This comment is not complete, and not accurate. You are taking the square root of the sum of squares of the errors
     //TODO: SC: using (T) as a casting method leads to some issues. The better way is static_cast<T>(var). I am also not totally sure you need to cast anything here. The pmError elements will need a T pow function call
     // Sum the error of the 6 element to determine the scale for the time step of the next iteration
-    normTotError = pow(pow(pmError.r,(T)2) + pow(pmError.theta,(T)2) + pow(pmError.z,(T)2) + pow(pmError.vr,(T)2) + pow(pmError.vtheta,(T)2) + pow(pmError.vz,(T)2),(T)1/2);
-    scale = pow((absTol/normTotError),(T)1/5);
+    normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),static_cast<T>(1/2));
+    scale = pow((absTol/normTotError),static_cast<T>(1/5));
 
         return scale;   
 }

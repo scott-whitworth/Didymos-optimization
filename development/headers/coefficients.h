@@ -11,13 +11,6 @@ template <class T> struct coefficients {
     const static int tauSize=11;
     T tau[tauSize]; //out-of-plane coefficients angle
 
-    //overload operators to do math on all the components in the struct seperately
-    //constructor which takes in an scalar
-    //multiplies each component of coefficients by a scalar value
-    coefficients<T> operator*(const T& i);
-    //divides each component of coefficients by a scalar value
-    coefficients<T> operator/(const T& i);
-
     //overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, coefficients<T> const & e); 
 };

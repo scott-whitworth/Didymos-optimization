@@ -1,4 +1,3 @@
-
 #include <math.h> // used for sine, cosine, and pow functions
 #include "ode45.h"
 
@@ -25,7 +24,7 @@ template <class T> T calcRate_z(elements<T> const & y)
 
 template <class T> T calcRate_vr(elements<T> const & y,  coefficients<T> const & coeff, T const & accel,T const & t, T const & timeFinal)
 {
-	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2))) + (pow(y.vtheta,2) / y.r) + (accel*cos(calc_tau(coeff,t, timeFinal))*sin(calc_gamma(coeff,t, timeFinal)));
+	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), static_cast<T>(3/2))) + (pow(y.vtheta,2) / y.r) + (accel*cos(calc_tau(coeff,t, timeFinal))*sin(calc_gamma(coeff,t, timeFinal)));
 }
 
 template <class T> T calcRate_vtheta(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal)
@@ -35,5 +34,5 @@ template <class T> T calcRate_vtheta(elements<T> const & y, coefficients<T> cons
 
 template <class T> T calcRate_vz(elements<T> const & y,coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal)
 {
-	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2)) + accel*sin(calc_tau(coeff,t, timeFinal));
+	return (-constG * massSun * y.z / (pow(pow(y.r, 2) + pow(y.z, 2), static_cast<T>(3/2))) + accel*sin(calc_tau(coeff,t, timeFinal));
 }

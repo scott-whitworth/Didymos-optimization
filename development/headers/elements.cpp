@@ -17,12 +17,12 @@ elements<T>::elements(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0){
 // sets values to default of zero
 template <class T>
 elements<T>::elements(){
-    r = (T)0;
-    theta = (T)0;
-    z = (T)0;
-    vr = (T)0;
-    vtheta = (T)0;
-    vz = (T)0;
+    r = static_cast<T>(0);
+    theta = static_cast<T>(0);
+    z = static_cast<T>(0);
+    vr = static_cast<T>(0);
+    vtheta = static_cast<T>(0);
+    vz = static_cast<T>(0);
 }
 
 //overload operators to do math on all the elements in the struct seperately
