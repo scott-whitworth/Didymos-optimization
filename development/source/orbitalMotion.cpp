@@ -7,7 +7,7 @@
 
 int main()
 {
-    // setting initial conditions of the asteroid
+    // setting landing conditions of the asteroid (October 5, 2022)
     elements<double> asteroid;
     asteroid.r = 1.02696822710421;// radial position (au)
     asteroid.theta= 0.238839574416454;// angular position (rad)
@@ -16,7 +16,7 @@ int main()
     asteroid.vtheta= 2.29132593453064e-07;// azimuthal velocity (rad/s)
     asteroid.vz= 8.00663905822009e-09;// off-plane velocity (au/s)
 
-    // setting initial conditions of earth
+    // setting landing conditions of earth (October 5, 2022)
     elements<double> earth;
     earth.r = 1.00021392223428;// radial position (au)
     earth.theta= 0.199470650149394;// angular position (rad)
@@ -26,6 +26,7 @@ int main()
     earth.vz= -9.71518257891386e-12;// off-plane velocity (au/s)
 
     // setting initial conditions of the spacecraft
+    // not the actual initial conditions, right now just equal to the earth's landing date conditions
     elements<double> spaceCraft;
     spaceCraft.r = earth.r;// radial position (au)
     spaceCraft.theta= earth.theta;// angular position (rad)
@@ -34,6 +35,7 @@ int main()
     spaceCraft.vtheta= earth.vtheta;// azimuthal velocity (rad/s)
     spaceCraft.vz=earth.vz;// off-plane velocity (au/s)
 
+    // setting the acceleration as a constant (temporary)
     double accel = 0.0000/AU;// thrust acceleration (au/s^2)
 
 
