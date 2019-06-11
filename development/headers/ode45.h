@@ -14,6 +14,8 @@
 
 
 // TODO: Const ref changes
+// TODO: SC: Documentation needs to be updated after the inclusion of coeff, accel, t and timeFinal
+// TODO: SC: t is a terrible variable name.
 
 //Calculates the corresponding k for the Runge-Kutta computation
 // Units for k
@@ -44,6 +46,19 @@ template <class T> T calcRate_theta(elements<T> const & y);
 // Based on: y.vz
 // Output: zDot
 template <class T> T calcRate_z(elements<T> const & y);
+
+//TODO: SC: A different way to write this in a not-so-copy kind of way:
+// (-g * M_sun * r) 
+// ----------------
+// (r^2 + z^2) ^ 3/2 + v_theta^2
+// -----------------------------
+// r
+//
+// or
+//
+// (-g * M_sun * r)  /  (r^2 + z^2) ^ 3/2 + v_theta^2  /  r
+//Philosophically you want to avoid just copy/pasting code, that is not helpful, I can just look at your function for that
+//You want to write your comment in a code-agnostic way so you can see if your code is working the way you want it to.
 
 // Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
 // Output: vrDot
