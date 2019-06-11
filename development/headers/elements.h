@@ -27,17 +27,17 @@ template <class T> struct elements {
     //Treating each element as a matrix operation
 
     //operator which takes in an element
-    elements<T> operator+(const elements<T>& e);
-    elements<T> operator-(const elements<T>& e);
-    elements<T> operator*(const elements<T>& e);
-    elements<T> operator/(const elements<T>& e);
+    elements<T> operator+(const elements<T> & e);
+    elements<T> operator-(const elements<T> & e);
+    elements<T> operator*(const elements<T> & e);
+    elements<T> operator/(const elements<T> & e);
 
     //operator which takes in an scalar
-    elements<T> operator*(const T& i);
-    elements<T> operator/(const T& i);
+    elements<T> operator*(const T & i);
+    elements<T> operator/(const T & i);
 
     //overload the stream output for elements used for writing to a file
-    template <class U> friend std::ostream & operator<<(std::ostream & Str, elements<T> const & e); 
+    template <class U> friend std::ostream & operator<<(std::ostream & Str, const elements<T> & e); 
 };
 
 #include "elements.cpp"

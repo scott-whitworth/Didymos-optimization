@@ -2,7 +2,7 @@
 #define coefficients_h
 
 // Utility to calculate the coefficients vector
-//coefficients struct holds acceleration, gamma, and tau values
+// coefficients struct holds acceleration, gamma, and tau values
 //TODO: SC: This could use a lot of clarifying comments. At no point do you reference these being a fourier set
 template <class T> struct coefficients {
     //setting the size of gamma
@@ -12,16 +12,8 @@ template <class T> struct coefficients {
     const static int tauSize=11;
     T tau[tauSize]; //out-of-plane coefficients angle
 
-    //overload operators to do math on all the components in the struct seperately
-    //constructor which takes in an scalar
-    //TODO: Impliment
-    //multiplies each component of coefficients by a scalar value
-    coefficients<T> operator*(const T& i);
-    //divides each component of coefficients by a scalar value
-    coefficients<T> operator/(const T& i);
-
     //overload the stream output for elements used for writing to a file
-    template <class U> friend std::ostream & operator<<(std::ostream & Str, coefficients<T> const & e); 
+    template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e); 
 };
 
 #include "coefficients.cpp"

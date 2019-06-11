@@ -2,7 +2,7 @@
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
-template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elements<T> y0, T stepSize, elements<T> *y, T absTol, coefficients<T> coeff, T accel,T *gamma, T *tau){
+template <class T> elements<T>* rk4sys( const T & timeInitial, const T & timeFinal, T *times, const  elements<T> & y0, T & stepSize, elements<T> *y, const T & absTol, coefficients<T> & coeff, const T & accel, T *gamma, T *tau){
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     times[0]=timeInitial;
@@ -72,7 +72,7 @@ template <class T> elements<T>* rk4sys(T timeInitial, T timeFinal,T *times, elem
     return y; //TODO: SC: Why are we returning y?
 }
 
-template <class T> T calc_scalingFactor(elements<T> previous, elements<T> difference, T absTol, T stepSize)
+template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & difference, const T & absTol, const T & stepSize)
 {
     //TODO: SC: normTotError might mean Normilize Total Error, but it should be documented. Also what does scale refer to? Why do we need to variables?
     T normTotError, scale;

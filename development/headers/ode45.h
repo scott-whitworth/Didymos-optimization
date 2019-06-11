@@ -29,7 +29,7 @@
 //       y: current position and velocity conditions
 //       h(time step): time interval between data points (s)
 //Output: returns k1,k2,k3,k4 for y[n+1] calculation
-template <class T> elements<T> calc_k(T const & h, elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal);
+template <class T> elements<T> calc_k(const T & h,const elements<T> & y, coefficients<T> & coeff, const T & accel,const T & t, const T & timeFinal);
 
 // Dot = derivative of element with respect to time
 // Utilities of calc_k(), calculates the element from current condition
@@ -37,15 +37,15 @@ template <class T> elements<T> calc_k(T const & h, elements<T> const & y, coeffi
 
 // Based on: y.vr
 // Output: rDot
-template <class T> T calcRate_r(elements<T> const & y);
+template <class T> T calcRate_r(const elements<T> & y);
 
 // Based on: y.vtheta
 // Output: thetaDot
-template <class T> T calcRate_theta(elements<T> const & y);
+template <class T> T calcRate_theta(const elements<T> & y);
 
 // Based on: y.vz
 // Output: zDot
-template <class T> T calcRate_z(elements<T> const & y);
+template <class T> T calcRate_z(const elements<T> & y);
 
 //TODO: SC: A different way to write this in a not-so-copy kind of way:
 // (-g * M_sun * r) 
@@ -62,15 +62,15 @@ template <class T> T calcRate_z(elements<T> const & y);
 
 // Based on: -constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)) + pow(y.vtheta,2) / y.r
 // Output: vrDot
-template <class T> T calcRate_vr(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal);
+template <class T> T calcRate_vr(const elements<T> & y, coefficients<T> & coeff, const T & accel,const T & t, const T & timeFinal);
 
 // Based on: -y.vr*y.vtheta / y.r
 // Output: vrDot
-template <class T> T calcRate_vtheta(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal);
+template <class T> T calcRate_vtheta(const elements<T> & y, coefficients<T> & coeff, const T & accel,const T & t, const T & timeFinal);
 
 // Based on: -constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2),(double)3/2)
 // Output: vrDot
-template <class T> T calcRate_vz(elements<T> const & y, coefficients<T> const & coeff, T const & accel, T const & t, T const & timeFinal);
+template <class T> T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel,const T & t, const T & timeFinal);
 
 #include "ode45.cpp"
 

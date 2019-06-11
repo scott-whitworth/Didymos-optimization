@@ -63,7 +63,7 @@ int main()
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
     for (int repeat = 0; repeat<1; repeat++){
-      yp = rk4sys(timeInitial,timeFinal,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau);
+      yp = rk4sys(timeInitial,timeFinal,times,asteroid,deltaT,yp,absTol,coeff,accel,gamma,tau);
     }
      // recording stop time
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();

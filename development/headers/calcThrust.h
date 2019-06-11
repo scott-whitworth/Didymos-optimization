@@ -3,15 +3,8 @@
 
 #include "coefficients.h"
 
+template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & totalTime);
 
-// Fourier series used to calculate gamma (in-plane angle)
-// input:
-//         coeff.gamma: coefficients structure component, used to set initial gamma
-//         t: time stamp for a given gamma (s)
-//         timeFinal: end time (s), used to normalize t
-// output: in-plane angle as a function of normalized time
-
-//TODO: SC: Let me try this a little differently, remember to be specific and complete
 // Calculates gamma (in-plane angle) at a specific time using Fourier series coefficients
 // Parameters:
 //         coeff: coefficients structure, specifically the gamma components
@@ -20,18 +13,18 @@
 //         t: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and gamma Fourier series
-template <class T> T calc_gamma(coefficients<T> const & coeff,T const & t, T const & timeFinal);
-
-//TODO: SC: there is a difference between '<type> const & <name>' and 'const <type> & <name>' You want the later one. 
+template <class T> T calc_gamma(coefficients<T> & coeff,const T & t, const T & timeFinal);
 
 
-// Fourier series used to calculate tau (out-of-plane angle)
-// input:
-//         coeff.tau: coefficients structure component, used to set initial tau
-//         t: time stamp for a given tau (s)
+// Calculates tau (out-of-plane angle) at a specific time using Fourier series coefficients
+// Parameters:
+//         coeff: coefficients structure, specifically the tau components
+//                coeff.tau is an array of <T> values
+//                coeff.tauSize is the size of this array
+//         t: current time (s) for calculated tau
 //         timeFinal: end time (s), used to normalize t
-// output: out-of-plane angle as a function of normalized time
-template <class T> T calc_tau(coefficients<T> const & coeff,T const & t, T const & timeFinal);
+// output: in-plane angle derived from normalized time and tau Fourier series
+template <class T> T calc_tau(coefficients<T> & coeff,const T & t, const T & timeFinal);
 
 #include "calcThrust.cpp"
 #endif
