@@ -98,7 +98,7 @@ int main()
   output.close();
 
 
-  // cleaning up dynamic yp and time
+  // cleaning up dynamic yp, time, gamma, and tau.
     delete [] yp;
     delete [] times;
     delete [] gamma;

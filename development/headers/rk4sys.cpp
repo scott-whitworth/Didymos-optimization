@@ -17,7 +17,9 @@ int n=0; // setting the initial iteration number equal to 0
 
 while(t<=timeFinal) // iterate until time is equal to the stop time
     {
+//      array of gamma for binary output
         gamma[n] =calc_gamma(coeff,t, timeFinal);
+//      array of tau for binary output
         tau[n] =calc_tau(coeff,t, timeFinal);  
 //      array of time output as t         
         t += stepSize;
