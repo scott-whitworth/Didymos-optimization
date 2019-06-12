@@ -3,13 +3,9 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau){
-<<<<<<< HEAD
-    
-=======
         // Set the first element of the solution vector to the initial conditions
         y[0] = y0;
         times[0]=timeInitial;
->>>>>>> b138334863b971538f35f81cb1ae10de86533b03
 
         T curTime = timeInitial; // setting time equal to the start time
         int iteration=0; // setting the initial iteration number equal to 0
