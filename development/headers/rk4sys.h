@@ -3,6 +3,7 @@
 #include "ode45.h" // Utility functions for calc_k()
 
 //TODO: SC: This needs to be updated to include information on coeff, gamma and tau
+//TODO: SC: Why are you returning an array of elements? You are also taking in y which is an array of elements?
 
 // Fourth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // Using adaptive time stepping  
@@ -15,15 +16,7 @@
 //      y: an array which contains the soultion to the dependent variable
 //      absTol: Sets the error tolerence for Runge-Kutta
 // Output: A dynamic array of position and velocity sets, last entry is final conditions
-template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0,  T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau);
-
-//take a time step in the runge-kutta algorithm
-//called repeatedly in rk4sys until the final time is reached
-template <class T> void rkStep(T *curTime, const T & timeInitial, const T & timeFinal, T *times, T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau, int *iteration);
-
-//calculate the runge-kutta equations for the current time
-//called from rkStep
-template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> *y, coefficients<T> coeff, const T & accel, elements<T> *v, elements<T> *u, int iteration);
+template <class T> elements<T>* rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0,  T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau);
 
 // Calculates the scaling factor for the stepSize
 // Parameters:

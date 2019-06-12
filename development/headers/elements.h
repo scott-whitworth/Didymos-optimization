@@ -40,6 +40,6 @@ template <class T> struct elements {
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const elements<T> & e); 
 };
 
-#include "elements.cpp" //to avoid templating issues
+#include "elements.cpp"
 
 #endif

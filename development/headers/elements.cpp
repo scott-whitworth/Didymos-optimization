@@ -2,7 +2,7 @@
 #include <iomanip> // setprecision(int)
 
 
-// constructors
+// constrctors
 
 // sets starting values as given
 template <class T>
