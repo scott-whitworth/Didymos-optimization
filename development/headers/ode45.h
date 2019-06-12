@@ -65,6 +65,6 @@ template <class T> T calcRate_vtheta(const elements<T> & y, coefficients<T> & co
 // Output: vrDot
 template <class T> T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
-#include "ode45.cpp"
+#include "ode45.cpp" // to avoid templating issues
 
 #endif
