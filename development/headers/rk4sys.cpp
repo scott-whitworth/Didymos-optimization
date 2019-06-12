@@ -2,7 +2,7 @@
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
-template <class T> elements<T>* rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau){
+template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau){
     
 
     // Set the first element of the solution vector to the initial conditions
@@ -53,18 +53,14 @@ while(curTime<=timeFinal) // iterate until time is equal to the stop time
 
 //      Alter the step size for the next iteration
         T s = calc_scalingFactor(v,u-v,absTol,stepSize);
-        stepSize = s*stepSize;
-
-        //TODO: SC: You take a slightly risky move here in changing stepSize. I know it makes sense in the context of the function, but it is also a variable you pass in.
-        //          This discrepancy might cause issues moving forward
-
+        stepSize = s*stepSize/10;
+ 
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/2)
             stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<(timeFinal-timeInitial)/1000)
                 stepSize=(timeFinal-timeInitial)/1000;
-//TODO: SC: This comment is not what it is doing:
-//      Calculates the y[n] for the next round of calculations
+//      sets u equal to current value of y
         y[n+1] = u;        
         n++;
     }//end of while 
@@ -72,20 +68,19 @@ while(curTime<=timeFinal) // iterate until time is equal to the stop time
 
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
 {
-//TODO: SC: normTotError might mean Normilize Total Error, but it should be documented. Also what does scale refer to? Why do we need to variables?
     T normTotError, scale;
 
-        // relative error (unitless) 
+//      relative error (unitless) 
         elements<T> pmError(difference.r/previous.r, difference.theta/previous.theta, difference.z/previous.z, 
         difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
 
-    //TODO: SC: This comment is not complete, and not accurate. You are taking the square root of the sum of squares of the errors
-    //TODO: SC: using (T) as a casting method leads to some issues. The better way is static_cast<T>(var). I am also not totally sure you need to cast anything here. The pmError elements will need a T pow function call
-    // Sum the error of the 6 element to determine the scale for the time step of the next iteration
-    normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),(T)1/2);
-    scale = pow((absTol/normTotError),(T)1/5);
 
     //TODO: changing to static cast alters the results slightly
+
+//  square root of the sum of squares of the errors to determine the scale for the time step of the next iteration
+//  normalized total error
+    normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),static_cast<T>(1/2));
+    scale = pow((absTol/normTotError),static_cast<T>(1/5));
 
         return scale;   
 }

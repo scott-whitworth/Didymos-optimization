@@ -16,7 +16,7 @@
 //      y: an array which contains the soultion to the dependent variable
 //      absTol: Sets the error tolerence for Runge-Kutta
 // Output: A dynamic array of position and velocity sets, last entry is final conditions
-template <class T> elements<T>* rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0,  T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau);
+template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0,  T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau);
 
 // Calculates the scaling factor for the stepSize
 // Parameters:

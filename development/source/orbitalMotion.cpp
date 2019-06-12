@@ -8,7 +8,7 @@
 int main()
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.0000/AU;// thrust acceleration (au/s^2)
+    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
