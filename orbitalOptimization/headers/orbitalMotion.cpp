@@ -8,7 +8,7 @@
 double trajectory( double x[3])
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.000/AU;// thrust acceleration (au/s^2)
+    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -77,15 +77,15 @@ double trajectory( double x[3])
   if (cost < Fmin)
     cost = 0;
   
- std::cout<<"The cost value is: "<<cost<<std::endl<<yFinal;
+ std::cout<<"The cost value is: "<<cost<<std::endl;
 
-  if (cost<1.0e-6)
+  if (cost<1.5e-5)
   {
     // Output of yp to a binary file
   std::ofstream output;
   
   output.open ("orbitalMotion-accel.bin", std::ios::binary);
-  for(int i=0; i < numSteps; i++)
+  for(int i=0; i <= lastStep; i++)
   {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
