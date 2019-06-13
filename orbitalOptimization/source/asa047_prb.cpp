@@ -103,7 +103,7 @@ void test01 ( )
 
   step[0] = 1.0e-9;
   step[1] = 1.0e-10;
-  step[2] = 1.0e-10;
+  step[2] = 1.0e-9;
 
   konvge = 10;
   kcount = 10000;
@@ -116,12 +116,12 @@ void test01 ( )
     cout << "  " << setw(14) << start[i] << "\n";
   }
 
-  ynewlo = trajectory ( start );
+  ynewlo = trajectoryP ( start );
 
   cout << "\n";
   cout << "  F(X) = " << ynewlo << "\n";
 
-  nelmin ( trajectory, n, start, xmin, &ynewlo, reqmin, step,
+  nelmin ( trajectoryP, n, start, xmin, &ynewlo, reqmin, step,
     konvge, kcount, &icount, &numres, &ifault );
 
   cout << "\n";
@@ -140,6 +140,8 @@ void test01 ( )
   cout << "\n";
   cout << "  Number of iterations = " << icount << "\n";
   cout << "  Number of restarts =   " << numres << "\n";
+
+  trajectoryP(xmin);
 
   delete [] start;
   delete [] step;
