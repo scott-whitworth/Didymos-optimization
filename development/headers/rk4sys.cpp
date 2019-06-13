@@ -17,14 +17,13 @@ template <class T> elements<T>* rk4sys(const T & timeInitial, const T & timeFina
 
     while(curTime<=timeFinal) // iterate until time is equal to the stop time
     {
+        /* M: We dont need this here, we can write this code outside this function and call using times[]
 //      array of gamma for binary output
         gamma[n] =calc_gamma(coeff,curTime, timeFinal);
 //      array of tau for binary output
         tau[n] =calc_tau(coeff,curTime, timeFinal);  
-//      array of time output as t         
-        curTime += stepSize;
-//      Time of iteration is set to the previous time plus the step size used within that iteration
-        times[n+1]=curTime;
+        */
+
 
     // Runge-Kutta algorithm       
 //      k1 = h*f(t, y[n])
@@ -58,6 +57,11 @@ template <class T> elements<T>* rk4sys(const T & timeInitial, const T & timeFina
             stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<(timeFinal-timeInitial)/1000)
                 stepSize=(timeFinal-timeInitial)/1000;
+
+//      array of time output as t         
+        curTime += stepSize;
+//      Time of iteration is set to the previous time plus the step size used within that iteration
+        times[n+1]=curTime;
 
         // store the new set of elements 
         y[n+1] = u;        

@@ -1,0 +1,6 @@
+classdef Object
+    properties(Constant)
+        EARTH = 0;
+        SHIP_EARTH_SPHERE = 1;
+    end
+end
