@@ -101,7 +101,7 @@ void test01 ( )
 
   reqmin = 1.0E-9;
 
-  step[0] = 1.0e-9;
+  step[0] = 1.0e-09;
   step[1] = 1.0e-10;
   step[2] = 1.0e-10;
 
@@ -140,6 +140,9 @@ void test01 ( )
   cout << "\n";
   cout << "  Number of iterations = " << icount << "\n";
   cout << "  Number of restarts =   " << numres << "\n";
+
+  // One more time
+  trajectoryPrint(xmin);
 
   delete [] start;
   delete [] step;
