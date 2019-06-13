@@ -101,7 +101,7 @@ void test01 ( )
 
   reqmin = 1.0E-9;
 
-  step[0] = 1.0e-09;
+  step[0] = 8.0e-09;
   step[1] = 1.0e-10;
   step[2] = 1.0e-10;
 

@@ -4,11 +4,12 @@
 #include <fstream> // used for stream output 
 #include <ctime> // used for clock
 #include <chrono> // used for clock
+#include <math.h>
 
 double trajectory( double x[3])
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -31,16 +32,16 @@ double trajectory( double x[3])
     double timeInitial=0; 
     double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
     double deltaT; // time step
-    int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
+    int numSteps = 50000; // initial guess for the number of time steps, guess for the memory allocated 
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=0;
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=0;
+      coeff.tau[i]=1;
     }
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;
@@ -79,7 +80,7 @@ double trajectory( double x[3])
 double trajectoryPrint( double x[3])
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel = 0.00001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -108,10 +109,10 @@ double trajectoryPrint( double x[3])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=0;
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=0;
+      coeff.tau[i]=1;
     }
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;

@@ -8,6 +8,10 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     times[0]=timeInitial;
+    //      array of gamma for binary output
+        gamma[0] =calc_gamma(coeff,timeInitial, timeFinal);
+//      array of tau for binary output
+        tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
@@ -19,10 +23,6 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
 while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
-//      array of gamma for binary output
- //       gamma[n] =calc_gamma(coeff,curTime, timeFinal);
-//      array of tau for binary output
-   //     tau[n] =calc_tau(coeff,curTime, timeFinal);  
 
 
 // Runge-Kutta algorithm       
@@ -54,9 +54,14 @@ while(curTime<timeFinal) // iterate until time is equal to the stop time
         curTime += stepSize;
 //      Time of iteration is set to the previous time plus the step size used within that iteration
         times[n+1]=curTime;
+        //      array of gamma for binary output
+        gamma[n+1] =calc_gamma(coeff,curTime, timeFinal);
+//      array of tau for binary output
+        tau[n+1] =calc_tau(coeff,curTime, timeFinal);  
+
 
 //      Alter the step size for the next iteration
-        stepSize = 2*stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
+        stepSize = stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
 
         //TODO: SC: You take a slightly risky move here in changing stepSize. I know it makes sense in the context of the function, but it is also a variable you pass in.
         //          This discrepancy might cause issues moving forward
@@ -77,10 +82,10 @@ while(curTime<timeFinal) // iterate until time is equal to the stop time
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/2)
             stepSize=(timeFinal-timeInitial)/2;
-        else if (stepSize<(timeFinal-timeInitial)/1000)
-                stepSize=(timeFinal-timeInitial)/1000;
+        else if (stepSize<(timeFinal-timeInitial)/10000)
+                stepSize=(timeFinal-timeInitial)/10000;
         if((curTime+stepSize)>timeFinal)
-            stepSize=1.000001*(timeFinal-curTime);
+            stepSize=(timeFinal-curTime);
 
 
 //      Calculates the y[n] for the next round of calculations
@@ -135,8 +140,8 @@ T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & a
 //      The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/2)
             stepSize=(timeFinal-timeInitial)/2;
-        else if (stepSize<((timeFinal-timeInitial)/2000))
-                stepSize=(timeFinal-timeInitial)/4000;
+        else if (stepSize<((timeFinal-timeInitial)/10000))
+                stepSize=(timeFinal-timeInitial)/10000;
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
 
