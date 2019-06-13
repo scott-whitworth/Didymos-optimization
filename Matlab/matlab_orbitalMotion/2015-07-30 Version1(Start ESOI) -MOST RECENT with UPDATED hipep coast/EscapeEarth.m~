@@ -1,0 +1,64 @@
+%EscapeEarth is passed a time that is guaranteed to be greater than the
+%time required to escape earth.  It then starts the ship in low earth orbit
+%and has it thrust parallel to its motion.  The integration has a
+%termination condition when the ship is outside earth sphere of influence.
+%The time at which it escaped earth influence is returned and the angle and
+%velocity at which it escaped are stored in global variables for later use.
+
+%called by FindPath and TimeObjectiveFunction
+function [EscapeTime,escapeVelocity,EarthEscapeAngle] = EscapeEarth(order, direction, Time, uexhaust, a0, a0_earth, launchRadius)
+
+%************************************************************
+%Global Constants
+%global GC_rLaunch   %radius of launch from earth
+%Global Variables
+%global G_object;            %current object being integrated for motion path
+%global G_escapeVelocity;    %scalar velcity at earth escape
+%global G_EarthEscapeAngle;  %escape angle relative to earth
+%************************************************************
+object = 'ShipEarthSphere';
+
+%Sets the event condition which stops integration when radius is equal to ESOI
+options = odeset('Events', @EscapeEvent);
+
+% Initializes the vector of initial conditions
+Initial = zeros(4,1);
+Initial(1) = launchRadius;         %initial radius of 500km LEO (non-dimensional)
+Initial(2) = 0;                     %initial theta(rad)
+Initial(3) = 0;                 %initial radial velocity (non-dimensional)
+Initial(4) = sqrt(Constants.MUE*launchRadius); %initial h (non-dimensional)
+
+
+%Integrates equations of motion for Earth escape
+%[t,Y,te,xe,ie] = ode45(@ode45Fun, [0 Time], Initial, options);
+[t,Y,te,xe,ie] = solveOde45Fun([0 Time], Initial, order, direction, object, uexhaust, a0, a0_earth, 0, options);
+%uses pythagorean theorem and the radial and angular velocities
+escapeVelocity = sqrt(Y(end,3)^2+(Y(end,4)/Y(end,1))^2);
+%atan of (radialVelocity/angularVelocity) defines 0 to be completely
+%angular and 90 degrees to be completely radial.
+EarthEscapeAngle = atan((Y(end,1)*Y(end,3)/Y(end,4)));
+EscapeTime = t(end); %The integraiton terminates when earth is escaped so the last value will be the escape time
+if Y(end,1)<Constants.ESOI
+    %if radius never reaches escape radius then the function has failed and
+    %returning a non number value is the easiest way to demonstrate that
+    %there was an error
+    fprintf ('EscapeEarth() NEVER REACHED GOAL RADIUS, CHANGE THE VALUE WHICH IT IS PASSED IN THE CODE TO BE GREATER\n')
+   EscapeTime = nan; 
+end
+end
+
+%Function which handles event.  
+function [value,isterminal,direction] = EscapeEvent(t,y)
+%Contains the event which triggers upon switching spheres of influence
+%**************************************************************
+%TODO
+%Something we still need to do is change this so that ESOI is not a
+%constant and instead varies with the current distance from the earth to
+%the sun. Does this function have to re-integrate earths motion for every
+%function call?  That could get very expensive.
+%******************************************************************
+
+value(1) = (y(1)-Constants.ESOI); %looks for current radius to be equal to the point where we switch spheres of influence
+isterminal(1) = 1; %Tells MATLAB to stop integrating
+direction(1) = 0; %Doesn't care which direction the function is moving
+end

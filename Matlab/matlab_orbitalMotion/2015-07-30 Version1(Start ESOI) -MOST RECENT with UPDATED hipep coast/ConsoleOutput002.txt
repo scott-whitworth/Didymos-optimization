@@ -1,0 +1,3079 @@
+Would you like to manually enter specifications (0) or read from Input.xlsx file(1)? 1
+Number of Trials per thruster: 3
+Coast during forward trip? : 0
+Coast during return trip? : 0
+Minimum AlphaP : 16
+Maximum AlphaP : 16
+Mass Payload : 750
+Asteroid Designation : 7 1999 RQ36 2019
+Fast Convergence (0) or Fully Converged(1) : 1
+Use tested Pin and Uex data(0) or Extrapolate data(1) : 1
+Percent of extrapolation: 0.2
+Preference of higher thrust (0) or efficiency (1) : 0
+Stay time on asteroid (in half-orbital periods) : 2
+Time Wait: 1.19944
+Number of thrusters to be evaluated : 1
+Thrusters being evaluated: 
+BHT-20k 
+Lower engine multiplier: 1
+Upper engine multiplier: 1
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 1                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~RETURN~                                        
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 0.657698
+Function   Value: 1.24585
+Function   Value Calculated from Y: 1.24585
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000501774
+Initial num = 1.16883
+Initial denom = 2329.39
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.701008
+Function   Value: 0.967538
+Function   Value Calculated from Y: 0.967538
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000487473
+Initial num = 1.16883
+Initial denom = 2397.73
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.744318
+Function   Value: 0.669679
+Function   Value Calculated from Y: 0.669679
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000473964
+Initial num = 1.16883
+Initial denom = 2466.07
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.787628
+Function   Value: 0.44203
+Function   Value Calculated from Y: 0.44203
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000460579
+Initial num = 1.1673
+Initial denom = 2534.41
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.830938
+Function   Value: 0.278145
+Function   Value Calculated from Y: 0.278145
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000448185
+Initial num = 1.16651
+Initial denom = 2602.74
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.874247
+Function   Value: 0.180528
+Function   Value Calculated from Y: 0.180528
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.00043581
+Initial num = 1.16408
+Initial denom = 2671.08
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.917557
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003093798953124000.000000 
+
+Function   Value: 5.00031e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.960867
+Function   Value: 0.1182
+Function   Value Calculated from Y: 0.1182
+Final Acceleration = 0.00090189
+Final num = 1.1649
+Final denom = 1291.63
+Initial Acceleration = 0.000414888
+Initial num = 1.1649
+Initial denom = 2807.76
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.00418
+Function   Value: 0.0979835
+Function   Value Calculated from Y: 0.0979835
+Final Acceleration = 0.00090061
+Final num = 1.16325
+Final denom = 1291.63
+Initial Acceleration = 0.000404455
+Initial num = 1.16325
+Initial denom = 2876.1
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.04749
+Function   Value: 0.343429
+Function   Value Calculated from Y: 0.343429
+Final Acceleration = 0.00090189
+Final num = 1.1649
+Final denom = 1291.63
+Initial Acceleration = 0.000395629
+Initial num = 1.1649
+Initial denom = 2944.43
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.0908
+Function   Value: 0.310026
+Function   Value Calculated from Y: 0.310026
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000387189
+Initial num = 1.16651
+Initial denom = 3012.77
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.13411
+Function   Value: 0.863951
+Function   Value Calculated from Y: 0.863951
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.00037808
+Initial num = 1.1649
+Initial denom = 3081.11
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.17742
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.155299 
+
+Function   Value: 0.155299
+Function   Value Calculated from Y: 0.155299
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000371122
+Initial num = 1.16883
+Initial denom = 3149.45
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.22073
+Function   Value: 0.417557
+Function   Value Calculated from Y: 0.417557
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000362764
+Initial num = 1.1673
+Initial denom = 3217.78
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.26404
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50013619620567507000.000000 
+
+Function   Value: 5.00136e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.30735
+Function   Value: 0.108872
+Function   Value Calculated from Y: 0.108872
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.00034844
+Initial num = 1.16883
+Initial denom = 3354.46
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.35066
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50007823436438127000.000000 
+
+Function   Value: 5.00078e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.39397
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50001510055816077000.000000 
+
+Function   Value: 5.00015e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.43728
+Function   Value: 0.0289956
+Function   Value Calculated from Y: 0.0289956
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000328371
+Initial num = 1.16883
+Initial denom = 3559.47
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.48059
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003240713298002000.000000 
+
+Function   Value: 5.00032e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.5239
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50002869217491075000.000000 
+
+Function   Value: 5.00029e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.56721
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 8.734142 
+
+Function   Value: 8.73414
+Function   Value Calculated from Y: 8.73414
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000337259
+Initial num = 1.16883
+Initial denom = 3465.67
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.61052
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.026207 
+
+Function   Value: 0.0262072
+Function   Value Calculated from Y: 0.0262072
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000304952
+Initial num = 1.16883
+Initial denom = 3832.82
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.65383
+Function   Value: 0.0175567
+Function   Value Calculated from Y: 0.0175567
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.00029961
+Initial num = 1.16883
+Initial denom = 3901.16
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.69713
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 4.72206e-07
+Function   Value Calculated from Y: 4.72206e-07
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000294452
+Initial num = 1.16883
+Initial denom = 3969.5
+DID NOT CONVERGE
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 1.68713
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.005471 
+
+Function   Value: 0.00547119
+Function   Value Calculated from Y: 0.00547119
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000295435
+Initial num = 1.16807
+Initial denom = 3953.72
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 1.67713
+Function   Value: 0.0440861
+Function   Value Calculated from Y: 0.0440861
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000296812
+Initial num = 1.16883
+Initial denom = 3937.94
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 1.68454
+Function   Value: 6.41321e-25
+Function   Value Calculated from Y: 6.41321e-25
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000295934
+Initial num = 1.16883
+Initial denom = 3949.62
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 1.68084
+Function   Value: 1.06384e-23
+Function   Value Calculated from Y: 1.06384e-23
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296373
+Initial num = 1.16883
+Initial denom = 3943.78
+CONVERGED
+
+TimeGuess  Value: 1.67713
+Function   Value: 7.35858e-05
+Function   Value Calculated from Y: 7.35858e-05
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296812
+Initial num = 1.16883
+Initial denom = 3937.94
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.67343
+Function   Value: 3.00988e-05
+Function   Value Calculated from Y: 3.00988e-05
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000297253
+Initial num = 1.16883
+Initial denom = 3932.1
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 1.67899
+Function   Value: 1.20805e-05
+Function   Value Calculated from Y: 1.20805e-05
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296592
+Initial num = 1.16883
+Initial denom = 3940.86
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.67713
+Function   Value: 7.35858e-05
+Function   Value Calculated from Y: 7.35858e-05
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296812
+Initial num = 1.16883
+Initial denom = 3937.94
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 1.67991
+Function   Value: 3.26239e-06
+Function   Value Calculated from Y: 3.26239e-06
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296482
+Initial num = 1.16883
+Initial denom = 3942.32
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.67899
+Function   Value: 1.20353e-05
+Function   Value Calculated from Y: 1.20353e-05
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000296592
+Initial num = 1.16883
+Initial denom = 3940.86
+DID NOT CONVERGE
+
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 1                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~FORWARD~                                       
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 0.630765
+Function   Value: 0.101415
+Function   Value Calculated from Y: 0.101415
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000221768
+Initial num = 1.09311
+Initial denom = 4929.06
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.670919
+Function   Value: 0.176273
+Function   Value Calculated from Y: 0.176273
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000218954
+Initial num = 1.09311
+Initial denom = 4992.41
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.711073
+Function   Value: 0.119936
+Function   Value Calculated from Y: 0.119936
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.00021621
+Initial num = 1.09311
+Initial denom = 5055.77
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.751227
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.072576 
+
+Function   Value: 0.0725756
+Function   Value Calculated from Y: 0.0725756
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000213534
+Initial num = 1.09311
+Initial denom = 5119.13
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.791381
+Function   Value: 0.086991
+Function   Value Calculated from Y: 0.086991
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000210923
+Initial num = 1.09311
+Initial denom = 5182.49
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.831535
+Function   Value: 0.0620791
+Function   Value Calculated from Y: 0.0620791
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000208376
+Initial num = 1.09311
+Initial denom = 5245.85
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.871689
+Function   Value: 0.0311021
+Function   Value Calculated from Y: 0.0311021
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000205889
+Initial num = 1.09311
+Initial denom = 5309.21
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.911843
+Function   Value: 0.0638145
+Function   Value Calculated from Y: 0.0638145
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000203461
+Initial num = 1.09311
+Initial denom = 5372.56
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.951997
+Function   Value: 0.0670524
+Function   Value Calculated from Y: 0.0670524
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.00020109
+Initial num = 1.09311
+Initial denom = 5435.92
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.992151
+Function   Value: 0.0866421
+Function   Value Calculated from Y: 0.0866421
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000198773
+Initial num = 1.09311
+Initial denom = 5499.28
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.0323
+Function   Value: 0.228384
+Function   Value Calculated from Y: 0.228384
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000199483
+Initial num = 1.09311
+Initial denom = 5479.7
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.07246
+Function   Value: 0.00372896
+Function   Value Calculated from Y: 0.00372896
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000194296
+Initial num = 1.09311
+Initial denom = 5626
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.11261
+Function   Value: 4.59417e-05
+Function   Value Calculated from Y: 4.59417e-05
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192132
+Initial num = 1.09311
+Initial denom = 5689.35
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.15277
+Function   Value: 3.71959e-24
+Function   Value Calculated from Y: 3.71959e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190016
+Initial num = 1.09311
+Initial denom = 5752.71
+CONVERGED
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 1.14277
+Function   Value: 4.50216e-24
+Function   Value Calculated from Y: 4.50216e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190539
+Initial num = 1.09311
+Initial denom = 5736.93
+CONVERGED
+
+TimeGuess  Value: 1.13277
+Function   Value: 3.27829e-24
+Function   Value Calculated from Y: 3.27829e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191064
+Initial num = 1.09311
+Initial denom = 5721.15
+CONVERGED
+
+TimeGuess  Value: 1.12277
+Function   Value: 2.02756e-24
+Function   Value Calculated from Y: 2.02756e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191593
+Initial num = 1.09311
+Initial denom = 5705.38
+CONVERGED
+
+TimeGuess  Value: 1.11277
+Function   Value: 3.93568e-05
+Function   Value Calculated from Y: 3.93568e-05
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192124
+Initial num = 1.09311
+Initial denom = 5689.6
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 1.10277
+Function   Value: 0.000247293
+Function   Value Calculated from Y: 0.000247293
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192658
+Initial num = 1.09311
+Initial denom = 5673.82
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 1.11015
+Function   Value: 0.0293174
+Function   Value Calculated from Y: 0.0293174
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192264
+Initial num = 1.09311
+Initial denom = 5685.46
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.11753
+Function   Value: 0.0311988
+Function   Value Calculated from Y: 0.0311988
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191871
+Initial num = 1.09311
+Initial denom = 5697.11
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.12491
+Function   Value: 0.00451029
+Function   Value Calculated from Y: 0.00451029
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191479
+Initial num = 1.09311
+Initial denom = 5708.75
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.13228
+Function   Value: 0.00498795
+Function   Value Calculated from Y: 0.00498795
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.00019109
+Initial num = 1.09311
+Initial denom = 5720.39
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.13966
+Function   Value: 0.0056466
+Function   Value Calculated from Y: 0.0056466
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190701
+Initial num = 1.09311
+Initial denom = 5732.04
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.14704
+Function   Value: 4.2681e-24
+Function   Value Calculated from Y: 4.2681e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190315
+Initial num = 1.09311
+Initial denom = 5743.68
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 1.14335
+Function   Value: 4.89251e-24
+Function   Value Calculated from Y: 4.89251e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190508
+Initial num = 1.09311
+Initial denom = 5737.86
+CONVERGED
+
+TimeGuess  Value: 1.13966
+Function   Value: 4.13176e-11
+Function   Value Calculated from Y: 4.13176e-11
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190701
+Initial num = 1.09311
+Initial denom = 5732.04
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.13597
+Function   Value: 5.06441e-24
+Function   Value Calculated from Y: 5.06441e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000190895
+Initial num = 1.09311
+Initial denom = 5726.22
+CONVERGED
+
+TimeGuess  Value: 1.13228
+Function   Value: 5.59852e-24
+Function   Value Calculated from Y: 5.59852e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.00019109
+Initial num = 1.09311
+Initial denom = 5720.39
+CONVERGED
+
+TimeGuess  Value: 1.1286
+Function   Value: 1.39677e-05
+Function   Value Calculated from Y: 1.39677e-05
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191284
+Initial num = 1.09311
+Initial denom = 5714.57
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.12491
+Function   Value: 1.90255e-24
+Function   Value Calculated from Y: 1.90255e-24
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191479
+Initial num = 1.09311
+Initial denom = 5708.75
+CONVERGED
+
+TimeGuess  Value: 1.12122
+Function   Value: 6.53915e-06
+Function   Value Calculated from Y: 6.53915e-06
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191675
+Initial num = 1.09311
+Initial denom = 5702.93
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.11753
+Function   Value: 3.70836e-25
+Function   Value Calculated from Y: 3.70836e-25
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191871
+Initial num = 1.09311
+Initial denom = 5697.11
+CONVERGED
+
+TimeGuess  Value: 1.11384
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 1.24344e-07
+Function   Value Calculated from Y: 1.24344e-07
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192067
+Initial num = 1.09311
+Initial denom = 5691.28
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.11015
+Function   Value: 1.10782e-05
+Function   Value Calculated from Y: 1.10782e-05
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192264
+Initial num = 1.09311
+Initial denom = 5685.46
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 1.11568
+Function   Value: 1.43906e-06
+Function   Value Calculated from Y: 1.43906e-06
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191969
+Initial num = 1.09311
+Initial denom = 5694.2
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.11384
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 1.24344e-07
+Function   Value Calculated from Y: 1.24344e-07
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192067
+Initial num = 1.09311
+Initial denom = 5691.28
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 1.1166
+Function   Value: 1.8109e-25
+Function   Value Calculated from Y: 1.8109e-25
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.00019192
+Initial num = 1.09311
+Initial denom = 5695.65
+CONVERGED
+
+TimeGuess  Value: 1.11568
+Function   Value: 1.66165e-07
+Function   Value Calculated from Y: 1.66165e-07
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000191969
+Initial num = 1.09311
+Initial denom = 5694.2
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.11476
+Function   Value: 3.70558e-25
+Function   Value Calculated from Y: 3.70558e-25
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192018
+Initial num = 1.09311
+Initial denom = 5692.74
+CONVERGED
+
+TimeGuess  Value: 1.11384
+Function   Value: 1.79089e-07
+Function   Value Calculated from Y: 1.79089e-07
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192067
+Initial num = 1.09311
+Initial denom = 5691.28
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.11291
+Function   Value: 3.26547e-06
+Function   Value Calculated from Y: 3.26547e-06
+Final Acceleration = 0.000277877
+Final num = 1.09311
+Final denom = 3933.78
+Initial Acceleration = 0.000192116
+Initial num = 1.09311
+Initial denom = 5689.83
+DID NOT CONVERGE
+
+ ____________________________________________________________________________________
+              1999 RQ36 2019 - BHT-20k - 24 kW                                                        
+                                    Trial: 1                                        
+                                                                                     
+                             FORWARD TIME: 1.11476                                        
+                                WAIT TIME: 1.19944 (2 Half Orbital Periods)              
+                              RETURN TIME: 1.68084                                        
+                       RETURN ESCAPE TIME: 0.00736914                                        
+                                          **************                             
+                          TOTAL TRIP TIME: 4.0024     +/-  0.0013065                            
+_____________________________________________________________________________________
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 2                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~RETURN~                                        
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 1.26063
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003346768736027000.000000 
+
+Function   Value: 5.00033e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.34467
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50001208893258375000.000000 
+
+Function   Value: 5.00012e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.42871
+Function   Value: 0.000753653
+Function   Value Calculated from Y: 0.000753653
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000329623
+Initial num = 1.16883
+Initial denom = 3545.96
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.51275
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50004870172697870000.000000 
+
+Function   Value: 5.00049e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.59679
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003357930912907000.000000 
+
+Function   Value: 5.00034e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.68084
+Function   Value: 0.0216257
+Function   Value Calculated from Y: 0.0216257
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.00029618
+Initial num = 1.16807
+Initial denom = 3943.78
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.76488
+Function   Value: 0.0106944
+Function   Value Calculated from Y: 0.0106944
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000286731
+Initial num = 1.16883
+Initial denom = 4076.39
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.84892
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50002442554568196000.000000 
+
+Function   Value: 5.00024e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.93296
+Function   Value: 3.21926e-08
+Function   Value Calculated from Y: 3.21926e-08
+Final Acceleration = 0.00090061
+Final num = 1.16325
+Final denom = 1291.63
+Initial Acceleration = 0.000268123
+Initial num = 1.16408
+Initial denom = 4341.61
+DID NOT CONVERGE
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 1.89094
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 2.38617e-11
+Function   Value Calculated from Y: 2.38617e-11
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.000272473
+Initial num = 1.1649
+Initial denom = 4275.3
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.84892
+Function   Value: 0.0916718
+Function   Value Calculated from Y: 0.0916718
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.000276765
+Initial num = 1.1649
+Initial denom = 4209
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 1.8069
+Function   Value: 1.58965e-05
+Function   Value Calculated from Y: 1.58965e-05
+Final Acceleration = 0.000902517
+Final num = 1.16571
+Final denom = 1291.63
+Initial Acceleration = 0.000281583
+Initial num = 1.16651
+Initial denom = 4142.69
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 1.81889
+Function   Value: 1.26037e-05
+Function   Value Calculated from Y: 1.26037e-05
+Final Acceleration = 0.000902517
+Final num = 1.16571
+Final denom = 1291.63
+Initial Acceleration = 0.000283827
+Initial num = 1.16651
+Initial denom = 4109.94
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.83089
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50010503828120125000.000000 
+
+Function   Value: 5.00105e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.84288
+Function   Value: 3.00989e-23
+Function   Value Calculated from Y: 3.00989e-23
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278147
+Initial num = 1.16807
+Initial denom = 4199.47
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 1.83688
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 1.73955e-07
+Function   Value Calculated from Y: 1.73955e-07
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278775
+Initial num = 1.16807
+Initial denom = 4190
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.83089
+Function   Value: 2.48073e-05
+Function   Value Calculated from Y: 2.48073e-05
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000279406
+Initial num = 1.16807
+Initial denom = 4180.54
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 1.83988
+Function   Value: 4.07942e-07
+Function   Value Calculated from Y: 4.07942e-07
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278461
+Initial num = 1.16807
+Initial denom = 4194.74
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.83688
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 1.73955e-07
+Function   Value Calculated from Y: 1.73955e-07
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278775
+Initial num = 1.16807
+Initial denom = 4190
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 1.84138
+Function   Value: 6.6947e-24
+Function   Value Calculated from Y: 6.6947e-24
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278304
+Initial num = 1.16807
+Initial denom = 4197.1
+CONVERGED
+
+TimeGuess  Value: 1.83988
+Function   Value: 7.59785e-07
+Function   Value Calculated from Y: 7.59785e-07
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278461
+Initial num = 1.16807
+Initial denom = 4194.74
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.83838
+Function   Value: 1.06574e-06
+Function   Value Calculated from Y: 1.06574e-06
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278618
+Initial num = 1.16807
+Initial denom = 4192.37
+DID NOT CONVERGE
+
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 2                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~FORWARD~                                       
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 0.836069
+Function   Value: 0.0605746
+Function   Value Calculated from Y: 0.0605746
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000198519
+Initial num = 1.09311
+Initial denom = 5506.32
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.891807
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.056581 
+
+Function   Value: 0.0565814
+Function   Value Calculated from Y: 0.0565814
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000195398
+Initial num = 1.09311
+Initial denom = 5594.27
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.947545
+Function   Value: 0.152128
+Function   Value Calculated from Y: 0.152128
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000192374
+Initial num = 1.09311
+Initial denom = 5682.22
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.00328
+Function   Value: 0.0831371
+Function   Value Calculated from Y: 0.0831371
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000189441
+Initial num = 1.09311
+Initial denom = 5770.16
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.05902
+Function   Value: 0.0923543
+Function   Value Calculated from Y: 0.0923543
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000186597
+Initial num = 1.09311
+Initial denom = 5858.11
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.11476
+Function   Value: 0.0417206
+Function   Value Calculated from Y: 0.0417206
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000183837
+Initial num = 1.09311
+Initial denom = 5946.06
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.1705
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.018951 
+
+Function   Value: 0.0189509
+Function   Value Calculated from Y: 0.0189509
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000181158
+Initial num = 1.09311
+Initial denom = 6034.01
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.22623
+Function   Value: 0.0775169
+Function   Value Calculated from Y: 0.0775169
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178555
+Initial num = 1.09311
+Initial denom = 6121.95
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.28197
+Function   Value: 2.8545e-13
+Function   Value Calculated from Y: 2.8545e-13
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000176027
+Initial num = 1.09311
+Initial denom = 6209.9
+DID NOT CONVERGE
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 1.2541
+Function   Value: 0.000877346
+Function   Value Calculated from Y: 0.000877346
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000177282
+Initial num = 1.09311
+Initial denom = 6165.93
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 1.22623
+Function   Value: 0.00136832
+Function   Value Calculated from Y: 0.00136832
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178555
+Initial num = 1.09311
+Initial denom = 6121.95
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 1.23211
+Function   Value: 0.000304582
+Function   Value Calculated from Y: 0.000304582
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178285
+Initial num = 1.09311
+Initial denom = 6131.23
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.23799
+Function   Value: 3.10449e-08
+Function   Value Calculated from Y: 3.10449e-08
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178016
+Initial num = 1.09311
+Initial denom = 6140.51
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.24387
+Function   Value: 3.72684e-25
+Function   Value Calculated from Y: 3.72684e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000177747
+Initial num = 1.09311
+Initial denom = 6149.78
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 1.24093
+Function   Value: 1.38823e-25
+Function   Value Calculated from Y: 1.38823e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000177882
+Initial num = 1.09311
+Initial denom = 6145.14
+CONVERGED
+
+TimeGuess  Value: 1.23799
+Function   Value: 3.4805e-27
+Function   Value Calculated from Y: 3.4805e-27
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178016
+Initial num = 1.09311
+Initial denom = 6140.51
+CONVERGED
+
+TimeGuess  Value: 1.23505
+Function   Value: 4.4395e-26
+Function   Value Calculated from Y: 4.4395e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.00017815
+Initial num = 1.09311
+Initial denom = 6135.87
+CONVERGED
+
+TimeGuess  Value: 1.23211
+Function   Value: 2.72749e-06
+Function   Value Calculated from Y: 2.72749e-06
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178285
+Initial num = 1.09311
+Initial denom = 6131.23
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.22917
+Function   Value: 1.52809e-05
+Function   Value Calculated from Y: 1.52809e-05
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.00017842
+Initial num = 1.09311
+Initial denom = 6126.59
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 1.23358
+Function   Value: 4.01713e-26
+Function   Value Calculated from Y: 4.01713e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178218
+Initial num = 1.09311
+Initial denom = 6133.55
+CONVERGED
+
+TimeGuess  Value: 1.23211
+Function   Value: 1.50594e-26
+Function   Value Calculated from Y: 1.50594e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178285
+Initial num = 1.09311
+Initial denom = 6131.23
+CONVERGED
+
+TimeGuess  Value: 1.23064
+Function   Value: 3.37433e-26
+Function   Value Calculated from Y: 3.37433e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178353
+Initial num = 1.09311
+Initial denom = 6128.91
+CONVERGED
+
+TimeGuess  Value: 1.22917
+Function   Value: 1.46069e-26
+Function   Value Calculated from Y: 1.46069e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.00017842
+Initial num = 1.09311
+Initial denom = 6126.59
+CONVERGED
+
+TimeGuess  Value: 1.2277
+Function   Value: 4.51948e-26
+Function   Value Calculated from Y: 4.51948e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178488
+Initial num = 1.09311
+Initial denom = 6124.27
+CONVERGED
+
+TimeGuess  Value: 1.22623
+Function   Value: 4.64398e-08
+Function   Value Calculated from Y: 4.64398e-08
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178555
+Initial num = 1.09311
+Initial denom = 6121.95
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.22476
+Function   Value: 1.51867e-13
+Function   Value Calculated from Y: 1.51867e-13
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178623
+Initial num = 1.09311
+Initial denom = 6119.64
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 1.22697
+Function   Value: 1.24429e-26
+Function   Value Calculated from Y: 1.24429e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178522
+Initial num = 1.09311
+Initial denom = 6123.11
+CONVERGED
+
+TimeGuess  Value: 1.22623
+Function   Value: 7.16107e-26
+Function   Value Calculated from Y: 7.16107e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178555
+Initial num = 1.09311
+Initial denom = 6121.95
+CONVERGED
+
+TimeGuess  Value: 1.2255
+Function   Value: 2.92664e-25
+Function   Value Calculated from Y: 2.92664e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178589
+Initial num = 1.09311
+Initial denom = 6120.79
+CONVERGED
+
+TimeGuess  Value: 1.22476
+Function   Value: 2.28038e-26
+Function   Value Calculated from Y: 2.28038e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178623
+Initial num = 1.09311
+Initial denom = 6119.64
+CONVERGED
+
+TimeGuess  Value: 1.22403
+Function   Value: 6.05702e-26
+Function   Value Calculated from Y: 6.05702e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178657
+Initial num = 1.09311
+Initial denom = 6118.48
+CONVERGED
+
+TimeGuess  Value: 1.2233
+Function   Value: 1.84294e-25
+Function   Value Calculated from Y: 1.84294e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178691
+Initial num = 1.09311
+Initial denom = 6117.32
+CONVERGED
+
+TimeGuess  Value: 1.22256
+Function   Value: 6.05088e-26
+Function   Value Calculated from Y: 6.05088e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178725
+Initial num = 1.09311
+Initial denom = 6116.16
+CONVERGED
+
+TimeGuess  Value: 1.22183
+Function   Value: 5.09098e-26
+Function   Value Calculated from Y: 5.09098e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178759
+Initial num = 1.09311
+Initial denom = 6115
+CONVERGED
+
+TimeGuess  Value: 1.22109
+Function   Value: 4.11991e-25
+Function   Value Calculated from Y: 4.11991e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178792
+Initial num = 1.09311
+Initial denom = 6113.84
+CONVERGED
+
+TimeGuess  Value: 1.22036
+Function   Value: 1.53436e-25
+Function   Value Calculated from Y: 1.53436e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178826
+Initial num = 1.09311
+Initial denom = 6112.68
+CONVERGED
+
+TimeGuess  Value: 1.21962
+Function   Value: 2.50987e-26
+Function   Value Calculated from Y: 2.50987e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.00017886
+Initial num = 1.09311
+Initial denom = 6111.52
+CONVERGED
+
+TimeGuess  Value: 1.21889
+Function   Value: 3.99978e-25
+Function   Value Calculated from Y: 3.99978e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178894
+Initial num = 1.09311
+Initial denom = 6110.36
+CONVERGED
+
+TimeGuess  Value: 1.21815
+Function   Value: 3.90271e-26
+Function   Value Calculated from Y: 3.90271e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178928
+Initial num = 1.09311
+Initial denom = 6109.2
+CONVERGED
+
+TimeGuess  Value: 1.21742
+Function   Value: 2.69999e-26
+Function   Value Calculated from Y: 2.69999e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178962
+Initial num = 1.09311
+Initial denom = 6108.04
+CONVERGED
+
+TimeGuess  Value: 1.21668
+Function   Value: 7.79422e-26
+Function   Value Calculated from Y: 7.79422e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000178996
+Initial num = 1.09311
+Initial denom = 6106.88
+CONVERGED
+
+TimeGuess  Value: 1.21595
+Function   Value: 1.25166e-25
+Function   Value Calculated from Y: 1.25166e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.00017903
+Initial num = 1.09311
+Initial denom = 6105.72
+CONVERGED
+
+TimeGuess  Value: 1.21521
+Function   Value: 2.01057e-26
+Function   Value Calculated from Y: 2.01057e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179064
+Initial num = 1.09311
+Initial denom = 6104.56
+CONVERGED
+
+TimeGuess  Value: 1.21448
+Function   Value: 7.57889e-26
+Function   Value Calculated from Y: 7.57889e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179098
+Initial num = 1.09311
+Initial denom = 6103.4
+CONVERGED
+
+TimeGuess  Value: 1.21374
+Function   Value: 6.78995e-27
+Function   Value Calculated from Y: 6.78995e-27
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179132
+Initial num = 1.09311
+Initial denom = 6102.24
+CONVERGED
+
+TimeGuess  Value: 1.21301
+Function   Value: 5.30935e-26
+Function   Value Calculated from Y: 5.30935e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179166
+Initial num = 1.09311
+Initial denom = 6101.08
+CONVERGED
+
+TimeGuess  Value: 1.21227
+Function   Value: 8.29597e-26
+Function   Value Calculated from Y: 8.29597e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.0001792
+Initial num = 1.09311
+Initial denom = 6099.92
+CONVERGED
+
+TimeGuess  Value: 1.21154
+Function   Value: 1.52961e-25
+Function   Value Calculated from Y: 1.52961e-25
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179234
+Initial num = 1.09311
+Initial denom = 6098.76
+CONVERGED
+
+TimeGuess  Value: 1.2108
+Function   Value: 4.87682e-26
+Function   Value Calculated from Y: 4.87682e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179268
+Initial num = 1.09311
+Initial denom = 6097.61
+CONVERGED
+
+TimeGuess  Value: 1.21007
+Function   Value: 5.59026e-26
+Function   Value Calculated from Y: 5.59026e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179302
+Initial num = 1.09311
+Initial denom = 6096.45
+CONVERGED
+
+TimeGuess  Value: 1.20933
+Function   Value: 1.27528e-26
+Function   Value Calculated from Y: 1.27528e-26
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179337
+Initial num = 1.09311
+Initial denom = 6095.29
+CONVERGED
+
+TimeGuess  Value: 1.2086
+Function   Value: 1.07608e-24
+Function   Value Calculated from Y: 1.07608e-24
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179371
+Initial num = 1.09311
+Initial denom = 6094.13
+CONVERGED
+
+TimeGuess  Value: 1.20786
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000000 
+
+Function   Value: 9.96943e-09
+Function   Value Calculated from Y: 9.96943e-09
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179405
+Initial num = 1.09311
+Initial denom = 6092.97
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.20713
+Function   Value: 1.4194e-08
+Function   Value Calculated from Y: 1.4194e-08
+Final Acceleration = 0.000261065
+Final num = 1.09311
+Final denom = 4187.1
+Initial Acceleration = 0.000179439
+Initial num = 1.09311
+Initial denom = 6091.81
+DID NOT CONVERGE
+
+ ____________________________________________________________________________________
+              1999 RQ36 2019 - BHT-20k - 24 kW                                                        
+                                    Trial: 2                                        
+                                                                                     
+                             FORWARD TIME: 1.2086                                        
+                                WAIT TIME: 1.19944 (2 Half Orbital Periods)              
+                              RETURN TIME: 1.84138                                        
+                       RETURN ESCAPE TIME: 0.00736914                                        
+                                          **************                             
+                          TOTAL TRIP TIME: 4.25679     +/-  0.00166958                            
+_____________________________________________________________________________________
+[Warning: Added specified worksheet.] 
+[> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',284,1)">xlswrite>activate_sheet at 284</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',256,1)">xlswrite>ExecuteWrite at 256</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',213,1)">xlswrite at 213</a>
+  In <a href="matlab: opentoline('C:\Users\elewis18\Desktop\2015-07-16  Version1(Start ESOI) -MOST RECENT, with interpol change - Copy\MultipleRuns.m',588,1)">MultipleRuns at 588</a>] 
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 3                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~RETURN~                                        
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 1.38103
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50000766650725638000.000000 
+
+Function   Value: 5.00008e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.4731
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003225330248606000.000000 
+
+Function   Value: 5.00032e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.56517
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.012267 
+
+Function   Value: 0.0122667
+Function   Value Calculated from Y: 0.0122667
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000310753
+Initial num = 1.16883
+Initial denom = 3761.28
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.65724
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.001214 
+
+Function   Value: 0.00121383
+Function   Value Calculated from Y: 0.00121383
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000299197
+Initial num = 1.16883
+Initial denom = 3906.55
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.74931
+Function   Value: 0.0578244
+Function   Value Calculated from Y: 0.0578244
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000288091
+Initial num = 1.1673
+Initial denom = 4051.83
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.84138
+Function   Value: 0.00769953
+Function   Value Calculated from Y: 0.00769953
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000278304
+Initial num = 1.16807
+Initial denom = 4197.1
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.93345
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50000657292383920000.000000 
+
+Function   Value: 5.00007e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.02552
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50002973615949799000.000000 
+
+Function   Value: 5.0003e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.11759
+Function   Value: 0.0489714
+Function   Value Calculated from Y: 0.0489714
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.000251441
+Initial num = 1.1649
+Initial denom = 4632.92
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.20966
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003017109748802000.000000 
+
+Function   Value: 5.0003e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.30172
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003243258504774000.000000 
+
+Function   Value: 5.00032e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.39379
+Function   Value: 0.0300544
+Function   Value Calculated from Y: 0.0300544
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000230595
+Initial num = 1.16883
+Initial denom = 5068.74
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.48586
+Function   Value: 0.689077
+Function   Value Calculated from Y: 0.689077
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000227989
+Initial num = 1.16883
+Initial denom = 5126.68
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.57793
+Function   Value: 127.178
+Function   Value Calculated from Y: 127.178
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000315826
+Initial num = 1.16883
+Initial denom = 3700.86
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.67
+Function   Value: 0.132784
+Function   Value Calculated from Y: 0.132784
+Final Acceleration = 0.00090434
+Final num = 1.16807
+Final denom = 1291.63
+Initial Acceleration = 0.000221514
+Initial num = 1.16883
+Initial denom = 5276.55
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.76207
+Function   Value: 0.00223481
+Function   Value Calculated from Y: 0.00223481
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000209355
+Initial num = 1.16807
+Initial denom = 5579.36
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.85414
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50004397415809573000.000000 
+
+Function   Value: 5.00044e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.94621
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50001566257415471000.000000 
+
+Function   Value: 5.00016e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 3.03828
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50004122091998880000.000000 
+
+Function   Value: 5.00041e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 3.13035
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50003850817601757000.000000 
+
+Function   Value: 5.00039e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 3.22241
+Function   Value: 3.00882e-24
+Function   Value Calculated from Y: 3.00882e-24
+Final Acceleration = 0.000904929
+Final num = 1.16883
+Final denom = 1291.63
+Initial Acceleration = 0.000183311
+Initial num = 1.16883
+Initial denom = 6376.21
+CONVERGED
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 3.17638
+Function   Value: 6.95411e-23
+Function   Value Calculated from Y: 6.95411e-23
+Final Acceleration = 0.000903742
+Final num = 1.1673
+Final denom = 1291.63
+Initial Acceleration = 0.000185423
+Initial num = 1.16883
+Initial denom = 6303.57
+CONVERGED
+
+TimeGuess  Value: 3.13035
+Function   Value: 0.000395626
+Function   Value Calculated from Y: 0.000395626
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000187463
+Initial num = 1.16807
+Initial denom = 6230.93
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 3.08431
+Function   Value: 6.27662e-23
+Function   Value Calculated from Y: 6.27662e-23
+Final Acceleration = 0.000901255
+Final num = 1.16408
+Final denom = 1291.63
+Initial Acceleration = 0.00018916
+Initial num = 1.1649
+Initial denom = 6158.3
+CONVERGED
+
+TimeGuess  Value: 3.03828
+Function   Value: 1.87731e-24
+Function   Value Calculated from Y: 1.87731e-24
+Final Acceleration = 0.00090061
+Final num = 1.16325
+Final denom = 1291.63
+Initial Acceleration = 0.000191283
+Initial num = 1.16408
+Initial denom = 6085.66
+CONVERGED
+
+TimeGuess  Value: 2.99224
+Function   Value: 3.33092e-11
+Function   Value Calculated from Y: 3.33092e-11
+Final Acceleration = 0.00090061
+Final num = 1.16325
+Final denom = 1291.63
+Initial Acceleration = 0.000193594
+Initial num = 1.16408
+Initial denom = 6013.02
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.94621
+Function   Value: 0.00150177
+Function   Value Calculated from Y: 0.00150177
+Final Acceleration = 0.00090061
+Final num = 1.16325
+Final denom = 1291.63
+Initial Acceleration = 0.000196073
+Initial num = 1.16408
+Initial denom = 5936.98
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 2.959
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50000880137285157000.000000 
+
+Function   Value: 5.00009e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.97179
+Function   Value: 11.8288
+Function   Value Calculated from Y: 11.8288
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000214928
+Initial num = 1.1673
+Initial denom = 5431.09
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.98459
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50004619148088771000.000000 
+
+Function   Value: 5.00046e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 2.99738
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 50001290047045714000.000000 
+
+Function   Value: 5.00013e+19
+Function   Value Calculated from Y: NaN
+Final Acceleration = NaN
+Final num = NaN
+Final denom = NaN
+Initial Acceleration = NaN
+Initial num = NaN
+Initial denom = NaN
+DID NOT CONVERGE
+
+TimeGuess  Value: 3.01017
+Function   Value: 5.45907e-25
+Function   Value Calculated from Y: 5.45907e-25
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000193347
+Initial num = 1.16807
+Initial denom = 6041.31
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 3.00377
+Function   Value: 2.50105e-06
+Function   Value Calculated from Y: 2.50105e-06
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.00019367
+Initial num = 1.16807
+Initial denom = 6031.22
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 2.99738
+Function   Value: 3.20531e-10
+Function   Value Calculated from Y: 3.20531e-10
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000193995
+Initial num = 1.16807
+Initial denom = 6021.13
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 3.00697
+Function   Value: 4.64142e-07
+Function   Value Calculated from Y: 4.64142e-07
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000193508
+Initial num = 1.16807
+Initial denom = 6036.27
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 3.00377
+Function   Value: 2.49962e-06
+Function   Value Calculated from Y: 2.49962e-06
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.00019367
+Initial num = 1.16807
+Initial denom = 6031.22
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 3.00857
+Function   Value: 1.09516e-11
+Function   Value Calculated from Y: 1.09516e-11
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000193428
+Initial num = 1.16807
+Initial denom = 6038.79
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 3.00697
+Function   Value: 4.64142e-07
+Function   Value Calculated from Y: 4.64142e-07
+Final Acceleration = 0.000903134
+Final num = 1.16651
+Final denom = 1291.63
+Initial Acceleration = 0.000193508
+Initial num = 1.16807
+Initial denom = 6036.27
+DID NOT CONVERGE
+
+____________________________________________________________________________________
+                            BHT-20k Total Power: 24                                      
+                                    Trial: 3                                       
+                                                                                    
+                                   CALCULATING:                                     
+                                    ~FORWARD~                                       
+                                    ~JOURNEY~                                       
+____________________________________________________________________________________
+TimeGuess  Value: 0.906449
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.063315 
+
+Function   Value: 0.0633146
+Function   Value Calculated from Y: 0.0633146
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000146498
+Initial num = 1.09311
+Initial denom = 7461.58
+DID NOT CONVERGE
+
+TimeGuess  Value: 0.966879
+Function   Value: 0.0807044
+Function   Value Calculated from Y: 0.0807044
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.00014465
+Initial num = 1.09311
+Initial denom = 7556.94
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.02731
+Function   Value: 0.0374254
+Function   Value Calculated from Y: 0.0374254
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000142847
+Initial num = 1.09311
+Initial denom = 7652.29
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.08774
+Function   Value: 0.031219
+Function   Value Calculated from Y: 0.031219
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000141089
+Initial num = 1.09311
+Initial denom = 7747.64
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.14817
+Function   Value: 0.00772994
+Function   Value Calculated from Y: 0.00772994
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000139374
+Initial num = 1.09311
+Initial denom = 7842.99
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.2086
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.005448 
+
+Function   Value: 0.00544777
+Function   Value Calculated from Y: 0.00544777
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.0001377
+Initial num = 1.09311
+Initial denom = 7938.34
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.26903
+Function   Value: 0.0020835
+Function   Value Calculated from Y: 0.0020835
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000136065
+Initial num = 1.09311
+Initial denom = 8033.69
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.32946
+Function   Value: 0.00115751
+Function   Value Calculated from Y: 0.00115751
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000134469
+Initial num = 1.09311
+Initial denom = 8129.04
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.38989
+Function   Value: 0.00630802
+Function   Value Calculated from Y: 0.00630802
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.00013291
+Initial num = 1.09311
+Initial denom = 8224.39
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.45032
+Function   Value: 0.001132
+Function   Value Calculated from Y: 0.001132
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131387
+Initial num = 1.09311
+Initial denom = 8319.74
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.51075
+Function   Value: 0.0544746
+Function   Value Calculated from Y: 0.0544746
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000130894
+Initial num = 1.09311
+Initial denom = 8351.12
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.57118
+Function   Value: 0.00117383
+Function   Value Calculated from Y: 0.00117383
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000128443
+Initial num = 1.09311
+Initial denom = 8510.45
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.63161
+Function   Value: 5.65923e-24
+Function   Value Calculated from Y: 5.65923e-24
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.00012702
+Initial num = 1.09311
+Initial denom = 8605.8
+CONVERGED
+
+FOUND FIRST INTERESTING POINT!
+
+TimeGuess  Value: 1.60139
+Function   Value: 1.08678e-25
+Function   Value Calculated from Y: 1.08678e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000127728
+Initial num = 1.09311
+Initial denom = 8558.12
+CONVERGED
+
+TimeGuess  Value: 1.57118
+Function   Value: 8.10857e-25
+Function   Value Calculated from Y: 8.10857e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000128443
+Initial num = 1.09311
+Initial denom = 8510.45
+CONVERGED
+
+TimeGuess  Value: 1.54096
+Function   Value: 3.25583e-24
+Function   Value Calculated from Y: 3.25583e-24
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000129167
+Initial num = 1.09311
+Initial denom = 8462.77
+CONVERGED
+
+TimeGuess  Value: 1.51075
+Function   Value: 1.0712e-24
+Function   Value Calculated from Y: 1.0712e-24
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000129898
+Initial num = 1.09311
+Initial denom = 8415.1
+CONVERGED
+
+TimeGuess  Value: 1.48053
+Function   Value: 4.72001e-07
+Function   Value Calculated from Y: 4.72001e-07
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000130639
+Initial num = 1.09311
+Initial denom = 8367.42
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.45032
+Function   Value: 9.51261e-05
+Function   Value Calculated from Y: 9.51261e-05
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131387
+Initial num = 1.09311
+Initial denom = 8319.74
+DID NOT CONVERGE
+
+FOUND FIRST UNINTERESTING POINT. STEPPING BACK
+
+TimeGuess  Value: 1.4201
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.002027 
+
+Function   Value: 0.00202699
+Function   Value Calculated from Y: 0.00202699
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132144
+Initial num = 1.09311
+Initial denom = 8272.07
+DID NOT CONVERGE
+
+FOUND MINIMUM TIME GUESS!!
+NOW SEARCHING FOR LOWEST CONVERGENCE
+
+TimeGuess  Value: 1.42871
+Function   Value: 0.000803049
+Function   Value Calculated from Y: 0.000803049
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131928
+Initial num = 1.09311
+Initial denom = 8285.65
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.43732
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.005103 
+
+Function   Value: 0.00510338
+Function   Value Calculated from Y: 0.00510338
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131712
+Initial num = 1.09311
+Initial denom = 8299.23
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.44592
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.007444 
+
+Function   Value: 0.00744398
+Function   Value Calculated from Y: 0.00744398
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131497
+Initial num = 1.09311
+Initial denom = 8312.81
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.45453
+Function   Value: 0.00459848
+Function   Value Calculated from Y: 0.00459848
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131282
+Initial num = 1.09311
+Initial denom = 8326.39
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.46314
+Function   Value: 4.32121e-14
+Function   Value Calculated from Y: 4.32121e-14
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131069
+Initial num = 1.09311
+Initial denom = 8339.97
+DID NOT CONVERGE
+
+TimeGuess  Value: 1.47174
+Function   Value: 2.06631e-26
+Function   Value Calculated from Y: 2.06631e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000130855
+Initial num = 1.09311
+Initial denom = 8353.55
+CONVERGED
+
+FOUND FIRST CONVERGENCE. STEPPING BACK
+
+STEP MULTIPLIER: 1 of 3
+
+TimeGuess  Value: 1.46744
+Function   Value: 4.76751e-26
+Function   Value Calculated from Y: 4.76751e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000130962
+Initial num = 1.09311
+Initial denom = 8346.76
+CONVERGED
+
+TimeGuess  Value: 1.46314
+Function   Value: 2.86839e-25
+Function   Value Calculated from Y: 2.86839e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131069
+Initial num = 1.09311
+Initial denom = 8339.97
+CONVERGED
+
+TimeGuess  Value: 1.45883
+Function   Value: 5.6324e-26
+Function   Value Calculated from Y: 5.6324e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131175
+Initial num = 1.09311
+Initial denom = 8333.18
+CONVERGED
+
+TimeGuess  Value: 1.45453
+Function   Value: 1.51265e-26
+Function   Value Calculated from Y: 1.51265e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131282
+Initial num = 1.09311
+Initial denom = 8326.39
+CONVERGED
+
+TimeGuess  Value: 1.45023
+Function   Value: 2.32305e-24
+Function   Value Calculated from Y: 2.32305e-24
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131389
+Initial num = 1.09311
+Initial denom = 8319.6
+CONVERGED
+
+TimeGuess  Value: 1.44592
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000006 
+
+Function   Value: 6.29489e-06
+Function   Value Calculated from Y: 6.29489e-06
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131497
+Initial num = 1.09311
+Initial denom = 8312.81
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.44162
+Function   Value: 3.06947e-25
+Function   Value Calculated from Y: 3.06947e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131604
+Initial num = 1.09311
+Initial denom = 8306.02
+CONVERGED
+
+TimeGuess  Value: 1.43732
+Function   Value: 5.70126e-09
+Function   Value Calculated from Y: 5.70126e-09
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131712
+Initial num = 1.09311
+Initial denom = 8299.23
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.43301
+Function   Value: 5.69605e-25
+Function   Value Calculated from Y: 5.69605e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.00013182
+Initial num = 1.09311
+Initial denom = 8292.44
+CONVERGED
+
+TimeGuess  Value: 1.42871
+Function   Value: 2.52646e-26
+Function   Value Calculated from Y: 2.52646e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000131928
+Initial num = 1.09311
+Initial denom = 8285.65
+CONVERGED
+
+TimeGuess  Value: 1.42441
+Function   Value: 3.25238e-26
+Function   Value Calculated from Y: 3.25238e-26
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132036
+Initial num = 1.09311
+Initial denom = 8278.86
+CONVERGED
+
+TimeGuess  Value: 1.4201
+Function   Value: 1.52127e-25
+Function   Value Calculated from Y: 1.52127e-25
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132144
+Initial num = 1.09311
+Initial denom = 8272.07
+CONVERGED
+
+TimeGuess  Value: 1.4158
+Function   Value: 6.38188e-06
+Function   Value Calculated from Y: 6.38188e-06
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132253
+Initial num = 1.09311
+Initial denom = 8265.28
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.4115
+Function   Value: 2.21346e-05
+Function   Value Calculated from Y: 2.21346e-05
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132362
+Initial num = 1.09311
+Initial denom = 8258.49
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 2 of 3
+
+TimeGuess  Value: 1.41795
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000001 
+
+Function   Value: 7.1529e-07
+Function   Value Calculated from Y: 7.1529e-07
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132199
+Initial num = 1.09311
+Initial denom = 8268.67
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.4158
+Function   Value: 6.38188e-06
+Function   Value Calculated from Y: 6.38188e-06
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132253
+Initial num = 1.09311
+Initial denom = 8265.28
+DID NOT CONVERGE
+
+STEP MULTIPLIER: 3 of 3
+
+TimeGuess  Value: 1.41903
+Function   Value: 3.60632e-07
+Function   Value Calculated from Y: 3.60632e-07
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132172
+Initial num = 1.09311
+Initial denom = 8270.37
+DID NOT CONVERGE
+
+DECREASING TIME STEP
+
+TimeGuess  Value: 1.41795
+ 
+Exiting: Maximum number of function evaluations has been exceeded
+         - increase MaxFunEvals option.
+         Current function value: 0.000001 
+
+Function   Value: 7.1529e-07
+Function   Value Calculated from Y: 7.1529e-07
+Final Acceleration = 0.000181239
+Final num = 1.09311
+Final denom = 6031.32
+Initial Acceleration = 0.000132199
+Initial num = 1.09311
+Initial denom = 8268.67
+DID NOT CONVERGE
+
+ ____________________________________________________________________________________
+              1999 RQ36 2019 - BHT-20k - 24 kW                                                        
+                                    Trial: 3                                        
+                                                                                     
+                             FORWARD TIME: 1.4201                                        
+                                WAIT TIME: 1.19944 (2 Half Orbital Periods)              
+                              RETURN TIME: 3.01017                                        
+                       RETURN ESCAPE TIME: 0.00736914                                        
+                                          **************                             
+                          TOTAL TRIP TIME: 5.63708     +/-  0.00192733                            
+_____________________________________________________________________________________
+[Warning: Added specified worksheet.] 
+[> In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',284,1)">xlswrite>activate_sheet at 284</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',256,1)">xlswrite>ExecuteWrite at 256</a>
+  In <a href="matlab: opentoline('C:\Program Files\MATLAB\R2014a\toolbox\matlab\iofun\xlswrite.m',213,1)">xlswrite at 213</a>
+  In <a href="matlab: opentoline('C:\Users\elewis18\Desktop\2015-07-16  Version1(Start ESOI) -MOST RECENT, with interpol change - Copy\MultipleRuns.m',588,1)">MultipleRuns at 588</a>] 
+LOW TIME: 4.0024

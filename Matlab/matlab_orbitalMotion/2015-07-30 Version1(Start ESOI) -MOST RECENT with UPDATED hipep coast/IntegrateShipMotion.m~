@@ -1,0 +1,60 @@
+%This function calculates the initial conditions of the ship in sun sphere
+%of influence and then integrates through its heliocentric trip specified
+%by time t.  It returns time and position vectors to describe the trip.
+
+%called by landingObjectiveFunction
+function [t,Y] = IntegrateShipMotion(c,t,order,direction,uexhaust,a0,a0_earth,escapeVelocity,EarthEscapeAngle,earthConditions)
+
+%******************************************
+%Global Constants
+%Global Variables
+% global G_object; %Object being integrated for motion path
+% global G_escapeVelocity;    %Scalar escape velocity from earth
+% global G_earthConditions;   %Vector of earth radius, radial velocity, and theta at escape
+% global G_EarthEscapeAngle;  %Angle of earth escape relative to earth radius vector
+%global G_c;                 %Vector of the coefficients of phi and escape angle
+%******************************************
+
+%c is passed into G_c so that it can be read by ode45Fun which needs the
+%values to calculate phi while integrating ship motion.
+%G_c = c;
+%escape angle from earth relative to earth and to the sun affect the escape
+%radius relative to the sun.  c(end) is the escape angle relative to the
+%sun.  0 is defined as being the direction of a circular orbit around the
+%sun.  Positive points away from the Sun and negative towards it.
+%EarthEscapeAngle is the escape angle relative to earth and
+%is defined to be 0 when the velocity is entirely angular
+%and 90 when it is entirely radial.  This equation calculates the ships
+%initial radius from the sun by combining these values.  Initial radius =
+%radiusEarthSun+radiusShipEarth*cos(EarthEscapeAngleRelativeToEarth-AngleRe
+%lativeToSun)
+ynot(1) = earthConditions(1)+Constants.ESOI*cos(EarthEscapeAngle-c(end)); 
+%Theta at escape is affected (like radius) by escape angle relative to
+%earth and the sun.  Imagine a right triangle where the sun and the ship
+%are points.  The earth is sitting along the third line but is not
+%necissarily the point.  THe right angle is between the ship-earth line and 
+%the earth-sun line.  The sin of the difference between our escape
+%angles times the distance between the ship and earth gives the length  of
+%the short end of the right triangle.  The theta offset is the inversesin
+%of the short end over the ship-sun length.
+ynot(2) = earthConditions(2)+asin(Constants.ESOI*sin(EarthEscapeAngle-c(end))/ynot(1));
+%Calculates initial radial velocity using earths radial velocity, the ships
+%scalar velocity, and angle of escape relative to sun.
+%RadialVelocity=radialComponentOfEscapeVelocity+EarthRadialVelocity
+ynot(3) = sin(c(end))*escapeVelocity + earthConditions(3);     
+%calculates initial h of ship using earths h, the ships scalar velocity,
+%escape angle, and initial radius. h =
+%earthH+angularComponentOfEscapeVelocity*radiusShipSunAtEscape.
+ynot(4) = (cos(c(end))*escapeVelocity)*ynot(1)+Constants.EARTHH; 
+
+%ode45Fun is used for all orbital integrations in this program.  To know if
+%its object has thrust and to know what the gravitational center is it
+%accesses a global indicator.  In this case it is integrating the Ship in
+%sun sphere of influence.
+object = 'ShipSunSphere';
+%ode45 gets passed the initial conditions and the time to integrate for and
+%returns vectors of time and coordinate values.
+%[t,Y] = ode45('ode45Fun',t,ynot);
+[t,Y] = solveOde45Fun(t, ynot, order, direction, object, uexhaust, a0, a0_earth, c);
+
+end
