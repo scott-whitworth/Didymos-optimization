@@ -1,0 +1,12 @@
+BHT-20k	10	1	20	21300	0.567	20	-300	0.27	30  BHTTripTrajectory  BHTEarthTrajectory BHTHelioPlot BHTEarthPlot  BHTInterpolData 
+HiPEP	10	1	39.3	94308	0.8	0	1000000	0.09	-1000000 HiPEPTripTrajectory  HiPEPEarthTrajectory HiPEPHelioPlot HiPEPEarthPlot  HiPEPInterpolData
+NASA-173Mv2	10	1	9.21	27500	0.63	0.63	5	0.13	-100    NASA173TripTrajectory  NASA173EarthTrajectory NASA173HelioPlot NASA173EarthPlot NASA173InterpolData
+Nexis20	10	1	20	75000	0.78	0	1000000	0.026	-60 Nexis20TripTrajectory  Nexis20EarthTrajectory Nexis20HelioPlot Nexis20EarthPlot Nexis20InterpolData
+Nexis27	10	1	27	87000	0.81	0	1000000	0.13	-1000000    Nexis27TripTrajectory  Nexis27EarthTrajectory Nexis27HelioPlot Nexis27EarthPlot Nexis27InterpolData
+NEXT	10	1	6.86	41104	0.71	0	1000000	0.13	-1000000    NEXTTripTrajectory  NEXTEarthTrajectory NEXTHelioPlot NEXTEarthPlot NEXTInterpolData NEXTInterpolData
+PPS-20k	10	1	22.4	27000	0.6	0	1000000	0.0001	-1000   PPSTripTrajectory  PPSEarthTrajectory PPSHelioPlot PPSEarthPlot PPSInterpolData
+TM-50	10	1	25.4	33250	0.62	25.4	-60	0.05	10  TM50TripTrajectory  TM50EarthTrajectory TM50HelioPlot TM50EarthPlot TM50InterpolData
+VHITAL_12-87	10	1	12.87	56000	0.64	12.87	-1000	0.6	-100    VHITAL12TripTrajectory  VHITAL12EarthTrajectory VHITAL12HelioPlot VHITAL12EarthPlot VHITAL12InterpolData
+VHITAL_25-29	10	1	25.29	53750	0.56	0.56	-7	0.13	-100    VHITAL25TripTrajectory  VHITAL25EarthTrajectory VHITAL25HelioPlot VHITAL25EarthPlot VHITAL25InterpolData
+VHITAL_36-755	10	1	36.755	76670	0.63	0.63	-7	0.13	-100    VHITAL36TripTrajectory  VHITAL36EarthTrajectory VHITAL36HelioPlot VHITAL36EarthPlot VHITAL36InterpolData
+

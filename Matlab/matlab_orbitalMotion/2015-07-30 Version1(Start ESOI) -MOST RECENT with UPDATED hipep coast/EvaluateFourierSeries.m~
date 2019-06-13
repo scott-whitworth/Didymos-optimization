@@ -1,0 +1,32 @@
+%this function takes a series of coefficients and a vector of times.  It
+%then returnes a vector of phi values that correspond to the values in the
+%time array it was passed.  The format of the coefficients must be
+%initial,a1,b1,a2,b2...an,bn where a corresponds to sin terms and b to cos.
+
+%called by PlotAndWriteToFile
+function PhiPoints = EvaluateFourierSeries(direction,c,Tarray)
+
+%function that calculates phi at a given time value
+    function phi = Phi(c,t)
+        %global G_timeTest;
+        %global G_heliotime;
+        %The fourier series starts with one coefficient at order 0 and then
+        %gains two coeffiecients with each increase in order.
+        order = (length(c)-1)/2;
+        %The first element is divided by two and does not follow the normal
+        %pattern
+        phi=c(1)/2;
+        for j=1:order %for every order afterwards there is a sin and cos term
+            %the following provides the ability to run the two trips with different fourier frequencies
+            if strcmpi(direction, 'forward')
+                phi=phi+c(2*j)*cos(j*t/2)+c(2*j+1)*sin(j*t/2);
+            elseif strcmpi(direction, 'return')
+                phi=phi+c(2*j)*cos(j*t/2)+c(2*j+1)*sin(j*t/2);
+            end
+        end
+    end
+%fills the PhiPoints vector with values corresponding to the Time vector
+for i = 1:length(Tarray)
+    PhiPoints(i) = Phi(c,Tarray(i));
+end
+end

@@ -1,0 +1,108 @@
+function [t,Y,te,xe,ie] = solveOde45Fun(time, initial, order, direction, object, uexhaust, a0, a0_earth, phiCoeff, options)
+
+if (~exist('options', 'var'))
+    options = [];
+end
+
+if nargout == 5
+    [t,Y,te,xe,ie] = ode45(@ode45Fun, time, initial, options);
+elseif nargout == 4
+    [t,Y,te,xe] = ode45(@ode45Fun, time, initial, options);
+elseif nargout == 3
+    [t,Y,te] = ode45(@ode45Fun, time, initial, options);
+elseif nargout == 2
+    [t,Y] = ode45(@ode45Fun, time, initial, options);
+elseif nargout == 1
+    [t] = ode45(@ode45Fun, time, initial, options);
+else
+    ode45(@ode45Fun, time, initial, options);
+end
+
+%this function is used by ade45 to integrate the laws of physics.  It is
+%called to calculate the derivatives of radius, radial velocity, h, and theta.
+%It accesses G_object
+%to know if it is working in sun or earth sphere and to know if there is
+%thrust and how to calculate that thrust.  The indicator is set in
+%functions outside this one.
+
+%called by any ode45 function.  We use ode45 in IntegrateShipMotion,
+%EscapeEarth, and CalcEarthConditions call it
+    function dy = ode45Fun(t,y)
+        %******************************************************
+        %Global Constants
+        %Global Variables
+        %global G_object;            %current object being integrated for motion path
+        %global G_c;                 %coefficients of phi
+        %global G_timeTest;
+        %global G_heliotime;
+        %******************************************************
+        
+        %sets mu to correspond to the mass of the central body
+        if strcmpi(object,'Earth')
+            mu = Constants.MUS;
+            accell = 0;
+            phi = 0;
+        elseif strcmpi(object,'ShipEarthSphere')
+            mu = Constants.MUE;
+            %Since the engine never shuts off, acceleration can be calculated
+            %directly from current trip time.  As fuel burns, weight decreases and
+            %acceleration increases. Time is maintained continuous throughout the
+            %program so it will always represent current total trip time. For the
+            %return trip time is running backward so weight will be increasing and
+            %acceleration decreasing
+            %options for forward or return trip
+            if direction == Direction.FORWARD
+                accell = a0/(1-(a0*t/uexhaust)); %acceleration increasing
+            elseif direction == Direction.RETURN
+                accell = a0_earth/(1+(a0_earth*t/uexhaust)); %acceleration decreasing; must start with drymass since integration begins at the end of the actual trip
+            end
+            phi = atan(y(1)*y(3)/y(4)); %makes phi tangent to motion
+        elseif strcmpi(object,'ShipSunSphere')
+            mu = Constants.MUS;
+            
+            %option for forward or return trip
+            if direction == Direction.FORWARD
+                accell = a0/(1-(a0*t/uexhaust));
+            elseif direction == Direction.RETURN
+                accell = a0/(1-(a0*t/uexhaust));
+            end
+            
+            %evaluates value of Forier series
+            phi=phiCoeff(1)/2;%The first coefficient is unique in that it is simply divided by 2
+            for j=1:order
+                %The following follows the pattern of the forier series
+                %acos(nx)+bsin(nx) where the pattern in G_c goes
+                %firstvalue,a1,b1,a2,b2....an,bn,escape angle.
+                if direction == Direction.FORWARD
+                    phi=phi+phiCoeff(2*j)*cos(j*t/2)+phiCoeff(2*j+1)*sin(j*t/2);
+                elseif direction == Direction.RETURN
+                    phi=phi+phiCoeff(2*j)*cos(j*t/2)+phiCoeff(2*j+1)*sin(j*t/2);
+                end
+            end
+        else
+            %If none of the above statements trigger then an incorrect value was
+            %assigned to G_object and the user needs to know that the program is
+            %not working.  All values are assigned to NotANumber and an error is
+            %written to the screen.
+            fprintf ('THERE IS AN ERROR IN ODE45FUN.  YOU ARE NOT ASSIGNING A VALUE TO G_object BEFORE CALLING IT\n')
+            dy(1)=NaN;
+            dy(2)=NaN;
+            dy(3)=NaN;
+            dy(4)=NaN;
+            return;
+        end
+        
+        %equations of orbital motion
+        dy = zeros(4,1);
+        dy(1) = y(3); %derivative of radius
+        dy(2) = y(4)/y(1)^2; %derivative of theta is directly related to r and h.
+        %derivative of radius prime is composed of centrifugal force term-gravity
+        %term+thrust term.
+        dy(3) = y(4)^2/y(1)^3-(mu/y(1)^2)+ accell*sin(phi);
+        dy(4) = y(1)*accell*cos(phi); %derivative of angular momentum per mass (h), only affected by thrust
+        
+        
+        
+    end
+
+end

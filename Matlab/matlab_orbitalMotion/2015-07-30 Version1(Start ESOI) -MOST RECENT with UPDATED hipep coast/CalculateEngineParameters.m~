@@ -1,0 +1,60 @@
+%This function is used to calculate a0.  Since the engine is always on in
+%our simulation current acceleration can be calculated only using a0 and
+%current trip time.  Most of the global constants are initialized in
+%UserInputConstants() or InitializeConstants().  The fuel mass for a given
+%trip is passed in in kg and then a0 is calculated with dimensional
+%calculations, non dimensionalized, and stored in a global variable.
+
+%called by FindPath and TimeObjectiveFunction
+function [massStruct,NDmdot,a0,a0_earth] = CalculateEngineParameters(direction,EstimatedTripTime,NumberOfEngines,uexhaust,inputPower,efficiency,massPowerPlant,massThruster,massPayload)
+%******************************************************
+%Global Constants, the values stored in them are always non-dimensional.
+
+%the following are only used to calculate a0 but are made global to be
+%accessible for possible output in the future.
+%************************************************************************
+%AN ISSUE WITH THIS IS THEY ARE NOT ALL NONDIMENSIONALIZED, THAT COULD BE
+%CONFUSING
+
+%*******************************************************************
+%******************************************************
+
+%all the following calculations are done with dimensional values;
+
+%if efficiency is not given it can be calculated by an equation similar to
+%this one.  This one is for a mass flow rate of .0008 kg/s
+%Requires Pin in kW
+%GC_efficiency = .01*(21.335615 + (92.967401 - 21.335615)/(1 + (883.012092/GC_pin)^1.690334)); %returns efficiency as a decimal
+%Automating the process of calculating efficiency is something that could
+%be implemented in the future but for now it is the users responsibility.
+
+Pth = efficiency*inputPower;   %power available for thrusting (Kw)
+mdot = 2*(Pth*1000)/(uexhaust)^2;      %dimensional mass flow rate (kg/s)
+NDmdot = mdot * Constants.SCONVERSION; %non-dimensional mass flow rate
+%Uex = sqrt(2*(Pth*1000)/mdot);   %dimensional exhaust velocity (m/s)
+
+%calculates fuel mass based on time guess  Since timeTest and GC_mdot are
+%in non-dimensional time units, fuelGuess comes out in kg.
+
+massFuel = NumberOfEngines * EstimatedTripTime*NDmdot; %calculating the fuel mass used during the trip
+
+thrust = NumberOfEngines * uexhaust * mdot;  %dimensional thrust (N)
+
+massStruct = 1000;  %mass of the structure of the spaceship
+%massStruct = .04*(massFuel+massPayload + GC_mpowerplant+GC_mthruster); %structural mass depends on fuel, engine, and payload weights.  Equation comes from sankaran 2009 equn.13 
+dryMass = massStruct + massPayload + massPowerPlant + massThruster; %returns mass of spaceship without fuel (kg)
+
+%options for forward journey or return
+if strcmpi (direction, 'forward')
+    initialMass = dryMass + massFuel;  %returns dimensional initial mass for forward journey(kg
+elseif strcmpi (direction, 'return')
+    initialMass = dryMass + massFuel;  %initial mass for return journey (kg)
+    a0_earth = thrust/dryMass;
+    a0_earth = a0_earth*Constants.SCONVERSION^2/Constants.MCONVERSION;
+end
+
+a0 = thrust/initialMass; %dimensional initial acceleration (m/s^2)
+
+a0 = a0*Constants.SCONVERSION^2/Constants.MCONVERSION;   %non-dimensional inital acceleration
+
+end

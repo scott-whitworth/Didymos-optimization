@@ -1,0 +1,13 @@
+* CalculateEngineParameters: 
+. massStruct --> needs to be not a constant --> later?
+. Why is initialMass = dryMass + massFuel; the same for RETURN and FORWARD? Is the massFuel of the RETURN already included in the dryMass of the FORWARD somewhere else?
+
+* CalcEarthConditions:
+. Ensure that Earth data is for the appropriate range of dates. --> Connection to GetCloseApproach?
+
+* EscapeEarth:
+. Need to keep track of C3 at ESOI.
+
+* Zombie files
+
+* Revised flowchart

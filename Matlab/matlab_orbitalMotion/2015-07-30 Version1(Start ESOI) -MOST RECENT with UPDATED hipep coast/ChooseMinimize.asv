@@ -1,0 +1,6 @@
+function [flagStore] = ChooseMinimize()
+fprintf('Optimize Time or Fuel?\n')
+fprintf('0: Time\n')
+fprintf('1: Fuel\n')
+choice = input(': ');
+end

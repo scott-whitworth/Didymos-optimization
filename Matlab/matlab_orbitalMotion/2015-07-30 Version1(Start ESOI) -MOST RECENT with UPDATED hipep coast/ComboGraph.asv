@@ -1,0 +1,1593 @@
+%This function is designed to take Power, efficiency, uExhaust, and mdot
+%and put them all into one plot. For a reference on what we are trying to
+%produce look at the 2010 Sankaran paper, Fig.1. We have taken data off of
+%two other papers to give us better data for the NEXT or HiPEP thruster.
+
+
+function [ ] = ComboGraph(thrusterID )
+
+%thrusterID = input('Choose a thruster, BHT(1), HiPEP(2), NEXT(6):');
+
+%This if statement will find the PowerIn, the mDot, and the uExhaust of the
+%chosen thruster off of an excel file. The values that are read will be used
+%to create their own efficiency calculations. This part has also has been
+%modified to give the size of each of the matrix. For the cases of the
+%HiPEP and the NEXT thruster there were many different groupts so we had to
+%split them up leading to different mdots across the board.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%BHT DATA%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if thrusterID == 1  %BHT
+   
+    thrusterName = 'BHT';
+    powerIn = xlsread('Thrustersread.xlsx','A3:A9');
+    mdot = xlsread('Thrustersread.xlsx','D3:D9');
+    uExhaust = xlsread('Thrustersread.xlsx','G3:G9');
+    eta = xlsread('Thrustersread.xlsx','F3:F9');
+    powerInPlotting = xlsread('Thrusters - Summer2015.xlsx','BHT-20k','B2:B83');
+    etaPlotting = xlsread('Thrusters - Summer2015.xlsx','BHT-20k','G2:G83');
+
+    powerInLength = length(powerIn);
+    mdotLength = length(mdot);
+    uExhaustLength = length(uExhaust);
+
+    %%%%%%%%%%%%%%%%%%%HiPEP DATA%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+elseif thrusterID == 2 %HiPEP
+    
+    
+     fileName = 'HiPEPdata.xlsx';
+    
+    thrusterName = 'HiPEP';
+    %First set of data points
+    mdot1 = xlsread('HiPEPdata.xlsx','Analysis','F2:F14');
+    powerIn1 = xlsread('HiPEPdata.xlsx','Analysis','G2:G14');
+    uExhaust1 = xlsread('HiPEPdata.xlsx','Analysis','C2:C14');
+    eta1 = xlsread('HiPEPdata.xlsx','Analysis','D2:D14');
+    mdot1L = length(mdot1);
+    
+    %Second set of data points
+    mdot2 = xlsread('HiPEPdata.xlsx','Analysis','F15:F28');
+    powerIn2 = xlsread('HiPEPdata.xlsx','Analysis','G15:G28');
+    uExhaust2 = xlsread('HiPEPdata.xlsx','Analysis','C15:C28');
+    eta2 = xlsread('HiPEPdata.xlsx','Analysis','D15:D28');
+    mdot2L = length(mdot2);
+    
+    %Third set of data points
+    mdot3 = xlsread('HiPEPdata.xlsx','Analysis','F29:F39');
+    powerIn3 = xlsread('HiPEPdata.xlsx','Analysis','G29:G39');
+    uExhaust3 = xlsread('HiPEPdata.xlsx','Analysis','C29:C39');
+    eta3 = xlsread('HiPEPdata.xlsx','Analysis','D29:D39');
+    mdot3L = length(mdot3);
+    
+    %Fourth set of data points
+    mdot4 = xlsread('HiPEPdata.xlsx','Analysis','F40:F49');
+    powerIn4 = xlsread('HiPEPdata.xlsx','Analysis','G40:G49');
+    uExhaust4 = xlsread('HiPEPdata.xlsx','Analysis','C40:C49');
+    eta4 = xlsread('HiPEPdata.xlsx','Analysis','D40:D49');
+    mdot4L = length(mdot4);
+    
+    %%%%%%%%%%%%%%%%%%%NEXT DATA%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+elseif thrusterID == 6
+    
+     fileName = 'NEXTdata.xlsx';
+    
+    thrusterName = 'NEXT';
+    %First set of data points
+    mdot1 = xlsread('NEXTdata.xlsx',2,'F2:F5');
+    powerIn1 = xlsread('NEXTdata.xlsx',2, 'G2:G5');
+    uExhaust1 = xlsread('NEXTdata.xlsx',2,'E2:E5');
+    eta1 = xlsread('NEXTdata.xlsx',2,'C2:C5');
+    mdot1L = length(mdot1);
+    
+    %Second set of data points
+    mdot2 = xlsread('NEXTdata.xlsx',2, 'F7:F10');
+    powerIn2 = xlsread('NEXTdata.xlsx',2,'G7:G10');
+    uExhaust2 = xlsread('NEXTdata.xlsx',2,'E7:E10');
+    eta2 = xlsread('NEXTdata.xlsx',2,'C7:C10');
+    mdot2L = length(mdot2);
+    
+    %Third set of data points
+    mdot3 = xlsread('NEXTdata.xlsx',2,'F12:F16');
+    powerIn3 = xlsread('NEXTdata.xlsx',2,'G12:G16');
+    uExhaust3 = xlsread('NEXTdata.xlsx',2,'E12:E16');
+    eta3 = xlsread('NEXTdata.xlsx',2,'C12:C16');
+    mdot3L = length(mdot3);
+    
+    %Fourth set of data points
+    mdot4 = xlsread('NEXTdata.xlsx',2,'F18:F22');
+    powerIn4 = xlsread('NEXTdata.xlsx',2,'G18:G22');
+    uExhaust4 = xlsread('NEXTdata.xlsx',2,'E18:E22');
+    eta4 = xlsread('NEXTdata.xlsx',2,'C18:C22');
+    mdot4L = length(mdot4);
+    
+    %Fifth set of data points
+    mdot5 = xlsread('NEXTdata.xlsx',2,'F24:F28');
+    powerIn5 = xlsread('NEXTdata.xlsx',2,'G24:G28');
+    uExhaust5 = xlsread('NEXTdata.xlsx',2,'E24:E28');
+    eta5 = xlsread('NEXTdata.xlsx',2,'C24:C28');
+    mdot5L = length(mdot5);
+    
+    %Sixth set of data points
+    mdot6 = xlsread('NEXTdata.xlsx',2,'F30:F34');
+    powerIn6 = xlsread('NEXTdata.xlsx',2,'G30:G34');
+    uExhaust6 = xlsread('NEXTdata.xlsx',2,'E30:E34');
+    eta6 = xlsread('NEXTdata.xlsx',2,'C30:C34');
+    mdot6L = length(mdot6);
+    
+    %Seventh set of data points
+    mdot7 = xlsread('NEXTdata.xlsx',2,'F36:F46');
+    powerIn7 = xlsread('NEXTdata.xlsx',2,'G36:G46');
+    uExhaust7 = xlsread('NEXTdata.xlsx',2,'E36:E46');
+    eta7 = xlsread('NEXTdata.xlsx',2,'C36:C46');
+    mdot7L = length(mdot7);
+    
+    %Eighth set of data points
+    mdot8 = xlsread('NEXTdata.xlsx',2,'F48:F48');
+    powerIn8 = xlsread('NEXTdata.xlsx',2,'G48:G48');
+    uExhaust8 = xlsread('NEXTdata.xlsx',2,'E48:E48');
+    eta8 = xlsread('NEXTdata.xlsx',2,'C48:C48');
+    mdot8L = length(mdot8);
+    
+else  %invalid input
+    fprintf('that was not a valid option')
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%% ETA'S %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%this calculates the eta of both of the constant mdot and the constant
+%uExhaust
+
+%%%%%%%%%%%%%%%%%%%%%%%%%    BHT ETA  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if thrusterID == 1
+    etaMDotC = zeros(mdotLength,1);
+    etaUExhaustC = zeros(mdotLength,1);
+    for j = 1:1:mdotLength;
+        for i = 1:1:powerInLength;
+            etaMDotC(i,j) = (((.5)*mdot(j,1)*(uExhaust(i,1)^2))/(powerIn(i,1)))
+        end
+    end
+    
+    for j = 1:1:uExhaustLength;
+        for i = 1:1:powerInLength;
+            etaUExhaustC(i,j) = (((.5)*mdot(i,1)*(uExhaust(j,1)^2))/(powerIn(i,1)));
+        end
+    end
+    
+    %This section is creaing the correct sized matricies for the creating of
+    %best fit lines.
+    etaMDotCPlot1 = etaMDotC(:,1);
+    etaMDotCPlot2 = etaMDotC(:,2);
+    etaMDotCPlot3 = etaMDotC(:,3);
+    etaMDotCPlot4 = etaMDotC(:,4);
+    etaMDotCPlot5 = etaMDotC(:,5);
+    etaMDotCPlot6 = etaMDotC(:,6);
+    etaMDotCPlot7 = etaMDotC(:,7);
+   % etaMDotCPlot8 = etaMDotC(:,8);
+    
+    etaUExhaustCPlot1 = etaUExhaustC(:,1);
+    etaUExhaustCPlot2 = etaUExhaustC(:,2);
+    etaUExhaustCPlot3 = etaUExhaustC(:,3);
+    etaUExhaustCPlot4 = etaUExhaustC(:,4);
+    etaUExhaustCPlot5 = etaUExhaustC(:,5);
+    etaUExhaustCPlot6 = etaUExhaustC(:,6);
+    etaUExhaustCPlot7 = etaUExhaustC(:,7);
+    %etaUExhaustCPlot8 = etaUExhaustC(:,8);
+    
+    
+    %{
+       etaMDotCPlot = zeros(mdotLength,mdotLength);
+    for j = 1:1:mdotLength
+        for i = 1:1:mdotLength
+            etaMDotCPlot(i,j) = etaMDotC(:,i)
+        end
+    end
+    
+    %}
+    
+    %this Else statement will be calculateing the different etas for the HiPEP
+    %engine.
+    
+    %%%%%%%%%%%%%%%%%%%%%%HiPEP ETA'S %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+elseif thrusterID == 2
+    %etas for 1
+    etaMDot1C = zeros(mdot1L,1);
+    etaUExhaust1C = zeros(mdot1L,1);
+    for j = 1:1:mdot1L
+        for i = 1:1:mdot1L
+            etaMDot1C(j,i) = (((.5)*mdot1(j,1)*(uExhaust1(i,1)^2))/(powerIn1(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot1L
+        for i = 1:1:mdot1L
+            etaUExhaust1C(j,i) = (((.5)*mdot1(i,1)*(uExhaust1(j,1)^2))/(powerIn1(i,1)));
+        end
+    end
+    
+    etaMDot1CPlot1 = etaMDot1C(:,1);
+    etaMDot1CPlot2 = etaMDot1C(:,2);
+    etaMDot1CPlot3 = etaMDot1C(:,3);
+    etaMDot1CPlot4 = etaMDot1C(:,4);
+    etaMDot1CPlot5 = etaMDot1C(:,5);
+    etaMDot1CPlot6 = etaMDot1C(:,6);
+    etaMDot1CPlot7 = etaMDot1C(:,7);
+    etaMDot1CPlot8 = etaMDot1C(:,8);
+    etaMDot1CPlot9 = etaMDot1C(:,9);
+    etaMDot1CPlot10 = etaMDot1C(:,10);
+    etaMDot1CPlot11 = etaMDot1C(:,11);
+    etaMDot1CPlot12 = etaMDot1C(:,12);
+    etaMDot1CPlot13 = etaMDot1C(:,13);
+    
+    etaUExhaust1CPlot1 = etaUExhaust1C(:,1);
+    etaUExhaust1CPlot2 = etaUExhaust1C(:,2);
+    etaUExhaust1CPlot3 = etaUExhaust1C(:,3);
+    etaUExhaust1CPlot4 = etaUExhaust1C(:,4);
+    etaUExhaust1CPlot5 = etaUExhaust1C(:,5);
+    etaUExhaust1CPlot6 = etaUExhaust1C(:,6);
+    etaUExhaust1CPlot7 = etaUExhaust1C(:,7);
+    etaUExhaust1CPlot8 = etaUExhaust1C(:,8);
+    etaUExhaust1CPlot9 = etaUExhaust1C(:,9);
+    etaUExhaust1CPlot10 = etaUExhaust1C(:,10);
+    etaUExhaust1CPlot11 = etaUExhaust1C(:,11);
+    etaUExhaust1CPlot12 = etaUExhaust1C(:,12);
+    etaUExhaust1CPlot13 = etaUExhaust1C(:,13);
+    
+    %etas for 2
+    etaMDot2C = zeros(mdot2L,1);
+    etaUExhaust2C = zeros(mdot2L,1);
+    for j = 1:1:mdot2L
+        for i = 1:1:mdot2L
+            etaMDot2C(j,i) = (((.5)*mdot2(j,1)*(uExhaust2(i,1)^2))/(powerIn2(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot2L
+        for i = 1:1:mdot2L
+            etaUExhaust2C(j,i) = (((.5)*mdot2(i,1)*(uExhaust2(j,1)^2))/(powerIn2(i,1)));
+        end
+    end
+    
+    etaMDot2CPlot1 = etaMDot2C(:,1);
+    etaMDot2CPlot2 = etaMDot2C(:,2);
+    etaMDot2CPlot3 = etaMDot2C(:,3);
+    etaMDot2CPlot4 = etaMDot2C(:,4);
+    etaMDot2CPlot5 = etaMDot2C(:,5);
+    etaMDot2CPlot6 = etaMDot2C(:,6);
+    etaMDot2CPlot7 = etaMDot2C(:,7);
+    etaMDot2CPlot8 = etaMDot2C(:,8);
+    etaMDot2CPlot9 = etaMDot2C(:,9);
+    etaMDot2CPlot10 = etaMDot2C(:,10);
+    etaMDot2CPlot11 = etaMDot2C(:,11);
+    etaMDot2CPlot12 = etaMDot2C(:,12);
+    etaMDot2CPlot13 = etaMDot2C(:,13);
+    etaMDot2CPlot14 = etaMDot2C(:,14);
+    
+    etaUExhaust2CPlot1 = etaUExhaust2C(:,1);
+    etaUExhaust2CPlot2 = etaUExhaust2C(:,2);
+    etaUExhaust2CPlot3 = etaUExhaust2C(:,3);
+    etaUExhaust2CPlot4 = etaUExhaust2C(:,4);
+    etaUExhaust2CPlot5 = etaUExhaust2C(:,5);
+    etaUExhaust2CPlot6 = etaUExhaust2C(:,6);
+    etaUExhaust2CPlot7 = etaUExhaust2C(:,7);
+    etaUExhaust2CPlot8 = etaUExhaust2C(:,8);
+    etaUExhaust2CPlot9 = etaUExhaust2C(:,9);
+    etaUExhaust2CPlot10 = etaUExhaust2C(:,10);
+    etaUExhaust2CPlot11 = etaUExhaust2C(:,11);
+    etaUExhaust2CPlot12 = etaUExhaust2C(:,12);
+    etaUExhaust2CPlot13 = etaUExhaust2C(:,13);
+    etaUExhaust2CPlot14 = etaUExhaust2C(:,14);
+    
+    %etas for 3
+    etaMDot3C = zeros(mdot3L,1);
+    etaUExhaust3C = zeros(mdot3L,1);
+    for j = 1:1:mdot3L
+        for i = 1:1:mdot3L
+            etaMDot3C(j,i) = (((.5)*mdot3(j,1)*(uExhaust3(i,1)^2))/(powerIn3(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot3L
+        for i = 1:1:mdot3L
+            etaUExhaust3C(j,i) = (((.5)*mdot3(i,1)*(uExhaust3(j,1)^2))/(powerIn3(i,1)));
+        end
+    end
+    
+    etaMDot3CPlot1 = etaMDot3C(:,1);
+    etaMDot3CPlot2 = etaMDot3C(:,2);
+    etaMDot3CPlot3 = etaMDot3C(:,3);
+    etaMDot3CPlot4 = etaMDot3C(:,4);
+    etaMDot3CPlot5 = etaMDot3C(:,5);
+    etaMDot3CPlot6 = etaMDot3C(:,6);
+    etaMDot3CPlot7 = etaMDot3C(:,7);
+    etaMDot3CPlot8 = etaMDot3C(:,8);
+    etaMDot3CPlot9 = etaMDot3C(:,9);
+    etaMDot3CPlot10 = etaMDot3C(:,10);
+    etaMDot3CPlot11 = etaMDot3C(:,11);
+    
+    etaUExhaust3CPlot1 = etaUExhaust3C(:,1);
+    etaUExhaust3CPlot2 = etaUExhaust3C(:,2);
+    etaUExhaust3CPlot3 = etaUExhaust3C(:,3);
+    etaUExhaust3CPlot4 = etaUExhaust3C(:,4);
+    etaUExhaust3CPlot5 = etaUExhaust3C(:,5);
+    etaUExhaust3CPlot6 = etaUExhaust3C(:,6);
+    etaUExhaust3CPlot7 = etaUExhaust3C(:,7);
+    etaUExhaust3CPlot8 = etaUExhaust3C(:,8);
+    etaUExhaust3CPlot9 = etaUExhaust3C(:,9);
+    etaUExhaust3CPlot10 = etaUExhaust3C(:,10);
+    etaUExhaust3CPlot11 = etaUExhaust3C(:,11);
+    
+    
+    %etas for 4
+    etaMDot4C = zeros(mdot4L,1);
+    etaUExhaust4C = zeros(mdot4L,1);
+    for j = 1:1:mdot4L
+        for i = 1:1:mdot4L
+            etaMDot4C(j,i) = (((.5)*mdot4(j,1)*(uExhaust4(i,1)^2))/(powerIn4(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot4L
+        for i = 1:1:mdot4L
+            etaUExhaust4C(j,i) = (((.5)*mdot4(i,1)*(uExhaust4(j,1)^2))/(powerIn4(i,1)));
+        end
+    end
+    
+    etaMDot4CPlot1 = etaMDot4C(:,1);
+    etaMDot4CPlot2 = etaMDot4C(:,2);
+    etaMDot4CPlot3 = etaMDot4C(:,3);
+    etaMDot4CPlot4 = etaMDot4C(:,4);
+    etaMDot4CPlot5 = etaMDot4C(:,5);
+    etaMDot4CPlot6 = etaMDot4C(:,6);
+    etaMDot4CPlot7 = etaMDot4C(:,7);
+    etaMDot4CPlot8 = etaMDot4C(:,8);
+    etaMDot4CPlot9 = etaMDot4C(:,9);
+    etaMDot4CPlot10 = etaMDot4C(:,10);
+    
+    etaUExhaust4CPlot1 = etaUExhaust4C(:,1);
+    etaUExhaust4CPlot2 = etaUExhaust4C(:,2);
+    etaUExhaust4CPlot3 = etaUExhaust4C(:,3);
+    etaUExhaust4CPlot4 = etaUExhaust4C(:,4);
+    etaUExhaust4CPlot5 = etaUExhaust4C(:,5);
+    etaUExhaust4CPlot6 = etaUExhaust4C(:,6);
+    etaUExhaust4CPlot7 = etaUExhaust4C(:,7);
+    etaUExhaust4CPlot8 = etaUExhaust4C(:,8);
+    etaUExhaust4CPlot9 = etaUExhaust4C(:,9);
+    etaUExhaust4CPlot10 = etaUExhaust4C(:,10);
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%NEXT ETA'S CONT.%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+elseif thrusterID == 6
+    
+    %etas for 1
+    etaMDot1C = zeros(mdot1L,1);
+    etaUExhaust1C = zeros(mdot1L,1);
+    for j = 1:1:mdot1L
+        for i = 1:1:mdot1L
+            etaMDot1C(j,i) = (((.5)*mdot1(j,1)*(uExhaust1(i,1)^2))/(powerIn1(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot1L
+        for i = 1:1:mdot1L
+            etaUExhaust1C(j,i) = (((.5)*mdot1(i,1)*(uExhaust1(j,1)^2))/(powerIn1(i,1)));
+        end
+    end
+    
+    etaMDot1CPlot1 = etaMDot1C(:,1);
+    etaMDot1CPlot2 = etaMDot1C(:,2);
+    etaMDot1CPlot3 = etaMDot1C(:,3);
+    etaMDot1CPlot4 = etaMDot1C(:,4);
+    
+    etaUExhaust1CPlot1 = etaUExhaust1C(:,1);
+    etaUExhaust1CPlot2 = etaUExhaust1C(:,2);
+    etaUExhaust1CPlot3 = etaUExhaust1C(:,3);
+    etaUExhaust1CPlot4 = etaUExhaust1C(:,4);
+
+    %etas for 2
+    etaMDot2C = zeros(mdot2L,1);
+    etaUExhaust2C = zeros(mdot2L,1);
+    for j = 1:1:mdot2L
+        for i = 1:1:mdot2L
+            etaMDot2C(j,i) = (((.5)*mdot2(j,1)*(uExhaust2(i,1)^2))/(powerIn2(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot2L
+        for i = 1:1:mdot2L
+            etaUExhaust2C(j,i) = (((.5)*mdot2(i,1)*(uExhaust2(j,1)^2))/(powerIn2(i,1)));
+        end
+    end
+    
+    etaMDot2CPlot1 = etaMDot2C(:,1);
+    etaMDot2CPlot2 = etaMDot2C(:,2);
+    etaMDot2CPlot3 = etaMDot2C(:,3);
+    etaMDot2CPlot4 = etaMDot2C(:,4);
+    
+    etaUExhaust2CPlot1 = etaUExhaust2C(:,1);
+    etaUExhaust2CPlot2 = etaUExhaust2C(:,2);
+    etaUExhaust2CPlot3 = etaUExhaust2C(:,3);
+    etaUExhaust2CPlot4 = etaUExhaust2C(:,4);
+    
+    %etas for 3
+    etaMDot3C = zeros(mdot3L,1);
+    etaUExhaust3C = zeros(mdot3L,1);
+    for j = 1:1:mdot3L
+        for i = 1:1:mdot3L
+            etaMDot3C(j,i) = (((.5)*mdot3(j,1)*(uExhaust3(i,1)^2))/(powerIn3(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot3L
+        for i = 1:1:mdot3L
+            etaUExhaust3C(j,i) = (((.5)*mdot3(i,1)*(uExhaust3(j,1)^2))/(powerIn3(i,1)));
+        end
+    end
+    
+    etaMDot3CPlot1 = etaMDot3C(:,1);
+    etaMDot3CPlot2 = etaMDot3C(:,2);
+    etaMDot3CPlot3 = etaMDot3C(:,3);
+    etaMDot3CPlot4 = etaMDot3C(:,4);
+    etaMDot3CPlot5 = etaMDot3C(:,5);
+    
+    etaUExhaust3CPlot1 = etaUExhaust3C(:,1);
+    etaUExhaust3CPlot2 = etaUExhaust3C(:,2);
+    etaUExhaust3CPlot3 = etaUExhaust3C(:,3);
+    etaUExhaust3CPlot4 = etaUExhaust3C(:,4);
+    etaUExhaust3CPlot5 = etaUExhaust3C(:,5);
+    
+    %etas for 4
+    etaMDot4C = zeros(mdot4L,1);
+    etaUExhaust4C = zeros(mdot4L,1);
+    for j = 1:1:mdot4L
+        for i = 1:1:mdot4L
+            etaMDot4C(j,i) = (((.5)*mdot4(j,1)*(uExhaust4(i,1)^2))/(powerIn4(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot4L
+        for i = 1:1:mdot4L
+            etaUExhaust4C(j,i) = (((.5)*mdot4(i,1)*(uExhaust4(j,1)^2))/(powerIn4(i,1)));
+        end
+    end
+    
+    etaMDot4CPlot1 = etaMDot4C(:,1);
+    etaMDot4CPlot2 = etaMDot4C(:,2);
+    etaMDot4CPlot3 = etaMDot4C(:,3);
+    etaMDot4CPlot4 = etaMDot4C(:,4);
+    etaMDot4CPlot5 = etaMDot4C(:,5);
+    
+    etaUExhaust4CPlot1 = etaUExhaust4C(:,1);
+    etaUExhaust4CPlot2 = etaUExhaust4C(:,2);
+    etaUExhaust4CPlot3 = etaUExhaust4C(:,3);
+    etaUExhaust4CPlot4 = etaUExhaust4C(:,4);
+    etaUExhaust4CPlot5 = etaUExhaust4C(:,5);
+    
+    %etas for 5
+    etaMDot5C = zeros(mdot5L,1);
+    etaUExhaust5C = zeros(mdot5L,1);
+    for j = 1:1:mdot5L
+        for i = 1:1:mdot5L
+            etaMDot5C(j,i) = (((.5)*mdot5(j,1)*(uExhaust5(i,1)^2))/(powerIn5(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot5L
+        for i = 1:1:mdot5L
+            etaUExhaust5C(j,i) = (((.5)*mdot5(i,1)*(uExhaust5(j,1)^2))/(powerIn5(i,1)));
+        end
+    end
+    
+    etaMDot5CPlot1 = etaMDot5C(:,1);
+    etaMDot5CPlot2 = etaMDot5C(:,2);
+    etaMDot5CPlot3 = etaMDot5C(:,3);
+    etaMDot5CPlot4 = etaMDot5C(:,4);
+    etaMDot5CPlot5 = etaMDot5C(:,5);
+    
+    etaUExhaust5CPlot1 = etaUExhaust5C(:,1);
+    etaUExhaust5CPlot2 = etaUExhaust5C(:,2);
+    etaUExhaust5CPlot3 = etaUExhaust5C(:,3);
+    etaUExhaust5CPlot4 = etaUExhaust5C(:,4);
+    etaUExhaust5CPlot5 = etaUExhaust5C(:,5);
+    
+    
+    %etas for 6
+    etaMDot6C = zeros(mdot6L,1);
+    etaUExhaust6C = zeros(mdot6L,1);
+    for j = 1:1:mdot6L
+        for i = 1:1:mdot6L
+            etaMDot6C(j,i) = (((.5)*mdot6(j,1)*(uExhaust6(i,1)^2))/(powerIn6(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot6L
+        for i = 1:1:mdot6L
+            etaUExhaust6C(j,i) = (((.5)*mdot6(i,1)*(uExhaust6(j,1)^2))/(powerIn6(i,1)));
+        end
+    end
+    
+    etaMDot6CPlot1 = etaMDot6C(:,1);
+    etaMDot6CPlot2 = etaMDot6C(:,2);
+    etaMDot6CPlot3 = etaMDot6C(:,3);
+    etaMDot6CPlot4 = etaMDot6C(:,4);
+    etaMDot6CPlot5 = etaMDot6C(:,5);
+    
+    etaUExhaust6CPlot1 = etaUExhaust6C(:,1);
+    etaUExhaust6CPlot2 = etaUExhaust6C(:,2);
+    etaUExhaust6CPlot3 = etaUExhaust6C(:,3);
+    etaUExhaust6CPlot4 = etaUExhaust6C(:,4);
+    etaUExhaust6CPlot5 = etaUExhaust6C(:,5);
+    
+    %etas for 7
+    etaMDot7C = zeros(mdot7L,1);
+    etaUExhaust7C = zeros(mdot7L,1);
+    for j = 1:1:mdot7L
+        for i = 1:1:mdot7L
+            etaMDot7C(j,i) = (((.5)*mdot7(j,1)*(uExhaust7(i,1)^2))/(powerIn7(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot7L
+        for i = 1:1:mdot7L
+            etaUExhaust7C(j,i) = (((.5)*mdot7(i,1)*(uExhaust7(j,1)^2))/(powerIn7(i,1)));
+        end
+    end
+    
+    etaMDot7CPlot1 = etaMDot7C(:,1);
+    etaMDot7CPlot2 = etaMDot7C(:,2);
+    etaMDot7CPlot3 = etaMDot7C(:,3);
+    etaMDot7CPlot4 = etaMDot7C(:,4);
+    etaMDot7CPlot5 = etaMDot7C(:,5);
+    etaMDot7CPlot6 = etaMDot7C(:,6);
+    etaMDot7CPlot7 = etaMDot7C(:,7);
+    etaMDot7CPlot8 = etaMDot7C(:,8);
+    etaMDot7CPlot9 = etaMDot7C(:,9);
+    etaMDot7CPlot10 = etaMDot7C(:,10);
+    etaMDot7CPlot11 = etaMDot7C(:,11);
+    
+    etaUExhaust7CPlot1 = etaUExhaust7C(:,1);
+    etaUExhaust7CPlot2 = etaUExhaust7C(:,2);
+    etaUExhaust7CPlot3 = etaUExhaust7C(:,3);
+    etaUExhaust7CPlot4 = etaUExhaust7C(:,4);
+    etaUExhaust7CPlot5 = etaUExhaust7C(:,5);
+    etaUExhaust7CPlot6 = etaUExhaust7C(:,6);
+    etaUExhaust7CPlot7 = etaUExhaust7C(:,7);
+    etaUExhaust7CPlot8 = etaUExhaust7C(:,8);
+    etaUExhaust7CPlot9 = etaUExhaust7C(:,9);
+    etaUExhaust7CPlot10 = etaUExhaust7C(:,10);
+    etaUExhaust7CPlot11 = etaUExhaust7C(:,11);
+    
+    %etas for 8
+    etaMDot8C = zeros(mdot8L,1);
+    etaUExhaust8C = zeros(mdot8L,1);
+    for j = 1:1:mdot8L
+        for i = 1:1:mdot8L
+            etaMDot8C(j,i) = (((.5)*mdot8(j,1)*(uExhaust8(i,1)^2))/(powerIn8(i,1)));
+        end
+    end
+    
+    for j = 1:1:mdot8L
+        for i = 1:1:mdot8L
+            etaUExhaust8C(j,i) = (((.5)*mdot8(i,1)*(uExhaust8(j,1)^2))/(powerIn8(i,1)));
+        end
+    end
+    
+    etaMDot8CPlot1 = etaMDot8C(:,1);
+
+    etaUExhaust8CPlot1 = etaUExhaust8C(:,1);
+    
+end
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% PLOTTING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%This is the graphing portion of the code. The first statement is for the
+%NEXT and the BHT while the second statement is for the HiPEP
+
+
+if thrusterID == 1 %BHT
+    
+    %This is the line fit for when the mdot is constant
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot1,1);
+    YMDot1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    table = [sqrt(powerIn1), YMDot1, etaMDot1CPlot1, YMDot1-etaMDot1CPlot1];         %%
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot2,1);
+    YMDot2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot3,1);
+    YMDot3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot4,1);
+    YMDot4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot1,1);
+    YMDot5 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot2,1);
+    YMDot6 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot3,1);
+    YMDot7 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    table = [sqrt(powerIn2), YMDot7, etaMDot2CPlot3, YMDot7-etaMDot2CPlot3];               %%
+    
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot4,1);
+    YMDot8 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot1,1);
+    YMDot9 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot2,1);
+    YMDot10 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    table = [sqrt(powerIn3), YMDot10, etaMDot3CPlot2, YMDot10-etaMDot3CPlot2];                %%
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot3,1);
+    YMDot11 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot4,1);
+    YMDot12 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot5,1);
+    YMDot13 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot1,1);
+    YMDot14 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot2,1);
+    YMDot15 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot3,1);
+    YMDot16 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot4,1);
+    YMDot17 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+     table = [sqrt(powerIn4), YMDot17, etaMDot4CPlot4, YMDot17-etaMDot4CPlot4];                %% 
+    
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot1,1);
+    YMDot18 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot2,1);
+    YMDot19 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot3,1);
+    YMDot20 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot4,1);
+    YMDot21 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot1,1);
+    YMDot22 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+     table = [sqrt(powerIn6), YMDot22, etaMDot6CPlot1, YMDot22-etaMDot6CPlot1];                %% 
+    
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot2,1);
+    YMDot23 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot1,1);
+    YMDot24 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot2,1);
+    YMDot25 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn8),etaMDot8CPlot1,1);
+    YMDot26 = (lineFit(1,1)*sqrt(powerIn8))+(lineFit(1,2));
+    
+    %This is the line fit for when the mdot is constant
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot1,1);
+    YUEx1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot2,1);
+    YUEx2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot3,1);
+    YUEx3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot4,1);
+    YUEx4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+     table = [sqrt(powerIn1), YUEx4, etaUExhaust1CPlot4, YUEx4-etaUExhaust1CPlot4];                %%
+     
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot1,1);
+    YUEx5 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot2,1);
+    YUEx6 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot3,1);
+    YUEx7 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot4,1);
+    YUEx8 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot1,1);
+    YUEx9 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot2,1);
+    YUEx10 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot3,1);
+    YUEx11 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot4,1);
+    YUEx12 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+     table = [sqrt(powerIn3), YUEx12, etaUExhaust3CPlot4, YUEx12-etaUExhaust3CPlot4];                %%
+     
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot5,1);
+    YUEx13 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot1,1);
+    YUEx14 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot2,1);
+    YUEx15 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot3,1);
+    YUEx16 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot4,1);
+    YUEx17 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot1,1);
+    YUEx18 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot2,1);
+    YUEx19 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+     table = [sqrt(powerIn5), YUEx19, etaUExhaust5CPlot2, YUEx19-etaUExhaust5CPlot2] ;               %%  
+    
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot3,1);
+    YUEx20 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust2CPlot4,1);
+    YUEx21 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot1,1);
+    YUEx22 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot2,1);
+    YUEx23 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot1,1);
+    YUEx24 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot2,1);
+    YUEx25 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn8),etaUExhaust8CPlot1,1);
+    YUEx26 = (lineFit(1,1)*sqrt(powerIn8))+(lineFit(1,2));
+    
+    %lineFit = polyfit(sqrt(powerIn),etaUExhaustCPlot8,1);
+    %YUEx8 = (lineFit(1,1)*sqrt(powerIn))+(lineFit(1,2));
+    
+    plot(powerIn,etaMDotC,'b+',powerIn,etaUExhaustC,'rO',powerIn,YMDot1,'-c',powerIn,YUEx1,'-m',powerIn,YMDot2,'-c',powerIn,YUEx2,'-m',powerIn,YMDot3,'-c',powerIn,YUEx3,'-m',powerIn,YMDot4,'-c',powerIn,YUEx4,'-m',powerIn,YMDot5,'-c',powerIn,YUEx5,'-m',powerIn,YMDot6,'-c',powerIn,YUEx6,'-m',powerIn,YMDot7,'-c',powerIn,YUEx7,'-m'); %,powerIn,YMDot8,'-c',powerIn,YUEx8,'-m');
+    %plot(powerInPlotting, etaPlotting,'+k',powerIn,YMDot1,'-c',powerIn,YUEx1,'-.m',powerIn,YMDot2,'-c',powerIn,YUEx2,'-.m',powerIn,YMDot3,'-c',powerIn,YUEx3,'-.m',powerIn,YMDot4,'-c',powerIn,YUEx4,'-.m',powerIn,YMDot5,'-c',powerIn,YUEx5,'-.m',powerIn,YMDot6,'-c',powerIn,YUEx6,'-.m',powerIn,YMDot7,'-c',powerIn,YUEx7,'-.m',powerIn,YMDot8,'-c',powerIn,YUEx8,'-.m');
+    
+    title(thrusterName)
+    xlabel('Power (W)')
+    ylabel('Efficiency')
+    axis([1000,24000,.3,.8])
+    legend('Measured Values','Constant mDot','Constant uExhaust','Location','southeast')
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+elseif thrusterID == 2 %HiPEP
+    %{
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot1,1);
+    YMDot1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    table = [sqrt(powerIn1), YMDot1, etaMDot1CPlot1, YMDot1-etaMDot1CPlot1];         %%
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot2,1);
+    YMDot2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot3,1);
+    YMDot3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot4,1);
+    YMDot4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot5,1);
+    YMDot5 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot6,1);
+    YMDot6 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot7,1);
+    YMDot7 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    table = [sqrt(powerIn1), YMDot7, etaMDot1CPlot7, YMDot7-etaMDot1CPlot7];               %%
+    
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot8,1);
+    YMDot8 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot9,1);
+    YMDot9 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot10,1);
+    YMDot10 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    table = [sqrt(powerIn1), YMDot10, etaMDot1CPlot10, YMDot10-etaMDot1CPlot10];                %%
+    
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot11,1);
+    YMDot11 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot12,1);
+    YMDot12 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot13,1);
+    YMDot13 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot1,1);
+    YMDot14 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot2,1);
+    YMDot15 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot3,1);
+    YMDot16 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot4,1);
+    YMDot17 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+     table = [sqrt(powerIn2), YMDot17, etaMDot2CPlot4, YMDot17-etaMDot2CPlot4];                %% 
+    
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot5,1);
+    YMDot18 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot6,1);
+    YMDot19 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot7,1);
+    YMDot20 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot8,1);
+    YMDot21 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot9,1);
+    YMDot22 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+     table = [sqrt(powerIn2), YMDot22, etaMDot2CPlot9, YMDot22-etaMDot2CPlot9];                %% 
+    
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot10,1);
+    YMDot23 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot11,1);
+    YMDot24 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot12,1);
+    YMDot25 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot13,1);
+    YMDot26 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot14,1);
+    YMDot27 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot1,1);
+    YMDot28 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot2,1);
+    YMDot29 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot3,1);
+    YMDot30 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot4,1);
+    YMDot31 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+     table = [sqrt(powerIn3), YMDot31, etaMDot3CPlot4, YMDot31-etaMDot3CPlot4] ;               %%  
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot5,1);
+    YMDot32 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot6,1);
+    YMDot33 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot7,1);
+    YMDot34 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot8,1);
+    YMDot35 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot9,1);
+    YMDot36 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+     table = [sqrt(powerIn3), YMDot36, etaMDot3CPlot9, YMDot36-etaMDot3CPlot9] ;               %%
+     
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot10,1);
+    YMDot37 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot11,1);
+    YMDot38 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot1,1);
+    YMDot39 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot2,1);
+    YMDot40 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot3,1);
+    YMDot41 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot4,1);
+    YMDot42 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot5,1);
+    YMDot43 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot6,1);
+    YMDot44 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot7,1);
+    YMDot45 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot8,1);
+    YMDot46 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+     table = [sqrt(powerIn4), YMDot46, etaMDot4CPlot8, YMDot46-etaMDot4CPlot8]  ;              %%
+       
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot9,1);
+    YMDot47 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot10,1);
+    YMDot48 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+    
+    
+    
+    
+    
+    %This is the line fit for when the mdot is constant
+        
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot1,1);
+    YUEx1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot2,1);
+    YUEx2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot3,1);
+    YUEx3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot4,1);
+    YUEx4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+     table = [sqrt(powerIn1), YUEx4, etaUExhaust1CPlot4, YUEx4-etaUExhaust1CPlot4];                %%
+     
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot5,1);
+    YUEx5 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot6,1);
+    YUEx6 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot7,1);
+    YUEx7 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot8,1);
+    YUEx8 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot9,1);
+    YUEx9 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot10,1);
+    YUEx10 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot11,1);
+    YUEx11 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot12,1);
+    YUEx12 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+     table = [sqrt(powerIn1), YUEx12, etaUExhaust1CPlot12, YUEx12-etaUExhaust1CPlot12];                %%
+     
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot13,1);
+    YUEx13 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot1,1);
+    YUEx14 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot2,1);
+    YUEx15 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot3,1);
+    YUEx16 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot4,1);
+    YUEx17 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot5,1);
+    YUEx18 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot6,1);
+    YUEx19 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+     table = [sqrt(powerIn2), YUEx19, etaUExhaust2CPlot6, YUEx19-etaUExhaust2CPlot6] ;               %%  
+    
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot7,1);
+    YUEx20 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot8,1);
+    YUEx21 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot9,1);
+    YUEx22 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot10,1);
+    YUEx23 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot11,1);
+    YUEx24 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot12,1);
+    YUEx25 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot13,1);
+    YUEx26 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot14,1);
+    YUEx27 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot1,1);
+    YUEx28 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    table = [sqrt(powerIn3), YUEx28, etaUExhaust3CPlot1, YUEx28-etaUExhaust3CPlot1];                %%
+       
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot2,1);
+    YUEx29 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot3,1);
+    YUEx30 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot4,1);
+    YUEx31 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot5,1);
+    YUEx32 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot6,1);
+    YUEx33 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot7,1);
+    YUEx34 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot8,1);
+    YUEx35 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot9,1);
+    YUEx36 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+     table = [sqrt(powerIn3), YUEx36, etaUExhaust3CPlot9, YUEx36-etaUExhaust3CPlot9];                %%
+     
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot10,1);
+    YUEx37 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot11,1);
+    YUEx38 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot1,1);
+    YUEx39 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+     
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot2,1);
+    YUEx40 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot3,1);
+    YUEx41 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot4,1);
+    YUEx42 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot5,1);
+    YUEx43 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot6,1);
+    YUEx44 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot7,1);
+    YUEx45 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+    table = [sqrt(powerIn4), YUEx45, etaUExhaust4CPlot7, YUEx45-etaUExhaust4CPlot7] ;               %%
+     
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot8,1);
+    YUEx46 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot9,1);
+    YUEx47 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot10,1);
+    YUEx48 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+    %}
+    
+%    lineFit = polyfit(sqrt(powerIn1),eta1,1);
+%    YMDot1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+pIn1 = powerIn1-min(powerIn1);
+pIn2 = powerIn2-min(powerIn2);
+pIn3 = powerIn3-min(powerIn3);
+pIn4 = powerIn4-min(powerIn4);
+
+%     lineFit = polyfit(powerIn1,eta1,3);
+%     YMDot1 = polyval(lineFit,powerIn1);
+%   
+%     lineFit = polyfit(powerIn2,eta2,3);
+%     YMDot2 = polyval(lineFit,powerIn2);
+%     
+%     lineFit = polyfit(powerIn3,eta3,3);
+%     YMDot3 = polyval(lineFit,powerIn3);
+%     
+%     lineFit = polyfit(powerIn4,eta4,3);
+%     YMDot4 = polyval(lineFit,powerIn4);
+
+    lineFit = polyfit(sqrt(pIn1),eta1,1);
+    YMDot1 = polyval(lineFit,sqrt(pIn1));
+    lineFit = polyfit(sqrt(pIn2),eta2,1);
+    YMDot2 = polyval(lineFit,sqrt(pIn2));
+    lineFit = polyfit(sqrt(pIn3),eta3,1);
+    YMDot3 = polyval(lineFit,sqrt(pIn3));
+    lineFit = polyfit(sqrt(pIn4),eta4,1);
+    YMDot4 = polyval(lineFit,sqrt(pIn4));
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% measured points
+    
+     MAX_DIMENTIONS = 15;
+dataMatrix = xlsread(fileName);
+dim = size(dataMatrix);
+
+powerIn = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+uExhaust = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+mdot = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+eta = zeros(MAX_DIMENTIONS, MAX_DIMENTIONS);
+
+%%%%%%%%%%%%%%%%%%%%%READS IN VALUES FROM EXCEL %%%%%%%%%%%%%%%%%%%%%%%%%
+i = 1;
+
+x = 1;
+while dataMatrix(i,1) ~= 0
+    
+     n = 1;
+     
+    
+     
+while dataMatrix(i,3) == dataMatrix(i+1,3)
+   
+   powerIn(x,n) = dataMatrix(i,1);
+ uExhaust(x,n) =  dataMatrix(i,2);
+ mdot(x,n) = dataMatrix(i,3);
+ eta(x,n) = dataMatrix(i,4);
+    
+   n = n + 1;
+   i = i + 1;
+  
+end
+
+powerIn(x,n) = dataMatrix(i,1);
+uExhaust(x,n) = dataMatrix(i,2);
+mdot(x,n) = dataMatrix(i,3);
+
+ x = x+1;
+ i = i+1;
+ 
+ if dataMatrix(i,1) == 0 
+         break;
+ end
+     
+ 
+end 
+
+
+  
+ %%%%%%%%%%%%%%%% repace zeros with NaN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ for i= 1:1:MAX_DIMENTIONS
+     for j = 1:1:MAX_DIMENTIONS
+         
+        if powerIn(j,i) < 1
+            powerIn(j,i) = NaN;
+            uExhaust(j,i) = NaN;
+            mdot(j,i) = NaN;
+           eta(j,i) = NaN;
+        end
+     end
+ end
+    
+    
+       
+    
+    
+ 
+    
+    
+    plot(powerIn1,YMDot1,'c-',powerIn2,YMDot2,'c-',powerIn3,YMDot3,'c-',powerIn4,YMDot4,'c-',powerIn',eta','k+');
+    %plot(powerIn1,etaMDot1C,'b+',powerIn1,etaUExhaust1C,'rO',powerIn2,etaMDot2C,'b+',powerIn2,etaUExhaust2C,'rO',powerIn3,etaMDot3C,'b+',powerIn3,etaUExhaust3C,'rO',powerIn4,etaMDot4C,'b+',powerIn4,etaUExhaust4C,'rO',powerIn1,YMDot1,'-c',powerIn1,YUEx1,'-m',powerIn1,YMDot2,'-c',powerIn1,YUEx2,'-m',powerIn1,YMDot3,'-c',powerIn1,YUEx3,'-m',powerIn1,YMDot4,'-c',powerIn1,YUEx4,'-m',powerIn1,YMDot5,'-c',powerIn1,YUEx5,'-m',powerIn1,YMDot6,'-c',powerIn1,YUEx6,'-m',powerIn1,YMDot7,'-c',powerIn1,YUEx7,'-m',powerIn1,YMDot8,'-c',powerIn1,YUEx8,'-m',powerIn1,YMDot9,'-c',powerIn1,YUEx9,'-m',powerIn1,YMDot10,'-c',powerIn1,YUEx10,'-m',powerIn1,YMDot11,'-c',powerIn1,YUEx11,'-m',powerIn1,YMDot12,'-c',powerIn1,YUEx12,'-m',powerIn1,YMDot13,'-c',powerIn1,YUEx13,'-m',powerIn2,YMDot14,'-c',powerIn2,YUEx14,'-m',powerIn2,YMDot15,'-c',powerIn2,YUEx15,'-m',powerIn2,YMDot16,'-c',powerIn2,YUEx16,'-m',powerIn2,YMDot17,'-c',powerIn2,YUEx17,'-m',powerIn2,YMDot18,'-c',powerIn2,YUEx18,'-m',powerIn2,YMDot19,'-c',powerIn2,YUEx19,'-m',powerIn2,YMDot20,'-c',powerIn2,YUEx20,'-m',powerIn2,YMDot21,'-c',powerIn2,YUEx21,'-m',powerIn2,YMDot22,'-c',powerIn2,YUEx22,'-m',powerIn2,YMDot23,'-c',powerIn2,YUEx23,'-m',powerIn2,YMDot24,'-c',powerIn2,YUEx24,'-m',powerIn2,YMDot25,'-c',powerIn2,YUEx25,'-m',powerIn2,YMDot26,'-c',powerIn2,YUEx26,'-m',powerIn2,YMDot27,'-c',powerIn2,YUEx27,'-m',powerIn3,YMDot28,'-c',powerIn3,YUEx28,'-m',powerIn3,YMDot29,'-c',powerIn3,YUEx29,'-m',powerIn3,YMDot30,'-c',powerIn3,YUEx30,'-m',powerIn3,YMDot31,'-c',powerIn3,YUEx31,'-m',powerIn3,YMDot32,'-c',powerIn3,YUEx32,'-m',powerIn3,YMDot33,'-c',powerIn3,YUEx33,'-m',powerIn3,YMDot34,'-c',powerIn3,YUEx34,'-m',powerIn3,YMDot35,'-c',powerIn3,YUEx35,'-m',powerIn3,YMDot36,'-c',powerIn3,YUEx36,'-m',powerIn3,YMDot37,'-c',powerIn3,YUEx37,'-m',powerIn3,YMDot38,'-c',powerIn3,YUEx38,'-m',powerIn4,YMDot39,'-c',powerIn4,YUEx39,'-m',powerIn4,YMDot40,'-c',powerIn4,YUEx40,'-m',powerIn4,YMDot41,'-c',powerIn4,YUEx41,'-m',powerIn4,YMDot42,'-c',powerIn4,YUEx42,'-m',powerIn4,YMDot43,'-c',powerIn4,YUEx43,'-m',powerIn4,YMDot44,'-c',powerIn4,YUEx44,'-m',powerIn4,YMDot45,'-c',powerIn4,YUEx45,'-m',powerIn4,YMDot46,'-c',powerIn4,YUEx46,'-m',powerIn4,YMDot47,'-c',powerIn4,YUEx47,'-m',powerIn4,YMDot48,'-c',powerIn4,YUEx48,'-m');
+    %plot(powerIn1,YMDot1,'-c',powerIn1,YUEx1,'-.m',powerIn',eta','k+',powerIn1,YMDot2,'-c',powerIn1,YUEx2,'-.m',powerIn1,YMDot3,'-c',powerIn1,YUEx3,'-.m',powerIn1,YMDot4,'-c',powerIn1,YUEx4,'-.m',powerIn1,YMDot5,'-c',powerIn1,YUEx5,'-.m',powerIn1,YMDot6,'-c',powerIn1,YUEx6,'-.m',powerIn1,YMDot7,'-c',powerIn1,YUEx7,'-.m',powerIn1,YMDot8,'-c',powerIn1,YUEx8,'-.m',powerIn1,YMDot9,'-c',powerIn1,YUEx9,'-.m',powerIn1,YMDot10,'-c',powerIn1,YUEx10,'-.m',powerIn1,YMDot11,'-c',powerIn1,YUEx11,'-.m',powerIn1,YMDot12,'-c',powerIn1,YUEx12,'-.m',powerIn1,YMDot13,'-c',powerIn1,YUEx13,'-.m',powerIn2,YMDot14,'-c',powerIn2,YUEx14,'-.m',powerIn2,YMDot15,'-c',powerIn2,YUEx15,'-.m',powerIn2,YMDot16,'-c',powerIn2,YUEx16,'-.m',powerIn2,YMDot17,'-c',powerIn2,YUEx17,'-.m',powerIn2,YMDot18,'-c',powerIn2,YUEx18,'-.m',powerIn2,YMDot19,'-c',powerIn2,YUEx19,'-.m',powerIn2,YMDot20,'-c',powerIn2,YUEx20,'-.m',powerIn2,YMDot21,'-c',powerIn2,YUEx21,'-.m',powerIn2,YMDot22,'-c',powerIn2,YUEx22,'-.m',powerIn2,YMDot23,'-c',powerIn2,YUEx23,'-.m',powerIn2,YMDot24,'-c',powerIn2,YUEx24,'-.m',powerIn2,YMDot25,'-c',powerIn2,YUEx25,'-.m',powerIn2,YMDot26,'-c',powerIn2,YUEx26,'-.m',powerIn2,YMDot27,'-c',powerIn2,YUEx27,'-.m',powerIn3,YMDot28,'-c',powerIn3,YUEx28,'-.m',powerIn3,YMDot29,'-c',powerIn3,YUEx29,'-.m',powerIn3,YMDot30,'-c',powerIn3,YUEx30,'-.m',powerIn3,YMDot31,'-c',powerIn3,YUEx31,'-.m',powerIn3,YMDot32,'-c',powerIn3,YUEx32,'-.m',powerIn3,YMDot33,'-c',powerIn3,YUEx33,'-.m',powerIn3,YMDot34,'-c',powerIn3,YUEx34,'-.m',powerIn3,YMDot35,'-c',powerIn3,YUEx35,'-.m',powerIn3,YMDot36,'-c',powerIn3,YUEx36,'-.m',powerIn3,YMDot37,'-c',powerIn3,YUEx37,'-.m',powerIn3,YMDot38,'-c',powerIn3,YUEx38,'-.m',powerIn4,YMDot39,'-c',powerIn4,YUEx39,'-.m',powerIn4,YMDot40,'-c',powerIn4,YUEx40,'-.m',powerIn4,YMDot41,'-c',powerIn4,YUEx41,'-.m',powerIn4,YMDot42,'-c',powerIn4,YUEx42,'-.m',powerIn4,YMDot43,'-c',powerIn4,YUEx43,'-.m',powerIn4,YMDot44,'-c',powerIn4,YUEx44,'-.m',powerIn4,YMDot45,'-c',powerIn4,YUEx45,'-.m',powerIn4,YMDot46,'-c',powerIn4,YUEx46,'-.m',powerIn4,YMDot47,'-c',powerIn4,YUEx47,'-.m',powerIn4,YMDot48,'-c',powerIn4,YUEx48,'-.m');
+    
+    title(thrusterName)
+    xlabel('Power (W)')
+    ylabel('Efficiency')
+    axis([6000,38000,0.6,.8])
+    legend('Constant mDot','Constant uExhaust','Measured Values','Location','southeast')
+    
+elseif thrusterID == 6 %NEXT
+    %{
+     lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot1,1);
+    YUEx1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot2,1);
+    YUEx2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    table = [sqrt(powerIn1), YUEx2, etaUExhaust1CPlot2, YUEx2-etaUExhaust1CPlot2]                %%
+
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot3,1);
+    YUEx3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaUExhaust1CPlot4,1);
+    YUEx4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot1,1);
+    YUEx5 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot2,1);
+    YUEx6 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    table = [sqrt(powerIn2), YUEx6, etaUExhaust2CPlot2, YUEx6-etaUExhaust2CPlot2]                %%
+
+    lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot3,1);
+    YUEx7 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn2),etaUExhaust2CPlot4,1);
+    YUEx8 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot1,1);
+    YUEx9 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot2,1);
+    YUEx10 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      table = [sqrt(powerIn3), YUEx10, etaUExhaust3CPlot2, YUEx10-etaUExhaust3CPlot2]                %%
+
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot3,1);
+    YUEx11 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot4,1);
+    YUEx12 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaUExhaust3CPlot5,1);
+    YUEx13 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot1,1);
+    YUEx14 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot2,1);
+    YUEx15 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      table = [sqrt(powerIn4), YUEx15, etaUExhaust4CPlot2, YUEx15-etaUExhaust4CPlot2]                %%
+
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot3,1);
+    YUEx16 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot4,1);
+    YUEx17 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaUExhaust4CPlot5,1);
+    YUEx18 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot1,1);
+    YUEx19 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot2,1);
+    YUEx20 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot3,1);
+    YUEx21 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      table = [sqrt(powerIn5), YUEx21, etaUExhaust5CPlot3, YUEx21-etaUExhaust5CPlot3]                %%
+
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot4,1);
+    YUEx22 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaUExhaust5CPlot5,1);
+    YUEx23 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot1,1);
+    YUEx24 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot2,1);
+    YUEx25 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      table = [sqrt(powerIn6), YUEx25, etaUExhaust6CPlot2, YUEx25-etaUExhaust6CPlot2]                %%
+
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot3,1);
+    YUEx26 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot4,1);
+    YUEx27 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaUExhaust6CPlot5,1);
+    YUEx28 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot1,1);
+    YUEx29 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot2,1);
+    YUEx30 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot3,1);
+    YUEx31 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      table = [sqrt(powerIn7), YUEx31, etaUExhaust7CPlot3, YUEx31-etaUExhaust7CPlot3]                %%
+
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot4,1);
+    YUEx32 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot5,1);
+    YUEx33 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot6,1);
+    YUEx34 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot7,1);
+    YUEx35 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot8,1);
+    YUEx36 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot9,1);
+    YUEx37 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot10,1);
+    YUEx38 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaUExhaust7CPlot11,1);
+    YUEx39 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn8),etaUExhaust8CPlot1,1);
+    YUEx40 = (lineFit(1,1)*sqrt(powerIn8))+(lineFit(1,2));
+      table = [sqrt(powerIn8), YUEx40, etaUExhaust8CPlot1, YUEx40-etaUExhaust8CPlot1]                %%
+
+      
+
+    
+    
+          
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot1,1);
+    YMDot1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot2,1);
+    YMDot2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+     table = [sqrt(powerIn1), YMDot2, etaMDot1CPlot2, YMDot2-etaMDot1CPlot2]  ;              %%
+
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot3,1);
+    YMDot3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot4,1);
+    YMDot4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot1,1);
+    YMDot5 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot2,1);
+    YMDot6 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+     table = [sqrt(powerIn2), YMDot6, etaMDot2CPlot2, YMDot6-etaMDot2CPlot2]                %%
+     
+    lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot3,1);
+    YMDot7 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot4,1);
+    YMDot8 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot1,1);
+    YMDot9 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+    
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot2,1);
+    YMDot10 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+       table = [sqrt(powerIn3), YMDot10, etaMDot3CPlot2, YMDot10-etaMDot3CPlot2]                %%
+
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot3,1);
+    YMDot11 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot4,1);
+    YMDot12 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn3),etaMDot3CPlot5,1);
+    YMDot13 = (lineFit(1,1)*sqrt(powerIn3))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot1,1);
+    YMDot14 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot2,1);
+    YMDot15 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot3,1);
+    YMDot16 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+       table = [sqrt(powerIn4), YMDot16, etaMDot4CPlot3, YMDot16-etaMDot4CPlot3]               %%
+
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot4,1);
+    YMDot17 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn4),etaMDot4CPlot5,1);
+    YMDot18 = (lineFit(1,1)*sqrt(powerIn4))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot1,1);
+    YMDot19 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot2,1);
+    YMDot20 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+       table = [sqrt(powerIn5), YMDot20, etaMDot5CPlot2, YMDot20-etaMDot5CPlot2]                %%
+
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot3,1);
+    YMDot21 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot4,1);
+    YMDot22 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn5),etaMDot5CPlot5,1);
+    YMDot23 = (lineFit(1,1)*sqrt(powerIn5))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot1,1);
+    YMDot24 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+       table = [sqrt(powerIn6), YMDot24, etaMDot6CPlot1, YMDot24-etaMDot6CPlot1]                %%
+
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot2,1);
+    YMDot25 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot3,1);
+    YMDot26 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot4,1);
+    YMDot27 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn6),etaMDot6CPlot5,1);
+    YMDot28 = (lineFit(1,1)*sqrt(powerIn6))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot1,1);
+    YMDot29 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot2,1);
+    YMDot30 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot3,1);
+    YMDot31 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot4,1);
+    YMDot32 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot5,1);
+    YMDot33 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+          
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot6,1);
+    YMDot34 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+       table = [sqrt(powerIn7), YMDot34, etaMDot7CPlot6, YMDot34-etaMDot7CPlot6]               %%
+    
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot7,1);
+    YMDot35 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot8,1);
+    YMDot36 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot9,1);
+    YMDot37 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot10,1);
+    YMDot38 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn7),etaMDot7CPlot11,1);
+    YMDot39 = (lineFit(1,1)*sqrt(powerIn7))+(lineFit(1,2));
+      
+     lineFit = polyfit(sqrt(powerIn8),etaMDot8CPlot1,1);
+    YMDot40 = (lineFit(1,1)*sqrt(powerIn8))+(lineFit(1,2));
+     table = [sqrt(powerIn8), YMDot40, etaMDot8CPlot1, YMDot40-etaMDot8CPlot1]               %%
+
+    %}
+    
+pIn1 = powerIn1-min(powerIn1);
+pIn2 = powerIn2-min(powerIn2);
+pIn3 = powerIn3-min(powerIn3);
+pIn4 = powerIn4-min(powerIn4);
+pIn5 = powerIn5-min(powerIn5);
+pIn6 = powerIn6-min(powerIn6);
+pIn7 = powerIn7-min(powerIn7);
+pIn8 = powerIn8-min(powerIn8);
+
+    lineFit = polyfit(sqrt(pIn1),eta1,1);
+    YMDot1 = polyval(lineFit,sqrt(pIn1));
+   
+    lineFit = polyfit(sqrt(pIn2),eta2,1);
+    YMDot2 = polyval(lineFit,sqrt(pIn2));
+    
+    lineFit = polyfit(sqrt(pIn3),eta3,1);
+    YMDot3 = polyval(lineFit,sqrt(pIn3));
+   
+    lineFit = polyfit(sqrt(pIn4),eta4,1);
+    YMDot4 = polyval(lineFit,sqrt(pIn4));
+
+lineFit = polyfit(sqrt(pIn1),eta1,1);
+    YMDot1 = polyval(lineFit,sqrt(pIn1));
+    lineFit = polyfit(sqrt(pIn2),eta2,1);
+    YMDot2 = polyval(lineFit,sqrt(pIn2));
+    lineFit = polyfit(sqrt(pIn3),eta3,1);
+    YMDot3 = polyval(lineFit,sqrt(pIn3));
+    lineFit = polyfit(sqrt(pIn4),eta4,1);
+    YMDot4 = polyval(lineFit,sqrt(pIn4));
+
+%     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot1,1);
+%     YMDot1 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+%     
+%     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot2,1);
+%     YMDot2 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+%      table = [sqrt(powerIn1), YMDot2, etaMDot1CPlot2, YMDot2-etaMDot1CPlot2]  ;              %%
+% 
+%     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot3,1);
+%     YMDot3 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+%     
+%     lineFit = polyfit(sqrt(powerIn1),etaMDot1CPlot4,1);
+%     YMDot4 = (lineFit(1,1)*sqrt(powerIn1))+(lineFit(1,2));
+%     
+%     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot1,1);
+%     YMDot5 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+%     
+%     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot2,1);
+%     YMDot6 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+%      table = [sqrt(powerIn2), YMDot6, etaMDot2CPlot2, YMDot6-etaMDot2CPlot2]                %%
+%      
+%     lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot3,1);
+%     YMDot7 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+%     
+%      lineFit = polyfit(sqrt(powerIn2),etaMDot2CPlot4,1);
+%     YMDot8 = (lineFit(1,1)*sqrt(powerIn2))+(lineFit(1,2));
+    
+    
+    
+    
+    
+     MAX_DIMENTIONS = 15;
+dataMatrix = xlsread(fileName);
+dim = size(dataMatrix);
+
+powerIn = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+uExhaust = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+mdot = zeros(MAX_DIMENTIONS,MAX_DIMENTIONS);
+eta = zeros(MAX_DIMENTIONS, MAX_DIMENTIONS);
+
+%%%%%%%%%%%%%%%%%%%%%READS IN VALUES FROM EXCEL %%%%%%%%%%%%%%%%%%%%%%%%%
+i = 1;
+
+x = 1;
+while dataMatrix(i,1) ~= 0
+    
+     n = 1;
+     
+    
+     
+while dataMatrix(i,3) == dataMatrix(i+1,3)
+   
+   powerIn(x,n) = dataMatrix(i,1);
+ uExhaust(x,n) =  dataMatrix(i,2);
+ mdot(x,n) = dataMatrix(i,3);
+ eta(x,n) = dataMatrix(i,4);
+    
+   n = n + 1;
+   i = i + 1;
+  
+end
+
+powerIn(x,n) = dataMatrix(i,1);
+uExhaust(x,n) = dataMatrix(i,2);
+mdot(x,n) = dataMatrix(i,3);
+
+ x = x+1;
+ i = i+1;
+ 
+ if dataMatrix(i,1) == 0 
+         break;
+ end
+     
+ 
+end 
+
+
+  
+ %%%%%%%%%%%%%%%% repace zeros with NaN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ for i= 1:1:MAX_DIMENTIONS
+     for j = 1:1:MAX_DIMENTIONS
+         
+        if powerIn(j,i) < 1
+            powerIn(j,i) = NaN;
+            uExhaust(j,i) = NaN;
+            mdot(j,i) = NaN;
+           eta(j,i) = NaN;
+        end
+     end
+ end
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  %  plot(powerIn1,etaMDot1C,'b',powerIn1,etaUExhaust1C,'r',powerIn2,etaMDot2C,'b',powerIn2,etaUExhaust2C,'r',powerIn3,etaMDot3C,'b',powerIn3,etaUExhaust3C,'r',powerIn4,etaMDot4C,'b',powerIn4,etaUExhaust4C,'r',powerIn5,etaMDot5C,'b',powerIn5,etaUExhaust5C,'r',powerIn6,etaMDot6C,'b',powerIn6,etaUExhaust6C,'r',powerIn7,etaMDot7C,'b',powerIn7,etaUExhaust7C,'r',powerIn8,etaMDot8C,'b',powerIn8,etaUExhaust8C,'r',powerIn1,YMDot1,'-c',powerIn1,YUEx1,'-m',powerIn1,YMDot2,'-c',powerIn1,YUEx2,'-m',powerIn1,YMDot3,'-c',powerIn1,YUEx3,'-m',powerIn1,YMDot4,'-c',powerIn1,YUEx4,'-m',powerIn2,YMDot5,'-c',powerIn2,YUEx5,'-m',powerIn2,YMDot6,'-c',powerIn2,YUEx6,'-m',powerIn2,YMDot7,'-c',powerIn2,YUEx7,'-m',powerIn2,YMDot8,'-c',powerIn2,YUEx8,'-m',powerIn3,YMDot9,'-c',powerIn3,YUEx9,'-m',powerIn3,YMDot10,'-c',powerIn3,YUEx10,'-m',powerIn3,YMDot11,'-c',powerIn3,YUEx11,'-m',powerIn3,YMDot12,'-c',powerIn3,YUEx12,'-m',powerIn3,YMDot13,'-c',powerIn3,YUEx13,'-m',powerIn4,YMDot14,'-c',powerIn4,YUEx14,'-m',powerIn4,YMDot15,'-c',powerIn4,YUEx15,'-m',powerIn4,YMDot16,'-c',powerIn4,YUEx16,'-m',powerIn4,YMDot17,'-c',powerIn4,YUEx17,'-m',powerIn4,YMDot18,'-c',powerIn4,YUEx18,'-m',powerIn5,YMDot19,'-c',powerIn5,YUEx19,'-m',powerIn5,YMDot20,'-c',powerIn5,YUEx20,'-m',powerIn5,YMDot21,'-c',powerIn5,YUEx21,'-m',powerIn5,YMDot22,'-c',powerIn5,YUEx22,'-m',powerIn5,YMDot23,'-c',powerIn5,YUEx23,'-m',powerIn6,YMDot24,'-c',powerIn6,YUEx24,'-m',powerIn6,YMDot25,'-c',powerIn6,YUEx25,'-m',powerIn6,YMDot26,'-c',powerIn6,YUEx26,'-m',powerIn6,YMDot27,'-c',powerIn6,YUEx27,'-m',powerIn6,YMDot28,'-c',powerIn6,YUEx28,'-m',powerIn7,YMDot29,'-c',powerIn7,YUEx29,'-m',powerIn7,YMDot30,'-c',powerIn7,YUEx30,'-m',powerIn7,YMDot31,'-c',powerIn7,YUEx31,'-m',powerIn7,YMDot32,'-c',powerIn7,YUEx32,'-m',powerIn7,YMDot33,'-c',powerIn7,YUEx33,'-m',powerIn7,YMDot34,'-c',powerIn7,YUEx34,'-m',powerIn7,YMDot35,'-c',powerIn7,YUEx35,'-m',powerIn7,YMDot36,'-c',powerIn7,YUEx36,'-m',powerIn7,YMDot37,'-c',powerIn7,YUEx37,'-m',powerIn7,YMDot38,'-c',powerIn7,YUEx38,'-m',powerIn7,YMDot39,'-c',powerIn7,YUEx39,'-m',powerIn8,YMDot40,'-c',powerIn8,YUEx40,'-m');
+    plot(powerIn1,YMDot1,'-c',powerIn1,YUEx1,'-.m',powerIn',eta','k+',powerIn1,YMDot2,'-c',powerIn1,YUEx2,'-.m',powerIn1,YMDot3,'-c',powerIn1,YUEx3,'-.m',powerIn1,YMDot4,'-c',powerIn1,YUEx4,'-.m',powerIn2,YMDot5,'-c',powerIn2,YUEx5,'-.m',powerIn2,YMDot6,'-c',powerIn2,YUEx6,'-.m',powerIn2,YMDot7,'-c',powerIn2,YUEx7,'-.m',powerIn2,YMDot8,'-c',powerIn2,YUEx8,'-.m',powerIn3,YMDot9,'-c',powerIn3,YUEx9,'-.m',powerIn3,YMDot10,'-c',powerIn3,YUEx10,'-.m',powerIn3,YMDot11,'-c',powerIn3,YUEx11,'-.m',powerIn3,YMDot12,'-c',powerIn3,YUEx12,'-.m',powerIn3,YMDot13,'-c',powerIn3,YUEx13,'-.m',powerIn4,YMDot14,'-c',powerIn4,YUEx14,'-.m',powerIn4,YMDot15,'-c',powerIn4,YUEx15,'-.m',powerIn4,YMDot16,'-c',powerIn4,YUEx16,'-.m',powerIn4,YMDot17,'-c',powerIn4,YUEx17,'-.m',powerIn4,YMDot18,'-c',powerIn4,YUEx18,'-.m',powerIn5,YMDot19,'-c',powerIn5,YUEx19,'-.m',powerIn5,YMDot20,'-c',powerIn5,YUEx20,'-.m',powerIn5,YMDot21,'-c',powerIn5,YUEx21,'-.m',powerIn5,YMDot22,'-c',powerIn5,YUEx22,'-.m',powerIn5,YMDot23,'-c',powerIn5,YUEx23,'-.m',powerIn6,YMDot24,'-c',powerIn6,YUEx24,'-.m',powerIn6,YMDot25,'-c',powerIn6,YUEx25,'-.m',powerIn6,YMDot26,'-c',powerIn6,YUEx26,'-.m',powerIn6,YMDot27,'-c',powerIn6,YUEx27,'-.m',powerIn6,YMDot28,'-c',powerIn6,YUEx28,'-.m',powerIn7,YMDot29,'-c',powerIn7,YUEx29,'-.m',powerIn7,YMDot30,'-c',powerIn7,YUEx30,'-.m',powerIn7,YMDot31,'-c',powerIn7,YUEx31,'-.m',powerIn7,YMDot32,'-c',powerIn7,YUEx32,'-.m',powerIn7,YMDot33,'-c',powerIn7,YUEx33,'-.m',powerIn7,YMDot34,'-c',powerIn7,YUEx34,'-.m',powerIn7,YMDot35,'-c',powerIn7,YUEx35,'-.m',powerIn7,YMDot36,'-c',powerIn7,YUEx36,'-.m',powerIn7,YMDot37,'-c',powerIn7,YUEx37,'-.m',powerIn7,YMDot38,'-c',powerIn7,YUEx38,'-.m',powerIn7,YMDot39,'-c',powerIn7,YUEx39,'-.m',powerIn8,YMDot40,'-c',powerIn8,YUEx40,'-.m');
+    
+    title(thrusterName)
+    xlabel('Power (W)')
+    ylabel('Efficiency')
+    axis([600,7500,0.2,.7])
+    legend('Constant mDot','Constant uExhaust','Measured Values','Location','southeast')
+end
+
+end
+
