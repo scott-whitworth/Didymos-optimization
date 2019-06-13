@@ -18,14 +18,13 @@ int n=0; // setting the initial iteration number equal to 0
 
 while(curTime<=timeFinal) // iterate until time is equal to the stop time
     {
+        /* M: We dont need this here, we can write this code outside this function and call using times[]
 //      array of gamma for binary output
         gamma[n] =calc_gamma(coeff,curTime, timeFinal);
 //      array of tau for binary output
         tau[n] =calc_tau(coeff,curTime, timeFinal);  
-//      array of time output as t         
-        curTime += stepSize;
-//      Time of iteration is set to the previous time plus the step size used within that iteration
-        times[n+1]=curTime;
+        */
+
 
 // Runge-Kutta algorithm       
 //      k1 = h*f(t, y[n])
@@ -63,8 +62,14 @@ while(curTime<=timeFinal) // iterate until time is equal to the stop time
             stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<(timeFinal-timeInitial)/1000)
                 stepSize=(timeFinal-timeInitial)/1000;
+
+//      array of time output as t         
+        curTime += stepSize;
+//      Time of iteration is set to the previous time plus the step size used within that iteration
+        times[n+1]=curTime;
 //TODO: SC: This comment is not what it is doing:
 //      Calculates the y[n] for the next round of calculations
+
         y[n+1] = u;        
         n++;
     }//end of while 
