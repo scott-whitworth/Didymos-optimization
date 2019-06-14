@@ -6,6 +6,7 @@
 #include <chrono> // used for clock
 #include <math.h>
 
+
 double trajectory( double x[15])
 {
 // setting the acceleration as a constant (temporary)
@@ -16,8 +17,8 @@ double trajectory( double x[15])
     // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
 
     // setting landing conditions of the asteroid (October 5, 2022)
-    elements<double> asteroid = elements<double>(1.35219423480925,	-0.911378666283127,	-0.0656258856035537,
-    -6.44929952472148e-08,	1.74030772175980e-07,	-2.87528545004242e-09);
+    elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+    -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
     // setting landing conditions of earth (October 5, 2022)
     elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
@@ -25,7 +26,7 @@ double trajectory( double x[15])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z, x[12], x[13],x[14]);
+    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z, x[0], x[1],x[2]);
 
     // setting time parameters
     double timeInitial=0; 
@@ -36,11 +37,12 @@ double trajectory( double x[15])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=x[i];
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=x[i+9];
+      coeff.tau[i]=1;
     }
+    
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;
 
@@ -76,8 +78,8 @@ double trajectoryPrint( double x[15])
     // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
 
     // setting landing conditions of the asteroid (October 5, 2022)
-    elements<double> asteroid = elements<double>(1.35219423480925,	-0.911378666283127,	-0.0656258856035537,
-    -6.44929952472148e-08,	1.74030772175980e-07,	-2.87528545004242e-09);
+    elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+    -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
     // setting landing conditions of earth (October 5, 2022)
     elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
@@ -85,7 +87,7 @@ double trajectoryPrint( double x[15])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,x[12],x[13], x[14]);
+    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,x[0], x[1],x[2]);
 
     // setting time parameters
     double timeInitial=0; 
@@ -97,11 +99,12 @@ double trajectoryPrint( double x[15])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=x[i];
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=x[i+9];
+      coeff.tau[i]=1;
     }
+
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;
 

@@ -66,7 +66,7 @@ void test01 ( )
   double *xmin;
   double ynewlo;
 
-  n = 15;
+  n = 3;
 
   start = new double[n];
   step = new double[n];
@@ -76,39 +76,17 @@ void test01 ( )
   cout << "TEST01\n";
   cout << "  Apply NELMIN to ROSENBROCK function.\n";
 
-  start[0] = 1.46064;
-  start[1] = 1.4072;
-  start[2] = 1.6128;
-  start[3] = 1.6144;
-  start[4] = 1.0814;
-  start[5] = 1.9013;
-  start[6] = 1.6301;
-  start[7] = 1.862401;
-  start[8] = 1.55202;
-  start[9] = 1.5334;
-  start[10] = 1.0304988;
-  start[11] = 1.0123319;
-  start[12] = -3.32034068725821e-09;
-  start[13] =  1.99029138292504e-07;
-  start[14] = -9.71518257891386e-12;
+  start[0] = -3.32034068725821e-09;
+  start[1] = 1.99029138292504e-07;
+  start[2] = -9.71518257891386e-12;
 
-  reqmin = 1.0E-18;
 
-  step[0] = 1.0E01;
-  step[1] = 1.0E02;
-  step[2] = 1.0E02;
-  step[3] = 1.0E01;
-  step[4] = 1.0E01;
-  step[5] = 1.0E01;
-  step[6] = 1.0E01;
-  step[7] = 1.0E01;
-  step[8] = 1.0E01;
-  step[9] = 1.0E02;
-  step[10] = 1.0E02;
-  step[11] = 1.0E01;
-  step[12] = 1.0E-08;
-  step[13] = 1.0E-09;
-  step[14] = 1.0E-09;
+  reqmin = 1.0E-10;
+
+  step[0] = 1.0e-9;
+  step[1] = 1.0e-10;
+  step[2] = 1.0e-10;
+
 
   konvge = 15;
   kcount = 30000;
