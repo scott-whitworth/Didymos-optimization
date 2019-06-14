@@ -6,7 +6,7 @@
 #include <chrono> // used for clock
 #include <math.h>
 
-double trajectory( double x[12])
+double trajectory( double x[15])
 {
 // setting the acceleration as a constant (temporary)
     double accel = 0.0001/AU;// thrust acceleration (au/s^2)
@@ -25,7 +25,7 @@ double trajectory( double x[12])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,earth.vr, earth.vtheta, earth.vz);
+    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z, x[12], x[13],x[14]);
 
     // setting time parameters
     double timeInitial=0; 
@@ -66,7 +66,7 @@ double trajectory( double x[12])
   return cost;
 }
 
-double trajectoryPrint( double x[12])
+double trajectoryPrint( double x[15])
 {
 // setting the acceleration as a constant (temporary)
     double accel = 0.0001/AU;// thrust acceleration (au/s^2)
@@ -85,7 +85,7 @@ double trajectoryPrint( double x[12])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,earth.vr, earth.vtheta, earth.vz);
+    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,x[12],x[13], x[14]);
 
     // setting time parameters
     double timeInitial=0; 
@@ -163,19 +163,3 @@ double trajectoryPrint( double x[12])
   return cost;
 }
 
-
-/*
-// Output of yp to a binary file
-  std::ofstream output;
-  
-  output.open ("orbitalMotion-accel.bin", std::ios::binary);
-  for(int i=0; i < numSteps; i++)
-  {
-    //output << yp[i];
-    output.write((char*)&yp[i], sizeof (elements<double>));
-    output.write((char*)&times[i], sizeof (double));
-    output.write((char*)&gamma[i], sizeof (double));
-    output.write((char*)&tau[i], sizeof (double));
-  }
-  output.close();
-*/

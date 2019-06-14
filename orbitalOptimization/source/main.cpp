@@ -6,6 +6,14 @@
 #include "nelder_mead.h"
 #include "orbitalMotion.h"
 
+//  Licensing:
+//    This code is distributed under the GNU LGPL license. 
+//  Modified:
+//    27 February 2008
+//  Author:
+//    John Burkardt
+//****************************************************************************
+
 using namespace std;
 
 int main ( );
@@ -14,40 +22,10 @@ double rosenbrock ( double x[2] );
 void test04 ( );
 double quartic ( double x[10] );
 
-//****************************************************************************80
-
 int main ( )
-
-//****************************************************************************80
-//
-//  Purpose:
-//    MAIN is the main program for ASA047_PRB.
-//  Discussion:
-//    ASA047_PRB tests the ASA047 library.
-//  Licensing:
-//    This code is distributed under the GNU LGPL license. 
-//  Modified:
-//    27 February 2008
-//  Author:
-//    John Burkardt
-//
 {
   double x[11];
  
-  x[0] = 0;
-  x[1] = 0;
-  x[2] = 0;
-  x[3] = 0;
-  x[4] = 0;
-  x[5] = 0;
-  x[6] = 0;
-  x[7] = 0;
-  x[8] = 0;
-  x[9] = 0;
-  x[10] = 0;
-  x[11] = 0;
-
-  trajectory(x);
   timestamp ( );
   cout << "\n";
   cout << "ASA047_PRB:\n";
@@ -66,21 +44,14 @@ int main ( )
 
   return 0;
 }
-//****************************************************************************80
+//****************************************************************************
 
 void test01 ( )
 
-//****************************************************************************80
-//
+//****************************************************************************
 //  Purpose:
 //    TEST01 demonstrates the use of NELMIN on 
-//  Licensing:
-//    This code is distributed under the GNU LGPL license. 
-//  Modified:
-//    27 February 2008
-//  Author:
-//    John Burkardt
-//
+
 {
   int i;
   int icount;
@@ -95,7 +66,7 @@ void test01 ( )
   double *xmin;
   double ynewlo;
 
-  n = 12;
+  n = 15;
 
   start = new double[n];
   step = new double[n];
@@ -105,36 +76,42 @@ void test01 ( )
   cout << "TEST01\n";
   cout << "  Apply NELMIN to ROSENBROCK function.\n";
 
-  start[0] = -5.46064;
-  start[1] = 47.4072;
-  start[2] = 27.6128;
-  start[3] = -55.6144;
-  start[4] = -54.0814;
-  start[5] = 20.9013;
+  start[0] = 1.46064;
+  start[1] = 1.4072;
+  start[2] = 1.6128;
+  start[3] = 1.6144;
+  start[4] = 1.0814;
+  start[5] = 1.9013;
   start[6] = 1.6301;
-  start[7] = -0.862401;
-  start[8] = -9.55202;
-  start[9] = 12.5334;
+  start[7] = 1.862401;
+  start[8] = 1.55202;
+  start[9] = 1.5334;
   start[10] = 1.0304988;
-  start[11] = 0.0123319;
+  start[11] = 1.0123319;
+  start[12] = -3.32034068725821e-09;
+  start[13] =  1.99029138292504e-07;
+  start[14] = -9.71518257891386e-12;
 
-  reqmin = 1.0E-12;
+  reqmin = 1.0E-18;
 
-  step[0] = 1.0E03;
-  step[1] = 1.0E03;
-  step[2] = 1.0E03;
-  step[3] = 1.0E03;
-  step[4] = 1.0E03;
-  step[5] = 1.0E03;
-  step[6] = 1.0E03;
-  step[7] = 1.0E03;
-  step[8] = 1.0E03;
-  step[9] = 1.0E03;
-  step[10] = 1.0E03;
-  step[11] = 1.0E03;
+  step[0] = 1.0E01;
+  step[1] = 1.0E02;
+  step[2] = 1.0E02;
+  step[3] = 1.0E01;
+  step[4] = 1.0E01;
+  step[5] = 1.0E01;
+  step[6] = 1.0E01;
+  step[7] = 1.0E01;
+  step[8] = 1.0E01;
+  step[9] = 1.0E02;
+  step[10] = 1.0E02;
+  step[11] = 1.0E01;
+  step[12] = 1.0E-08;
+  step[13] = 1.0E-09;
+  step[14] = 1.0E-09;
 
-  konvge = 5;
-  kcount = 10000;
+  konvge = 15;
+  kcount = 30000;
 
   cout << "\n";
   cout << "  Starting point X:\n";
@@ -178,42 +155,17 @@ void test01 ( )
 
   return;
 }
-//****************************************************************************80
+//****************************************************************************
 
 double rosenbrock ( double x[2] )
 
-//****************************************************************************80
-//
+//****************************************************************************
 //  Purpose:
-//
 //    ROSENBROCK evaluates the Rosenbrock parabolic value function.
-//
-//  Licensing:
-//
-//    This code is distributed under the GNU LGPL license. 
-//
-//  Modified:
-//
-//    27 February 2008
-//
-//  Author:
-//
-//    John Burkardt
-//
-//  Reference:
-//
-//    R ONeill,
-//    Algorithm AS 47:
-//    Function Minimization Using a Simplex Procedure,
-//    Applied Statistics,
-//    Volume 20, Number 3, 1971, pages 338-345.
-//
-//  Parameters:
-//
+//  Parameters
 //    Input, double X[2], the argument.
-//
 //    Output, double ROSENBROCK, the value of the function.
-//
+
 {
   double fx;
   double fx1;
@@ -227,21 +179,14 @@ double rosenbrock ( double x[2] )
 
   return fx;
 }
-//****************************************************************************80
+//****************************************************************************
 
 void test04 ( )
 
-//****************************************************************************80
-//
+//****************************************************************************
 //  Purpose:
 //    TEST04 demonstrates the use of NELMIN on QUARTIC.
-//  Licensing:
-//    This code is distributed under the GNU LGPL license. 
-//  Modified:
-//    19 February 2008
-//  Author:
-//    John Burkardt
-//
+
 {
   int i;
   int icount;
@@ -320,42 +265,17 @@ void test04 ( )
 
   return;
 }
-//****************************************************************************80
+//****************************************************************************
 
 double quartic ( double x[10] )
 
-//****************************************************************************80
-//
+//****************************************************************************
 //  Purpose:
-//
 //    QUARTIC evaluates a function defined by a sum of fourth powers.
-//
-//  Licensing:
-//
-//    This code is distributed under the GNU LGPL license. 
-//
-//  Modified:
-//
-//    27 February 2008
-//
-//  Author:
-//
-//    John Burkardt
-//
-//  Reference:
-//
-//    R ONeill,
-//    Algorithm AS 47:
-//    Function Minimization Using a Simplex Procedure,
-//    Applied Statistics,
-//    Volume 20, Number 3, 1971, pages 338-345.
-//
 //  Parameters:
-//
 //    Input, double X[10], the argument.
-//
 //    Output, double QUARTIC, the value of the function.
-//
+
 {
   double fx;
   int i;
