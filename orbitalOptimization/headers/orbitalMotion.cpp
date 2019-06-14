@@ -32,7 +32,6 @@ double trajectory( double x[3])
     double timeInitial=0; 
     double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
     double deltaT; // time step
-    int numSteps = 50000; // initial guess for the number of time steps, guess for the memory allocated 
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
@@ -50,30 +49,21 @@ double trajectory( double x[3])
     double Fmin = 1e-18;
 
     // Initialize memory for the solution vector of the dependant solution
-    elements<double>* yp;
-    yp = new elements<double>[numSteps];
-    // Initialize memory for the values of the independent variable
-
+    elements<double> yp;
 
     int lastStep = 0;
   
     rk4Simple(timeInitial,timeFinal,spaceCraft,deltaT,yp,absTol,coeff,accel,lastStep);
 
-  elements<double> yFinal;
-  yFinal = yp[lastStep];
-  
-  // cleaning up dynamic yp, time, gamma, and tau.
-
-
   double cost;
-  cost = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);
+  cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
 
   if (cost < Fmin)
     cost = 0;
   
  std::cout<<"The cost value is: "<<cost<<std::endl;
 
-  delete [] yp;
+
   return cost;
 }
 
