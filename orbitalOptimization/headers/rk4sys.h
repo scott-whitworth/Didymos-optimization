@@ -5,7 +5,27 @@
 //TODO: SC: This needs to be updated to include information on coeff, gamma and tau
 //TODO: SC: Why are you returning an array of elements? You are also taking in y which is an array of elements?
 
-// Fourth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
+// fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
+// Using adaptive time stepping  
+// Parameters: 
+//      timeInitial: start time (s)
+//      timeFinal: end time (s)
+//      times:an array that contains the time for each data point
+//      y0: initial conditions (position,velocity)
+//      stepSize: first time interval between data points (s)
+//      y: an array which contains the soultion to the dependent variable
+//      absTol: Sets the error tolerence for Runge-Kutta
+//      coeff: passes the structure containing the fourier coefficients for gamma and tau
+//      accel: constant value of spacecraft's acceleration (au/s^2)
+//      gamma: an array which contains all gamma values for a given run
+//      tau: an array which contains all tau values for a given run
+//      lastStep: returns the index of the last element of y
+// Output: A dynamic array of position and velocity sets, last entry is final conditions
+template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, 
+T stepSize, elements<T> y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau, int & lastStep);
+
+
+// fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // Using adaptive time stepping  
 // Parameters: 
 //      timeInitial: start time (s)
@@ -15,10 +35,10 @@
 //      stepSize: time interval between data points (s)
 //      y: an array which contains the soultion to the dependent variable
 //      absTol: Sets the error tolerence for Runge-Kutta
-// Output: A dynamic array of position and velocity sets, last entry is final conditions
-template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, 
-T stepSize, elements<T> y, const T & absTol, coefficients<T> coeff, const T & accel, T *gamma, T *tau, int & lastStep);
-
+//      coeff: passes the structure containing the fourier coefficients for gamma and tau
+//      accel: constant value of spacecraft's acceleration (au/s^2)
+//      lastStep: returns the index of the last element of y
+// Output: the final position and velocity sets
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
 T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, int & lastStep);
 

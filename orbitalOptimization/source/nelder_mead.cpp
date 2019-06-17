@@ -4,24 +4,33 @@
 # include <ctime>
 # include <cmath>
 # include "nelder_mead.h"
-using namespace std;
 
-
-
-//****************************************************************************80
+//  Licensing:
+//    This code is distributed under the GNU LGPL license. 
+//  Modified:
+//    27 February 2008
+//  Author:
+//    Original FORTRAN77 version by R ONeill.
+//    C++ version by John Burkardt.
+//  Reference:
+//    John Nelder, Roger Mead,
+//    A simplex method for function minimization,
+//    Computer Journal,
+//    Volume 7, 1965, pages 308-313.
+//
+//    R ONeill,
+//    Algorithm AS 47:
+//    Function Minimization Using a Simplex Procedure,
+//    Applied Statistics,
+//    Volume 20, Number 3, 1971, pages 338-345.
 
 void nelmin ( double fn ( double x[] ), int n, double start[], double xmin[], 
   double *ynewlo, double reqmin, double step[], int konvge, int kcount, 
   int *icount, int *numres, int *ifault )
 
-//****************************************************************************80
-//
 //  Purpose:
-//
 //    NELMIN minimizes a function using the Nelder-Mead algorithm.
-//
 //  Discussion:
-//
 //    This routine seeks the minimum value of a user-specified function.
 //
 //    Simplex function minimisation procedure due to Nelder+Mead(1965),
@@ -41,33 +50,6 @@ void nelmin ( double fn ( double x[] ), int n, double start[], double xmin[],
 //
 //    This routine does not include a termination test using the
 //    fitting of a quadratic surface.
-//
-//  Licensing:
-//
-//    This code is distributed under the GNU LGPL license. 
-//
-//  Modified:
-//
-//    27 February 2008
-//
-//  Author:
-//
-//    Original FORTRAN77 version by R ONeill.
-//    C++ version by John Burkardt.
-//
-//  Reference:
-//
-//    John Nelder, Roger Mead,
-//    A simplex method for function minimization,
-//    Computer Journal,
-//    Volume 7, 1965, pages 308-313.
-//
-//    R ONeill,
-//    Algorithm AS 47:
-//    Function Minimization Using a Simplex Procedure,
-//    Applied Statistics,
-//    Volume 20, Number 3, 1971, pages 338-345.
-//
 //  Parameters:
 //
 //    Input, double FN ( double x[] ), the name of the routine which evaluates
@@ -535,7 +517,7 @@ void timestamp ( void )
 
   len = strftime ( time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm );
 
-  cout << time_buffer << "\n";
+  std::cout << time_buffer << "\n";
 
   return;
 # undef TIME_SIZE
