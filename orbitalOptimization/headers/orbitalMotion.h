@@ -1,7 +1,7 @@
 #ifndef orbitalMotion_h
 #define orbitalMotion_h
 
-double trajectory( double x[3]);
+double trajectory( double x[]);
 
 
 #include "orbitalMotion.cpp"

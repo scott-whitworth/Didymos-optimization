@@ -5,11 +5,17 @@
 #include <ctime> // used for clock
 #include <chrono> // used for clock
 #include <math.h>
+#define earthRadius 1.49598261e11/AU
+#define earthMass 5.9742e24
+#define ESOI earthRadius*pow((earthMass/massSun),.4)
+#define C3Energy 4.676e6 // (m^2/s^2)
+#define vEscape sqrt(2*C3Energy)/AU
 
-double trajectory( double x[12])
+
+double trajectory( double x[])
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel = 0.001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -25,7 +31,8 @@ double trajectory( double x[12])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,earth.vr, earth.vtheta, earth.vz);
+    elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[12]), earth.theta+asin(sin(M_PI-x[12])*ESOI/earth.r),earth.z,
+    earth.vr+sin(x[13])*vEscape, earth.vtheta+cos(x[13])*vEscape,earth.vz);
 
     // setting time parameters
     double timeInitial=0; 
@@ -66,10 +73,10 @@ double trajectory( double x[12])
   return cost;
 }
 
-double trajectoryPrint( double x[12])
+double trajectoryPrint( double x[])
 {
 // setting the acceleration as a constant (temporary)
-    double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel = 0.001/AU;// thrust acceleration (au/s^2)
 
     // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
     // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -85,7 +92,8 @@ double trajectoryPrint( double x[12])
 
     // setting initial conditions of the spacecraft
     // not the actual initial conditions, right now just equal to the earth's landing date conditions
-    elements<double> spaceCraft = elements<double>(earth.r, earth.theta, earth.z,earth.vr, earth.vtheta, earth.vz);
+    elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[12]), earth.theta+asin(sin(M_PI-x[12])*ESOI/earth.r),earth.z,
+    earth.vr+sin(x[13])*vEscape, earth.vtheta+cos(x[13])*vEscape,earth.vz);
 
     // setting time parameters
     double timeInitial=0; 

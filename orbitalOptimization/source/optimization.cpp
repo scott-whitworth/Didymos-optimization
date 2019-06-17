@@ -32,22 +32,7 @@ int main ( )
 //    John Burkardt
 //
 {
-  double x[11];
- 
-  x[0] = 0;
-  x[1] = 0;
-  x[2] = 0;
-  x[3] = 0;
-  x[4] = 0;
-  x[5] = 0;
-  x[6] = 0;
-  x[7] = 0;
-  x[8] = 0;
-  x[9] = 0;
-  x[10] = 0;
-  x[11] = 0;
-
-  trajectory(x);
+  
   timestamp ( );
   cout << "\n";
   cout << "ASA047_PRB:\n";
@@ -105,35 +90,39 @@ void test01 ( )
   cout << "TEST01\n";
   cout << "  Apply NELMIN to ROSENBROCK function.\n";
 
-  start[0] = -5.46064;
-  start[1] = 47.4072;
-  start[2] = 27.6128;
-  start[3] = -55.6144;
-  start[4] = -54.0814;
-  start[5] = 20.9013;
-  start[6] = 1.6301;
-  start[7] = -0.862401;
-  start[8] = -9.55202;
-  start[9] = 12.5334;
-  start[10] = 1.0304988;
-  start[11] = 0.0123319;
+  start[0] = 1.5;
+  start[1] = 1.5;
+  start[2] = 1.5;
+  start[3] = 1.5;
+  start[4] = 1.5;
+  start[5] = 1.5;
+  start[6] = 1.5;
+  start[7] = 1.5;
+  start[8] = 1.5;
+  start[9] = 1.5;
+  start[10] = 1.5;
+  start[11] = 1.5;
+  start[12] = 0.5;
+  start[13] = 0.5;
 
-  reqmin = 1.0E-12;
+  reqmin = 1.0E-26;
 
-  step[0] = 1.0E03;
-  step[1] = 1.0E03;
-  step[2] = 1.0E03;
-  step[3] = 1.0E03;
-  step[4] = 1.0E03;
-  step[5] = 1.0E03;
-  step[6] = 1.0E03;
-  step[7] = 1.0E03;
-  step[8] = 1.0E03;
-  step[9] = 1.0E03;
-  step[10] = 1.0E03;
-  step[11] = 1.0E03;
+  step[0] = 1.0E01;
+  step[1] = 1.0E01;
+  step[2] = 1.0E01;
+  step[3] = 1.0E01;
+  step[4] = 1.0E01;
+  step[5] = 1.0E01;
+  step[6] = 1.0E01;
+  step[7] = 1.0E01;
+  step[8] = 1.0E01;
+  step[9] = 1.0E01;
+  step[10] = 1.0E01;
+  step[11] = 1.0E01;
+  step[12] = 1.0E01;
+  step[13] = 1.0E01;
 
-  konvge = 5;
+  konvge = 15;
   kcount = 10000;
 
   cout << "\n";
@@ -141,7 +130,7 @@ void test01 ( )
   cout << "\n";
   for ( i = 0; i < n; i++ )
   {
-    cout << "  " << setw(14) << start[i] << "\n";
+    cout << "" << setw(14) << start[i] << "\n";
   }
 
   ynewlo = trajectory ( start );
@@ -159,7 +148,7 @@ void test01 ( )
   cout << "\n";
   for ( i = 0; i < n; i++ )
   {
-    cout << "  " << setw(14) << xmin[i] << "\n";
+    cout << setw(14) << xmin[i] << ",";
   }
 
   cout << "\n";
@@ -286,7 +275,7 @@ void test04 ( )
   cout << "\n";
   for ( i = 0; i < n; i++ )
   {
-    cout << "  " << setw(14) << start[i] << "\n";
+    cout << setw(14) << start[i] << "\n";
   }
 
   ynewlo = quartic ( start );
