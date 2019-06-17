@@ -107,20 +107,20 @@ void test01 ( )
 
   reqmin = 1.0E-26;
 
-  step[0] = 1.0E01;
-  step[1] = 1.0E01;
-  step[2] = 1.0E01;
-  step[3] = 1.0E01;
-  step[4] = 1.0E01;
-  step[5] = 1.0E01;
-  step[6] = 1.0E01;
-  step[7] = 1.0E01;
-  step[8] = 1.0E01;
-  step[9] = 1.0E01;
-  step[10] = 1.0E01;
-  step[11] = 1.0E01;
-  step[12] = 1.0E01;
-  step[13] = 1.0E01;
+  step[0] = 1.0E-1;
+  step[1] = 1.0E-1;
+  step[2] = 1.0E-1;
+  step[3] = 1.0E-1;
+  step[4] = 1.0E-1;
+  step[5] = 1.0E-1;
+  step[6] = 1.0E-1;
+  step[7] = 1.0E-1;
+  step[8] = 1.0E-1;
+  step[9] = 1.0E-1;
+  step[10] = 1.0E-1;
+  step[11] = 1.0E-1;
+  step[12] = 1.0E00;
+  step[13] = 1.0E00;
 
   konvge = 15;
   kcount = 10000;

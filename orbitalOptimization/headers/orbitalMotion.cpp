@@ -5,11 +5,6 @@
 #include <ctime> // used for clock
 #include <chrono> // used for clock
 #include <math.h>
-#define earthRadius 1.49598261e11/AU
-#define earthMass 5.9742e24
-#define ESOI earthRadius*pow((earthMass/massSun),.4)
-#define C3Energy 4.676e6 // (m^2/s^2)
-#define vEscape sqrt(2*C3Energy)/AU
 
 
 double trajectory( double x[])
@@ -43,10 +38,10 @@ double trajectory( double x[])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=1;
+      coeff.gamma[i]=x[i];
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=1;
+      coeff.tau[i]=x[i+9];
     }
     
     // setting Runge-Kutta tolerance
@@ -106,10 +101,10 @@ double trajectoryPrint( double x[])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=1;
+      coeff.gamma[i]=x[i];
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=1;
+      coeff.tau[i]=x[i+9];
     }
 
     // setting Runge-Kutta tolerance

@@ -7,11 +7,7 @@
 #include "elements.h"
 #include "coefficients.h"
 #include "calcThrust.h"
-
-#define AU 1.49597870691e11// units: m; used to convert meters to astronomical units
-#define constG 1.99349603314131e-44 //units: AU^3/(s^2 * kg); gravitational constant- used to calculate the gravitational force
-#define massSun 1.98892e30//kg
-
+#include "constants.h"
 
 //Calculates the corresponding k for the Runge-Kutta computation
 // Units for k

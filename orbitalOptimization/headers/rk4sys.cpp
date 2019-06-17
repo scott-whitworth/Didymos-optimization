@@ -137,7 +137,10 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
                 stepSize=(timeFinal-timeInitial)/1000;
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
-
+        if (u.r<0.5)
+        {
+                u.r=10000;
+        }
 
 //      Calculates the y[n] for the next round of calculations
         y = u;  

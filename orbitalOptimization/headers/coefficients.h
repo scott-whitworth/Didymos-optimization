@@ -9,7 +9,7 @@ template <class T> struct coefficients {
     const static int gammaSize=9;
     T gamma[gammaSize]; //in-plane coefficients angle
     //setting the size of tau
-    const static int tauSize=9;
+    const static int tauSize=3;
     T tau[tauSize]; //out-of-plane coefficients angle
 
     //overload the stream output for elements used for writing to a file
