@@ -3,6 +3,8 @@
 
 double trajectory( double x[]);
 
+double trajectoryPrint (double x[]);
+
 
 #include "orbitalMotion.cpp"
 #endif

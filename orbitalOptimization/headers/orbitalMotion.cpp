@@ -5,12 +5,6 @@
 #include <ctime> // used for clock
 #include <chrono> // used for clock
 #include <math.h>
-#define earthRadius 1.49598261e11/AU
-#define earthMass 5.9742e24
-#define ESOI earthRadius*pow((earthMass/massSun),.4)
-#define C3Energy 4.676e6 // (m^2/s^2)
-#define vEscape sqrt(2*C3Energy)/AU
-#define Torbital 6.653820100923719e+07//orbital period of the asteroid (s)
 
 double trajectory( double x[])
 {
