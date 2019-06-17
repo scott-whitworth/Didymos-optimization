@@ -10,9 +10,6 @@ using namespace std;
 
 int main ( );
 void test01 ( );
-double rosenbrock ( double x[2] );
-void test04 ( );
-double quartic ( double x[10] );
 
 //****************************************************************************80
 
@@ -119,8 +116,8 @@ void test01 ( )
   step[9] = 1.0E01;
   step[10] = 1.0E01;
   step[11] = 1.0E01;
-  step[12] = 1.0E01;
-  step[13] = 1.0E01;
+  step[12] = 1.0E00;
+  step[13] = 1.0E00;
 
   konvge = 15;
   kcount = 10000;

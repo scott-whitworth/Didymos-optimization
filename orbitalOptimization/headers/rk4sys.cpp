@@ -79,7 +79,7 @@ while(curTime<timeFinal) // iterate until time is equal to the stop time
         }
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
-
+        
 
 //      Calculates the y[n] for the next round of calculations
         y[n+1] = u;   
@@ -137,7 +137,10 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
                 stepSize=(timeFinal-timeInitial)/1000;
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
-
+        if (u.r<0.5)
+        {
+                u.r=1000;
+        }
 
 //      Calculates the y[n] for the next round of calculations
         y = u;  

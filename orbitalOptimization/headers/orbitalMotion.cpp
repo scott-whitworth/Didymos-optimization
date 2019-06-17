@@ -10,7 +10,7 @@
 #define ESOI earthRadius*pow((earthMass/massSun),.4)
 #define C3Energy 4.676e6 // (m^2/s^2)
 #define vEscape sqrt(2*C3Energy)/AU
-
+#define Torbital 6.653820100923719e+07//orbital period of the asteroid (s)
 
 double trajectory( double x[])
 {
@@ -36,17 +36,17 @@ double trajectory( double x[])
 
     // setting time parameters
     double timeInitial=0; 
-    double timeFinal=6.653820100923719e+07/2; // Orbital period of asteroid(s)
+    double timeFinal=Torbital/5; // Orbital period of asteroid(s)
     double deltaT; // time step
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=1;
+      coeff.gamma[i]=x[i];
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=1;
+      coeff.tau[i]=x[i+9];
     }
     
     // setting Runge-Kutta tolerance
@@ -98,18 +98,18 @@ double trajectoryPrint( double x[])
 
     // setting time parameters
     double timeInitial=0; 
-    double timeFinal=6.653820100923719e+07/2; // Orbital period of asteroid(s)
+    double timeFinal=Torbital/5; // Orbital period of asteroid(s)
     double deltaT; // time step
-    int numSteps = 50000; // initial guess for the number of time steps, guess for the memory allocated 
+    int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=1;
+      coeff.gamma[i]=x[i];
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=1;
+      coeff.tau[i]=x[i+9];
     }
 
     // setting Runge-Kutta tolerance
