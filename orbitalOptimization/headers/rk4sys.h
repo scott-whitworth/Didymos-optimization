@@ -40,7 +40,24 @@ T stepSize, elements<T> y, const T & absTol, coefficients<T> coeff, const T & ac
 //      lastStep: returns the index of the last element of y
 // Output: the final position and velocity sets
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel, int & lastStep);
+T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & accel);
+
+// fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
+// Using adaptive time stepping  
+// Parameters: 
+//      timeInitial: start time (s)
+//      timeFinal: end time (s)
+//      times:an array that contains the time for each data point
+//      y0: initial conditions (position,velocity)
+//      stepSize: time interval between data points (s)
+//      y: an array which contains the soultion to the dependent variable
+//      absTol: Sets the error tolerence for Runge-Kutta
+//      coeff: passes the structure containing the fourier coefficients for gamma and tau
+//      accel: constant value of spacecraft's acceleration (au/s^2)
+//      lastStep: returns the index of the last element of y
+// Output: the final position and velocity sets
+template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
+T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel);
 
 // Calculates the scaling factor for the stepSize
 // Parameters:

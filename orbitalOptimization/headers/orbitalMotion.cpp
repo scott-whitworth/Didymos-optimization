@@ -9,6 +9,7 @@
 // solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 double trajectory( double x[])
 {
+
   // setting the acceleration as a constant (temporary)
   double accel = 0.001/AU;// thrust acceleration (au/s^2)
 
@@ -21,11 +22,12 @@ double trajectory( double x[])
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
   // setting landing conditions of earth (October 5, 2022)
-  elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
-  -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+  // change to positions and velocities based on landing date - triptime
+  //elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
+  //-3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+  elements<double> earth =  earthInitial(Torbital);
 
   // setting initial conditions of the spacecraft
-  // change earth variables to be equal to the position of earth at landing date - triptime
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[12]), //earth.r+ESOI*cos(alpha)
 
   /*Initial Angular Position is calculated using law of sines and the 
@@ -55,7 +57,7 @@ double trajectory( double x[])
 
   // setting time parameters
   double timeInitial=0; 
-  double timeFinal=Torbital/5; // Orbital period of asteroid(s)
+  double timeFinal=Torbital; // Orbital period of asteroid(s)
   double deltaT; // time step
   deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
@@ -77,10 +79,9 @@ double trajectory( double x[])
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
-  int lastStep = 0;
 
   // calling rk4simple for efficieny, calculates the last value of y
-  rk4Simple(timeInitial,timeFinal,spaceCraft,deltaT,yp,absTol,coeff,accel,lastStep);
+  rk4Simple(timeInitial,Torbital,spaceCraft,deltaT,yp,absTol,coeff,accel);
 
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
@@ -108,8 +109,9 @@ double trajectoryPrint( double x[])
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
   // setting landing conditions of earth (October 5, 2022)
-  elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
-  -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+  //elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
+  //-3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+  elements<double> earth =  earthInitial(Torbital);
 
   // setting initial conditions of the spacecraft
   // not the actual initial conditions, right now just equal to the earth's landing date conditions
@@ -118,7 +120,7 @@ double trajectoryPrint( double x[])
 
   // setting time parameters
   double timeInitial=0; 
-  double timeFinal=Torbital/5; // Orbital period of asteroid(s)
+  double timeFinal=Torbital; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
   deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
@@ -154,7 +156,7 @@ double trajectoryPrint( double x[])
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,timeFinal,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep);
+  rk4sys(timeInitial,Torbital,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];
@@ -184,7 +186,6 @@ double trajectoryPrint( double x[])
     output.write((char*)&tau[i], sizeof (double));
   }
   output.close();
-  
 
   delete [] yp;
   delete [] times;
@@ -194,3 +195,24 @@ double trajectoryPrint( double x[])
   return cost;
 }
 
+elements<double> earthInitial(double tripTime)
+{
+    coefficients<double> earthCoeff;
+    for (int i=0;i<earthCoeff.gammaSize;i++){
+        earthCoeff.gamma[i]=0;
+    }
+    for (int i=0;i<earthCoeff.tauSize;i++){
+        earthCoeff.tau[i]=0;
+    }
+
+    double earthAccel = 0;
+    elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
+    -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+    double timeInitial= 0; 
+    double deltaT; // time step
+    deltaT = (tripTime-timeInitial)/1e9; // initial guess for time step, small is preferable
+    elements<double> yp;
+    double absTol = 1e-12;
+    rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
+    return yp; 
+}
