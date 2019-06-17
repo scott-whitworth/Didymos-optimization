@@ -22,8 +22,8 @@ double trajectory( double x[])
     // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
 
     // setting landing conditions of the asteroid (October 5, 2022)
-    elements<double> asteroid = elements<double>(1.35219423480925,	-0.911378666283127,	-0.0656258856035537,
-    -6.44929952472148e-08,	1.74030772175980e-07,	-2.87528545004242e-09);
+    elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+    -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
     // setting landing conditions of earth (October 5, 2022)
     elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
@@ -43,11 +43,12 @@ double trajectory( double x[])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=x[i];
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=x[i+9];
+      coeff.tau[i]=1;
     }
+    
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;
 
@@ -83,8 +84,8 @@ double trajectoryPrint( double x[])
     // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
 
     // setting landing conditions of the asteroid (October 5, 2022)
-    elements<double> asteroid = elements<double>(1.35219423480925,	-0.911378666283127,	-0.0656258856035537,
-    -6.44929952472148e-08,	1.74030772175980e-07,	-2.87528545004242e-09);
+    elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+    -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
     // setting landing conditions of earth (October 5, 2022)
     elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
@@ -105,11 +106,12 @@ double trajectoryPrint( double x[])
     // setup of thrust angle calculations
     coefficients<double> coeff;
     for (int i=0;i<coeff.gammaSize;i++){
-      coeff.gamma[i]=x[i];
+      coeff.gamma[i]=1;
     }
     for (int i=0;i<coeff.tauSize;i++){
-      coeff.tau[i]=x[i+9];
+      coeff.tau[i]=1;
     }
+
     // setting Runge-Kutta tolerance
     double absTol = 1e-12;
 
@@ -171,19 +173,3 @@ double trajectoryPrint( double x[])
   return cost;
 }
 
-
-/*
-// Output of yp to a binary file
-  std::ofstream output;
-  
-  output.open ("orbitalMotion-accel.bin", std::ios::binary);
-  for(int i=0; i < numSteps; i++)
-  {
-    //output << yp[i];
-    output.write((char*)&yp[i], sizeof (elements<double>));
-    output.write((char*)&times[i], sizeof (double));
-    output.write((char*)&gamma[i], sizeof (double));
-    output.write((char*)&tau[i], sizeof (double));
-  }
-  output.close();
-*/

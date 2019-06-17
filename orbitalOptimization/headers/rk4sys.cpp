@@ -9,7 +9,8 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     y[0] = y0;
     times[0]=timeInitial;
     //      array of gamma for binary output
-        gamma[0] =calc_gamma(coeff,timeInitial, timeFinal);
+
+        gamma[0] =cos(calc_gamma(coeff,timeInitial, timeFinal))*sin(calc_tau(coeff,timeInitial, timeFinal));
 //      array of tau for binary output
         tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
     // k variables for Runge-Kutta calculation of y[n+1]
@@ -55,7 +56,7 @@ while(curTime<timeFinal) // iterate until time is equal to the stop time
 //      Time of iteration is set to the previous time plus the step size used within that iteration
         times[n+1]=curTime;
         //      array of gamma for binary output
-        gamma[n+1] =calc_gamma(coeff,curTime, timeFinal);
+        gamma[n+1] =cos(calc_gamma(coeff,curTime, timeFinal))*sin(calc_tau(coeff,curTime, timeFinal));
 //      array of tau for binary output
         tau[n+1] =calc_tau(coeff,curTime, timeFinal);  
 
