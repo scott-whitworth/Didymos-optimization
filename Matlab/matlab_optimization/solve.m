@@ -38,8 +38,8 @@ disp(V_ini)
 
 %% Solving differential motions
 
-gammaCoeff= [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
-tauCoeff=[1,1,1,1,1,1,1,1,1,1,1];
+gammaCoeff= [3.04674,       1.41777,      0.464943,      0.936405,       1.50647,        1.4136,       7.10873,       1.47479,     0.0799631];
+tauCoeff=[1.45942,       1.09074,       2.20416];
 accel=0.000/au;
 options = odeset('RelTol',1e-15);
 tic
