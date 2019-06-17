@@ -36,7 +36,7 @@ double trajectory( double x[])
 
     // setting time parameters
     double timeInitial=0; 
-    double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
+    double timeFinal=6.653820100923719e+07/2; // Orbital period of asteroid(s)
     double deltaT; // time step
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
@@ -98,7 +98,7 @@ double trajectoryPrint( double x[])
 
     // setting time parameters
     double timeInitial=0; 
-    double timeFinal=6.653820100923719e+07; // Orbital period of asteroid(s)
+    double timeFinal=6.653820100923719e+07/2; // Orbital period of asteroid(s)
     double deltaT; // time step
     int numSteps = 50000; // initial guess for the number of time steps, guess for the memory allocated 
     deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
