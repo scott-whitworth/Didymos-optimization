@@ -98,6 +98,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeInitial; // setting time equal to the start time
+
     int n=0; // setting the initial iteration number equal to 0
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
@@ -160,7 +161,6 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeFinal; // setting time equal to the start time
-    stepSize = stepSize;
     int n=0; // setting the initial iteration number equal to 0
 
     while(curTime>timeInitial) // iterates in reverse
@@ -180,7 +180,7 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
         k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);        
         //k7 = h*f(t, y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
         k7 = calc_k(stepSize,y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
-
+        
 
         // Previous value 
         //v = y[n] + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
@@ -191,25 +191,24 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
         elements<T> u = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187/6784 + k6*11/84;  
 
         //array of time output as t         
-        curTime += stepSize;
+        curTime = curTime + stepSize;
 
         //Alter the step size for the next iteration
         stepSize =stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/2)
+        if (-stepSize>(timeFinal-timeInitial)/2)
             stepSize=-(timeFinal-timeInitial)/2;
-        else if (stepSize<((timeFinal-timeInitial)/1000))
+        else if (-stepSize<((timeFinal-timeInitial)/1000))
             stepSize=-(timeFinal-timeInitial)/1000;
         if((curTime+stepSize)<timeInitial)
-            stepSize=(timeInitial-curTime);
+            stepSize=-(curTime-timeInitial);
 
         //Calculates the y[n] for the next round of calculations
         y = u;  
         n++;
     }//end of while 
 }
-
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
 {
 //TODO: SC: normTotError might mean Normilize Total Error, but it should be documented. Also what does scale refer to? Why do we need to variables?

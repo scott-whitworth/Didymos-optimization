@@ -10,5 +10,6 @@
 #define constG 1.99349603314131e-44 //units: AU^3/(s^2 * kg); gravitational constant- used to calculate the gravitational force
 #define massSun 1.98892e30//kg
 #define Torbital 6.653820100923719e+07 // orbital period time of the asteroid (s)
+#define TRIP 6.653820100923719e+07/2 // half of the orbital period time of the asteroid (s)
 
 #endif
