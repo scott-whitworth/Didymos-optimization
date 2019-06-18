@@ -15,10 +15,10 @@
 
 // starting location in the optimization array
 #define gamma_offset 0 
-#define tau_offset 7 
-#define alpha_offset 10
-#define beta_offset 11 
-#define tripTime_offset 12 
+#define tau_offset 9
+#define alpha_offset 12
+#define beta_offset 13 
+#define tripTime_offset 14
 
 // Spacecraft constants
 #define wetMass 3000 // fuel + dry mass (kg)

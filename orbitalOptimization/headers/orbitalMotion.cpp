@@ -174,7 +174,7 @@ double trajectoryPrint( double x[])
   yFinal = yp[lastStep];
   
   // cleaning up dynamic yp, time, gamma, and tau.
-
+ 
 
   double cost;
   cost = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);
@@ -182,7 +182,7 @@ double trajectoryPrint( double x[])
   if (cost < Fmin)
     cost = 0;
   
- 
+std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl;
 
   
   // Output of yp to a binary file

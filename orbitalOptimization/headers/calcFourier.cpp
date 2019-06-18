@@ -1,4 +1,5 @@
 #include "calcFourier.h"
+#include "acceleration.h"
 #include <math.h> // used for sine and cosine functions
 #include <iostream> // used for cout
 

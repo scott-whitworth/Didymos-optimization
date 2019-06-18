@@ -26,5 +26,6 @@ template <class T> T calc_gamma(const coefficients<T> & coeff,const T & curTime,
 // output: in-plane angle derived from normalized time and tau Fourier series
 template <class T> T calc_tau(const coefficients<T> & coeff,const T & curTime, const T & timeFinal);
 
+
 #include "calcFourier.cpp"
 #endif

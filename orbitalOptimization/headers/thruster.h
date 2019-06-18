@@ -4,7 +4,7 @@
 
 
 template <class T> struct thruster {
-
+    
     T m_Dot;
     T eff;
     T P0;

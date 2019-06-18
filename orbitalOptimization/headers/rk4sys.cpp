@@ -36,6 +36,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
         accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT);
         
+
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y[n])
         k1 = calc_k(stepSize, y[n], coeff, accel, curTime, timeFinal);        
@@ -70,7 +71,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         //array of tau for binary output
         tau[n+1] =calc_tau(coeff,curTime, timeFinal);  
         //array of accel for binary output
-        accel_output[n]=accel;
+        accel_output[n+1]=accel;
 
 
         //Alter the step size for the next iteration
