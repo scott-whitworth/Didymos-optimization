@@ -1,6 +1,5 @@
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
-
 #include "nelder_mead.h"
 #include "orbitalMotion.h"
 
@@ -51,7 +50,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 14; 
+  n = 15; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -60,29 +59,31 @@ void optimizing ()
 
   std::cout << "\n"<<"minimizing orbital motion"<<std::endl;
 
-  // x[0]-x[8]: gamma coefficients
-  // x[9]-x[11]: tau coefficients
+  // x[0]-x[8]: gamma coefficients used to calculate fourier series
+  // x[9]-x[11]: tau coefficients used to calculate fourier series
   // x[12]: alpha - launch angle (declination) position 
   // x[13]: beta - launch angle (declination) velocity 
+  // x[14]: trip time - total time from launch to impact, sets the initial earth position
 
-  // initial guesses for variables
-  start[0] = 1.5;
-  start[1] = 1.5;
-  start[2] = 1.5;
-  start[3] = 1.5;
-  start[4] = 1.5;
-  start[5] = 1.5;
-  start[6] = 1.5;
-  start[7] = 1.5;
-  start[8] = 1.5;
-  start[9] = 1.5;
-  start[10] = 1.5;
-  start[11] = 1.5;
+  // initial guesses for variables based off of previous runs which have small cost values
+  start[0] = 50;
+  start[1] = 50;
+  start[2] = 50;
+  start[3] = 50;
+  start[4] = 50;
+  start[5] = 50;
+  start[6] = 50;
+  start[7] = 50;
+  start[8] = 50;
+  start[9] = 50;
+  start[10] = 50;
+  start[11] = 50;
   start[12] = 0.5;
   start[13] = 0.5;
+  start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
 
   // convergence tolerance
-  reqmin = 1.0E-26;
+  reqmin = 1.0E-40;
 
   // initial change in variable size
   // based off of the variable start value
@@ -100,11 +101,12 @@ void optimizing ()
   step[11] = 1.0E02;
   step[12] = 1.0E00;
   step[13] = 1.0E00;
+  step[14] = 1.0E07;
 
   // how often the equation checks for a convergence
-  konvge = 15;
+  konvge = 20;
   // maximum number of iterations for convergence
-  kcount = 10000;
+  kcount = 30000;
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;

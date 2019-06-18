@@ -21,11 +21,8 @@ double trajectory( double x[])
   elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
-  // setting landing conditions of earth (October 5, 2022)
-  // change to positions and velocities based on landing date - triptime
-  //elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
-  //-3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
-  elements<double> earth =  earthInitial(TRIP);
+  // setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
+  elements<double> earth =  earthInitial(x[14]);
 
   // setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[12]), //earth.r+ESOI*cos(alpha)
@@ -74,14 +71,14 @@ double trajectory( double x[])
   double absTol = 1e-12;
 
   //set optmization minimum
-  double Fmin = 1e-18;
+  double Fmin = 1e-20;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
 
   // calling rk4simple for efficieny, calculates the last value of y
-  rk4Simple(timeInitial,TRIP,spaceCraft,deltaT,yp,absTol,coeff,accel);
+  rk4Simple(timeInitial,x[14],spaceCraft,deltaT,yp,absTol,coeff,accel);
 
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
@@ -108,10 +105,8 @@ double trajectoryPrint( double x[])
   elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
-  // setting landing conditions of earth (October 5, 2022)
-  //elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
-  //-3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
-  elements<double> earth =  earthInitial(TRIP);
+// setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
+  elements<double> earth =  earthInitial(x[14]);
 
   // setting initial conditions of the spacecraft
   // not the actual initial conditions, right now just equal to the earth's landing date conditions
@@ -138,7 +133,7 @@ double trajectoryPrint( double x[])
   double absTol = 1e-12;
 
   //set optmization minimum
-  double Fmin = 1e-18;
+  double Fmin = 1e-20;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
@@ -156,7 +151,7 @@ double trajectoryPrint( double x[])
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,TRIP,times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep);
+  rk4sys(timeInitial,x[14],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];

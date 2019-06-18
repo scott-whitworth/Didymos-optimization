@@ -21,8 +21,6 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
     int minStep=0;
     int maxStep=0;
 
-    //TODO: SC: This while loop (and the function in general) should be functionalized. This whole function has gotten to the point where it is sufficiently complex to cause issues moving forward
-
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
 
@@ -65,8 +63,6 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
         //Alter the step size for the next iteration
         stepSize = stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
 
-        //TODO: SC: You take a slightly risky move here in changing stepSize. I know it makes sense in the context of the function, but it is also a variable you pass in.
-        //This discrepancy might cause issues moving forward
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/2)
         {
@@ -93,39 +89,37 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
 T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & accel)
 {
-    // Set the first element of the solution vector to the initial conditions
+    // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
-    // k variables for Runge-Kutta calculation of y[n+1]
+    // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeInitial; // setting time equal to the start time
-
-    int n=0; // setting the initial iteration number equal to 0
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // Runge-Kutta algorithm       
-        //k1 = h*f(t, y[n])
+        //k1 = h*f(t, y)
         k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);        
-        //k2 = h*f(t+1/5, y[n]+k1*1/5)
+        //k2 = h*f(t+1/5, y+k1*1/5)
         k2 = calc_k(stepSize, y+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal);   
-        //k3 = h*f(t+3/10, y[n]+k1*3/40+k2*9/40)
+        //k3 = h*f(t+3/10, y+k1*3/40+k2*9/40)
         k3 = calc_k(stepSize, y+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
-        //k4 = h*f(t+4/5, y[n]+k1*44/45+k2*-56/15+k3*32/9)
+        //k4 = h*f(t+4/5, y+k1*44/45+k2*-56/15+k3*32/9)
         k4 = calc_k(stepSize,y+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal);    
-        //k5 = h*f(t+8/9, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
+        //k5 = h*f(t+8/9, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
         k5 = calc_k(stepSize, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal);        
-        //k6 = h*f(t, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
+        //k6 = h*f(t, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
         k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);        
-        //k7 = h*f(t, y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
+        //k7 = h*f(t, y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
         k7 = calc_k(stepSize,y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
 
 
         // Previous value 
-        //v = y[n] + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
+        //v = y + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
         elements<T> v = y + k1*5179/57600 + k3*7571/16695 + k4*393/640 - k5*92097/339200 + k6*187/2100 + k7*1/40;     
 
         //Current value
-        //u = y[n] + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
+        //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
         elements<T> u = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187/6784 + k6*11/84;  
 
         //array of time output as t         
@@ -134,69 +128,68 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
         //Alter the step size for the next iteration
         stepSize =stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
 
-        // The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/2)
             stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<((timeFinal-timeInitial)/1000))
             stepSize=(timeFinal-timeInitial)/1000;
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
+
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
         if (u.r<0.5)
         {
             u.r=1000;
         }
-
-        //Calculates the y[n] for the next round of calculations
+        //Calculates the y for the next round of calculations
         y = u;  
-        n++;
     }//end of while 
 }
 
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
 T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel)
 {
-    // Set the first element of the solution vector to the initial conditions
+    // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y = y0;
-    // k variables for Runge-Kutta calculation of y[n+1]
+    // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeFinal; // setting time equal to the start time
-    int n=0; // setting the initial iteration number equal to 0
 
     while(curTime>timeInitial) // iterates in reverse
     {
         // Runge-Kutta algorithm       
-        //k1 = h*f(t, y[n])
+        //k1 = h*f(t, y)
         k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);        
-        //k2 = h*f(t+1/5, y[n]+k1*1/5)
+        //k2 = h*f(t+1/5, y+k1*1/5)
         k2 = calc_k(stepSize, y+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal);   
-        //k3 = h*f(t+3/10, y[n]+k1*3/40+k2*9/40)
+        //k3 = h*f(t+3/10, y+k1*3/40+k2*9/40)
         k3 = calc_k(stepSize, y+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
-        //k4 = h*f(t+4/5, y[n]+k1*44/45+k2*-56/15+k3*32/9)
+        //k4 = h*f(t+4/5, y+k1*44/45+k2*-56/15+k3*32/9)
         k4 = calc_k(stepSize,y+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal);    
-        //k5 = h*f(t+8/9, y[n]+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
+        //k5 = h*f(t+8/9, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
         k5 = calc_k(stepSize, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal);        
-        //k6 = h*f(t, y[n]+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
+        //k6 = h*f(t, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
         k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);        
-        //k7 = h*f(t, y[n]+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
+        //k7 = h*f(t, y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
         k7 = calc_k(stepSize,y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
         
 
         // Previous value 
-        //v = y[n] + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
+        //v = y + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
         elements<T> v = y + k1*5179/57600 + k3*7571/16695 + k4*393/640 - k5*92097/339200 + k6*187/2100 + k7*1/40;     
 
         //Current value
-        //u = y[n] + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
+        //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
         elements<T> u = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187/6784 + k6*11/84;  
 
         //array of time output as t         
         curTime = curTime + stepSize;
 
         //Alter the step size for the next iteration
+        //Expected to be negative
         stepSize =stepSize*calc_scalingFactor(v,u-v,absTol,stepSize);
 
-        // The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (-stepSize>(timeFinal-timeInitial)/2)
             stepSize=-(timeFinal-timeInitial)/2;
         else if (-stepSize<((timeFinal-timeInitial)/1000))
@@ -204,9 +197,8 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
         if((curTime+stepSize)<timeInitial)
             stepSize=-(curTime-timeInitial);
 
-        //Calculates the y[n] for the next round of calculations
+        //Calculates the y for the next round of calculations
         y = u;  
-        n++;
     }//end of while 
 }
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
