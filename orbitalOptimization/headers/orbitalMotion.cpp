@@ -9,9 +9,10 @@
 // solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 double trajectory( double x[])
 {
-
   // setting the acceleration as a constant (temporary)
   double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+
+/***********************************************************************************************************************************/
 
   // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
   // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -51,6 +52,8 @@ double trajectory( double x[])
   earth.vtheta+cos(x[13])*vEscape, // earth.vtheta + cos(beta)*vEscape
 
   earth.vz);
+
+/***********************************************************************************************************************************/
 
   // setting time parameters
   double timeInitial=0; 
@@ -92,10 +95,16 @@ double trajectory( double x[])
   return cost;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 double trajectoryPrint( double x[])
 {
 // setting the acceleration as a constant (temporary)
   double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+
+/***********************************************************************************************************************************/
 
   // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
   // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -112,6 +121,8 @@ double trajectoryPrint( double x[])
   // not the actual initial conditions, right now just equal to the earth's landing date conditions
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[12]), earth.theta+asin(sin(M_PI-x[12])*ESOI/earth.r),earth.z,
   earth.vr+sin(x[13])*vEscape, earth.vtheta+cos(x[13])*vEscape,earth.vz);
+
+/***********************************************************************************************************************************/
 
   // setting time parameters
   double timeInitial=0; 
@@ -190,6 +201,10 @@ double trajectoryPrint( double x[])
   return cost;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 elements<double> earthInitial(double tripTime)
 {
   coefficients<double> earthCoeff;
@@ -201,14 +216,23 @@ elements<double> earthInitial(double tripTime)
   }
 
   double earthAccel = 0;
-  //Orbital elements of the earth on the asteroid impact date of 2022-10-05.
+  //setting initial conditions for calculation of earth on launch date with orbital elements of the earth on the asteroid impact date of 2022-10-05.
   elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
   -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+
+// setting intiial time parameters
   double timeInitial= 0; 
   double deltaT; // time step
   deltaT = -(tripTime-timeInitial)/1e9; // initial guess for time step, small is preferable
+
+// declaring the solution vector
   elements<double> yp;
+
+ // setting Runge-Kutta tolerance
   double absTol = 1e-12;
+
+// calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
   rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
+
   return yp; 
 }
