@@ -1,5 +1,6 @@
 #include "rk4sys.h"
 #include "calcFourier.h"
+#include "acceleration.h"
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
 #include <ctime> // used for clock
@@ -9,9 +10,11 @@
 // solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 double trajectory( double x[])
 {
-  // setting the acceleration as a constant (temporary)
-  double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+  
 
+  // setting the acceleration as a constant (temporary)
+  //double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel;
 /***********************************************************************************************************************************/
 
   // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
@@ -102,8 +105,8 @@ double trajectory( double x[])
 double trajectoryPrint( double x[])
 {
 // setting the acceleration as a constant (temporary)
-  double accel = 0.0001/AU;// thrust acceleration (au/s^2)
-
+  //double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+    double accel;
 /***********************************************************************************************************************************/
 
   // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
@@ -159,10 +162,13 @@ double trajectoryPrint( double x[])
   double *tau;
   tau = new double[numSteps];
 
+  double *accel_output;
+  accel_output = new double[numSteps];
+
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[tripTime_offset],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep);
+  rk4sys(timeInitial,x[tripTime_offset],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];
@@ -176,7 +182,7 @@ double trajectoryPrint( double x[])
   if (cost < Fmin)
     cost = 0;
   
- std::cout<<"The cost value is: "<<cost<<std::endl<<yFinal;
+ 
 
   
   // Output of yp to a binary file
@@ -190,6 +196,7 @@ double trajectoryPrint( double x[])
     output.write((char*)&times[i], sizeof (double));
     output.write((char*)&gamma[i], sizeof (double));
     output.write((char*)&tau[i], sizeof (double));
+    output.write((char*)&accel_output[i], sizeof (double));
   }
   output.close();
 

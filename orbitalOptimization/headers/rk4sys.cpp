@@ -1,11 +1,13 @@
 #include "rk4sys.h"
+#include "acceleration.h"
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, 
-const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int & lastStep)
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output)
 {
-    
+
+
     // Set the first element of the solution vector to the initial conditions
     y[0] = y0;
     times[0]=timeInitial;
@@ -13,6 +15,8 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
     gamma[0] =calc_gamma(coeff,timeInitial, timeFinal);
     // array of tau for binary output
     tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
+ 
+
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
@@ -21,10 +25,17 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
     int minStep=0;
     int maxStep=0;
 
+    thruster<T> NEXT = thruster<T>(NEXTmDot,NEXTeff,NEXTP0);
+
+    T massFuelSpent =0;//Fuel mass spent (kg)
+
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
 
+        T deltaT = stepSize;
 
+        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT);
+        
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y[n])
         k1 = calc_k(stepSize, y[n], coeff, accel, curTime, timeFinal);        
@@ -58,6 +69,8 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
         gamma[n+1] =calc_gamma(coeff,curTime, timeFinal);
         //array of tau for binary output
         tau[n+1] =calc_tau(coeff,curTime, timeFinal);  
+        //array of accel for binary output
+        accel_output[n]=accel;
 
 
         //Alter the step size for the next iteration
@@ -87,7 +100,7 @@ const T & absTol, coefficients<T> coeff, const T & accel, T *gamma,  T *tau, int
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & accel)
+T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
@@ -95,8 +108,17 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeInitial; // setting time equal to the start time
 
+    thruster<T> NEXT = thruster<T>(NEXTmDot,NEXTeff,NEXTP0);
+
+    T massFuelSpent =0;
+
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
+
+        T deltaT = stepSize;
+
+        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT);
+
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y)
         k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);        
