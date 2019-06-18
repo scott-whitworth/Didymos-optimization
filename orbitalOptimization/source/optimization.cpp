@@ -50,7 +50,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 15; 
+  n = 13; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -66,21 +66,19 @@ void optimizing ()
   // x[14]: trip time - total time from launch to impact, sets the initial earth position
 
   // initial guesses for variables based off of previous runs which have small cost values
-  start[0] = 50;
-  start[1] = 50;
-  start[2] = 50;
-  start[3] = 50;
-  start[4] = 50;
-  start[5] = 50;
-  start[6] = 50;
-  start[7] = 50;
-  start[8] = 50;
-  start[9] = 50;
-  start[10] = 50;
-  start[11] = 50;
-  start[12] = 0.5;
-  start[13] = 0.5;
-  start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
+  start[0] = 10;
+  start[1] = 10;
+  start[2] = 10;
+  start[3] = 10;
+  start[4] = 10;
+  start[5] = 10;
+  start[6] = 10;
+  start[7] = 10;
+  start[8] = 10;
+  start[9] = 10;
+  start[10] = 0.5;
+  start[11] = 0.5;
+  start[12] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
 
   // convergence tolerance
   reqmin = 1.0E-40;
@@ -97,11 +95,9 @@ void optimizing ()
   step[7] = 1.0E02;
   step[8] = 1.0E02;
   step[9] = 1.0E02;
-  step[10] = 1.0E02;
-  step[11] = 1.0E02;
-  step[12] = 1.0E00;
-  step[13] = 1.0E00;
-  step[14] = 1.0E07;
+  step[10] = 1.0E00;
+  step[11] = 1.0E00;
+  step[12] = 1.0E07;
 
   // how often the equation checks for a convergence
   konvge = 20;

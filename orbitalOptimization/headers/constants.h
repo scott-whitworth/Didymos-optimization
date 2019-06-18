@@ -11,4 +11,11 @@
 #define massSun 1.98892e30// mass of the sun (kg)
 #define Torbital 6.653820100923719e+07 // orbital period time of the asteroid (s)
 
+// starting location in the optimization array
+#define gamma_offset 0 
+#define tau_offset 7 
+#define alpha_offset 10
+#define beta_offset 11 
+#define tripTime_offset 12 
+
 #endif
