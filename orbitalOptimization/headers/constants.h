@@ -22,8 +22,8 @@
 
 // Spacecraft constants
 #define wetMass 3000 // fuel + dry mass (kg)
-#define NEXTmDot 5.76*pow(kiloConversion,2)// fuel differential (kg/s)
-#define NEXTeff 0.671 // NEXT efficiency (unitless)
-#define NEXTP0 7.240/kiloConversion // initial power (W)
+#define NEXTmDot 5.76E-06// fuel differential (kg/s)
+#define NEXTeff 0.70 // NEXT efficiency (unitless)
+#define NEXTP0 7.33/kiloConversion // initial power (W)
 
 #endif
