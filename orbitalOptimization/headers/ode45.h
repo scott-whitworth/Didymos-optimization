@@ -6,7 +6,7 @@
 
 #include "elements.h"
 #include "coefficients.h"
-#include "calcThrust.h"
+#include "calcFourier.h"
 #include "constants.h"
 
 //Calculates the corresponding k for the Runge-Kutta computation

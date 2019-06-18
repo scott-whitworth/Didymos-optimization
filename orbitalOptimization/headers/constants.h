@@ -18,4 +18,7 @@
 #define beta_offset 11 
 #define tripTime_offset 12 
 
+// Spacecraft constants
+#define wetMass 3000 // fuel + dry mass (kg)
+
 #endif

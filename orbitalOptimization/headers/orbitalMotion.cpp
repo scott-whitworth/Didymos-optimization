@@ -1,5 +1,5 @@
 #include "rk4sys.h"
-#include "calcThrust.h"
+#include "calcFourier.h"
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
 #include <ctime> // used for clock
