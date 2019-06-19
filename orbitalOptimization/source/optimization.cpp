@@ -126,12 +126,12 @@ void optimizing ()
     konvge, kcount, &icount, &numres, &ifault);
 
   // displays error type when an error occurs
-  std::cout << "\n"<< "  Return code IFAULT = " << ifault << "\n"<< "  Estimate of minimizing value X*:\n"<< "\n";
+  std::cout << "\nReturn code IFAULT = " << ifault << "\nEstimate of minimizing value X*:\n\n";
   for (i = 0; i < n; i++)
   {
     std::cout << std::setw(2) << xmin[i] << ",";
   }
-  std::cout << "\n" << "  F(X*) = " << ynewlo << "\n";
+  std::cout << "\nF(X*) = " << ynewlo << "\n";
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
 
   // writes the solution based on optimized variables to a binary file
