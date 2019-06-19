@@ -1,2 +1,8 @@
 development/bin/*
+orbitalOptimization/.vscode
+orbitalOptimization/.vscode/*
+orbitalOptimization/bin
+orbitalOptimization/bin/*
 .vscode/*
+*.exe
+*.json
