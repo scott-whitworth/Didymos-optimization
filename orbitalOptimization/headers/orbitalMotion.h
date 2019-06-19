@@ -21,5 +21,6 @@ double trajectoryPrint (double x[]);
 elements<double> earthInitial(double tripTime);
 
 
+
 #include "orbitalMotion.cpp"
 #endif

@@ -14,16 +14,13 @@
 #define kiloConversion .001 //  used to convert to kilograms and Watts (meters/kilometer)
 
 // starting location in the optimization array
-#define gamma_offset 0 
-#define tau_offset 9
-#define alpha_offset 12
-#define beta_offset 13 
-#define tripTime_offset 14
+#define GAMMA_OFFSET 0 
+#define TAU_OFFSET 9
+#define ALPHA_OFFSET 12
+#define BETA_OFFSET 13 
+#define TRIPTIME_OFFSET 14
 
 // Spacecraft constants
 #define wetMass 3000 // fuel + dry mass (kg)
-#define NEXTmDot 5.76E-06// fuel differential (kg/s)
-#define NEXTeff 0.70 // NEXT efficiency (unitless)
-#define NEXTP0 7.33/kiloConversion // initial power (W)
 
 #endif

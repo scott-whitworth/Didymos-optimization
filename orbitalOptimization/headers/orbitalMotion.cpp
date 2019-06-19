@@ -26,17 +26,18 @@ double trajectory( double x[])
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
   // setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
-  elements<double> earth =  earthInitial(x[tripTime_offset]);
+  elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
+  
 
   // setting initial conditions of the spacecraft
-  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[alpha_offset]), //earth.r+ESOI*cos(alpha)
+  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), //earth.r+ESOI*cos(alpha)
 
   /*Initial Angular Position is calculated using law of sines and the 
   triangle made by ESOI Radius, the radius of earth, and the radius from
   the Sun to the spacecraft. The angle at the suns apex is the
   calculated and added to the angle of the Earth to calculate the angle
   of the spacecraft.*/
-  earth.theta+asin(sin(M_PI-x[alpha_offset])*ESOI/earth.r), // earth.theta +arcsin(sin(pi-alpha))*ESOI/earth.r
+  earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r), // earth.theta +arcsin(sin(pi-alpha))*ESOI/earth.r
 
   // nothing because earth is flat
   earth.z,
@@ -47,12 +48,12 @@ double trajectory( double x[])
   is defined to be 0 when the velocity is entirely angular
   and 90 when it is entirely radial. This equation calculates the ships
   initial radius from the sun by combining these values.*/
-  earth.vr+sin(x[beta_offset])*vEscape, // earth.vr + sin(beta)*vEscape
+  earth.vr+sin(x[BETA_OFFSET])*vEscape, // earth.vr + sin(beta)*vEscape
 
   /*Calculates initial specific angular momementum of ship using earth's
   specific angular momementum, the ships scalar velocity, escape angle,
   and initial radius.*/
-  earth.vtheta+cos(x[beta_offset])*vEscape, // earth.vtheta + cos(beta)*vEscape
+  earth.vtheta+cos(x[BETA_OFFSET])*vEscape, // earth.vtheta + cos(beta)*vEscape
 
   earth.vz);
 
@@ -67,10 +68,10 @@ double trajectory( double x[])
   // setup of thrust angle calculations
   coefficients<double> coeff;
   for (int i=0;i<coeff.gammaSize;i++){
-    coeff.gamma[i]=x[i+gamma_offset];
+    coeff.gamma[i]=x[i+GAMMA_OFFSET];
   }
   for (int i=0;i<coeff.tauSize;i++){
-    coeff.tau[i]=x[i+tau_offset];
+    coeff.tau[i]=x[i+TAU_OFFSET];
   }
   
   // setting Runge-Kutta tolerance
@@ -84,7 +85,7 @@ double trajectory( double x[])
 
 
   // calling rk4simple for efficieny, calculates the last value of y
-  rk4Simple(timeInitial,x[tripTime_offset],spaceCraft,deltaT,yp,absTol,coeff,accel);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel);
 
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
@@ -118,12 +119,12 @@ double trajectoryPrint( double x[])
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
 // setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
-  elements<double> earth =  earthInitial(x[tripTime_offset]);
+  elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
 
   // setting initial conditions of the spacecraft
   // not the actual initial conditions, right now just equal to the earth's landing date conditions
-  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[alpha_offset]), earth.theta+asin(sin(M_PI-x[alpha_offset])*ESOI/earth.r),earth.z,
-  earth.vr+sin(x[beta_offset])*vEscape, earth.vtheta+cos(x[beta_offset])*vEscape,earth.vz);
+  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),earth.z,
+  earth.vr+sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(x[BETA_OFFSET])*vEscape,earth.vz);
 
 /***********************************************************************************************************************************/
 
@@ -137,10 +138,10 @@ double trajectoryPrint( double x[])
   // setup of thrust angle calculations
   coefficients<double> coeff;
   for (int i=0;i<coeff.gammaSize;i++){
-    coeff.gamma[i]=x[i+gamma_offset];
+    coeff.gamma[i]=x[i+GAMMA_OFFSET];
   }
   for (int i=0;i<coeff.tauSize;i++){
-    coeff.tau[i]=x[i+tau_offset];
+    coeff.tau[i]=x[i+TAU_OFFSET];
   }
 
   // setting Runge-Kutta tolerance
@@ -168,7 +169,7 @@ double trajectoryPrint( double x[])
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[tripTime_offset],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];
@@ -182,7 +183,7 @@ double trajectoryPrint( double x[])
   if (cost < Fmin)
     cost = 0;
   
-std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl;
+std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
 
   
   // Output of yp to a binary file
@@ -241,5 +242,5 @@ elements<double> earthInitial(double tripTime)
 // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
   rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
 
-  return yp; 
+  return yp;
 }

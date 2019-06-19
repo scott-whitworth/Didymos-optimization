@@ -25,7 +25,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     int minStep=0;
     int maxStep=0;
 
-    thruster<T> NEXT = thruster<T>(NEXTmDot,NEXTeff,NEXTP0);
+    thruster<T> NEXT = thruster<T>(1);
 
     T massFuelSpent =0;//Fuel mass spent (kg)
 
@@ -109,7 +109,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeInitial; // setting time equal to the start time
 
-    thruster<T> NEXT = thruster<T>(NEXTmDot,NEXTeff,NEXTP0);
+    thruster<T> NEXT = thruster<T>(1);
 
     T massFuelSpent =0;
 
