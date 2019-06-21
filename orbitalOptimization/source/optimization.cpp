@@ -10,16 +10,9 @@
 //  Author:
 //    John Burkardt
 
-
-int main ();
-
-// optimizes a vector for orbital motion and writes a binary file for the best solution 
-void optimizing ();
-
 int main ()
 
 {
-  
   timestamp ();
   std::cout << "\n"<<"beginning of optimization"<<std::endl;
 
@@ -32,8 +25,6 @@ int main ()
 }
 
 void optimizing ()
-//  Purpose:
-//    optimizes the coefficients for gamma and tau fourier series. Also, optimizes alpha and beta angles (used in initial velocity of the spacecraft).
 {
   // initializing variables for nelmin algorithm. See nelder_mead.cpp for input/output information
   int i; 
