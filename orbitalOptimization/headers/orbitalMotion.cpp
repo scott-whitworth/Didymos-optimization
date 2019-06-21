@@ -73,6 +73,11 @@ double trajectory( double x[])
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+  for (int i=0;i<coeff.coastSize;i++){
+    coeff.coast[i]=x[i+COAST_OFFSET];
+  }
+
+  coeff.coastThreshold = 9.5;//x[COASTTHRESHOLD_OFFSET];
   
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -85,7 +90,7 @@ double trajectory( double x[])
 
 
   // calling rk4simple for efficieny, calculates the last value of y
-  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,x);
 
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
@@ -103,7 +108,7 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-double trajectoryPrint( double x[])
+double trajectoryPrint(double x[])
 {
 // setting the acceleration as a constant (temporary)
   //double accel = 0.0001/AU;// thrust acceleration (au/s^2)
@@ -143,6 +148,11 @@ double trajectoryPrint( double x[])
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+  for (int i=0;i<coeff.coastSize;i++){
+    coeff.coast[i]=x[i+COAST_OFFSET];
+  }
+
+  coeff.coastThreshold =9.5;// x[COASTTHRESHOLD_OFFSET];
 
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -166,10 +176,13 @@ double trajectoryPrint( double x[])
   double *accel_output;
   accel_output = new double[numSteps];
 
+  double *coast;
+  coast = new double[numSteps];
+
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,x,coast);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];
@@ -198,6 +211,7 @@ std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl
     output.write((char*)&gamma[i], sizeof (double));
     output.write((char*)&tau[i], sizeof (double));
     output.write((char*)&accel_output[i], sizeof (double));
+    output.write((char*)&coast[i],sizeof(double));
   }
   output.close();
 
@@ -205,6 +219,7 @@ std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl
   delete [] times;
   delete [] gamma;
   delete [] tau;
+  delete [] coast;
 
   return cost;
 }
@@ -242,5 +257,40 @@ elements<double> earthInitial(double tripTime)
 // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
   rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
 
-  return yp;
+  return yp; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+elements<double> earthMotion(double x[],double curTime)
+{
+  // setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
+  elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
+
+  double EARTHaccel =0;
+
+  // setting time parameters
+  double timeInitial=0; 
+  double timeFinal=Torbital; // Orbital period of asteroid(s)
+  double deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
+
+  // setup of thrust angle calculations
+  coefficients<double> coeff;
+  for (int i=0;i<coeff.gammaSize;i++){
+    coeff.gamma[i]=0;
+  }
+  for (int i=0;i<coeff.tauSize;i++){
+    coeff.tau[i]=0;
+  }
+
+  // setting Runge-Kutta tolerance
+  double absTol = 1e-12;
+
+  // Initialize memory for the solution vector of the dependant solution
+  elements<double> yEARTH;
+  
+  // used to track the cost function throughout a run via output and outputs to a binary
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],earth,deltaT,yEARTH,absTol,coeff,EARTHaccel,x);
+
+  return yEARTH;
+
 }

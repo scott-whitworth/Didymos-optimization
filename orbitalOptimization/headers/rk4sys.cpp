@@ -1,10 +1,12 @@
 #include "rk4sys.h"
 #include "acceleration.h"
+#include "constants.h"
+#include "orbitalMotion.h"
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output)
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output,T x[], T *coast)
 {
 
 
@@ -34,7 +36,9 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
         T deltaT = stepSize;
 
-        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT);
+        bool thrusting = calc_coast(coeff, curTime, timeFinal);
+
+        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT,thrusting);
         
 
         // Runge-Kutta algorithm       
@@ -70,6 +74,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         gamma[n+1] =calc_gamma(coeff,curTime, timeFinal);
         //array of tau for binary output
         tau[n+1] =calc_tau(coeff,curTime, timeFinal);  
+        coast[n+1]=thrusting;
         //array of accel for binary output
         accel_output[n+1]=accel;
 
@@ -91,6 +96,11 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
 
+        // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
+        if (u.r<0.5)
+        {
+            u.r=1000;
+        }
 
         //Calculates the y[n] for the next round of calculations
         y[n+1] = u;   
@@ -101,7 +111,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
+T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, T x[])
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
@@ -118,7 +128,9 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
 
         T deltaT = stepSize;
 
-        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT);
+        bool thrusting = calc_coast(coeff, curTime, timeFinal);
+
+        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT,thrusting);
 
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y)
@@ -159,11 +171,20 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
 
+
+
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
         if (u.r<0.5)
         {
             u.r=1000;
         }
+
+        //elements<T> yEARTH = earthMotion(x,curTime);
+        //if (abs(u.theta-yEARTH.theta)<=1.0e-10 && abs(u.r-yEARTH.r)<=ESOI)
+        //{
+        //    u.r=1000;
+        //}
+
         //Calculates the y for the next round of calculations
         y = u;  
     }//end of while 
