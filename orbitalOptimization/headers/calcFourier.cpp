@@ -2,6 +2,7 @@
 #include "acceleration.h"
 #include <math.h> // used for sine and cosine functions
 #include <iostream> // used for cout
+#include <stdlib.h>
 
 template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & timeFinal){
     T coeff = series[0];
@@ -13,9 +14,19 @@ template <class T> T calc_Series(T series[], const int series_size, const T & cu
 }
 
 template <class T> T calc_gamma(coefficients<T> & coeff,const T & curTime, const T & timeFinal){
-   return calc_Series(coeff.gamma, coeff.gammaSize, curTime, timeFinal);
+    return calc_Series(coeff.gamma, coeff.gammaSize, curTime, timeFinal);
 }
 
 template <class T> T calc_tau(coefficients<T> & coeff, const T & curTime, const T & timeFinal){
     return calc_Series(coeff.tau, coeff.tauSize, curTime, timeFinal);
+}
+
+template <class T> bool calc_coast(coefficients<T> & coeff,const T & curTime, const T & timeFinal){
+    T coastValue = calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal);
+    if (coastValue>coeff.coastThreshold){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
