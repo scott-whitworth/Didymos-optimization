@@ -2,6 +2,7 @@
 #include <iomanip> //used for setw(), sets spaces between values
 #include "nelder_mead.h"
 #include "orbitalMotion.h"
+#include "optimization.h"
 
 //  Licensing:
 //    This code is distributed under the GNU LGPL license. 
