@@ -8,6 +8,11 @@ template <class T> T calc_accel(const T & r, thruster<T> & thrusterType,T & mass
     if(!thrusting){
         return 0;
     }
+
+    if(wetMass - massFuel < dryMass){
+        return 0;
+    }
+    
     T Pin;
     T Pthrust;
     T thrust;
