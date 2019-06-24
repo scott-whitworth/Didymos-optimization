@@ -77,9 +77,9 @@ void optimizing ()
   start[12] = 0.5;
   start[13] = 0.5;
   start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
-  start[15] = 20;
-  start[16] = 5;
-  start[17] = -15;
+  start[15] = 28;
+  start[16] = 4;
+  start[17] = -7;
   //start[18] = 50;
 
   // convergence tolerance

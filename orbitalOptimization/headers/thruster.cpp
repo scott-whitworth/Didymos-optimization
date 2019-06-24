@@ -14,7 +14,7 @@ type = newType;
 
 template <class T> T thruster<T>::calc_eff(const T & Pin){
    if(type == 1){
-    return  -1.535293e-23*pow(Pin,6) + 6.687136e-19*pow(Pin,5) - 1.042237e-14*pow(Pin,4) +  7.890710e-11*pow(Pin,3) - 3.178227e-07*pow(Pin,2) +  6.848803e-04*Pin - 1.506641e-03;
+    return  -1.328086e-23*pow(Pin,6) + 6.207694e-19*pow(Pin,5) - 9.991813e-15*pow(Pin,4) +  7.701266e-11*pow(Pin,3) - 3.136031e-07*pow(Pin,2) +  6.805225e-04*Pin;
    }
 }
 

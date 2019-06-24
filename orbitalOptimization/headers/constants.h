@@ -24,6 +24,6 @@
 
 // Spacecraft constants
 #define wetMass 3000 // fuel + dry mass (kg)
-#define dryMass 2500
+#define dryMass 2600
 
 #endif

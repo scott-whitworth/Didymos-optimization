@@ -77,7 +77,7 @@ double trajectory( double x[])
     coeff.coast[i]=x[i+COAST_OFFSET];
   }
 
-  coeff.coastThreshold = 9.5;//x[COASTTHRESHOLD_OFFSET];
+  coeff.coastThreshold = 10;//x[COASTTHRESHOLD_OFFSET];
   
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -152,7 +152,7 @@ double trajectoryPrint(double x[])
     coeff.coast[i]=x[i+COAST_OFFSET];
   }
 
-  coeff.coastThreshold =9.5;// x[COASTTHRESHOLD_OFFSET];
+  coeff.coastThreshold =10;//x[COASTTHRESHOLD_OFFSET];
 
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -196,7 +196,7 @@ double trajectoryPrint(double x[])
   if (cost < Fmin)
     cost = 0;
   
-std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
+std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl;
 
   
   // Output of yp to a binary file
