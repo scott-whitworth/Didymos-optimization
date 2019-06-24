@@ -20,7 +20,6 @@ double trajectoryPrint (double x[]);
 // calculates the earth's initial conditions for launch date based on impact date (oct. 5, 2022) minus the optimized trip time
 elements<double> earthInitial(double tripTime);
 
-elements<double> earthMotion(double x[],double curTime);
 
 
 #include "orbitalMotion.cpp"

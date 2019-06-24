@@ -6,7 +6,7 @@
 template <class T>
 thruster<T>::thruster(int newType){
     if(newType == 1){
-        m_Dot = 5.73E-06;
+        m_Dot = NEXTm_Dot0;
         P0 = NEXTP0;
     }
 type = newType;

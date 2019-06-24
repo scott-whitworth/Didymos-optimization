@@ -11,7 +11,6 @@
 //  Author:
 //    John Burkardt
 
-
 int main ()
 
 {
@@ -46,7 +45,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 18; 
+  n = 15; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -77,10 +76,6 @@ void optimizing ()
   start[12] = 0.5;
   start[13] = 0.5;
   start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
-  start[15] = 28;
-  start[16] = 4;
-  start[17] = -7;
-  //start[18] = 50;
 
   // convergence tolerance
   reqmin = 1.0E-40;
@@ -102,10 +97,6 @@ void optimizing ()
   step[12] = 1.0E00;
   step[13] = 1.0E00;
   step[14] = 1.0E07;
-  step[15] = 1.0E01;
-  step[16] = 1.0E01;
-  step[17] = 1.0E01;
-  //step[18] = 1.0E01;
 
   // how often the equation checks for a convergence
   konvge = 20;
@@ -130,12 +121,12 @@ void optimizing ()
     konvge, kcount, &icount, &numres, &ifault);
 
   // displays error type when an error occurs
-  std::cout << "\n"<< "  Return code IFAULT = " << ifault << "\n"<< "  Estimate of minimizing value X*:\n"<< "\n";
+  std::cout << "\nReturn code IFAULT = " << ifault << "\nEstimate of minimizing value X*:\n\n";
   for (i = 0; i < n; i++)
   {
     std::cout << std::setw(2) << xmin[i] << ",";
   }
-  std::cout << "\n" << "  F(X*) = " << ynewlo << "\n";
+  std::cout << "\nF(X*) = " << ynewlo << "\n";
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
 
   // writes the solution based on optimized variables to a binary file

@@ -3,7 +3,7 @@
 
 #include "thruster.h"
 
-template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const bool & thrusting);
+template <class T> T calc_accel(const T & r, const thruster<T> & thrusterType, const T & massFuel, const T & deltaT);
 
 #include "acceleration.cpp"
 #endif

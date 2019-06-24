@@ -8,6 +8,7 @@ template <class T> struct thruster {
     T m_Dot;
     int type;
     T P0;
+    T m_Dot0;
 
     //thruster<T>(T m_Dot0, T eff0, T P00);
     thruster<T>(int type);
@@ -18,6 +19,7 @@ template <class T> struct thruster {
     void calc_m_Dot(const T & Pin);
     private:
     T NEXTP0 =7330; // initial power (W)
+    T NEXTm_Dot0 = 5.73E-06;
 };
 
 #include "thruster.cpp"

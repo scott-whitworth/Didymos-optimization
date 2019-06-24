@@ -15,11 +15,6 @@ template <class T> struct coefficients {
     const static int tauSize=3; 
     T tau[tauSize]; 
 
-    const static int coastSize=3;
-    T coast[coastSize];
-
-    T coastThreshold;
-
     //overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e); 
 };
