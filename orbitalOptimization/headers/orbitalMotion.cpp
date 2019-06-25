@@ -88,9 +88,15 @@ double trajectory( double x[])
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
+  double dryMass = x[DRYMASS_OFFSET];
+
+  if(dryMass<2700 || dryMass>wetMass)
+  {
+      return 100;
+  }
 
   // calling rk4simple for efficieny, calculates the last value of y
-  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,dryMass);
 
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
@@ -99,7 +105,6 @@ double trajectory( double x[])
     cost = 0;
   
  std::cout<<"The cost value is: "<<cost<<std::endl;
-
 
   return cost;
 }
@@ -154,6 +159,8 @@ double trajectoryPrint( double x[])
 
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
 
+  double dryMass = x[DRYMASS_OFFSET];
+
 
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -180,7 +187,7 @@ double trajectoryPrint( double x[])
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, dryMass);
 
   elements<double> yFinal;
   yFinal = yp[lastStep];

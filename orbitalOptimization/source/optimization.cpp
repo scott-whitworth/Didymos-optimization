@@ -3,6 +3,7 @@
 #include "nelder_mead.h"
 #include "orbitalMotion.h"
 #include "optimization.h"
+#include "constants.h"
 
 //  Licensing:
 //    This code is distributed under the GNU LGPL license. 
@@ -45,7 +46,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 19; 
+  n = 22; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -76,10 +77,13 @@ void optimizing ()
   start[12] = 0.5;
   start[13] = 0.5;
   start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
-  start[15] = 10;
-  start[16] = 10;
-  start[17] = 10;
-  start[18] = 0.25;
+  start[15] = 1;
+  start[16] = 1;
+  start[17] = 1;
+  start[18] = 1;
+  start[19] = 1;
+  start[20] = 0.25;
+  start[21] = wetMass-200;
 
   // convergence tolerance
   reqmin = 1.0E-40;
@@ -101,10 +105,13 @@ void optimizing ()
   step[12] = 1.0E00;
   step[13] = 1.0E00;
   step[14] = 1.0E07;
-  step[15] = 1.0E0;
-  step[16] = 1.0E01;
-  step[17] = 1.0E01;
-  step[18] = 1.0E-02;
+  step[15] = 1.0E00;
+  step[16] = 1.0E00;
+  step[17] = 1.0E00;
+  step[18] = 1.0E00;
+  step[19] = 1.0E00;
+  step[20] = 5.0E-01;
+  step[21] = 5.0E01;
 
   // how often the equation checks for a convergence
   konvge = 20;

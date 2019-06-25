@@ -15,7 +15,7 @@ template <class T> struct coefficients {
     const static int tauSize=3; 
     T tau[tauSize]; 
 
-    const static int coastSize=3;
+    const static int coastSize=5;
     T coast[coastSize];
 
     T coastThreshold;

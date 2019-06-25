@@ -4,7 +4,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output)
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & dryMass)
 {
 
 
@@ -29,6 +29,8 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
     T massFuelSpent =0;//Fuel mass spent (kg)
 
+    accel_output[0] = calc_accel(y[0].r, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), dryMass);
+
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
 
@@ -36,7 +38,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
         T coast = calc_coast(coeff, curTime, timeFinal);
 
-        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast);
+        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast, dryMass);
         
 
         // Runge-Kutta algorithm       
@@ -98,12 +100,13 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         y[n+1] = u;   
         n++;
     }//end of while 
+    std::cout<<massFuelSpent<<std::endl;
     lastStep = n;
     std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
+T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, const T & dryMass)
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
@@ -122,7 +125,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
 
         T coast = calc_coast(coeff, curTime, timeFinal);
 
-        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast);
+        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast, dryMass);
 
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y)

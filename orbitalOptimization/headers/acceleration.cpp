@@ -3,8 +3,8 @@
 #include "thruster.h"
 #include <iostream>
 
-template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const T & thrusting){
-
+template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const T & thrusting, const T & dryMass){
+    
     if(wetMass - massFuel < dryMass){
         return 0;
     }
@@ -25,8 +25,6 @@ template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & mas
 
     thrusterType.calc_m_Dot(Pin);
 
-    //std::cout<<"Power in: "<<Pin<<"\n"<<"power thrust: "<<Pthrust<<std::endl<<"eff: "<<thrusterType.calc_eff(Pin)<<std::endl<<"mDot: "<<thrusterType.m_Dot<<std::endl;
-
     thrust = sqrt(2*Pthrust*thrusterType.m_Dot);
 
     massFuel = massFuel + thrusterType.m_Dot*deltaT;
@@ -36,8 +34,6 @@ template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & mas
     accel = thrust/m_spaceCraft;
 
     accel = accel/AU;
-
-   // std::cout<<"accel: "<<accel<<"\n";
 
 return accel;
 }

@@ -20,10 +20,10 @@
 #define BETA_OFFSET 13 
 #define TRIPTIME_OFFSET 14
 #define COAST_OFFSET 15
-#define THRESHOLD_OFFSET 18
+#define THRESHOLD_OFFSET 20
+#define DRYMASS_OFFSET 21
 
 // Spacecraft constants
 #define wetMass 3000 // fuel + dry mass (kg)
-#define dryMass 2500
 
 #endif
