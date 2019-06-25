@@ -45,7 +45,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 15; 
+  n = 19; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -76,6 +76,10 @@ void optimizing ()
   start[12] = 0.5;
   start[13] = 0.5;
   start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
+  start[15] = 10;
+  start[16] = 10;
+  start[17] = 10;
+  start[18] = 0.25;
 
   // convergence tolerance
   reqmin = 1.0E-40;
@@ -97,6 +101,10 @@ void optimizing ()
   step[12] = 1.0E00;
   step[13] = 1.0E00;
   step[14] = 1.0E07;
+  step[15] = 1.0E0;
+  step[16] = 1.0E01;
+  step[17] = 1.0E01;
+  step[18] = 1.0E-02;
 
   // how often the equation checks for a convergence
   konvge = 20;

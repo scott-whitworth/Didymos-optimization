@@ -73,6 +73,11 @@ double trajectory( double x[])
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+  for (int i=0;i<coeff.coastSize;i++){
+    coeff.coast[i]=x[i+COAST_OFFSET];
+  }
+
+  coeff.coastThreshold = x[THRESHOLD_OFFSET];
   
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -143,6 +148,11 @@ double trajectoryPrint( double x[])
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+  for (int i=0;i<coeff.coastSize;i++){
+    coeff.coast[i]=x[i+COAST_OFFSET];
+  }
+
+  coeff.coastThreshold = x[THRESHOLD_OFFSET];
 
 
   // setting Runge-Kutta tolerance

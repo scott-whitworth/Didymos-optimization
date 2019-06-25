@@ -3,9 +3,13 @@
 #include "thruster.h"
 #include <iostream>
 
-template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & massFuel, const T & deltaT){
+template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const T & thrusting){
 
     if(wetMass - massFuel < dryMass){
+        return 0;
+    }
+
+    if(thrusting == 0){
         return 0;
     }
 

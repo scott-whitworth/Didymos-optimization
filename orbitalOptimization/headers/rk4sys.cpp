@@ -34,7 +34,9 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
         T deltaT = stepSize;
 
-        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT);
+        T coast = calc_coast(coeff, curTime, timeFinal);
+
+        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast);
         
 
         // Runge-Kutta algorithm       
@@ -118,7 +120,9 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel)
 
         T deltaT = stepSize;
 
-        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT);
+        T coast = calc_coast(coeff, curTime, timeFinal);
+
+        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast);
 
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y)

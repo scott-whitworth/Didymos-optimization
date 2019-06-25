@@ -19,3 +19,13 @@ template <class T> T calc_gamma(coefficients<T> & coeff,const T & curTime, const
 template <class T> T calc_tau(coefficients<T> & coeff, const T & curTime, const T & timeFinal){
     return calc_Series(coeff.tau, coeff.tauSize, curTime, timeFinal);
 }
+
+template <class T> T calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal){
+    T coastValue = pow(cos(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal)),2);
+    if(coastValue>coeff.coastThreshold){
+        return 1.0;
+    }
+    else{
+        return 0.0;
+    }
+}
