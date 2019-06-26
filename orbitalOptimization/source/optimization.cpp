@@ -83,7 +83,7 @@ void optimizing ()
   start[18] = 1;
   start[19] = 1;
   start[20] = 0.25;
-  start[21] = wetMass-200;
+  start[21] = wetMass-250;
 
   // convergence tolerance
   reqmin = 1.0E-40;

@@ -22,7 +22,7 @@ template <class T> T calc_tau(coefficients<T> & coeff, const T & curTime, const 
 
 template <class T> T calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal){
     T coastValue = pow(cos(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal)),2);
-    if(coastValue>coeff.coastThreshold){
+    if(coastValue>=coeff.coastThreshold){
         return 1.0;
     }
     else{

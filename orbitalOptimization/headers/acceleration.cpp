@@ -21,6 +21,10 @@ template <class T> T calc_accel(const T & r, thruster<T> & thrusterType, T & mas
 
     Pin = thrusterType.P0/pow(r,2);
 
+    if(r<1){
+        Pin = thrusterType.P0/1;
+    }
+
     Pthrust = thrusterType.calc_eff(Pin)*Pin;
 
     thrusterType.calc_m_Dot(Pin);
