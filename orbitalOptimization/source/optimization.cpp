@@ -60,6 +60,9 @@ void optimizing ()
   // x[12]: alpha - launch angle (declination) position 
   // x[13]: beta - launch angle (declination) velocity 
   // x[14]: trip time - total time from launch to impact, sets the initial earth position
+  // x[15-19] coasting coefficients
+  // x[20] coasting threshold
+  // x[21] wetMass 
 
   // initial guesses for variables based off of previous runs which have small cost values
   start[0] = 10;
