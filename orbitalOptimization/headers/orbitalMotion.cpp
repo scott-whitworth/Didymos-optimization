@@ -1,34 +1,26 @@
-#include "rk4sys.h"
-#include "calcFourier.h"
-#include "acceleration.h"
+#include "rk4sys.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
+#include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
-#include <ctime> // used for clock
-#include <chrono> // used for clock
-#include <math.h>
+#include <math.h> // used for M_PI
 
 // solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 double trajectory( double x[])
 {
-  
-
-  // setting the acceleration as a constant (temporary)
-  //double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+  // defining acceleration
     double accel;
-/***********************************************************************************************************************************/
 
-  // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
-  // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
-  // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
+  /*set the asteroid and inital conditions for the earth and spacecraft:
+  constructor takes in radial position(au), angluar position(rad), off-plane position(au),
+  radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
   elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
-  // setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
+  // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized)
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
   
-
   // setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), //earth.r+ESOI*cos(alpha)
 
@@ -39,7 +31,6 @@ double trajectory( double x[])
   of the spacecraft.*/
   earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r), // earth.theta +arcsin(sin(pi-alpha))*ESOI/earth.r
 
-  // nothing because earth is flat
   earth.z,
 
   /* Calculates initial radial velocity using earths radial velocity, the ship's
@@ -57,27 +48,38 @@ double trajectory( double x[])
 
   earth.vz);
 
-/***********************************************************************************************************************************/
-
   // setting time parameters
   double timeInitial=0; 
   double timeFinal=Torbital; // Orbital period of asteroid(s)
   double deltaT; // time step
   deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
-  // setup of thrust angle calculations
+  // setup of thrust angle calculations based off of optimized coefficients
+  // in-plane angle
   coefficients<double> coeff;
   for (int i=0;i<coeff.gammaSize;i++){
     coeff.gamma[i]=x[i+GAMMA_OFFSET];
   }
+  // out-of-plane angle
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+
+  // setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
   }
-
+  // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
+ 
+  // TODO: change to wet mass!
+  // assigning optimized drymass
+  double dryMass = x[DRYMASS_OFFSET];
+  // setting a resonable range for dryMass
+  if(dryMass<2700 || dryMass>wetMass)
+  {
+      return 100;
+  }
   
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -88,55 +90,47 @@ double trajectory( double x[])
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
-  double dryMass = x[DRYMASS_OFFSET];
-
-  if(dryMass<2700 || dryMass>wetMass)
-  {
-      return 100;
-  }
-
-  // calling rk4simple for efficieny, calculates the last value of y
+  // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
   rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,dryMass);
 
+  // cost equation determines how close a given run is to impact.
+  // based off the position components of the spacecraft and asteroid.
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
 
+  // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
   if (cost < Fmin)
     cost = 0;
   
- std::cout<<"The cost value is: "<<cost<<std::endl;
+  // output of the cost value
+  std::cout<<"The cost value is: "<<cost<<std::endl;
 
   return cost;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 double trajectoryPrint( double x[])
 {
-// setting the acceleration as a constant (temporary)
-  //double accel = 0.0001/AU;// thrust acceleration (au/s^2)
+  // defining the acceleration
     double accel;
-/***********************************************************************************************************************************/
 
-  // set landing conditions for Earth and the asteroid and inital conditions for the spacecraft:
-  // constructor takes in radial position(au), angluar position(rad), off-plane position(au),
-  // radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)
+  /*set the asteroid and inital conditions for the earth and spacecraft:
+  constructor takes in radial position(au), angluar position(rad), off-plane position(au),
+  radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
   elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
-// setting initial conditions of earth based off of the impact date minus the trip time (October 5, 2022)
+  // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
 
   // setting initial conditions of the spacecraft
-  // not the actual initial conditions, right now just equal to the earth's landing date conditions
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),earth.z,
   earth.vr+sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(x[BETA_OFFSET])*vEscape,earth.vz);
-
-/***********************************************************************************************************************************/
 
   // setting time parameters
   double timeInitial=0; 
@@ -145,22 +139,32 @@ double trajectoryPrint( double x[])
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
   deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
 
-  // setup of thrust angle calculations
+  // setup of thrust angle calculations based off of optimized coefficients
+  // in-plane angle
   coefficients<double> coeff;
   for (int i=0;i<coeff.gammaSize;i++){
     coeff.gamma[i]=x[i+GAMMA_OFFSET];
   }
+  // out-of-plane angle
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
+
+  // setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
   }
-
+  // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
-
+ 
+  // TODO: change to wet mass!
+  // assigning optimized drymass
   double dryMass = x[DRYMASS_OFFSET];
-
+  // setting a resonable range for dryMass
+  if(dryMass<2700 || dryMass>wetMass)
+  {
+      return 100;
+  }
 
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
@@ -171,39 +175,41 @@ double trajectoryPrint( double x[])
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
   yp = new elements<double>[numSteps];
-  // Initialize memory for the values of the independent variable
+  // Initialize memory for time array
   double *times;
   times = new double[numSteps];
-
+  // Initialize memory for gamma array
   double *gamma;
   gamma = new double[numSteps];
-
+  // Initialize memory for tau array
   double *tau;
   tau = new double[numSteps];
-
+  // Initialize memory for acceleration array
   double *accel_output;
   accel_output = new double[numSteps];
 
+  // used to get yFinal
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
   rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, dryMass);
 
+  // gets the final y values of the spacecrafts for the cost function.
   elements<double> yFinal;
   yFinal = yp[lastStep];
-  
-  // cleaning up dynamic yp, time, gamma, and tau.
  
-
+  // cost equation determines how close a given run is to impact.
+  // based off the position components of the spacecraft and asteroid.
   double cost;
   cost = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);
 
+  // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
   if (cost < Fmin)
     cost = 0;
-  
-std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
 
-  
+  // output of the cost value
+  std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
+
   // Output of yp to a binary file
   std::ofstream output;
   
@@ -219,6 +225,7 @@ std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl
   }
   output.close();
 
+  // cleaning up dynamic yp, time, gamma, and tau.
   delete [] yp;
   delete [] times;
   delete [] gamma;
@@ -227,12 +234,16 @@ std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl
   return cost;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+// solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
+// reverse integration in order to determine the initial conditions of the earth (at launch)
 elements<double> earthInitial(double tripTime)
 {
+  // setup of thrust angle calculations based off of optimized coefficients
+  // all set to zero because the earth has no acceleration due to thrusting.
   coefficients<double> earthCoeff;
   for (int i=0;i<earthCoeff.gammaSize;i++){
     earthCoeff.gamma[i]=0;
@@ -241,23 +252,25 @@ elements<double> earthInitial(double tripTime)
     earthCoeff.tau[i]=0;
   }
 
+  // set to zero because the earth has no acceleration due to thrusting.
   double earthAccel = 0;
+
   //setting initial conditions for calculation of earth on launch date with orbital elements of the earth on the asteroid impact date of 2022-10-05.
   elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
   -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
 
-// setting intiial time parameters
+  // setting intiial time parameters
   double timeInitial= 0; 
   double deltaT; // time step
   deltaT = -(tripTime-timeInitial)/1e9; // initial guess for time step, small is preferable
 
-// declaring the solution vector
+  // declaring the solution vector
   elements<double> yp;
 
- // setting Runge-Kutta tolerance
+  // setting Runge-Kutta tolerance
   double absTol = 1e-12;
 
-// calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
+  // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
   rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
 
   return yp;

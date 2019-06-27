@@ -1,9 +1,10 @@
+#include "optimization.h" 
+#include "nelder_mead.h" // used for nelmin()
+#include "constants.h" //used for wetMass
+#include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
-#include "nelder_mead.h"
-#include "orbitalMotion.h"
-#include "optimization.h"
-#include "constants.h"
+
 
 //  Licensing:
 //    This code is distributed under the GNU LGPL license. 
@@ -13,9 +14,7 @@
 //    John Burkardt
 
 int main ()
-
 {
-  
   timestamp ();
   std::cout << "\n"<<"beginning of optimization"<<std::endl;
 
@@ -60,6 +59,9 @@ void optimizing ()
   // x[12]: alpha - launch angle (declination) position 
   // x[13]: beta - launch angle (declination) velocity 
   // x[14]: trip time - total time from launch to impact, sets the initial earth position
+  // x[15-19]: coast coefficients used to calculate fourier series
+  // x[20]: coast threshold - value set to determine when coasting occurs
+  // x[21]: dry mass - mass of spacecraft excluding fuel
 
   // initial guesses for variables based off of previous runs which have small cost values
   start[0] = 10;
@@ -83,7 +85,7 @@ void optimizing ()
   start[18] = 1;
   start[19] = 1;
   start[20] = 0.25;
-  start[21] = wetMass-250;
+  start[21] = wetMass-250; // 2700 kg
 
   // convergence tolerance
   reqmin = 1.0E-40;

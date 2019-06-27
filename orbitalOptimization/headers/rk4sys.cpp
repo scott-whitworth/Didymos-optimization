@@ -1,22 +1,11 @@
 #include "rk4sys.h"
-#include "acceleration.h"
+#include "acceleration.h" //used for calc_accel() and calc_coast()
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, 
 const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & dryMass)
 {
-
-
-    // Set the first element of the solution vector to the initial conditions
-    y[0] = y0;
-    times[0]=timeInitial;
-    // array of gamma for binary output
-    gamma[0] =calc_gamma(coeff,timeInitial, timeFinal);
-    // array of tau for binary output
-    tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
- 
-
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
@@ -25,19 +14,32 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     int minStep=0;
     int maxStep=0;
 
+    // corresponds NEXT thruster to type 1 in thruster.h
     thruster<T> NEXT = thruster<T>(1);
 
-    T massFuelSpent =0;//Fuel mass spent (kg)
+    //mass of fuel expended (kg)
+    //set to 0 initially
+    T massFuelSpent =0;
 
+    // Set the first element of the solution vector to the initial conditions
+    y[0] = y0;
+    times[0]=timeInitial;
+    // array of gamma for binary output
+    gamma[0] =calc_gamma(coeff,timeInitial, timeFinal);
+    // array of tau for binary output
+    tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
+    // array of acceleration for binary output
     accel_output[0] = calc_accel(y[0].r, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), dryMass);
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
-
+        // defining deltaT for calc_accel as the stepsize
         T deltaT = stepSize;
 
+        // defining coast using calc_coast()
         T coast = calc_coast(coeff, curTime, timeFinal);
 
+        // defining acceleration using calc_accel()
         accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast, dryMass);
         
 
@@ -114,17 +116,23 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     T curTime = timeInitial; // setting time equal to the start time
 
+    // corresponds NEXT thruster to type 1 in thruster.h
     thruster<T> NEXT = thruster<T>(1);
 
+    //mass of fuel expended (kg)
+    //set to 0 initially
     T massFuelSpent =0;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
 
+        // defining deltaT for calc_accel as the stepsize
         T deltaT = stepSize;
 
+        // defining coast using calc_coast()
         T coast = calc_coast(coeff, curTime, timeFinal);
 
+        // defining acceleration using calc_accel()
         accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast, dryMass);
 
         // Runge-Kutta algorithm       
@@ -228,16 +236,15 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
 }
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
 {
-//TODO: SC: normTotError might mean Normilize Total Error, but it should be documented. Also what does scale refer to? Why do we need to variables?
+    // relative total error is the total error of all coponents of y which is used in scale.
+    // scale is used to determine the next step size.
     T normTotError, scale;
 
     // relative error (unitless) 
     elements<T> pmError(difference.r/previous.r, difference.theta/previous.theta, difference.z/previous.z, 
     difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
 
-    //TODO: SC: This comment is not complete, and not accurate. You are taking the square root of the sum of squares of the errors
-    //TODO: SC: using (T) as a casting method leads to some issues. The better way is static_cast<T>(var). I am also not totally sure you need to cast anything here. The pmError elements will need a T pow function call
-    // Sum the error of the 6 element to determine the scale for the time step of the next iteration
+    // square root of sum of squares of the error from the 6 elements to determine the scale for the time step of the next iteration
     normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),(T)1/2);
     scale = pow((absTol/normTotError),(T)1/5);
 

@@ -1,10 +1,9 @@
 #include "thruster.h"
-#include <iomanip> // setprecision(int)
+#include <iomanip> // used for setPrecision()
 
-
-// sets starting values as given
 template <class T>
 thruster<T>::thruster(int newType){
+    // setting values (defined in header) for when type 1 is called (NEXT)
     if(newType == 1){
         m_Dot = NEXTm_Dot0;
         P0 = NEXTP0;

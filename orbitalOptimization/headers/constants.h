@@ -14,16 +14,17 @@
 #define kiloConversion .001 //  used to convert to kilograms and Watts (meters/kilometer)
 
 // starting location in the optimization array
-#define GAMMA_OFFSET 0 
-#define TAU_OFFSET 9
-#define ALPHA_OFFSET 12
-#define BETA_OFFSET 13 
-#define TRIPTIME_OFFSET 14
-#define COAST_OFFSET 15
-#define THRESHOLD_OFFSET 20
-#define DRYMASS_OFFSET 21
+#define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
+#define TAU_OFFSET 9 // x[9-11] first order fourier for out-of-plane angle
+#define ALPHA_OFFSET 12 // x[12] position escape earth angle
+#define BETA_OFFSET 13 // x[13] velocity escape earth angle
+#define TRIPTIME_OFFSET 14 // x[14] total duration of the trip
+#define COAST_OFFSET 15 // x[15-19] second order fourier for coasting determination
+#define THRESHOLD_OFFSET 20 // x[20] coasting threshold
+#define DRYMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
 
 // Spacecraft constants
+// TODO: this number is made up! we need to figure out what actually is. It would be better to optimize wet mass because the drymass is not variable.
 #define wetMass 3000 // fuel + dry mass (kg)
 
 #endif
