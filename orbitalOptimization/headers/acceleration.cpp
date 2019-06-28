@@ -7,7 +7,7 @@ template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T 
     
     // Ensures there is a limit to how much fuel is used in a given trip.
     // wetMass is a optimized variable and dryMass is defined in constants.h 
-    if(wetMass - massFuel < dryMass){
+    if(wetMass - massFuel <= dryMass){
         return 0;
     }
 

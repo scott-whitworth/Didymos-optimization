@@ -85,7 +85,7 @@ void optimizing ()
   start[18] = 1;
   start[19] = 1;
   start[20] = 0.25;
-  start[21] = dryMass+250; // 3950 kg
+  start[21] = dryMass+200; // 3950 kg
 
   // convergence tolerance
   reqmin = 1.0E-40;
