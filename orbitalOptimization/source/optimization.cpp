@@ -78,14 +78,14 @@ void optimizing ()
   start[11] = 10;
   start[12] = 0.5;
   start[13] = 0.5;
-  start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
+  start[14] = 6.653820100923719e+07; // period of asteroid divided by two, approx. 1.1 years
   start[15] = 1;
   start[16] = 1;
   start[17] = 1;
   start[18] = 1;
   start[19] = 1;
   start[20] = 0.25;
-  start[21] = wetMass-250; // 2700 kg
+  start[21] = wetMass-500; // 2700 kg
 
   // convergence tolerance
   reqmin = 1.0E-40;

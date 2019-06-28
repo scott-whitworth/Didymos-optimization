@@ -171,6 +171,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
             stepSize=(timeFinal-timeInitial)/2;
         else if (stepSize<((timeFinal-timeInitial)/1000))
             stepSize=(timeFinal-timeInitial)/1000;
+        // shorten the last step to end exactly at time final
         if((curTime+stepSize)>timeFinal)
             stepSize=(timeFinal-curTime);
 
@@ -230,6 +231,7 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
             stepSize=-(timeFinal-timeInitial)/2;
         else if (-stepSize<((timeFinal-timeInitial)/1000))
             stepSize=-(timeFinal-timeInitial)/1000;
+        // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize=-(curTime-timeInitial);
     }//end of while 

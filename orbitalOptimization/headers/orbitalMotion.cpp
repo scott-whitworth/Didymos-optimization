@@ -15,7 +15,7 @@ double trajectory( double x[])
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+  elements<double> asteroid = elements<double>(1.02696822710421*3, 0.238839574416454, -0.0526614832914496*3,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized)
@@ -76,7 +76,7 @@ double trajectory( double x[])
   // assigning optimized drymass
   double dryMass = x[DRYMASS_OFFSET];
   // setting a resonable range for dryMass
-  if(dryMass<2700 || dryMass>wetMass)
+  if(dryMass<2500 || dryMass>wetMass)
   {
       return 100;
   }
@@ -122,7 +122,7 @@ double trajectoryPrint( double x[])
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
+  elements<double> asteroid = elements<double>(1.02696822710421*3, 0.238839574416454, -0.0526614832914496*3,
   -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
