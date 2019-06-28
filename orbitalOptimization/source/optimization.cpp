@@ -61,7 +61,7 @@ void optimizing ()
   // x[14]: trip time - total time from launch to impact, sets the initial earth position
   // x[15-19]: coast coefficients used to calculate fourier series
   // x[20]: coast threshold - value set to determine when coasting occurs
-  // x[21]: dry mass - mass of spacecraft excluding fuel
+  // x[21]: wet mass - mass of spacecraft including fuel
 
   // initial guesses for variables based off of previous runs which have small cost values
   start[0] = 10;
@@ -85,7 +85,7 @@ void optimizing ()
   start[18] = 1;
   start[19] = 1;
   start[20] = 0.25;
-  start[21] = wetMass-500; // 2700 kg
+  start[21] = dryMass+200; // 3950 kg
 
   // convergence tolerance
   reqmin = 1.0E-40;

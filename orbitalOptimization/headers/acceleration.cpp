@@ -3,11 +3,11 @@
 #include "thruster.h" // used for P0, calc_eff(), and calc_m_Dot()
 #include <iostream> // used for cout
 
-template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const T & thrusting, const T & dryMass){
+template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T & massFuel, const T & deltaT, const T & thrusting, const T & wetMass){
     
     // Ensures there is a limit to how much fuel is used in a given trip.
-    // DryMass is a optimized variable and wetMass is defined in constants.h 
-    if(wetMass - massFuel < dryMass){
+    // wetMass is a optimized variable and dryMass is defined in constants.h 
+    if(wetMass - massFuel <= dryMass){
         return 0;
     }
 

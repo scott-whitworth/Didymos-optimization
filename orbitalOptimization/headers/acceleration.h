@@ -13,10 +13,10 @@
 //         massFuel: recalculated every time the function is called to update the current mass of fuel expended during the trip.
 //         deltaT: stepsize for a given iteration, used in the calculation of massFuel.
 //         thrusting: evaluated in calc_coast() to determine whether calc_accel() will be called.
-//         dryMass: mass of the spacecraft excluding the fuel (optimized).
+//         wetMass: mass of the spacecraft including the fuel (optimized).
 // output: acceleration of the spacecraft due to thrusting.
 
-template <class T> T calc_accel(const T & radius, const thruster<T> & thrusterType, const T & massFuel, const T & deltaT, const T & thrusting, const T & dryMass);
+template <class T> T calc_accel(const T & radius, const thruster<T> & thrusterType, const T & massFuel, const T & deltaT, const T & thrusting, const T & wetMass);
 
 #include "acceleration.cpp"
 #endif

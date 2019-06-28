@@ -72,15 +72,14 @@ double trajectory( double x[])
   // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
  
-  // TODO: change to wet mass!
-  // assigning optimized drymass
-  double dryMass = x[DRYMASS_OFFSET];
-  // setting a resonable range for dryMass
-  if(dryMass<2500 || dryMass>wetMass)
+  // assigning optimized wetMass
+  double wetMass = x[WETMASS_OFFSET];
+  // setting a resonable range for wetMass
+  if(wetMass<dryMass || wetMass>3000)
   {
       return 100;
   }
-  
+
   // setting Runge-Kutta tolerance
   double absTol = 1e-12;
 
@@ -91,7 +90,7 @@ double trajectory( double x[])
   elements<double> yp;
 
   // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
-  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,dryMass);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass);
 
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
@@ -157,11 +156,10 @@ double trajectoryPrint( double x[])
   // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
  
-  // TODO: change to wet mass!
-  // assigning optimized drymass
-  double dryMass = x[DRYMASS_OFFSET];
-  // setting a resonable range for dryMass
-  if(dryMass<2700 || dryMass>wetMass)
+  // assigning optimized wetMass
+  double wetMass = x[WETMASS_OFFSET];
+  // setting a resonable range for wetMass
+  if(wetMass<dryMass || wetMass>3000)
   {
       return 100;
   }
@@ -192,7 +190,7 @@ double trajectoryPrint( double x[])
   int lastStep = 0;
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, dryMass);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
   elements<double> yFinal;

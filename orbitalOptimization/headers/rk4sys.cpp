@@ -4,7 +4,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & dryMass)
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass)
 {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
@@ -29,7 +29,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     // array of tau for binary output
     tau[0] =calc_tau(coeff,timeInitial, timeFinal); 
     // array of acceleration for binary output
-    accel_output[0] = calc_accel(y[0].r, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), dryMass);
+    accel_output[0] = calc_accel(y[0].r, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
@@ -40,7 +40,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         T coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast, dryMass);
+        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast, wetMass);
         
 
         // Runge-Kutta algorithm       
@@ -108,7 +108,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, const T & dryMass)
+T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass)
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
@@ -133,7 +133,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         T coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast, dryMass);
+        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast, wetMass);
 
         // Runge-Kutta algorithm       
         //k1 = h*f(t, y)
