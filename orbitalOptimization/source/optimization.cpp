@@ -78,7 +78,7 @@ void optimizing ()
   start[11] = 10;
   start[12] = 0.5;
   start[13] = 0.5;
-  start[14] = 6.653820100923719e+07; // period of asteroid divided by two, approx. 1.1 years
+  start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
   start[15] = 1;
   start[16] = 1;
   start[17] = 1;
