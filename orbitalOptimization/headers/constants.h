@@ -21,10 +21,9 @@
 #define TRIPTIME_OFFSET 14 // x[14] total duration of the trip
 #define COAST_OFFSET 15 // x[15-19] second order fourier for coasting determination
 #define THRESHOLD_OFFSET 20 // x[20] coasting threshold
-#define DRYMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
+#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
 
 // Spacecraft constants
-// TODO: this number is made up! we need to figure out what actually is. It would be better to optimize wet mass because the drymass is not variable.
-#define wetMass 3000 // fuel + dry mass (kg)
+#define dryMass 2700 // mass of spacecraft excluding fuel (kg)
 
 #endif
