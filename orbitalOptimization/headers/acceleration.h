@@ -16,7 +16,7 @@
 //         wetMass: mass of the spacecraft including the fuel (optimized).
 // output: acceleration of the spacecraft due to thrusting.
 
-template <class T> T calc_accel(const T & radius, const thruster<T> & thrusterType, const T & massFuel, const T & deltaT, const T & thrusting, const T & wetMass);
+template <class T> T calc_accel(const T & radius, const thruster<T> & thrusterType, const T & massExpelled, const T & deltaT, const T & thrusting, const T & wetMass);
 
 #include "acceleration.cpp"
 #endif

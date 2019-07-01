@@ -35,6 +35,7 @@
 
 
 // starting location in the optimization array
+#define OPTIM_VARS 22//Number of variables in the optimization
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
 #define TAU_OFFSET 9 // x[9-11] first order fourier for out-of-plane angle
 #define ALPHA_OFFSET 12 // x[12] position escape earth angle

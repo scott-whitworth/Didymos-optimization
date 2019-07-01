@@ -6,13 +6,6 @@
 #include <iomanip> //used for setw(), sets spaces between values
 
 
-//  Licensing:
-//    This code is distributed under the GNU LGPL license. 
-//  Modified:
-//    27 February 2008
-//  Author:
-//    John Burkardt
-
 int main ()
 {
   timestamp ();
@@ -27,8 +20,11 @@ int main ()
 }
 
 void optimizing ()
-//  Purpose:
-//    optimizes the coefficients for gamma and tau fourier series. Also, optimizes alpha and beta angles (used in initial velocity of the spacecraft).
+//  Purpose: Optimize the following:
+//* Coefficients for gamma and tau fourier series,
+//* alpha and beta angles (used in initial velocity of the spacecraft),
+//* trip times,
+//* Fuel mass.
 {
   // initializing variables for nelmin algorithm. See nelder_mead.cpp for input/output information
   int i; 
@@ -45,7 +41,7 @@ void optimizing ()
   double ynewlo;
 
   // number of variables to be optimized
-  n = 22; 
+  n = OPTIM_VARS; 
 
   // allocating memory according to number of variables
   start = new double[n];
@@ -64,30 +60,30 @@ void optimizing ()
   // x[21]: wet mass - mass of spacecraft including fuel
 
   // initial guesses for variables based off of previous runs which have small cost values
-  start[0] = 10;
-  start[1] = 10;
-  start[2] = 10;
-  start[3] = 10;
-  start[4] = 10;
-  start[5] = 10;
-  start[6] = 10;
-  start[7] = 10;
-  start[8] = 10;
-  start[9] = 10;
-  start[10] = 10;
-  start[11] = 10;
-  start[12] = 0.5;
-  start[13] = 0.5;
-  start[14] = 6.653820100923719e+07/2; // period of asteroid divided by two, approx. 1.1 years
-  start[15] = 1;
-  start[16] = 1;
-  start[17] = 1;
-  start[18] = 1;
-  start[19] = 1;
-  start[20] = 0.25;
-  start[21] = dryMass+200; // 3950 kg
+  start[GAMMA_OFFSET] = 10;
+  start[GAMMA_OFFSET+1] = 10;
+  start[GAMMA_OFFSET+2] = 10;
+  start[GAMMA_OFFSET+3] = 10;
+  start[GAMMA_OFFSET+4] = 10;
+  start[GAMMA_OFFSET+5] = 10;
+  start[GAMMA_OFFSET+6] = 10;
+  start[GAMMA_OFFSET+7] = 10;
+  start[GAMMA_OFFSET+8] = 10;
+  start[TAU_OFFSET] = 10;
+  start[TAU_OFFSET+1] = 10;
+  start[TAU_OFFSET+2] = 10;
+  start[ALPHA_OFFSET] = 0.5;
+  start[BETA_OFFSET] = 0.5;
+  start[TRIPTIME_OFFSET] = 6.653820100923719e+07/2; // 2 YEARS
+  start[COAST_OFFSET] = 1;
+  start[COAST_OFFSET+1] = 1;
+  start[COAST_OFFSET+2] = 1;
+  start[COAST_OFFSET+3] = 1;
+  start[COAST_OFFSET+4] = 1;
+  start[THRESHOLD_OFFSET] = 0.25;
+  start[WETMASS_OFFSET] = dryMass+200; // 3950 kg
 
-  // convergence tolerance
+  // terminating limit for the variance of function values
   reqmin = 1.0E-40;
 
   // initial change in variable size

@@ -1,4 +1,4 @@
-#include "rk4sys.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
+#include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
@@ -14,10 +14,10 @@ double trajectory( double x[])
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
-  // setting landing conditions of the asteroid (October 5, 2022)
+  // setting impact conditions of the asteroid (October 5, 2022)
   elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
-  // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized)
+  // setting initial conditions of earth based on the impact date (October 5, 2022) minus the trip time (optimized)
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
   
   // setting initial conditions of the spacecraft
@@ -263,7 +263,7 @@ elements<double> earthInitial(double tripTime)
   elements<double> yp;
 
   // setting Runge-Kutta tolerance
-  double absTol = 1e-12;
+  double absTol = RK_TOL;
 
   // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
   rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
