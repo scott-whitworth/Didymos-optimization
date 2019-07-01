@@ -13,6 +13,27 @@
 #define Torbital 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define kiloConversion .001 //  used to convert to kilograms and Watts (meters/kilometer)
 
+
+#define MAX_NUMSTEPS 1e9
+#define RK_TOL 1e-12
+#define F_MIN 1e-20
+
+//final conditions of the asteroid and Earth
+#define R_FIN_AST 1.02696822710421
+#define THETA_FIN_AST 0.238839574416454
+#define Z_FIN_AST -0.0526614832914496
+#define VR_FIN_AST -2.05295246185041e-08
+#define VTHETA_FIN_AST 2.29132593453064e-07
+#define VZ_FIN_AST 8.00663905822009e-09
+
+#define R_FIN_EARTH 1.00021392223428
+#define THETA_FIN_EARTH 0.199470650149394
+#define Z_FIN_EARTH -1.54878511585620e-05
+#define VR_FIN_EARTH -3.32034068725821e-09
+#define VTHETA_FIN_EARTH 1.99029138292504e-07
+#define VZ_FIN_EARTH -9.71518257891386e-12
+
+
 // starting location in the optimization array
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
 #define TAU_OFFSET 9 // x[9-11] first order fourier for out-of-plane angle

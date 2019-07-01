@@ -15,8 +15,7 @@ double trajectory( double x[])
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
-  -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
+  elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized)
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
@@ -52,7 +51,7 @@ double trajectory( double x[])
   double timeInitial=0; 
   double timeFinal=Torbital; // Orbital period of asteroid(s)
   double deltaT; // time step
-  deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   // in-plane angle
@@ -81,10 +80,10 @@ double trajectory( double x[])
   }
 
   // setting Runge-Kutta tolerance
-  double absTol = 1e-12;
+  double absTol = RK_TOL;
 
   //set optmization minimum
-  double Fmin = 1e-20;
+  double Fmin = F_MIN;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
@@ -121,8 +120,7 @@ double trajectoryPrint( double x[])
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(1.02696822710421, 0.238839574416454, -0.0526614832914496,
-  -2.05295246185041e-08, 2.29132593453064e-07, 8.00663905822009e-09);
+  elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
@@ -136,7 +134,7 @@ double trajectoryPrint( double x[])
   double timeFinal=Torbital; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
-  deltaT = (timeFinal-timeInitial)/1e9; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   // in-plane angle
@@ -165,10 +163,10 @@ double trajectoryPrint( double x[])
   }
 
   // setting Runge-Kutta tolerance
-  double absTol = 1e-12;
+  double absTol = RK_TOL;
 
   //set optmization minimum
-  double Fmin = 1e-20;
+  double Fmin = F_MIN;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
@@ -254,13 +252,12 @@ elements<double> earthInitial(double tripTime)
   double earthAccel = 0;
 
   //setting initial conditions for calculation of earth on launch date with orbital elements of the earth on the asteroid impact date of 2022-10-05.
-  elements<double> earth = elements<double>(1.00021392223428, 0.199470650149394, -1.54878511585620e-05,
-  -3.32034068725821e-09, 1.99029138292504e-07, -9.71518257891386e-12);
+  elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
 
   // setting intiial time parameters
   double timeInitial= 0; 
   double deltaT; // time step
-  deltaT = -(tripTime-timeInitial)/1e9; // initial guess for time step, small is preferable
+  deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
   // declaring the solution vector
   elements<double> yp;
