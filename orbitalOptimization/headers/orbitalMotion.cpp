@@ -68,9 +68,12 @@ double trajectory( double x[])
   // setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
+//    coeff.coast[i]=0.;
+
   }
   // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
+//  coeff.coastThreshold = -1.;
  
   // assigning optimized wetMass
   double wetMass = WET_MASS;
@@ -90,17 +93,20 @@ double trajectory( double x[])
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
+
   // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
   rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass, massFuelSpent);
 
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost;
-  cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
+  double cost, cost_pos, cost_vel;
+  cost_pos = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
+  cost_vel = pow((sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))-V_IMPACT)/V_IMPACT,2);
+  //cost = cost_pos<cost_vel?cost_pos:cost_vel;
+  cost = cost_pos;
+
   //+pow((wetMass-dryMass-massFuelSpent)/(wetMass-dryMass),2)
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
-  //if (sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))<V_IMPACT)
-  //  return 1;
   if (cost < Fmin)
     cost = 0;
 
@@ -154,9 +160,11 @@ double trajectoryPrint( double x[])
   // setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
+  //  coeff.coast[i]=0.;
   }
   // assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
+  //coeff.coastThreshold = -1.;
  
   // assigning optimized wetMass
   double wetMass = WET_MASS;
@@ -200,15 +208,19 @@ double trajectoryPrint( double x[])
  
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost;
-  cost = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);
+  double cost, cost_pos, cost_vel;
+  cost_pos = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);         
+  cost_vel = pow((sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2))-V_IMPACT)/V_IMPACT,2);
+  //cost = cost_pos<cost_vel?cost_pos:cost_vel;
+  cost = cost_pos;
 
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
-  if (cost < Fmin)
+   if (cost < Fmin)
     cost = 0;
 
   // output of the cost value
-  std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
+  std::cout<<"The cost value is: "<<cost<<"\n";
+  std::cout<<"The relative impact speed (m/s): "<< AU*sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2));
 
   // Output of yp to a binary file
   std::ofstream output;

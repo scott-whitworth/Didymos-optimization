@@ -35,6 +35,7 @@
 
 //Official DART mission data
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
+//#define V_IMPACT 6.0e-08 //impact velocity in AU/s
 
 // starting location in the optimization array
 #define OPTIM_VARS 21//Number of variables in the optimization
