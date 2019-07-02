@@ -95,7 +95,7 @@ double trajectory( double x[])
 
 
   // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
-  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass, massFuelSpent);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass);
 
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
