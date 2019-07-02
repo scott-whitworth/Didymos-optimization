@@ -178,8 +178,9 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
     }//end of while 
 }
 
-template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & v, elements<T> & u){
-    // Runge-Kutta algorithm       
+template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & v, elements<T> & u){
+    // Runge-Kutta algorithm      
+    elements<T> k1, k2, k3, k4, k5, k6, k7; 
     //k1 = h*f(t, y)
     k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);        
     //k2 = h*f(t+1/5, y+k1*1/5)
