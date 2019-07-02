@@ -108,7 +108,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass)
+T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, T & massFuelSpent)
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y = y0;
@@ -121,7 +121,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
 
     //mass of fuel expended (kg)
     //set to 0 initially
-    T massFuelSpent =0;
+    //T massFuelSpent =0;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {

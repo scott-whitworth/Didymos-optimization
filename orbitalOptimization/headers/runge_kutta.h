@@ -35,7 +35,7 @@ T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & a
 // 2.
     // Output: writes in y the final position  of the spacecraft
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel, const T & wetMass);
+T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel, const T & wetMass,const T & massFuelSpent);
 
 //3.
     // Comment on stepsize: Expected to be negative due to reverse integration

@@ -33,9 +33,11 @@
 #define VTHETA_FIN_EARTH 1.99029138292504e-07
 #define VZ_FIN_EARTH -9.71518257891386e-12
 
+//Official DART mission data
+#define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
 
 // starting location in the optimization array
-#define OPTIM_VARS 22//Number of variables in the optimization
+#define OPTIM_VARS 21//Number of variables in the optimization
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
 #define TAU_OFFSET 9 // x[9-11] first order fourier for out-of-plane angle
 #define ALPHA_OFFSET 12 // x[12] position escape earth angle
@@ -43,9 +45,10 @@
 #define TRIPTIME_OFFSET 14 // x[14] total duration of the trip
 #define COAST_OFFSET 15 // x[15-19] second order fourier for coasting determination
 #define THRESHOLD_OFFSET 20 // x[20] coasting threshold
-#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
+//#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
 
 // Spacecraft constants
 #define dryMass 2700 // mass of spacecraft excluding fuel (kg)
+#define WET_MASS 3000
 
 #endif

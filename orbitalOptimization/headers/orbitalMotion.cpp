@@ -9,6 +9,7 @@ double trajectory( double x[])
 {
   // defining acceleration
     double accel;
+    double massFuelSpent = 0;
 
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -72,13 +73,14 @@ double trajectory( double x[])
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
  
   // assigning optimized wetMass
-  double wetMass = x[WETMASS_OFFSET];
+  double wetMass = WET_MASS;
   // setting a resonable range for wetMass
+  /*
   if(wetMass<dryMass || wetMass>3000)
   {
       return 100;
   }
-
+ */
   // setting Runge-Kutta tolerance
   double absTol = RK_TOL;
 
@@ -89,17 +91,19 @@ double trajectory( double x[])
   elements<double> yp;
 
   // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
-  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass);
+  rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass, massFuelSpent);
 
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
   double cost;
   cost = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
-
+  //+pow((wetMass-dryMass-massFuelSpent)/(wetMass-dryMass),2)
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
+  //if (sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))<V_IMPACT)
+  //  return 1;
   if (cost < Fmin)
     cost = 0;
-  
+
   // output of the cost value
   std::cout<<"The cost value is: "<<cost<<std::endl;
 
@@ -155,7 +159,7 @@ double trajectoryPrint( double x[])
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
  
   // assigning optimized wetMass
-  double wetMass = x[WETMASS_OFFSET];
+  double wetMass = WET_MASS;
   // setting a resonable range for wetMass
   if(wetMass<dryMass || wetMass>3000)
   {

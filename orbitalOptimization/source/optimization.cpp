@@ -74,14 +74,14 @@ void optimizing ()
   start[TAU_OFFSET+2] = 10;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
-  start[TRIPTIME_OFFSET] = 6.653820100923719e+07/2; // 2 YEARS
-  start[COAST_OFFSET] = 1;
-  start[COAST_OFFSET+1] = 1;
-  start[COAST_OFFSET+2] = 1;
-  start[COAST_OFFSET+3] = 1;
-  start[COAST_OFFSET+4] = 1;
-  start[THRESHOLD_OFFSET] = 0.25;
-  start[WETMASS_OFFSET] = dryMass+200; // 3950 kg
+  start[TRIPTIME_OFFSET] = 365*24*3600*2; // 2 YEARS
+  start[COAST_OFFSET] = 0.5;
+  start[COAST_OFFSET+1] = 0.5;
+  start[COAST_OFFSET+2] = 0.5;
+  start[COAST_OFFSET+3] = 0.5;
+  start[COAST_OFFSET+4] = 0.5;
+  start[THRESHOLD_OFFSET] = 0.05;
+  //start[WETMASS_OFFSET] = dryMass+200; // 3950 kg
 
   // terminating limit for the variance of function values
   reqmin = 1.0E-40;
@@ -102,14 +102,14 @@ void optimizing ()
   step[11] = 1.0E01;
   step[12] = 1.0E00;
   step[13] = 1.0E00;
-  step[14] = 1.0E07;
+  step[14] = 2.0E07;
   step[15] = 1.0E00;
   step[16] = 1.0E00;
   step[17] = 1.0E00;
   step[18] = 1.0E00;
   step[19] = 1.0E00;
-  step[20] = 5.0E-01;
-  step[21] = 5.0E01;
+  step[20] = 1.0E-02;
+  //step[21] = 1.0E01;
 
   // how often the equation checks for a convergence
   konvge = 20;
