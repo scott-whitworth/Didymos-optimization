@@ -84,10 +84,11 @@ void optimizing ()
   //start[WETMASS_OFFSET] = dryMass+200; // 3950 kg
 
   // terminating limit for the variance of function values
+  //nelmin algorithm aims for the square root of this number
   reqmin = 1.0E-40;
 
   // initial change in variable size
-  // based off of the variable start value
+  // based on the variable start value
   step[0] = 1.0E01;
   step[1] = 1.0E01;
   step[2] = 1.0E01;
@@ -102,7 +103,7 @@ void optimizing ()
   step[11] = 1.0E01;
   step[12] = 1.0E00;
   step[13] = 1.0E00;
-  step[14] = 2.0E07;
+  step[14] = 1.0E07;
   step[15] = 1.0E00;
   step[16] = 1.0E00;
   step[17] = 1.0E00;
@@ -110,11 +111,11 @@ void optimizing ()
   step[19] = 1.0E00;
   step[20] = 1.0E-02;
   //step[21] = 1.0E01;
-
+  
   // how often the equation checks for a convergence
   konvge = 20;
   // maximum number of iterations for convergence
-  kcount = 10000;
+  kcount = 30000;
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;
@@ -130,8 +131,7 @@ void optimizing ()
   
   // nelder_mead function (optimization function)
   // see nelder_mead.cpp for input and output information
-  nelmin (trajectory, n, start, xmin, &ynewlo, reqmin, step,
-    konvge, kcount, &icount, &numres, &ifault);
+  nelmin (trajectory, n, start, xmin, &ynewlo, reqmin, step, konvge, kcount, &icount, &numres, &ifault);
 
   // displays error type when an error occurs
   std::cout << "\nReturn code IFAULT = " << ifault << "\nEstimate of minimizing value X*:\n\n";
