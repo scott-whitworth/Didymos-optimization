@@ -143,7 +143,20 @@ void optimizing ()
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
 
   // writes the solution based on optimized variables to a binary file
-  trajectoryPrint(xmin);
+  int numSteps = 0;
+
+  trajectoryPrint(xmin, numSteps);
+
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+
+  output.open ("final-optimization.bin", std::ios::binary);
+  for(int i=0; i < OPTIM_VARS; i++)
+  {
+    output.write((char*)&xmin[i], sizeof (double));
+  }
+  output.write((char*)&numSteps, sizeof (int));
+  output.close();
 
   // cleans up dynamic memory
   delete [] start;

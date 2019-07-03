@@ -114,7 +114,7 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double trajectoryPrint( double x[])
+double trajectoryPrint( double x[], int & n)
 {
   // defining the acceleration
     double accel;
@@ -206,6 +206,8 @@ double trajectoryPrint( double x[])
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
   if (cost < Fmin)
     cost = 0;
+
+  n = lastStep;
 
   // output of the cost value
   std::cout<<"The cost value is: "<<cost<<"\n"<<"the final y: "<<yFinal<<std::endl<<"the earth's position is: "<<earth<<std::endl;
