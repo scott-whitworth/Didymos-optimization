@@ -1,8 +1,7 @@
-development/bin/*
-orbitalOptimization/.vscode
-orbitalOptimization/.vscode/*
-orbitalOptimization/bin
-orbitalOptimization/bin/*
-.vscode/*
+**/bin
+**/.vscode
 *.exe
 *.json
+*final-optimization.bin
+*final-optimization.txt
+*orbitalMotion-accel.bin
