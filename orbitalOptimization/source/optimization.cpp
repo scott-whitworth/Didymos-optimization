@@ -13,8 +13,8 @@ int main ()
   std::cout << "\n"<<"beginning of optimization"<<std::endl;
 
   //optimizing();
-  iterativeOptimize();
-  //optimizeStartConditions();
+  //iterativeOptimize();
+  optimizeStartConditions();
 
   std::cout << "\n"<<"end of optimization"<<std::endl;
   timestamp ();
@@ -27,12 +27,15 @@ void optimizeStartConditions(){
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
 
+  double bestCost = 1.0E9;
+  //double *bestStart = new double[OPTIM_VARS];
+
   std::srand(std::time(NULL)); //seed the random number generator
 
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 10000; i++){
     // random initial guesses for variables within a reasonable range
     start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
     start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
@@ -95,7 +98,6 @@ void optimizeStartConditions(){
 
     trajectoryPrint(start, numSteps, cost);
 
-    //writes final optimization values to a seperate file
     output << "start values:" << std::endl;
     for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
     {
@@ -108,10 +110,33 @@ void optimizeStartConditions(){
     }
     output << std::endl << "cost value: " << cost << std::endl;
     output << "---------------------------------------------------------------------------------" << std::endl;
+
+    if(cost < bestCost){
+      bestCost = cost;
+      // not outputing the right start values
+      //bestStart = start;
+    }
   }
+  output << "---------------------------------------------------------------------------------" << std::endl;
+  output << "---------------------------------------------------------------------------------" << std::endl;
+  output << "BEST RESULTS:" << std::endl;
+  /*
+  output << "start values:" << std::endl;
+  for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
+  {
+    output << i + 1 << ": " << bestStart[i] << ", ";
+  }
+  output << std::endl;
+  for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
+  {
+    output << i + 1<< ": " << bestStart[i] << ", ";
+  }
+  */
+  output << std::endl << "cost value: " << bestCost << std::endl;
   output.close();
 
   delete [] start;
+  //delete [] bestStart;
   delete [] step;
 }
 
@@ -233,7 +258,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20;
   // maximum number of iterations for convergence
-  kcount = 30000 + (std::rand() % 10);
+  kcount = 300 + (std::rand() % 10);
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;
