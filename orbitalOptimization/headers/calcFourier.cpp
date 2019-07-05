@@ -4,6 +4,7 @@
 
 template <class T> T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal){
     T coeff = series[0];
+    T curTimeRatio = curTime / timeFinal;
 
     // f(x) = a_0 + sum{a_n*cos(n*t)+b_n*sin(n*t)}
     for(int i=1;i<=(series_size-1)/2;i++){

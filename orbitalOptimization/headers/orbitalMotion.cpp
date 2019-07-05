@@ -50,7 +50,7 @@ double trajectory( double x[])
 
   // setting time parameters
   double timeInitial=0; 
-  double timeFinal=Torbital; // Orbital period of asteroid(s)
+  double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
@@ -99,7 +99,7 @@ double trajectory( double x[])
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
-  //+pow((wetMass-dryMass-massFuelSpent)/(wetMass-dryMass),2)
+  //+pow((wetMass-DRY_MASS-massFuelSpent)/(wetMass-DRY_MASS),2)
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
   if (cost < Fmin)
     cost = 0;
@@ -114,7 +114,7 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double trajectoryPrint( double x[], int & n)
+double trajectoryPrint( double x[], int & n, double & cost)
 {
   // defining the acceleration
     double accel;
@@ -135,7 +135,7 @@ double trajectoryPrint( double x[], int & n)
 
   // setting time parameters
   double timeInitial=0; 
-  double timeFinal=Torbital; // Orbital period of asteroid(s)
+  double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
   deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
@@ -202,7 +202,7 @@ double trajectoryPrint( double x[], int & n)
  
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost, cost_pos, cost_vel;
+  double cost_pos, cost_vel;
   cost_pos = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);         
   cost_vel = pow((sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2))-V_IMPACT)/V_IMPACT,2);
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
@@ -214,14 +214,11 @@ double trajectoryPrint( double x[], int & n)
 
   n = lastStep;
 
-  // output of the cost value
-  std::cout<<"The cost value is: "<<cost<<"\n";
-  std::cout<<"The relative impact speed (m/s): "<< AU*sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2));
-
   // Output of yp to a binary file
   std::ofstream output;
   
-  output.open ("orbitalMotion-accel.bin", std::ios::binary);
+  output.open ("orbitalMotion-accel.bin", std::ios::binary); 
+
   for(int i=0; i <= lastStep; i++)
   {
     //output << yp[i];

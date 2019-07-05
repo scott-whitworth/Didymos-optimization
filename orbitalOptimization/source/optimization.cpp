@@ -4,13 +4,16 @@
 #include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
+#include <time.h> //for seeding the random number generator
 
 
 int main ()
 {
   timestamp ();
 
-  optimizeStartConditions ();
+  //optimizing();
+  iterativeOptimize();
+  //optimizeStartConditions();
 
   timestamp ();
   
@@ -90,10 +93,11 @@ void optimizeStartConditions()
     optimizing(start, step);
   }
 
-  // writes the solution based on optimized variables to a binary file
+ // writes the solution based on optimized variables to a binary file
   int numSteps = 0;
+  double cost = 0;
 
-  trajectoryPrint(start, numSteps);
+  trajectoryPrint(start, numSteps, cost);
 
   //writes final optimization values to a seperate file
   std::ofstream output;
@@ -167,8 +171,6 @@ void optimizing (double *&start, double *step)
   }
   std::cout << "\nF(X) = " << ynewlo << "\n";
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
-
-
 
   // use the results as the starting point for the next run
   delete [] start;

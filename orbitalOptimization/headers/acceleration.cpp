@@ -1,6 +1,5 @@
 #include "acceleration.h" 
 #include "constants.h" // used for wetMass
-#include "thruster.h" // used for P0, calc_eff(), and calc_m_Dot()
 #include <iostream> // used for cout
 
 template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const T & thrusting, const T & wetMass){
@@ -34,7 +33,7 @@ template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T 
     //The thrust power of the spacecraft is dependent upon the efficiency (calculated in thruster.cpp) and the power (in).
     Pthrust = thrusterType.calc_eff(Pin)*Pin; // P_thrust = eta*P_in
 
-    //Calling calc_m_Dot (defined in thruster.cpp) which returns the fuel flow rate (mDot) for a given power (in).
+    //update thrusterType's current m_Dot based on power input
     thrusterType.calc_m_Dot(Pin);
 
     //Thrust is calculated by power (thrust) and mDot.
