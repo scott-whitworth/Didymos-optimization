@@ -34,32 +34,22 @@ A better comment would be:
 
 acceleration.cpp/.h:
 * This function could benefit from a mathematical overview of what is going on. What are the equations being used? That would go a long way to giving a clearer picture and solve a number of issues pointed out below.
-* Comment in acceleration.h: massFuel is not the same as massExpelled? Also this calculates the magnitude of the accelleration, right? You define thrusting as being set in a different function, but what is it? 
+* This calculates the magnitude of the accelleration, right? You define thrusting as being set in a different function, but what is it? 
 * Line 6: For thrusting: Why is this a T? Could this be a flag? It is a little weird to compare a double to 0, that can cause issues if you are off by 0.00000000000000000000000000000001
-* Line 3: thruster.h is already included in acceleration.h
-* Line 9: I don't think this is true anymore. I might change Line 8 to be: `//If all of the fuel has been expelled, then no more thrust can be applied`
-* Lines 14 and 15: This is not really relevant to the function. You have already defined(?) what thrusting is. You can leave it with `//No thrust will be calculated, coasting`
 * Line 28: a better design would be to push this calcuation inside of the thruster. This looks true for all these lines, you need a buch of information from thrusterType. Might as well make this a method of thruster and pass in the relevant information (radius for the most part)
-* Line 38: An example of a not-great comment. A better comment might be: `//update thrusterType's m_Dot based on power input`. This call does not return anything.
-* Line 41: This comment is only part of the following line
 
 calcFourier.cpp/.h
 * Line 8 (.h): yes, by default this is an input array, what does it represent?
-* Line 13 (.h): Probably should make the series a const ref. It kind of alreay is as an array, but still should probably make it a const at a minimum.
 * Line 10/12 (.h) : If you are going to copy paste, make sure you copy and paste the right thing. This has nothing to do with gama or an in-plane angle. This just calculates the value of a series at a specific point in time.
 Line 47 (.h): Seems like a good place for a bool. Be careful, this might change things, do this carefully.
 * Lines 5-12: No comments. Should have at least a mathematical reference to what you are doing.
-* Line 9: Slight optimization, it might be better to pre-calculate curTime/timeFinal. Depending on how often this is being called this could save a number of ops per series calculation. At the moment this needs to be computed twice * half the parameters per series calculation
 
 constants.h
-* Line 13: Torbital is not a great variable name for the orbtal period of the asteroid
 * Line 14: Whoa... how is kiloConversion being used? Is there a case where this is not 0.001?
 * Lines 17 - 34: No comments and lots of magic numbers. I get what some of these are, but they should be clearly documented, and these are not. Where did this data come from? It is in reference to a specific time right? What is that time?
 * Lines 36 - 38: Official DART mission data that is two different values? That does not seem right. Additionally, is V_IMPACT a good name? That is the ideal V_IMPACT, not necessarily 'our' impact.
-* Line 52: DRY_MASS naming consistancy.
 
 elements.cpp/.h
-* Lines 29 and 35 (.h): I don't think this is correct. Oh! This is more of an issue that these are not constructors, they are operator overloads.
 
 motion_equations.cpp/.h
 
