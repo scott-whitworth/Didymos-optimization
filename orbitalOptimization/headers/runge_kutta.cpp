@@ -82,7 +82,6 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         y[n+1] = u;   
         n++;
     }//end of while 
-    std::cout<<massFuelSpent<<std::endl;
     lastStep = n;
     std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
