@@ -161,7 +161,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
         rkCalc(curTime, timeFinal, stepSize, y, coeff, accel, v, y);
 
         //array of time output as t         
-        curTime = curTime + stepSize;
+        curTime += stepSize;
 
         //Alter the step size for the next iteration
         //Expected to be negative

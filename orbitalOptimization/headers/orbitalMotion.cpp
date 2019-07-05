@@ -111,7 +111,7 @@ double trajectory( double x[])
     cost = 0;
 
   // output of the cost value
-  std::cout<<"The cost value is: "<<cost<<std::endl;
+  //std::cout<<"The cost value is: "<<cost<<std::endl;
 
   return cost;
 }
