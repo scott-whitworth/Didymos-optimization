@@ -5,11 +5,11 @@
 
 // General fourier series function which can be called for specific parameters (gamma,tau,and coast)
 // Parameters:
-//         series[]: input array
+//         series[]: input array, the coefficients of the series
 //         series_size: size of the input array
 //         curTime: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
-// output: in-plane angle derived from normalized time and gamma Fourier series
+// output: the value of the fourier series evaluated at a curTime
 template <class T> T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal);
 
 // Calculates gamma (in-plane angle) at a specific time using Fourier series coefficients

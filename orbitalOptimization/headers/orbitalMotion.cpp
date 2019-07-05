@@ -4,24 +4,24 @@
 #include <fstream> // used for stream output 
 #include <math.h> // used for M_PI
 
-// solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
+// Solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 double trajectory( double x[])
 {
-  // defining acceleration
+  // Defining acceleration
     double accel;
     double massFuelSpent = 0;
 
-  /*set the asteroid and inital conditions for the earth and spacecraft:
+  /*Set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
-  // setting impact conditions of the asteroid (October 5, 2022)
+  // Setting impact conditions of the asteroid (October 5, 2022)
   elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
-  // setting initial conditions of earth based on the impact date (October 5, 2022) minus the trip time (optimized)
+  // Setting initial conditions of earth based on the impact date (October 5, 2022) minus the trip time (optimized)
   elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
   
-  // setting initial conditions of the spacecraft
+  // Setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), //earth.r+ESOI*cos(alpha)
 
   /*Initial Angular Position is calculated using law of sines and the 
@@ -54,51 +54,45 @@ double trajectory( double x[])
   double deltaT; // time step
   deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
-  // setup of thrust angle calculations based off of optimized coefficients
-  // in-plane angle
+  // Setup of thrust angle calculations based off of optimized coefficients
+  // In-plane angle
   coefficients<double> coeff;
   for (int i=0;i<coeff.gammaSize;i++){
     coeff.gamma[i]=x[i+GAMMA_OFFSET];
   }
-  // out-of-plane angle
+  // Out-of-plane angle
   for (int i=0;i<coeff.tauSize;i++){
     coeff.tau[i]=x[i+TAU_OFFSET];
   }
 
-  // setup of coast determination calculations based off of optimized coefficients
+  // Setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
 //    coeff.coast[i]=0.;
 
   }
-  // assigning optimized coast threshold
+  // Assigning optimized coast threshold
   coeff.coastThreshold = x[THRESHOLD_OFFSET];
-//  coeff.coastThreshold = -1.;
+  // coeff.coastThreshold = -1.;
  
-  // assigning optimized wetMass
+  // Sssigning optimized wetMass
   double wetMass = WET_MASS;
-  // setting a resonable range for wetMass
-  /*
-  if(wetMass<DRY_MASS || wetMass>3000)
-  {
-      return 100;
-  }
- */
-  // setting Runge-Kutta tolerance
+
+  // Setting Runge-Kutta tolerance
   double absTol = RK_TOL;
 
-  //set optmization minimum
+  // Set optmization minimum
   double Fmin = F_MIN;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double> yp;
 
 
-  // calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
+  // Calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
   rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass);
 
-  // cost equation determines how close a given run is to impact.
-  // based off the position components of the spacecraft and asteroid.
+  // Cost equation determines how close a given run is to impact.
+  // Based off the position components of the spacecraft and asteroid.
   double cost, cost_pos, cost_vel;
   cost_pos = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
   cost_vel = pow((sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))-V_IMPACT)/V_IMPACT,2);
@@ -169,7 +163,7 @@ double trajectoryPrint( double x[], int & n, double & cost)
   // assigning optimized wetMass
   double wetMass = WET_MASS;
   // setting a resonable range for wetMass
-  if(wetMass<DRY_MASS || wetMass>3000)
+  if(wetMass<DRY_MASS|| wetMass>3000)
   {
       return 100;
   }

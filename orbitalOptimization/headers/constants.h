@@ -12,11 +12,11 @@
 #define massSun 1.98892e30// mass of the sun (kg)
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define kiloConversion .001 //  used to convert to kilograms and Watts (meters/kilometer)
+// Not sure this is being used ^
 
-
-#define MAX_NUMSTEPS 1e9
-#define RK_TOL 1e-12
-#define F_MIN 1e-20
+#define MAX_NUMSTEPS 1e9 // The highest precision the runge kutta method is going to use for the first step
+#define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
+#define F_MIN 1e-20 // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
 
 //final conditions of the asteroid and Earth
 #define R_FIN_AST 1.02696822710421
@@ -35,17 +35,21 @@
 
 //Official DART mission data
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
-//#define V_IMPACT 6.0e-08 //impact velocity in AU/s
+//#define V_IMPACT 6.0e-08 //test impact velocity in AU/s
 
 // starting location in the optimization array
-#define OPTIM_VARS 21//Number of variables in the optimization
+#define OPTIM_VARS 23//Number of variables in the optimization
+#define TAU_ARRAY_SIZE 9 // Length of the array of coefficients for gamma
+#define GAMMA_ARRAY_SIZE 5 // Length of the array of coefficients for tau
+#define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
+
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
 #define TAU_OFFSET 9 // x[9-11] first order fourier for out-of-plane angle
-#define ALPHA_OFFSET 12 // x[12] position escape earth angle
-#define BETA_OFFSET 13 // x[13] velocity escape earth angle
-#define TRIPTIME_OFFSET 14 // x[14] total duration of the trip
-#define COAST_OFFSET 15 // x[15-19] second order fourier for coasting determination
-#define THRESHOLD_OFFSET 20 // x[20] coasting threshold
+#define ALPHA_OFFSET 14 // x[12] position escape earth angle
+#define BETA_OFFSET 15 // x[13] velocity escape earth angle
+#define TRIPTIME_OFFSET 16 // x[14] total duration of the trip
+#define COAST_OFFSET 17 // x[15-19] second order fourier for coasting determination
+#define THRESHOLD_OFFSET 22 // x[20] coasting threshold
 //#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
 
 // Spacecraft constants
