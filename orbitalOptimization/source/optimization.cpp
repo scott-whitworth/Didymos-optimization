@@ -11,7 +11,7 @@ int main ()
   timestamp ();
   std::cout << "\n"<<"beginning of optimization"<<std::endl;
 
-  optimizeStartConditions ();
+  iterativeOptimize();
 
   std::cout << "\n"<<"end of optimization"<<std::endl;
   timestamp ();
@@ -19,7 +19,7 @@ int main ()
   return 0;
 }
 
-void optimizeStartConditions(){
+void iterativeOptimize(){
   // allocating memory according to number of variables
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
