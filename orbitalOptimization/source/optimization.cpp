@@ -34,9 +34,9 @@ void optimizeStartConditions(){
   start[GAMMA_OFFSET+6] = 10;
   start[GAMMA_OFFSET+7] = 10;
   start[GAMMA_OFFSET+8] = 10;
-  start[TAU_OFFSET] = 1;
-  start[TAU_OFFSET+1] = 1;
-  start[TAU_OFFSET+2] = 1;
+  start[TAU_OFFSET] = 10;
+  start[TAU_OFFSET+1] = 10;
+  start[TAU_OFFSET+2] = 10;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
   start[TRIPTIME_OFFSET] = 365*24*3600*2; // 2 YEARS
@@ -73,7 +73,7 @@ void optimizeStartConditions(){
   step[20] = 1.0E-02;
   //step[21] = 1.0E01;
 
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 1; i++){
     optimizing(start, step);
   }
 
@@ -120,7 +120,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 10;
   // maximum number of iterations for convergence
-  kcount = 1500;
+  kcount = 20000;
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;
