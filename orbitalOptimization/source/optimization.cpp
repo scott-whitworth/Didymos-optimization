@@ -34,9 +34,9 @@ void optimizeStartConditions(){
   start[GAMMA_OFFSET+6] = 10;
   start[GAMMA_OFFSET+7] = 10;
   start[GAMMA_OFFSET+8] = 10;
-  start[TAU_OFFSET] = 1;
-  start[TAU_OFFSET+1] = 1;
-  start[TAU_OFFSET+2] = 1;
+  start[TAU_OFFSET] = 0.1;
+  start[TAU_OFFSET+1] = 0.1;
+  start[TAU_OFFSET+2] = 0.1;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
   start[TRIPTIME_OFFSET] = 365*24*3600*2; // 2 YEARS
@@ -73,9 +73,25 @@ void optimizeStartConditions(){
   step[20] = 1.0E-02;
   //step[21] = 1.0E01;
 
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 100; i++){
     optimizing(start, step);
   }
+
+  // writes the solution based on optimized variables to a binary file
+  int numSteps = 0;
+
+  trajectoryPrint(start, numSteps);
+
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+
+  output.open ("final-optimization.bin", std::ios::binary);
+  for(int i=0; i < OPTIM_VARS; i++)
+  {
+    output.write((char*)&start[i], sizeof (double));
+  }
+  output.write((char*)&numSteps, sizeof (int));
+  output.close();
 
   delete [] start;
   delete [] step;
@@ -118,9 +134,9 @@ void optimizing (double *&start, double *step)
   reqmin = 1.0E-40;
   
   // how often the equation checks for a convergence
-  konvge = 10;
+  konvge = 5;
   // maximum number of iterations for convergence
-  kcount = 1500;
+  kcount = 1000+std::rand()%10;
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;
@@ -147,21 +163,7 @@ void optimizing (double *&start, double *step)
   std::cout << "\nF(X*) = " << ynewlo << "\n";
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
 
-  // writes the solution based on optimized variables to a binary file
-  int numSteps = 0;
 
-  trajectoryPrint(xmin, numSteps);
-
-  //writes final optimization values to a seperate file
-  std::ofstream output;
-
-  output.open ("final-optimization.bin", std::ios::binary);
-  for(int i=0; i < OPTIM_VARS; i++)
-  {
-    output.write((char*)&xmin[i], sizeof (double));
-  }
-  output.write((char*)&numSteps, sizeof (int));
-  output.close();
 
   // use the results as the starting point for the next run
   delete [] start;
