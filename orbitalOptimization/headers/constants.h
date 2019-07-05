@@ -10,7 +10,7 @@
 #define AU 1.49597870691e11// used to convert meters to astronomical units (m) 
 #define constG 1.99349603314131e-44 //gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
 #define massSun 1.98892e30// mass of the sun (kg)
-#define Torbital 6.653820100923719e+07 // orbital period time of the asteroid (s)
+#define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define kiloConversion .001 //  used to convert to kilograms and Watts (meters/kilometer)
 
 
@@ -49,7 +49,7 @@
 //#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
 
 // Spacecraft constants
-#define dryMass 2700 // mass of spacecraft excluding fuel (kg)
+#define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
 #define WET_MASS 3000
 
 #endif

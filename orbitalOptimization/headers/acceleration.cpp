@@ -1,18 +1,17 @@
 #include "acceleration.h" 
 #include "constants.h" // used for wetMass
-#include "thruster.h" // used for P0, calc_eff(), and calc_m_Dot()
 #include <iostream> // used for cout
 
 template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const T & thrusting, const T & wetMass){
     
     // Ensures there is a limit to how much fuel is used in a given trip.
-    // wetMass is a optimized variable and dryMass is defined in constants.h 
-    if(wetMass - massExpelled <= dryMass){
+    // fuel mass = wet mass - dry mass
+    // if all the fuel has been used, we cannot thrust
+    if(wetMass - massExpelled <= DRY_MASS){
         return 0;
     }
 
-    // Thrusting is evaluated in calcFourier.cpp within calc_coast().
-    // When thrusting is equal to zero, calc_accel() will not be evaluated.
+    // coasting, so don't calculate thrust
     if(thrusting == 0){
         return 0;
     }
@@ -35,10 +34,10 @@ template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T 
     //The thrust power of the spacecraft is dependent upon the efficiency (calculated in thruster.cpp) and the power (in).
     Pthrust = thrusterType.calc_eff(Pin)*Pin;
 
-    //Calling calc_m_Dot (defined in thruster.cpp) which returns the fuel flow rate (mDot) for a given power (in).
+    //update thrusterType's current m_Dot based on power input
     thrusterType.calc_m_Dot(Pin);
 
-    //Thrust is calculated by power (thrust) and mDot.
+    //Thrust is calculated by sqrt(2*power(thrust)*mDot).
     thrust = sqrt(2*Pthrust*thrusterType.m_Dot);
 
     //Calculates the amount of fuel used throughout the duration of the trip.

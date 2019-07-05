@@ -4,6 +4,7 @@
 #include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
+#include <time.h> //for seeding the random number generator
 
 
 int main ()
@@ -11,12 +12,107 @@ int main ()
   timestamp ();
   std::cout << "\n"<<"beginning of optimization"<<std::endl;
 
+  //optimizing();
   iterativeOptimize();
+  //optimizeStartConditions();
 
   std::cout << "\n"<<"end of optimization"<<std::endl;
   timestamp ();
   
   return 0;
+}
+
+void optimizeStartConditions(){
+  // allocating memory according to number of variables
+  double *start = new double[OPTIM_VARS];
+  double *step = new double[OPTIM_VARS];
+
+  std::srand(std::time(NULL)); //seed the random number generator
+
+  std::ofstream output;
+  output.open ("optimized-start-conditions.txt");
+
+  for(int i = 0; i < 10; i++){
+    // random initial guesses for variables within a reasonable range
+    start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
+    start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+2] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+3] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+4] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+5] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+6] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+7] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET+8] = std::rand() % 201 - 100;
+
+    start[TAU_OFFSET] = (std::rand() % 201) / 10 - 10; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = (std::rand() % 201) / 10 - 10;
+    start[TAU_OFFSET+2] = (std::rand() % 201) / 10 - 10;
+
+    start[ALPHA_OFFSET] = (std::rand() % 201) / 10 - 10;
+    start[BETA_OFFSET] = (std::rand() % 201) / 10 - 10;
+
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 50001 / 10000 + 1); // 1.0000 - 6.0000 years converted to seconds
+
+    start[COAST_OFFSET] = (std::rand() % 101) / 10; //0.0 - 10.0
+    start[COAST_OFFSET+1] = (std::rand() % 101) / 10;
+    start[COAST_OFFSET+2] = (std::rand() % 101) / 10;
+    start[COAST_OFFSET+3] = (std::rand() % 101) / 10;
+    start[COAST_OFFSET+4] = (std::rand() % 101) / 10;
+
+    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 10;
+    //start[WETMASS_OFFSET] = DRY_MASS+200; // 3950 kg
+
+    // initial change in variable size
+    // based on the variable start value
+    step[0] = 1.0E01;
+    step[1] = 1.0E01;
+    step[2] = 1.0E01;
+    step[3] = 1.0E01;
+    step[4] = 1.0E01;
+    step[5] = 1.0E01;
+    step[6] = 1.0E01;
+    step[7] = 1.0E01;
+    step[8] = 1.0E01;
+    step[9] = 1.0E01;
+    step[10] = 1.0E01;
+    step[11] = 1.0E01;
+    step[12] = 1.0E00;
+    step[13] = 1.0E00;
+    step[14] = 1.0E07;
+    step[15] = 1.0E00;
+    step[16] = 1.0E00;
+    step[17] = 1.0E00;
+    step[18] = 1.0E00;
+    step[19] = 1.0E00;
+    step[20] = 1.0E-02;
+    //step[21] = 1.0E01;
+
+    optimizing(start, step);
+
+    // writes the solution based on optimized variables to a binary file
+    int numSteps = 0;
+    double cost; // to store the cost caluclated by trajectoryPrint()
+
+    trajectoryPrint(start, numSteps, cost);
+
+    //writes final optimization values to a seperate file
+    output << "start values:" << std::endl;
+    for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
+    {
+      output << i + 1 << ": " << start[i] << ", ";
+    }
+    output << std::endl;
+    for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
+    {
+      output << i + 1<< ": " << start[i] << ", ";
+    }
+    output << std::endl << "cost value: " << cost << std::endl;
+    output << "---------------------------------------------------------------------------------" << std::endl;
+  }
+  output.close();
+
+  delete [] start;
+  delete [] step;
 }
 
 void iterativeOptimize(){
@@ -34,9 +130,9 @@ void iterativeOptimize(){
   start[GAMMA_OFFSET+6] = 10;
   start[GAMMA_OFFSET+7] = 10;
   start[GAMMA_OFFSET+8] = 10;
-  start[TAU_OFFSET] = 10;
-  start[TAU_OFFSET+1] = 10;
-  start[TAU_OFFSET+2] = 10;
+  start[TAU_OFFSET] = 0.1;
+  start[TAU_OFFSET+1] = 0.1;
+  start[TAU_OFFSET+2] = 0.1;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
   start[TRIPTIME_OFFSET] = 365*24*3600*2; // 2 YEARS
@@ -46,7 +142,7 @@ void iterativeOptimize(){
   start[COAST_OFFSET+3] = 0.5;
   start[COAST_OFFSET+4] = 0.5;
   start[THRESHOLD_OFFSET] = 0.05;
-  //start[WETMASS_OFFSET] = dryMass+200; // 3950 kg
+  //start[WETMASS_OFFSET] = DRY_MASS+200; // 3950 kg
 
   // initial change in variable size
   // based on the variable start value
@@ -76,6 +172,23 @@ void iterativeOptimize(){
   for(int i = 0; i < 1; i++){
     optimizing(start, step);
   }
+
+ // writes the solution based on optimized variables to a binary file
+  int numSteps = 0;
+  double cost = 0;
+
+  trajectoryPrint(start, numSteps, cost);
+
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+
+  output.open ("final-optimization.bin", std::ios::binary);
+  for(int i=0; i < OPTIM_VARS; i++)
+  {
+    output.write((char*)&start[i], sizeof (double));
+  }
+  output.write((char*)&numSteps, sizeof (int));
+  output.close();
 
   delete [] start;
   delete [] step;
@@ -118,9 +231,9 @@ void optimizing (double *&start, double *step)
   reqmin = 1.0E-40;
   
   // how often the equation checks for a convergence
-  konvge = 10;
+  konvge = 20;
   // maximum number of iterations for convergence
-  kcount = 20000;
+  kcount = 30000 + (std::rand() % 10);
 
 
   std::cout << "\n"<<"starting conditions"<<std::endl;
@@ -146,22 +259,6 @@ void optimizing (double *&start, double *step)
   }
   std::cout << "\nF(X*) = " << ynewlo << "\n";
   std::cout << "\n"<< "  Number of iterations = " << icount << "\n"<< "  Number of restarts =   " << numres << "\n";
-
-  // writes the solution based on optimized variables to a binary file
-  int numSteps = 0;
-
-  trajectoryPrint(xmin, numSteps);
-
-  //writes final optimization values to a seperate file
-  std::ofstream output;
-
-  output.open ("final-optimization.bin", std::ios::binary);
-  for(int i=0; i < OPTIM_VARS; i++)
-  {
-    output.write((char*)&xmin[i], sizeof (double));
-  }
-  output.write((char*)&numSteps, sizeof (int));
-  output.close();
 
   // use the results as the starting point for the next run
   delete [] start;

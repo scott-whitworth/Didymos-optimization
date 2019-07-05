@@ -2,11 +2,12 @@
 #include <math.h> // used for sine and cosine functions
 #include <iostream> // used for cout
 
-template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & timeFinal){
+template <class T> T calc_Series(const T series[], const int seriesSize, const T & curTime, const T & timeFinal){
     T coeff = series[0];
+    T curTimeRatio = curTime / timeFinal;
 
-    for(int i=1;i<=(series_size-1)/2;i++){
-        coeff+=series[2*i-1]*cos(i*curTime/timeFinal)+series[2*i]*sin(i*curTime/timeFinal);
+    for(int i=1;i<=(seriesSize-1)/2;i++){
+        coeff+=series[2*i-1]*cos(i*curTimeRatio)+series[2*i]*sin(i*curTimeRatio);
     }
     return coeff;
 }

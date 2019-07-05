@@ -26,13 +26,13 @@ template <class T> struct elements {
     //overload operators to do math on all the elements in the struct seperately
     //Treating each element as a matrix operation
 
-    //constructor which takes in an element
+    //operators acting on two elements
     elements<T> operator+(const elements<T>& e);
     elements<T> operator-(const elements<T>& e);
     elements<T> operator*(const elements<T>& e);
     elements<T> operator/(const elements<T>& e);
 
-    //constructor which takes in an scalar
+    //operators acting on an element and a scalar
     elements<T> operator*(const T& i);
     elements<T> operator/(const T& i);
 

@@ -10,7 +10,7 @@
 //         curTime: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and gamma Fourier series
-template <class T> T calc_Series(T series[], const int series_size, const T & curTime, const T & timeFinal);
+template <class T> T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal);
 
 // Calculates gamma (in-plane angle) at a specific time using Fourier series coefficients
 // Parameters:
