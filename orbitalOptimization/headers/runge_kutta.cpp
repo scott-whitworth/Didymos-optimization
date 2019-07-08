@@ -43,8 +43,8 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         T deltaT = stepSize;
 
         // defining coast using calc_coast()
-        T coast = calc_coast(coeff, curTime, timeFinal);
-
+        bool coast = calc_coast(coeff, curTime, timeFinal);
+        
         // defining acceleration using calc_accel()
         accel = calc_accel(y[n].r,y[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
 
@@ -116,7 +116,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         T deltaT = stepSize;
 
         // defining coast using calc_coast()
-        T coast = calc_coast(coeff, curTime, timeFinal);
+        bool coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
         accel = calc_accel(y.r,y.z, NEXT, massFuelSpent, deltaT, coast, wetMass);

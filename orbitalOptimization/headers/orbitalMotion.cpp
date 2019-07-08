@@ -73,14 +73,12 @@ double trajectory( double x[])
   // Setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
-  //coeff.coast[i]=0.;
 
   }
-  // Assigning optimized coast threshold
-  coeff.coastThreshold = x[THRESHOLD_OFFSET];
-  // coeff.coastThreshold = -1.;
+  // Assigning coast threshold
+  coeff.coastThreshold = COAST_THRESHOLD;
  
-  // Sssigning optimized wetMass
+  // Sssigning wetMass
   double wetMass = WET_MASS;
 
   // Setting Runge-Kutta tolerance
@@ -159,13 +157,11 @@ double trajectoryPrint( double x[], int & n, double & cost)
   // setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
-  //  coeff.coast[i]=0.;
   }
-  // assigning optimized coast threshold
-  coeff.coastThreshold = x[THRESHOLD_OFFSET];
-  //coeff.coastThreshold = -1.;
+  // assigning coast threshold
+   coeff.coastThreshold = COAST_THRESHOLD;
  
-  // assigning optimized wetMass
+  // assigning wetMass
   double wetMass = WET_MASS;
   // setting a resonable range for wetMass
   if(wetMass<DRY_MASS|| wetMass>3000)
