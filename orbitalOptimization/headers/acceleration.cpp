@@ -1,8 +1,15 @@
+//Didymos-Optimization_Project:
+//Last Editor: Lauren and Ben
+//Tasks Completed: 
+    //Defined all the neccesary equations for calculating acceleration.
+    //Created if statements to ensure accleration does not occur is the fuel mass is 0 and if the spacecraft is coasting.
+    //Added a z component to the calculation of power in to the spacecraft.
+
 #include "acceleration.h" 
 #include "constants.h" // used for wetMass
 #include <iostream> // used for cout
 
-template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const T & thrusting, const T & wetMass){
+template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
     
     //If all of the fuel has been expelled, then no more thrust can be applied
     if(wetMass - massExpelled <= DRY_MASS){
@@ -11,7 +18,7 @@ template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T 
 
     // Thrusting is evaluated in calcFourier.cpp within calc_coast().
     // When thrusting is equal to zero, calc_accel() will not be evaluated.
-    if(thrusting == 0.0){
+    if(!thrusting){
         return 0;
     }
 
@@ -23,7 +30,7 @@ template <class T> T calc_accel(const T & radius, thruster<T> & thrusterType, T 
     T accel;
 
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
-    Pin = thrusterType.P0/pow(radius,2); // Power availabe = P_in / (radius/1 au)
+    Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); // Power avaliable = P_in / (radius/1 au)
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
     if(radius<1){

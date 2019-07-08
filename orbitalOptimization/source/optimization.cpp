@@ -1,3 +1,11 @@
+//Didymos-Optimization_Project:
+//Last Editor: Ben and Mateo
+//Tasks Completed: 
+  //Created iterativeOptimization() and optimizeStartConditions().
+  //Changed all starts and steps to be defined constants instead of magic numbers.
+  //Changed the initial guess of a parameter to be a random number within a resonable range of values.
+
+
 #include "optimization.h" 
 #include "nelder_mead.h" // used for nelmin()
 #include "constants.h" //used for wetMass
@@ -9,19 +17,19 @@
 
 int main ()
 {
-  timestamp ();
+  //Top of optimizing(): starting to calculate minimization of orbital motion
 
   //optimizing();
   //iterativeOptimize();
   optimizeStartConditions();
-
-  timestamp ();
   
   return 0;
 }
 
 void optimizeStartConditions(){
-  // allocating memory according to number of variables
+  //Pre-allocating memory for starting parameters and steps
+  //start - starting parameters for optimization, order and contents defined in constants.h
+  //step - starting step sizes for starting parameters
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
 
@@ -33,7 +41,8 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  for(int i = 0; i < 3; i++){
+  int executions = 3;
+  for(int i = 0; i < executions; i++){
     // random initial guesses for variables within a reasonable range
     start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
     start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
@@ -63,11 +72,9 @@ void optimizeStartConditions(){
     start[COAST_OFFSET+4] = (std::rand() % 101) / 10;
 
     start[THRESHOLD_OFFSET] = (std::rand() % 101) / 10;
-    //start[WETMASS_OFFSET] = DRY_MASS+200; // 3950 kg
 
-    // initial change in variable size
-    // based on the variable start value
-
+    // Initial change in variable size based on the variable start value
+    // Delimits the search space
     step[GAMMA_OFFSET] = 1.0E02;
     step[GAMMA_OFFSET+1] = 1.0E02;
     step[GAMMA_OFFSET+2] = 1.0E02;
@@ -83,12 +90,9 @@ void optimizeStartConditions(){
     step[TAU_OFFSET+2] = 1.0E02;
     step[TAU_OFFSET+3] = 1.0E02;
     step[TAU_OFFSET+4] = 1.0E02;
-
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
-
     step[TRIPTIME_OFFSET] = 1.0E07;
-
     step[COAST_OFFSET] = 1.0E02;
     step[COAST_OFFSET+1] = 1.0E02;
     step[COAST_OFFSET+2] = 1.0E02;
@@ -186,7 +190,6 @@ void iterativeOptimize(){
   start[COAST_OFFSET+3] = 0.5;
   start[COAST_OFFSET+4] = 0.5;
   start[THRESHOLD_OFFSET] = 0.05;
-  //start[WETMASS_OFFSET] = DRY_MASS+200; // 3950 kg
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
@@ -213,30 +216,16 @@ void iterativeOptimize(){
   step[COAST_OFFSET+3] = 1.0E02;
   step[COAST_OFFSET+4] = 1.0E02;
   step[THRESHOLD_OFFSET] = 1.0E-02;
-  //step[21] = 1.0E01;
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
-  for(int i = 0; i < 1; i++)
+  int executions = 1;
+  for(int i = 0; i < executions; i++)
   {
     optimizing(start, step);
   }
 
- // writes the solution based on optimized variables to a binary file
-  int numSteps = 0;
-  double cost = 0;
-
-  trajectoryPrint(start, numSteps, cost);
-
-  //writes final optimization values to a seperate file
-  std::ofstream output;
-
-  output.open ("final-optimization.bin", std::ios::binary);
-  for(int i=0; i < OPTIM_VARS; i++)
-  {
-    output.write((char*)&start[i], sizeof (double));
-  }
-  output.write((char*)&numSteps, sizeof (int));
-  output.close();
+  // writes the solution based on optimized variables to a binary file
+  writeTrajectoryToFile(start);
 
   delete [] start;
   delete [] step;
@@ -247,18 +236,20 @@ void optimizing (double *&start, double *step)
 //* Coefficients for gamma and tau fourier series,
 //* alpha and beta angles (used in initial velocity of the spacecraft),
 //* trip times,
-//* Fuel mass.
+//* coast fourier
+//* coast threshold
 {
   // initializing variables for nelmin algorithm. See nelder_mead.cpp for input/output information
-  int i; 
-  int icount; 
-  int ifault;
-  int kcount;
-  int konvge;
-  int numres;
-  double reqmin;
-  double *xmin;
-  double ynewlo;
+  int i; // iteration number
+  int icount; // number of function evaluations
+  int ifault; // Output, int *IFAULT, error indicator. 0, no errors detected. 1, REQMIN, N, or KONVGE has an illegal value. 
+  //2, iteration terminated because KCOUNT was exceeded without convergence.
+  int kcount; // maximum number of iterations
+  int konvge; // how often cost value is checked for convergence
+  int numres; // number of restarts
+  double reqmin; // the convergence minimum
+  double *xmin; // final output
+  double ynewlo; // cost value
 
   //Allocting xmin: space for nelder_mead algorithm to fill in final optimized parameters
   xmin = new double[OPTIM_VARS];
@@ -270,7 +261,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 30000+std::rand()%100;
+  kcount = 10000+std::rand()%100;
 
     //****************
     // Move into its own function
@@ -305,4 +296,24 @@ void optimizing (double *&start, double *step)
   start = xmin;
 
   return;
+}
+
+
+void writeTrajectoryToFile(double *start)
+{
+  int numSteps = 0;
+  double cost = 0;
+
+  trajectoryPrint(start, numSteps, cost);
+
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+
+  output.open ("final-optimization.bin", std::ios::binary);
+  for(int i=0; i < OPTIM_VARS; i++)
+  {
+    output.write((char*)&start[i], sizeof (double));
+  }
+  output.write((char*)&numSteps, sizeof (int));
+  output.close();
 }

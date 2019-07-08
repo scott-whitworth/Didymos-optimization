@@ -1,3 +1,9 @@
+//Didymos-Optimization_Project:
+//Last Editor: Ben and Lauren
+//Tasks Completed: 
+    //Functionalized rkCaLc() which is called by all three of the runge-kutta functions.
+    //Added the z component to the calcAccel() function calls
+
 #include "runge_kutta.h"
 #include "acceleration.h" //used for calc_accel() and calc_coast()
 #include <iostream> // used for cout
@@ -29,7 +35,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
     // array of acceleration for binary output
-    accel_output[0] = calc_accel(y[0].r, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
+    accel_output[0] = calc_accel(y[0].r,y[0].z, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
@@ -40,7 +46,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         T coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y[n].r, NEXT, massFuelSpent, deltaT, coast, wetMass);
+        accel = calc_accel(y[n].r,y[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
 
         // to hold previous and  current  values
         elements<T> v, u;
@@ -113,7 +119,7 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         T coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y.r, NEXT, massFuelSpent, deltaT, coast, wetMass);
+        accel = calc_accel(y.r,y.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
         elements<T> v;
 
 

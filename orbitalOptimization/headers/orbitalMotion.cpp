@@ -1,3 +1,8 @@
+//Didymos-Optimization_Project:
+//Last Editor: Mateo, Lauren, and Ben
+//Tasks Completed: 
+    //No recent changes
+
 #include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().
 #include <iostream> // used for cout
@@ -68,7 +73,7 @@ double trajectory( double x[])
   // Setup of coast determination calculations based off of optimized coefficients
   for (int i=0;i<coeff.coastSize;i++){
     coeff.coast[i]=x[i+COAST_OFFSET];
-//    coeff.coast[i]=0.;
+  //coeff.coast[i]=0.;
 
   }
   // Assigning optimized coast threshold
