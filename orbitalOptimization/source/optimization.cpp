@@ -41,7 +41,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 3;
+  int executions = 1;
   for(int i = 0; i < executions; i++){
     // random initial guesses for variables within a reasonable range
     start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
@@ -54,24 +54,24 @@ void optimizeStartConditions(){
     start[GAMMA_OFFSET+7] = std::rand() % 201 - 100;
     start[GAMMA_OFFSET+8] = std::rand() % 201 - 100;
 
-    start[TAU_OFFSET] = (std::rand() % 201) / 10 - 10; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = (std::rand() % 201) / 10 - 10;
-    start[TAU_OFFSET+2] = (std::rand() % 201) / 10 - 10;
-    start[TAU_OFFSET+3] = (std::rand() % 201) / 10 - 10;
-    start[TAU_OFFSET+4] = (std::rand() % 201) / 10 - 10;
+    start[TAU_OFFSET] = (std::rand() % 201) / 10.0 - 10; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = (std::rand() % 201) / 10.0 - 10;
+    start[TAU_OFFSET+2] = (std::rand() % 201) / 10.0 - 10;
+    start[TAU_OFFSET+3] = (std::rand() % 201) / 10.0 - 10;
+    start[TAU_OFFSET+4] = (std::rand() % 201) / 10.0 - 10;
 
-    start[ALPHA_OFFSET] = (std::rand() % 201) / 10 - 10;
-    start[BETA_OFFSET] = (std::rand() % 201) / 10 - 10;
+    start[ALPHA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
+    start[BETA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 50001 / 10000 + 1); // 1.0000 - 6.0000 years converted to seconds
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 20001 / 10000.0 + 1); // 1.0000 - 3.0000 years converted to seconds
 
-    start[COAST_OFFSET] = (std::rand() % 101) / 10; //0.0 - 10.0
-    start[COAST_OFFSET+1] = (std::rand() % 101) / 10;
-    start[COAST_OFFSET+2] = (std::rand() % 101) / 10;
-    start[COAST_OFFSET+3] = (std::rand() % 101) / 10;
-    start[COAST_OFFSET+4] = (std::rand() % 101) / 10;
+    start[COAST_OFFSET] = (std::rand() % 101) / 10.0; //0.0 - 10.0
+    start[COAST_OFFSET+1] = (std::rand() % 101) / 10.0;
+    start[COAST_OFFSET+2] = (std::rand() % 101) / 10.0;
+    start[COAST_OFFSET+3] = (std::rand() % 101) / 10.0;
+    start[COAST_OFFSET+4] = (std::rand() % 101) / 10.0;
 
-    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 10;
+    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 100.0;
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space
@@ -90,9 +90,12 @@ void optimizeStartConditions(){
     step[TAU_OFFSET+2] = 1.0E02;
     step[TAU_OFFSET+3] = 1.0E02;
     step[TAU_OFFSET+4] = 1.0E02;
+
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
+
     step[TRIPTIME_OFFSET] = 1.0E07;
+
     step[COAST_OFFSET] = 1.0E02;
     step[COAST_OFFSET+1] = 1.0E02;
     step[COAST_OFFSET+2] = 1.0E02;
@@ -225,7 +228,7 @@ void iterativeOptimize(){
   }
 
   // writes the solution based on optimized variables to a binary file
-  writeTrajectoryToFile(start);
+  //writeTrajectoryToFile(start);
 
   delete [] start;
   delete [] step;
@@ -261,7 +264,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 10000+std::rand()%100;
+  kcount = 30000+std::rand()%100;
 
     //****************
     // Move into its own function
