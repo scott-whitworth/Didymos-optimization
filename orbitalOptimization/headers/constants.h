@@ -39,8 +39,9 @@
 
 // starting location in the optimization array
 #define OPTIM_VARS 23//Number of variables in the optimization
-#define TAU_ARRAY_SIZE 9 // Length of the array of coefficients for gamma
-#define GAMMA_ARRAY_SIZE 5 // Length of the array of coefficients for tau
+
+#define GAMMA_ARRAY_SIZE 9 // Length of the array of coefficients for gamma
+#define TAU_ARRAY_SIZE 5 // Length of the array of coefficients for tau
 #define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
 
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle

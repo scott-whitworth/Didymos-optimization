@@ -33,7 +33,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  for(int i = 0; i < 10000; i++){
+  for(int i = 0; i < 3; i++){
     // random initial guesses for variables within a reasonable range
     start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
     start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
@@ -48,6 +48,8 @@ void optimizeStartConditions(){
     start[TAU_OFFSET] = (std::rand() % 201) / 10 - 10; // -10.0 - 10.0
     start[TAU_OFFSET+1] = (std::rand() % 201) / 10 - 10;
     start[TAU_OFFSET+2] = (std::rand() % 201) / 10 - 10;
+    start[TAU_OFFSET+3] = (std::rand() % 201) / 10 - 10;
+    start[TAU_OFFSET+4] = (std::rand() % 201) / 10 - 10;
 
     start[ALPHA_OFFSET] = (std::rand() % 201) / 10 - 10;
     start[BETA_OFFSET] = (std::rand() % 201) / 10 - 10;
@@ -65,28 +67,35 @@ void optimizeStartConditions(){
 
     // initial change in variable size
     // based on the variable start value
-    step[0] = 1.0E01;
-    step[1] = 1.0E01;
-    step[2] = 1.0E01;
-    step[3] = 1.0E01;
-    step[4] = 1.0E01;
-    step[5] = 1.0E01;
-    step[6] = 1.0E01;
-    step[7] = 1.0E01;
-    step[8] = 1.0E01;
-    step[9] = 1.0E01;
-    step[10] = 1.0E01;
-    step[11] = 1.0E01;
-    step[12] = 1.0E00;
-    step[13] = 1.0E00;
-    step[14] = 1.0E07;
-    step[15] = 1.0E00;
-    step[16] = 1.0E00;
-    step[17] = 1.0E00;
-    step[18] = 1.0E00;
-    step[19] = 1.0E00;
-    step[20] = 1.0E-02;
-    //step[21] = 1.0E01;
+
+    step[GAMMA_OFFSET] = 1.0E02;
+    step[GAMMA_OFFSET+1] = 1.0E02;
+    step[GAMMA_OFFSET+2] = 1.0E02;
+    step[GAMMA_OFFSET+3] = 1.0E02;
+    step[GAMMA_OFFSET+4] = 1.0E02;
+    step[GAMMA_OFFSET+5] = 1.0E02;
+    step[GAMMA_OFFSET+6] = 1.0E02;
+    step[GAMMA_OFFSET+7] = 1.0E02;
+    step[GAMMA_OFFSET+8] = 1.0E02;
+
+    step[TAU_OFFSET] = 1.0E02;
+    step[TAU_OFFSET+1] = 1.0E02;
+    step[TAU_OFFSET+2] = 1.0E02;
+    step[TAU_OFFSET+3] = 1.0E02;
+    step[TAU_OFFSET+4] = 1.0E02;
+
+    step[ALPHA_OFFSET] = 1.0E00;
+    step[BETA_OFFSET] = 1.0E00;
+
+    step[TRIPTIME_OFFSET] = 1.0E07;
+
+    step[COAST_OFFSET] = 1.0E02;
+    step[COAST_OFFSET+1] = 1.0E02;
+    step[COAST_OFFSET+2] = 1.0E02;
+    step[COAST_OFFSET+3] = 1.0E02;
+    step[COAST_OFFSET+4] = 1.0E02;
+
+    step[THRESHOLD_OFFSET] = 1.0E-02;
 
     optimizing(start, step);
 
@@ -111,9 +120,11 @@ void optimizeStartConditions(){
 
     if(cost < bestCost){
       bestCost = cost;
-      // not outputing the right start values
+      // code not outputing the right start values
       //bestStart = start;
     }
+
+    std::cout << "run " << i + 1 << " complete" << std::endl;
   }
   output << "---------------------------------------------------------------------------------" << std::endl;
   output << "---------------------------------------------------------------------------------" << std::endl;
