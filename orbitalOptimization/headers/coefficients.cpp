@@ -1,3 +1,8 @@
+//Didymos-Optimization_Project:
+//Last Editor: Ben and Mateo
+//Tasks Completed: 
+    //Changed the magic numbers to defined constants
+
 #include "coefficients.h"
 #include <iomanip> // setprecision(int)
 

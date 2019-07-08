@@ -44,7 +44,7 @@ template <class T> T calc_tau(const coefficients<T> & coeff,const T & curTime, c
 // output: 
 //         above the threshold: returns thrusting = 1
 //         below the threshold: returns thrusting = 0
-template <class T> T calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal);
+template <class T> bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal);
 
 #include "calcFourier.cpp"
 #endif
