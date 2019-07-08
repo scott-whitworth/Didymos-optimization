@@ -116,9 +116,11 @@ void optimizeStartConditions(){
 
     if(cost < bestCost){
       bestCost = cost;
-      // not outputing the right start values
+      // code not outputing the right start values
       //bestStart = start;
     }
+
+    std::cout << "run " << i + 1 << " complete" << std::endl;
   }
   output << "---------------------------------------------------------------------------------" << std::endl;
   output << "---------------------------------------------------------------------------------" << std::endl;
@@ -164,13 +166,9 @@ void iterativeOptimize(){
   start[GAMMA_OFFSET+4] = 10;
   start[GAMMA_OFFSET+5] = 10;
   start[GAMMA_OFFSET+6] = 10;
-  start[GAMMA_OFFSET+7] = 10;
-  start[GAMMA_OFFSET+8] = 10;
   start[TAU_OFFSET] = 10;
   start[TAU_OFFSET+1] = 10;
   start[TAU_OFFSET+2] = 10;
-  start[TAU_OFFSET+3] = 10;
-  start[TAU_OFFSET+4] = 10;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
   start[TRIPTIME_OFFSET] = 365*24*3600*1.5; // 2 YEARS
@@ -179,7 +177,6 @@ void iterativeOptimize(){
   start[COAST_OFFSET+2] = 0.5;
   start[COAST_OFFSET+3] = 0.5;
   start[COAST_OFFSET+4] = 0.5;
-  start[THRESHOLD_OFFSET] = 0.05;
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
@@ -190,13 +187,9 @@ void iterativeOptimize(){
   step[GAMMA_OFFSET+4] = 1.0E02;
   step[GAMMA_OFFSET+5] = 1.0E02;
   step[GAMMA_OFFSET+6] = 1.0E02;
-  step[GAMMA_OFFSET+7] = 1.0E02;
-  step[GAMMA_OFFSET+8] = 1.0E02;
   step[TAU_OFFSET] = 1.0E02;
   step[TAU_OFFSET+1] = 1.0E02;
   step[TAU_OFFSET+2] = 1.0E02;
-  step[TAU_OFFSET+3] = 1.0E02;
-  step[TAU_OFFSET+4] = 1.0E02;
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
   step[TRIPTIME_OFFSET] = 1.0E07;
@@ -205,7 +198,7 @@ void iterativeOptimize(){
   step[COAST_OFFSET+2] = 1.0E02;
   step[COAST_OFFSET+3] = 1.0E02;
   step[COAST_OFFSET+4] = 1.0E02;
-  step[THRESHOLD_OFFSET] = 1.0E-02;
+
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
   int executions = 1;
