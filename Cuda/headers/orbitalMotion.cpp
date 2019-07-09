@@ -2,6 +2,7 @@
 //Last Editor: Mateo, Lauren, and Ben
 //Tasks Completed: 
     //No recent changes
+#define _USE_MATH_DEFINES // for use of M_PI
 
 #include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().

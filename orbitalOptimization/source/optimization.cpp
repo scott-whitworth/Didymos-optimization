@@ -71,7 +71,7 @@ void optimizeStartConditions(){
     start[COAST_OFFSET+3] = (std::rand() % 101) / 10.0;
     start[COAST_OFFSET+4] = (std::rand() % 101) / 10.0;
 
-    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 100.0;
+    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 100.0; //0.00 - 1.00
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space

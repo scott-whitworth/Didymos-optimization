@@ -4,9 +4,12 @@
     //Functionalized rkCaLc() which is called by all three of the runge-kutta functions.
     //Added the z component to the calcAccel() function calls
 
+#define _USE_MATH_DEFINES // for use of M_PI
 #include "runge_kutta.h"
 #include "acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
+#include "constants.h" // for MAX_NUMSTEPS
+#include <math.h> //used for M_PI
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
@@ -93,24 +96,106 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
 
-void callRK(){
-    T timeInitial;
-    T stepSize;
-    rkParameters<T> example;
+template <class T> void callRK(){
+    int numThreads = 32;
+
+    T timeInitial = 0;
+    T absTol = RK_TOL;
+    T stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS;
+
+    // example values
+    /*-------------------------------------------------------------------------------------*/
+    T gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+    T tau[] = {3, 3, 3, 3, 3};
+    T coast[] = {5, 5, 5, 5, 5};
+
+    elements<double> earth = earthInitial(2.0);
+    // timeFinal, accel, wetMass, 
+    // r, theta, z, 
+    // vr, vtheta, vz, 
+    // gamma[], tau[], coast[], coastThreshold0
+    rkParameters<T> example
+    (2.0, 0.0, WET_MASS, 
+    earth.r+ESOI*cos(10), earth.theta+asin(sin(M_PI-10)*ESOI/earth.r), earth.z,
+    earth.vr+sin(3)*vEscape, earth.vtheta+cos(3)*vEscape, earth.vz,
+    gamma, tau, coast, 0.05);
+    
     rkParameters<T> rkParameters[] = {example};
+    /*-------------------------------------------------------------------------------------*/
 
-    rkParameters<T> *dev_rkParameters;
-    cudaMalloc((void**) &dev_rkParameters, 32 * sizeof(rkParameters<T>));
-    cudaMemcpy((void**) dev_rkParameters, rkParameters, 32 * sizeof(rkParameters<T>));
+    rkParameters *devRKParameters; 
+    T *devTimeInitial;
+    T *devStepSize;
+    T *devAbsTol;
 
-    rk4Simple<<<1,1>>>(dev_rkParameters);
+    cudaMalloc((void**) &devRKParameters, numThreads * sizeof(rkParameters));
+    cudaMalloc((void**) &devTimeInitial, sizeof(T));
+    cudaMalloc((void**) &devStepSize, sizeof(T));
+    cudaMalloc((void**) &devAbsTol, sizeof(T));
+
+    cudaMemcpy((void**) devRKParameters, rkParameters, numThreads * sizeof(rkParameters));
+    cudaMemcpy((void**) devTimeInitial, timeInitial, sizeof(T));
+    cudaMemcpy((void**) devStepSize, stepSize, sizeof(T));
+    cudaMemcpy((void**) devAbsTol, absTol, sizeof(T));
+
+    rk4SimpleCUDA<<<1,1>>>(devRKParameters, devTimeInitial, devStepSize, devAbsTol);
 }
 
-__global__ void rk4Simple(rkParameters<T> rkParametersList[]){
-    rkParameters<T> threadRKparameters = rkParametersList[threadId];
-    //y0 = rk4Reverse(timeInitial, threadRKparameters.timeFinal, /*global constant*/) // to illustrate
-    //y=rk4Simple(timeInitial,threadRKparameters.timeFinal,y0,stepSize,/**/)
-    //dev_rkParameters[threadId]=(y.r^1-asteroidr)^2+(y.theta^1-asteroidtheta)^2+(y.z^1-asteroidz)^2
+//y0 = rk4Reverse(timeInitial, threadRKparameters.timeFinal, /*global constant*/) // to illustrate
+//y=rk4Simple(timeInitial,threadRKparameters.timeFinal,y0,stepSize,/**/)
+//dev_rkParameters[threadId]=(y.r^1-asteroidr)^2+(y.theta^1-asteroidtheta)^2+(y.z^1-asteroidz)^2
+
+
+// seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
+template <class T> __global__ void rk4SimpleCUDA(rkParameters<T> rkParametersList[], T timeInitial, T stepSize, T absTol){
+    int threadId = threadIdx.x;
+    rkParameters<T> threadRKParameters = rkParametersList[threadId]; // get the parameters for this thread
+
+    threadRKParameters.y = threadRKParameters.y0; // start with the initial conditions of the spacecraft
+
+    elements<T> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
+
+    T curTime = timeInitial; // setting time equal to the start time
+
+    thruster<T> NEXT = thruster<T>(1); // corresponds NEXT thruster to type 1 in thruster.h
+
+    T massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
+
+    T deltaT; // change in time for calc_accel()
+
+    T coast; // to hold the result from calc_coast()
+
+    while(curTime < threadRKParameters.timeFinal){
+        deltaT = stepSize;
+
+        coast = calc_coast(threadRKParameters.coefficients, curTime, threadRKParameters.timeFinal);
+        threadRKParameters.accel = calc_accel(threadRKParameters.y.r, threadRKParameters.y.z, NEXT, massFuelSpent, deltaT, coast, threadRKParameters.wetMass);
+
+        elements<T> v; // holds output of previous value from rkCalc
+
+        // calculate k values and get new value of y
+        rkCalc(curTime, threadRKParameters.timeFinal, stepSize, threadRKParameters.y, threadRKParameters.coeff, threadRKParameters.accel, v, threadRKParameters.y); 
+
+        curTime += stepSize; // update the current time in the simulation
+        stepSize *= calc_scalingFactor(v,threadRKParameters.y-v,absTol,stepSize); // Alter the step size for the next iteration
+
+        // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
+        if (stepSize > (threadRKParameters.timeFinal - timeInitial) / 2){
+            stepSize = (threadRKParameters.timeFinal - timeInitial) / 2;
+        }
+        else if (stepSize < ((threadRKParameters.timeFinal - timeInitial) / 1000)){
+            stepSize = (threadRKParameters.timeFinal - timeInitial) / 1000;
+        }
+
+        if((curTime + stepSize) > threadRKParameters.timeFinal)
+            stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
+
+        // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
+        if (threadRKParameters.y.r < 0.5)
+        {
+            threadRKParameters.y.r = 1000;
+        }
+    }
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
@@ -140,7 +225,6 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         // defining acceleration using calc_accel()
         accel = calc_accel(y.r,y.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
         elements<T> v;
-
 
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, y, coeff, accel, v, y); 

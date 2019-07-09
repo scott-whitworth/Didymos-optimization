@@ -35,7 +35,7 @@ T stepSize, elements<T> *y, const T & absTol, coefficients<T> coeff, const T & a
 // 2.
     // Output: writes in y the final position  of the spacecraft
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel, const T & wetMass,const T & massFuelSpent);
+T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & accel, const T & wetMass);
 
 //3.
     // Comment on stepsize: Expected to be negative due to reverse integration
@@ -61,5 +61,10 @@ template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elem
 // Output: Unitless scaling coefficient which changes the time step each iteration
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
 
-#include "runge_kutta.cpp"
+
+//CUDA functions
+template <class T> __global__ void rk4SimpleCUDA(rkParameters<T> rkParametersList[], T timeInitial, T stepSize, T absTol);
+template <class T> void callRK();
+
+#include "runge_kutta.cu"
 #endif

@@ -15,14 +15,19 @@
 #include <time.h> //for seeding the random number generator
 
 
+#include "runge_kutta.h" //for testing rk4simple
+
+
 int main ()
 {
   //Top of optimizing(): starting to calculate minimization of orbital motion
 
   //optimizing();
   //iterativeOptimize();
-  optimizeStartConditions();
+  //optimizeStartConditions();
   
+  callRK<double>();
+
   return 0;
 }
 
