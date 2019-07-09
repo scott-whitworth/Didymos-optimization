@@ -34,22 +34,22 @@
 
 //Official DART mission data
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
-//#define V_IMPACT 6.0e-08 //test impact velocity in AU/s
 
 // starting location in the optimization array
-#define OPTIM_VARS 23//Number of variables in the optimization
-#define GAMMA_ARRAY_SIZE 9 // Length of the array of coefficients for gamma
-#define TAU_ARRAY_SIZE 5 // Length of the array of coefficients for tau
+#define OPTIM_VARS 18//Number of variables in the optimization
+#define GAMMA_ARRAY_SIZE 7 // Length of the array of coefficients for gamma
+#define TAU_ARRAY_SIZE 3 // Length of the array of coefficients for tau
 #define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
 
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
-#define TAU_OFFSET 9 // x[9-13] first order fourier for out-of-plane angle
-#define ALPHA_OFFSET 14 // x[14] position escape earth angle
-#define BETA_OFFSET 15 // x[15] velocity escape earth angle
-#define TRIPTIME_OFFSET 16 // x[16] total duration of the trip
-#define COAST_OFFSET 17 // x[17-21] second order fourier for coasting determination
-#define THRESHOLD_OFFSET 22 // x[22] coasting threshold
-//#define WETMASS_OFFSET 21 // x[21] used to calculate the amount of fuel avaliable to the spacecraft
+#define TAU_OFFSET 7 // x[9-13] first order fourier for out-of-plane angle
+#define ALPHA_OFFSET 10 // x[14] position escape earth angle
+#define BETA_OFFSET 11 // x[15] velocity escape earth angle
+#define TRIPTIME_OFFSET 12 // x[16] total duration of the trip
+#define COAST_OFFSET 13 // x[17-21] second order fourier for coasting determination
+
+// Value at which if the coast output is below it returns acceleration as 0.
+#define COAST_THRESHOLD 0.5
 
 // Spacecraft constants
 #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)

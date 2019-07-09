@@ -17,12 +17,10 @@
 
 int main ()
 {
-  //Top of optimizing(): starting to calculate minimization of orbital motion
 
-  //optimizing();
-  //iterativeOptimize();
-  optimizeStartConditions();
-  
+  //iterativeOptimize(); // manually set initial conditions
+  optimizeStartConditions(); // random values within a given range for initial conditions
+
   return 0;
 }
 
@@ -41,68 +39,60 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 1;
-  for(int i = 0; i < executions; i++){
-    // random initial guesses for variables within a reasonable range
-    start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
-    start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+2] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+3] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+4] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+5] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+6] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+7] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+8] = std::rand() % 201 - 100;
+  int executions = 5;
+  for(int i = 0; i < executions; i++)
+  {
+    // random initial guesses for variables within a reasonable range based on previous runs which had small cost values
+    start[GAMMA_OFFSET] = std::rand() % 21 - 10; // -10 - 10
+    start[GAMMA_OFFSET+1] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET+2] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET+3] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET+4] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET+5] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET+6] = std::rand() % 21 - 10;
 
-    start[TAU_OFFSET] = (std::rand() % 201) / 10.0 - 10; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+2] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+3] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+4] = (std::rand() % 201) / 10.0 - 10;
 
-    start[ALPHA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
-    start[BETA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
+    start[TAU_OFFSET] = std::rand() % 21/10.0 - 1.0; // -1.0 - 1.0
+    start[TAU_OFFSET+1] = std::rand() % 21/10.0 - 1.0;
+    start[TAU_OFFSET+2] = std::rand() % 21/10.0 - 1.0;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 20001 / 10000.0 + 1); // 1.0000 - 3.0000 years converted to seconds
 
-    start[COAST_OFFSET] = (std::rand() % 101) / 10.0; //0.0 - 10.0
-    start[COAST_OFFSET+1] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+2] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+3] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+4] = (std::rand() % 101) / 10.0;
+    start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
+    start[BETA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14;
 
-    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 100.0; //0.00 - 1.00
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 15001 / 10000.0 + 1); // 0.5 - 2.5 years converted to seconds
+
+    start[COAST_OFFSET] = std::rand() % 21/2.0 - 10/2.0; //-5 - 5
+    start[COAST_OFFSET+1] = std::rand() % 21/2.0 - 10/2.0;
+    start[COAST_OFFSET+2] = std::rand() % 21/2.0 - 10/2.0;
+    start[COAST_OFFSET+3] = std::rand() % 21/2.0 - 10/2.0;
+    start[COAST_OFFSET+4] = std::rand() % 21/2.0 - 10/2.0;
+
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space
-    step[GAMMA_OFFSET] = 1.0E02;
-    step[GAMMA_OFFSET+1] = 1.0E02;
-    step[GAMMA_OFFSET+2] = 1.0E02;
-    step[GAMMA_OFFSET+3] = 1.0E02;
-    step[GAMMA_OFFSET+4] = 1.0E02;
-    step[GAMMA_OFFSET+5] = 1.0E02;
-    step[GAMMA_OFFSET+6] = 1.0E02;
-    step[GAMMA_OFFSET+7] = 1.0E02;
-    step[GAMMA_OFFSET+8] = 1.0E02;
+    step[GAMMA_OFFSET] = 1.0E01/2;
+    step[GAMMA_OFFSET+1] = 1.0E01/2;
+    step[GAMMA_OFFSET+2] = 1.0E01/2;
+    step[GAMMA_OFFSET+3] = 1.0E01/2;
+    step[GAMMA_OFFSET+4] = 1.0E01/2;
+    step[GAMMA_OFFSET+5] = 1.0E01/2;
+    step[GAMMA_OFFSET+6] = 1.0E01/2;
 
-    step[TAU_OFFSET] = 1.0E02;
-    step[TAU_OFFSET+1] = 1.0E02;
-    step[TAU_OFFSET+2] = 1.0E02;
-    step[TAU_OFFSET+3] = 1.0E02;
-    step[TAU_OFFSET+4] = 1.0E02;
+    step[TAU_OFFSET] = 1.0E0/5;
+    step[TAU_OFFSET+1] = 1.0E0/5;
+    step[TAU_OFFSET+2] = 1.0E0/5;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
 
     step[TRIPTIME_OFFSET] = 1.0E07;
+    step[COAST_OFFSET] = 1.0E01;
+    step[COAST_OFFSET+1] = 1.0E01;
+    step[COAST_OFFSET+2] = 1.0E01;
+    step[COAST_OFFSET+3] = 1.0E01;
+    step[COAST_OFFSET+4] = 1.0E01;
 
-    step[COAST_OFFSET] = 1.0E02;
-    step[COAST_OFFSET+1] = 1.0E02;
-    step[COAST_OFFSET+2] = 1.0E02;
-    step[COAST_OFFSET+3] = 1.0E02;
-    step[COAST_OFFSET+4] = 1.0E02;
-
-    step[THRESHOLD_OFFSET] = 1.0E-02;
 
     optimizing(start, step);
 
@@ -110,7 +100,7 @@ void optimizeStartConditions(){
     int numSteps = 0;
     double cost; // to store the cost caluclated by trajectoryPrint()
 
-    trajectoryPrint(start, numSteps, cost);
+    writeTrajectoryToFile(start, cost);
 
     output << "start values:" << std::endl;
     for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
@@ -177,13 +167,9 @@ void iterativeOptimize(){
   start[GAMMA_OFFSET+4] = 10;
   start[GAMMA_OFFSET+5] = 10;
   start[GAMMA_OFFSET+6] = 10;
-  start[GAMMA_OFFSET+7] = 10;
-  start[GAMMA_OFFSET+8] = 10;
   start[TAU_OFFSET] = 10;
   start[TAU_OFFSET+1] = 10;
   start[TAU_OFFSET+2] = 10;
-  start[TAU_OFFSET+3] = 10;
-  start[TAU_OFFSET+4] = 10;
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
   start[TRIPTIME_OFFSET] = 365*24*3600*1.5; // 2 YEARS
@@ -192,7 +178,6 @@ void iterativeOptimize(){
   start[COAST_OFFSET+2] = 0.5;
   start[COAST_OFFSET+3] = 0.5;
   start[COAST_OFFSET+4] = 0.5;
-  start[THRESHOLD_OFFSET] = 0.05;
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
@@ -203,13 +188,9 @@ void iterativeOptimize(){
   step[GAMMA_OFFSET+4] = 1.0E02;
   step[GAMMA_OFFSET+5] = 1.0E02;
   step[GAMMA_OFFSET+6] = 1.0E02;
-  step[GAMMA_OFFSET+7] = 1.0E02;
-  step[GAMMA_OFFSET+8] = 1.0E02;
   step[TAU_OFFSET] = 1.0E02;
   step[TAU_OFFSET+1] = 1.0E02;
   step[TAU_OFFSET+2] = 1.0E02;
-  step[TAU_OFFSET+3] = 1.0E02;
-  step[TAU_OFFSET+4] = 1.0E02;
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
   step[TRIPTIME_OFFSET] = 1.0E07;
@@ -218,7 +199,7 @@ void iterativeOptimize(){
   step[COAST_OFFSET+2] = 1.0E02;
   step[COAST_OFFSET+3] = 1.0E02;
   step[COAST_OFFSET+4] = 1.0E02;
-  step[THRESHOLD_OFFSET] = 1.0E-02;
+
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
   int executions = 1;
@@ -228,7 +209,8 @@ void iterativeOptimize(){
   }
 
   // writes the solution based on optimized variables to a binary file
-  //writeTrajectoryToFile(start);
+  double cost = 0;
+  writeTrajectoryToFile(start,cost);
 
   delete [] start;
   delete [] step;
@@ -302,10 +284,9 @@ void optimizing (double *&start, double *step)
 }
 
 
-void writeTrajectoryToFile(double *start)
+void writeTrajectoryToFile(double *start, double & cost)
 {
   int numSteps = 0;
-  double cost = 0;
 
   trajectoryPrint(start, numSteps, cost);
 

@@ -29,7 +29,7 @@ template <class T> T calc_tau(coefficients<T> & coeff, const T & curTime, const 
 template <class T> bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal)
 {
     // Use the fourier series for the coasting coefficients, then take the cos^2(coasting)
-    T coastValue = pow(cos(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal)),2);
+    T coastValue = pow(sin(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal)),2);
     // if it is above the optimized threshold we return true for not coasting
     if(coastValue>=coeff.coastThreshold){
         return true;
