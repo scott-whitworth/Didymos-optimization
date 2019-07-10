@@ -4,7 +4,8 @@
     //No recent changes
 #define _USE_MATH_DEFINES // for use of M_PI
 
-#include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
+#include "runge_kutta.h" // used for rk4sys(), rk4Simple(), and rk4Reverse().
+#include "runge_kuttaCUDA.cuh" // used for rk4SimpleCUDA()
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
@@ -99,9 +100,10 @@ double trajectory( double x[])
 
   // Cost equation determines how close a given run is to impact.
   // Based off the position components of the spacecraft and asteroid.
-  double cost, cost_pos, cost_vel;
+  double cost, cost_pos;
+  //double cost_vel;
   cost_pos = pow(asteroid.r-yp.r,2)+pow(asteroid.theta-yp.theta,2)+pow(asteroid.z-yp.z,2);
-  cost_vel = pow((sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))-V_IMPACT)/V_IMPACT,2);
+  //cost_vel = pow((sqrt(pow(asteroid.vr-yp.vr,2)+pow(asteroid.vtheta-yp.vtheta,2)+pow(asteroid.vz-yp.vz,2))-V_IMPACT)/V_IMPACT,2);
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
@@ -208,9 +210,10 @@ double trajectoryPrint( double x[], int & n, double & cost)
  
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost_pos, cost_vel;
+  double cost_pos;
+  //double cost_vel;
   cost_pos = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);         
-  cost_vel = pow((sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2))-V_IMPACT)/V_IMPACT,2);
+  //cost_vel = pow((sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2))-V_IMPACT)/V_IMPACT,2);
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 

@@ -47,7 +47,7 @@ T stepSize, elements<T> &y, const T & absTol, coefficients<T> coeff, const T & a
 
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
-template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & v, elements<T> & u);
+template <class T> __host__ __device__ void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & v, elements<T> & u);
 
 
 /**********************************************************************************************************************************/
@@ -59,12 +59,7 @@ template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elem
 //      absTol: Sets the error tolerence for Runge-Kutta
 //      stepSize: time interval between data points (s)
 // Output: Unitless scaling coefficient which changes the time step each iteration
-template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
+template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
 
-
-//CUDA functions
-template <class T> __global__ void rk4SimpleCUDA(rkParameters<T> rkParametersList[], T timeInitial, T stepSize, T absTol);
-template <class T> void callRK();
-
-#include "runge_kutta.cu"
+#include "runge_kutta.cpp"
 #endif

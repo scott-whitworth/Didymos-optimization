@@ -17,24 +17,24 @@ template <class T> struct elements {
     T vz; // axial velocity (out-of-plane)
 
     // Constructor which sets all the components
-    elements<T>(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0);
+    __host__ __device__ elements<T>(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0);
 
     // Constructor which takes no values and sets everything to zero
-    elements<T>();
+    __host__ __device__ elements<T>();
 
 
     // Overload operators to do math on all the elements in the struct seperately
     // Treating each element as a matrix operation
 
     // Operator overloads, used in runge kutta for the math between elements
-    elements<T> operator+(const elements<T>& e);
-    elements<T> operator-(const elements<T>& e);
-    elements<T> operator*(const elements<T>& e);
-    elements<T> operator/(const elements<T>& e);
+    __host__ __device__ elements<T> operator+(const elements<T>& e);
+    __host__ __device__ elements<T> operator-(const elements<T>& e);
+    __host__ __device__ elements<T> operator*(const elements<T>& e);
+    __host__ __device__ elements<T> operator/(const elements<T>& e);
 
     // Operator overloads, for scalars
-    elements<T> operator*(const T& i);
-    elements<T> operator/(const T& i);
+    __host__ __device__ elements<T> operator*(const T& i);
+    __host__ __device__ elements<T> operator/(const T& i);
 
     // Overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const elements<T> & e); 

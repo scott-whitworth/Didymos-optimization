@@ -10,7 +10,7 @@ template <class T> struct thruster {
     T P0; // inital power in
     T m_Dot0; // initial m_Dot
 
-    thruster<T>(int type);
+    __host__ __device__ thruster<T>(int type);
 
     //overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
@@ -19,13 +19,13 @@ template <class T> struct thruster {
 // Parameters:
 //         Pin: Given a certian value of power in to the spacecraft, a specific efficiency will be calculated for an iteration.
 // output: spacecraft's effciency for a certian iteration
-    T calc_eff(const T & Pin);
+   __host__ __device__ T calc_eff(const T & Pin);
 
 // Evaluates the spacecraft's fuel flow rate (mDot) for a certian iteration based off of "if statements".
 // Parameters:
 //         Pin: Given a certian value of power in to the spacecraft, a certian fuel flow rate will be set for an iteration.
 // output: spacecraft's mDot for a certian iteration
-    void calc_m_Dot(const T & Pin);
+    __host__ __device__ void calc_m_Dot(const T & Pin);
 
     private:
     T NEXTP0 =7330; // initial power (W)

@@ -9,7 +9,7 @@
 #include "constants.h" // used for wetMass
 #include <iostream> // used for cout
 
-template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
+template <class T> __host__ __device__ T calc_accel(const T & radius, const T & offPlane, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
     
     //If all of the fuel has been expelled, then no more thrust can be applied
     if(wetMass - massExpelled <= DRY_MASS){

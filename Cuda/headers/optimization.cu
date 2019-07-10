@@ -15,7 +15,7 @@
 #include <time.h> //for seeding the random number generator
 
 
-#include "runge_kutta.h" //for testing rk4simple
+#include "runge_kuttaCUDA.cuh" //for testing rk4simple
 
 
 int main ()
@@ -26,7 +26,7 @@ int main ()
   //iterativeOptimize();
   //optimizeStartConditions();
   
-  callRK<double>();
+  callRK();
 
   return 0;
 }
