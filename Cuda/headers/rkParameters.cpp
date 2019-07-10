@@ -41,9 +41,10 @@ template <class T> rkParameters<T>::rkParameters()
     y0.vtheta = 0;
     y0.vz = 0;
 
-    coefficients.gamma = NULL;
-    coefficients.tau = NULL;
-    coefficients.coast = NULL;
+    //causes error: "expression must be a modifiable lvalue"
+    //coefficients.gamma = NULL;
+    //coefficients.tau = NULL;
+    //coefficients.coast = NULL;
     coefficients.coastThreshold = 0;
 }
 
