@@ -52,9 +52,9 @@ void optimizeStartConditions(){
     start[GAMMA_OFFSET+6] = std::rand() % 21 - 10;
 
 
-    start[TAU_OFFSET] = std::rand() % 21/10.0 - 1.0; // -1.0 - 1.0
-    start[TAU_OFFSET+1] = std::rand() % 21/10.0 - 1.0;
-    start[TAU_OFFSET+2] = std::rand() % 21/10.0 - 1.0;
+    start[TAU_OFFSET] = std::rand() % 21/1.0 - 10.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = std::rand() % 21/1.0 - 10.0;
+    start[TAU_OFFSET+2] = std::rand() % 21/1.0 - 10.0;
 
 
     start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
@@ -246,7 +246,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 30000+std::rand()%100;
+  kcount = 5000+std::rand()%100;
 
     //****************
     // Move into its own function
