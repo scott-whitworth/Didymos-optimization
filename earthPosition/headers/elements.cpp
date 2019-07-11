@@ -66,6 +66,37 @@ template <class T> elements<T> elements<T>::operator/(const T & i){
     return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
 }
 
+//constructor which takes in an element
+template <class T> 
+elements<T> elements<T>::operator+(const elements<T> & e)const{
+    return elements<T>(this->r + e.r, this->theta + e.theta, this->z + e.z, this->vr + e.vr, this->vtheta + e.vtheta, this->vz + e.vz);
+}
+
+template <class T> 
+elements<T> elements<T>::operator-(const elements & e)const{
+    return elements<T>(this->r - e.r, this->theta - e.theta, this->z - e.z, this->vr - e.vr, this->vtheta - e.vtheta, this->vz - e.vz);
+}
+
+template <class T> 
+elements<T> elements<T>::operator*(const elements<T> & e)const{
+    return elements<T>(this->r * e.r, this->theta * e.theta, this->z * e.z, this->vr * e.vr, this->vtheta * e.vtheta, this->vz * e.vz);
+}
+
+template <class T> 
+elements<T> elements<T>::operator/(const elements<T> & e)const{
+    return elements<T>(this->r / e.r, this->theta / e.theta, this->z / e.z, this->vr / e.vr, this->vtheta / e.vtheta, this->vz / e.vz);
+}
+
+//constructor which takes in an scalar
+template <class T> 
+elements<T> elements<T>::operator*(const T & i)const{
+    return elements<T>(this->r * i,  this->theta * i, this->z * i, this->vr * i, this->vtheta * i, this->vz * i);
+}
+
+template <class T> elements<T> elements<T>::operator/(const T & i)const{
+    return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
+}
+
 template <class T> std::ostream & operator<<(std::ostream & Str, const elements<T> & e) {
     Str << std::fixed;
     Str << std::setprecision(16); // number of decimals output into text file
