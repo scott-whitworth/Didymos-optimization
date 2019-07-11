@@ -42,7 +42,7 @@ void optimizeStartConditions(){
   int executions = 5;
   for(int i = 0; i < executions; i++)
   {
-    // random initial guesses for variables within a reasonable range based on previous runs which had small cost values
+    // Initial guesses for variables based off of previous runs which have small cost values
     start[GAMMA_OFFSET] = std::rand() % 21 - 10; // -10 - 10
     start[GAMMA_OFFSET+1] = std::rand() % 21 - 10;
     start[GAMMA_OFFSET+2] = std::rand() % 21 - 10;
@@ -53,9 +53,6 @@ void optimizeStartConditions(){
 
 
     start[TAU_OFFSET] = std::rand() % 21/1.0 - 10.0; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = std::rand() % 21/1.0 - 10.0;
-    start[TAU_OFFSET+2] = std::rand() % 21/1.0 - 10.0;
-
 
     start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14;
@@ -80,12 +77,9 @@ void optimizeStartConditions(){
     step[GAMMA_OFFSET+6] = 1.0E01/2;
 
     step[TAU_OFFSET] = 1.0E0/5;
-    step[TAU_OFFSET+1] = 1.0E0/5;
-    step[TAU_OFFSET+2] = 1.0E0/5;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
-
     step[TRIPTIME_OFFSET] = 1.0E07;
     step[COAST_OFFSET] = 1.0E01;
     step[COAST_OFFSET+1] = 1.0E01;
