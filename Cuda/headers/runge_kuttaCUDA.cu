@@ -8,7 +8,7 @@
 #include <iostream>
 
 void callRK(){
-    const int numThreads = 2048;
+    const int numThreads = 32;
 
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero
@@ -19,11 +19,13 @@ void callRK(){
 
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
+    double timeFinal = 2.5; // number of years the trip takes
+    
+    /*
+    //for setting every thread's parameters to the same values
     double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
     double tau[] = {3, 3, 3, 3, 3};
     double coast[] = {5, 5, 5, 5, 5};
-
-    double timeFinal = 2.0; // number of years the trip takes
 
     elements<double> earth = earthInitial(timeFinal);
     // timeFinal, accel, wetMass, 
@@ -35,10 +37,21 @@ void callRK(){
     earth.r+ESOI*cos(10), earth.theta+asin(sin(M_PI-10)*ESOI/earth.r), earth.z,
     earth.vr+sin(3)*vEscape, earth.vtheta+cos(3)*vEscape, earth.vz,
     gamma, tau, coast, 0.05);
+    */
+
+    rkParameters<double> inputParameters[numThreads]; // contains all input parameters besides those which are always common amongst every thread
+
+    for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
+        double gamma[] = {i, i, i, i, i, i, i, i, i};
+        double tau[] = {i%4, i%4, i%4, i%4, i%4};
+        double coast[] = {i%6, i%6, i%6, i%6, i%6};    
     
-    rkParameters<double> inputParameters[numThreads];
-    for(int i = 0; i < numThreads; i++){ // set every thread's input parameters to the same value for now
-        inputParameters[i] = example;
+        elements<double> earth = earthInitial(timeFinal - i/32);
+        
+        inputParameters[i] = rkParameters<double>(timeFinal - i / 32, 0.0, WET_MASS,
+        earth.r+ESOI*cos(i), earth.theta+asin(sin(M_PI-i)*ESOI/earth.r), earth.z,
+        earth.vr+sin(i%4)*vEscape, earth.vtheta+cos(i%4)*vEscape, earth.vz,
+        gamma, tau, coast, 0.005 * i);
     }
     /*-------------------------------------------------------------------------------------*/
 
@@ -62,7 +75,7 @@ void callRK(){
     cudaMemcpy(devAbsTol, &absTol, sizeof(double), cudaMemcpyHostToDevice);
 
     // GPU version of rk4Simple()
-    rk4SimpleCUDA<<<1024,numThreads/1024>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos);
+    rk4SimpleCUDA<<<16,2>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos);
 
     // copy the result of the kernel onto the host
     cudaMemcpy(&finalPos, devFinalPos, numThreads * sizeof(elements<double>), cudaMemcpyDeviceToHost);
@@ -74,15 +87,16 @@ void callRK(){
     cudaFree(devAbsTol);
     
     // CPU version of rk4Simple()
-    elements<double> rk4SimpleOutput;
-    example.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
+    elements<double> rk4SimpleOutput[numThreads];
+    for(int i = 0; i < numThreads; i++){
+        inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+    }
 
     // display final r, theta, z, vr, vtheta, and vz
-    std::cout << "CPU output:" << std::endl;
-    std::cout << rk4SimpleOutput << std::endl;
-
-    std::cout << "GPU output" << std::endl;
-    for(int i = 0; i < numThreads; i+=100){
+    for(int i = 0; i < numThreads; i++){
+        std::cout << "CPU output " << i << std::endl;
+        std::cout << rk4SimpleOutput[i] << std::endl;
+        std::cout << "GPU output " << i << std::endl;
         std::cout << finalPos[i] << std::endl;
     }
 }
