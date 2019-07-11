@@ -84,7 +84,5 @@ template <class T> T calc_scalingFactor(const elements<T> & previous , const ele
     normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),(T)1/2);
     scale = pow((absTol/normTotError),(T)1/5);
 
-    //TODO: changing to static cast alters the results slightly
-
     return scale;   
 }
