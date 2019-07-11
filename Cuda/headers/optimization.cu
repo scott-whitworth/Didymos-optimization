@@ -20,17 +20,33 @@
 
 int main ()
 {
-  //optimizing();
-  //iterativeOptimize();
-  //optimizeStartConditions();
+    //optimizing();
+    //iterativeOptimize();
+    //optimizeStartConditions();
 
-  int numThreads = 1024;
-  int blockThreads = 32;
+    int blockThreads = 0;
+    int numThreads = 0;
+    int blockThreadNums[] = {16, 32, 64, 256, 384, 512, 768, 1024};
+    int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
   
-  std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-  callRK(numThreads, blockThreads);
+    //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+    //callRK(numThreads, blockThreads);
 
-  return 0;
+    std::ofstream efficiencyGraph;
+    efficiencyGraph.open("efficiencyGraph.csv");
+
+    for(int i = 0; i < std::size(blockThreadNums); i++){
+        for(int j = 0; j < std::size(threadNums); j++){
+            blockThreads = blockThreadNums[i];
+            numThreads = threadNums[j];
+            std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+            efficiencyGraph << blockThreads << "," << numThreads << "," << callRK(numThreads, blockThreads) << "\n";
+        }
+    }
+
+    efficiencyGraph.close();
+
+    return 0;
 }
 
 void optimizeStartConditions(){

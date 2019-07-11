@@ -6,8 +6,9 @@
 #include "orbitalMotion.h"
 #include <math.h>
 #include <iostream>
+#include <fstream> // for outputing to .csv file
 
-void callRK(const int numThreads, const int blockThreads){
+double callRK(const int numThreads, const int blockThreads){
 
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero
@@ -92,7 +93,7 @@ void callRK(const int numThreads, const int blockThreads){
 
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
-    rk4SimpleCUDA<<<blockThreads,(numThreads+blockThreads-1)/blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos);
+    rk4SimpleCUDA<<<blockThreads,(numThreads+blockThreads-1)/blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, numThreads);
 
 
     // copy the result of the kernel onto the host
@@ -111,7 +112,7 @@ void callRK(const int numThreads, const int blockThreads){
     for(int i = 0; i < numThreads; i++){
         inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
     }
-    
+
     // display final r, theta, z, vr, vtheta, and vz
     double maxError = 0.0; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
@@ -155,70 +156,77 @@ void callRK(const int numThreads, const int blockThreads){
     cudaEventElapsedTime(&kernelT, Kernel_e, MemCpyHost_e);
     cudaEventElapsedTime(&memCpyHostT, MemCpyHost_e, MemCpyHostStop_e);
     
+    double rkPerS = numThreads / (kernelT / 1000.0); // how many times the Runge Kutta algorithm ran in the kernel per second
+
     std::cout << "Device memory allocation time: " << mallocT << " ms" << std::endl;
     std::cout << "Device memory copy time: " << memCpyDevT << " ms" << std::endl;
-    std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
     std::cout << "Host memory copy time: " << memCpyHostT << " ms" << std::endl;
+    std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
+    std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
 
     delete [] rk4SimpleOutput;
     delete [] finalPos;
     delete [] inputParameters;
     
+    return rkPerS;
 }
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos){
+__global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, int n){
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
-    rkParameters<double> threadRKParameters = rkParametersList[threadId]; // get the parameters for this thread
+    if(threadId <= n)
+    {
+        rkParameters<double> threadRKParameters = rkParametersList[threadId]; // get the parameters for this thread
 
-    elements<double> curPos = threadRKParameters.y0; // start with the initial conditions of the spacecraft
+        elements<double> curPos = threadRKParameters.y0; // start with the initial conditions of the spacecraft
 
-    // storing copies of the input values
-    double stepSize = *startStepSize;
-    double absTol = *absTolInput;
-    double curTime = *timeInitial;
+        // storing copies of the input values
+        double stepSize = *startStepSize;
+        double absTol = *absTolInput;
+        double curTime = *timeInitial;
 
-    elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
+        elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
 
-    thruster<double> NEXT = thruster<double>(1); // corresponds NEXT thruster to type 1 in thruster.h
+        thruster<double> NEXT = thruster<double>(1); // corresponds NEXT thruster to type 1 in thruster.h
 
-    double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
+        double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
 
-    double deltaT; // change in time for calc_accel()
+        double deltaT; // change in time for calc_accel()
 
-    double coast; // to hold the result from calc_coast()
+        double coast; // to hold the result from calc_coast()
 
-    elements<double> v; // holds output of previous value from rkCalc
+        elements<double> v; // holds output of previous value from rkCalc
 
-    while(curTime < threadRKParameters.timeFinal){
-        //deltaT = stepSize;
+        while(curTime < threadRKParameters.timeFinal){
+            //deltaT = stepSize;
 
-        coast = calc_coast(threadRKParameters.coefficients, curTime, threadRKParameters.timeFinal);
-        threadRKParameters.accel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, threadRKParameters.wetMass);
+            coast = calc_coast(threadRKParameters.coefficients, curTime, threadRKParameters.timeFinal);
+            threadRKParameters.accel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, threadRKParameters.wetMass);
 
-        // calculate k values and get new value of y
-        rkCalc(curTime, threadRKParameters.timeFinal, stepSize, curPos, threadRKParameters.coefficients, threadRKParameters.accel, v, curPos); 
+            // calculate k values and get new value of y
+            rkCalc(curTime, threadRKParameters.timeFinal, stepSize, curPos, threadRKParameters.coefficients, threadRKParameters.accel, v, curPos); 
 
-        curTime += stepSize; // update the current time in the simulation
-        stepSize *= calc_scalingFactor(v,curPos-v,absTol,stepSize); // Alter the step size for the next iteration
+            curTime += stepSize; // update the current time in the simulation
+            stepSize *= calc_scalingFactor(v,curPos-v,absTol,stepSize); // Alter the step size for the next iteration
 
-        // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (threadRKParameters.timeFinal - *timeInitial) / 2){
-            stepSize = (threadRKParameters.timeFinal - *timeInitial) / 2;
+            // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
+            if (stepSize > (threadRKParameters.timeFinal - *timeInitial) / 2){
+                stepSize = (threadRKParameters.timeFinal - *timeInitial) / 2;
+            }
+            else if (stepSize < ((threadRKParameters.timeFinal - *timeInitial) / 1000)){
+                stepSize = (threadRKParameters.timeFinal - *timeInitial) / 1000;
+            }
+
+            if((curTime + stepSize) > threadRKParameters.timeFinal)
+                stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
+
+            // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
+            if (curPos.r < 0.5)
+            {
+                curPos.r = 1000;
+            }
         }
-        else if (stepSize < ((threadRKParameters.timeFinal - *timeInitial) / 1000)){
-            stepSize = (threadRKParameters.timeFinal - *timeInitial) / 1000;
-        }
-
-        if((curTime + stepSize) > threadRKParameters.timeFinal)
-            stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
-
-        // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
-        if (curPos.r < 0.5)
-        {
-            curPos.r = 1000;
-        }
-    }
 
     finalPos[threadId] = curPos; // output to this thread's index
+    }
 }
