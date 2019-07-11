@@ -4,7 +4,7 @@
 #include "rkParameters.h" // rkParameters struct
 
 //sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
-void callRK();
+void callRK(const int numThreads, const int blockThreads);
 
 // the simple version of the runge_kutta algorithm, on GPU
 __global__ void rk4SimpleCUDA(rkParameters<double> *rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos);

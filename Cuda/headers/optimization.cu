@@ -20,13 +20,15 @@
 
 int main ()
 {
-  //Top of optimizing(): starting to calculate minimization of orbital motion
-
   //optimizing();
   //iterativeOptimize();
   //optimizeStartConditions();
+
+  int numThreads = 1024;
+  int blockThreads = 32;
   
-  callRK();
+  std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+  callRK(numThreads, blockThreads);
 
   return 0;
 }
