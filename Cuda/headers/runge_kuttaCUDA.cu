@@ -19,7 +19,7 @@ double callRK(const int numThreads, const int blockThreads){
 
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
-    double timeFinal = 2.5; // number of years the trip takes
+    double timeFinal = 365*24*3600*2.5; // number of seconds the trip takes
     
     
     //for setting every thread's parameters to the same values
@@ -44,17 +44,16 @@ double callRK(const int numThreads, const int blockThreads){
     rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
-        
-        double gamma[] = {i, i, i, i, i, i, i, i, i};
-        double tau[] = {i%4, i%4, i%4, i%4, i%4};
-        double coast[] = {i%6, i%6, i%6, i%6, i%6};    
+        double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+        double tau[] = {3, 3, 3, 3, 3};
+        double coast[] = {5, 5, 5, 5, 5};
     
-        elements<double> earth = earthInitial(timeFinal - i/32);
+        elements<double> earth = earthInitial(timeFinal);
         
-        inputParameters[i] = rkParameters<double>(timeFinal - i / 32, 0.0, WET_MASS,
-        earth.r+ESOI*cos(i), earth.theta+asin(sin(M_PI-i)*ESOI/earth.r), earth.z,
-        earth.vr+sin(i%4)*vEscape, earth.vtheta+cos(i%4)*vEscape, earth.vz,
-        gamma, tau, coast, 0.005 * i);
+        inputParameters[i] = rkParameters<double>(timeFinal, 0.0, WET_MASS,
+        earth.r+ESOI*cos(0), earth.theta+asin(sin(M_PI-0)*ESOI/earth.r), earth.z,
+        earth.vr+sin(0)*vEscape, earth.vtheta+cos(0)*vEscape, earth.vz,
+        gamma, tau, coast, 0.005);
         
         // doesn't work
         //inputParameters[i] = example;
@@ -93,7 +92,7 @@ double callRK(const int numThreads, const int blockThreads){
 
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
-    rk4SimpleCUDA<<<blockThreads,(numThreads+blockThreads-1)/blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, numThreads);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, numThreads);
 
 
     // copy the result of the kernel onto the host
@@ -184,6 +183,7 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
         double stepSize = *startStepSize;
         double absTol = *absTolInput;
         double curTime = *timeInitial;
+        double initialTime = *timeInitial;
 
         elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
 
@@ -210,11 +210,11 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
             stepSize *= calc_scalingFactor(v,curPos-v,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.timeFinal - *timeInitial) / 2){
-                stepSize = (threadRKParameters.timeFinal - *timeInitial) / 2;
+            if (stepSize > (threadRKParameters.timeFinal - initialTime) / 2){
+                stepSize = (threadRKParameters.timeFinal - initialTime) / 2;
             }
-            else if (stepSize < ((threadRKParameters.timeFinal - *timeInitial) / 1000)){
-                stepSize = (threadRKParameters.timeFinal - *timeInitial) / 1000;
+            else if (stepSize < ((threadRKParameters.timeFinal - initialTime) / 1000)){
+                stepSize = (threadRKParameters.timeFinal - initialTime) / 1000;
             }
 
             if((curTime + stepSize) > threadRKParameters.timeFinal)
