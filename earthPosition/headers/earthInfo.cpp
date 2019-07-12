@@ -11,7 +11,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     startTime = beginTime; //Starting time (s)
     endTime = stopTime; //Ending time (s)
     timeRes = timeAcc; //Time resolution (s)
-    tolData = ((endTime-startTime)/timeRes) + 1; //Total Number of Data points in earthCon, plus one for the last 'section'
+    tolData = ((endTime-startTime)/timeRes) + 1; //Total Number of Data points (in hours) in earthCon, plus one for the last 'section'
 
     //Alocate memory for earthCon, one entry for every data point
     earthCon = new elements<double> [tolData]();
@@ -20,13 +20,9 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
 
     for(int i=0; i<tolData; i++)
     { 
-        earthCon[i]=earthInitial(calc_time(i));
+        earthCon[i]=earthInitial(calc_time(i));//Obtaining conditions of the earth every hour
+        std::cout << " number of runs: " << i << "results: " << earthCon[i] << std::endl;
     }
-}
-
-elements<double> EarthInfo::interpolate(const elements<double> & lower,const elements<double> & upper,const double & lowerWeight,const double & upperWeight)
-{
-    return (lower*lowerWeight)+(upper*upperWeight);
 }
 
 elements<double> EarthInfo::getCondition(const double & currentTime)
@@ -34,7 +30,7 @@ elements<double> EarthInfo::getCondition(const double & currentTime)
     elements<double> lower;
     elements<double> upper;
     int index;
-    index = calcIndex(currentTime);
+    index = calcIndex(currentTime);//Location of data (in hours) based on time (in seconds)
     lower = earthCon[index];
     upper = earthCon[index + 1];
     double lowerWeight = 1 - ((currentTime-calc_time(index))/timeRes);
@@ -56,6 +52,11 @@ double EarthInfo::calc_time(const int & currentIndex)
 
 int EarthInfo::getTolData(){
     return tolData;
+}
+
+elements<double> EarthInfo::interpolate(const elements<double> & lower,const elements<double> & upper,const double & lowerWeight,const double & upperWeight)
+{
+    return (lower*lowerWeight)+(upper*upperWeight);
 }
 
 EarthInfo::~EarthInfo()

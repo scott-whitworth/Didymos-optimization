@@ -24,7 +24,7 @@ T stepSize, elements<T> & y, const T & absTol)
 
         //Alter the step size for the next iteration
         //Expected to be negative
-        stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize)/50;
+        stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize)/10;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (-stepSize>(timeFinal-timeInitial)/100)
