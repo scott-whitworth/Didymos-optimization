@@ -28,6 +28,8 @@ int main ()
     int numThreads = 0;
     int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
     int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
+    //int blockThreadNums[] = { 32};
+    //int threadNums[] = {100, 500, 1000, 2000, 3000};
   
     //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     //callRK(numThreads, blockThreads);
