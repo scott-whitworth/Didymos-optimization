@@ -16,7 +16,7 @@ double trajectory( double x[])
 {
   // Defining acceleration
     double accel;
-    double massFuelSpent = 0;
+    //double massFuelSpent = 0;
 
   /*Set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),

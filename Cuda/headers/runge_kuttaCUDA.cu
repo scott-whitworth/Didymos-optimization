@@ -20,7 +20,8 @@ double callRK(const int numThreads, const int blockThreads){
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
     //double timeFinal = 2.5; // number of years the trip takes
-    double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
+    //double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
+    double timeFinal = 75178800-3600;
     
     
     //for setting every thread's parameters to the same values
@@ -58,14 +59,14 @@ double callRK(const int numThreads, const int blockThreads){
         gamma, tau, coast, 0.005 * i);*/
 
         double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
-        double tau[] = {3, 3, 3, 3, 3};
-        double coast[] = {2, 2, 2, 2, 2};    
+        double tau[] = {5, 5, 5, 5, 5};
+        double coast[] = {3, 3, 3, 3, 3};    
     
         elements<double> earth = earthInitial(timeFinal);
         
         inputParameters[i] = rkParameters<double>(timeFinal, WET_MASS,
-        earth.r+ESOI*cos(10), earth.theta+asin(sin(M_PI-10)*ESOI/earth.r), earth.z,
-        earth.vr+sin(3)*vEscape, earth.vtheta+cos(3)*vEscape, earth.vz,
+        earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
+        earth.vr+sin(0.1)*vEscape, earth.vtheta+cos(0.1)*vEscape, earth.vz,
         gamma, tau, coast, 0.05);
         
         // doesn't work
@@ -206,7 +207,7 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
 
         double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
 
-        double deltaT; // change in time for calc_accel()
+        //double deltaT; // change in time for calc_accel()
 
         double coast; // to hold the result from calc_coast()
 
@@ -225,11 +226,11 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
             stepSize *= calc_scalingFactor(v,curPos-v,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.timeFinal - startTime) / 2){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 2;
+            if (stepSize > (threadRKParameters.timeFinal - startTime) / 100){
+                stepSize = (threadRKParameters.timeFinal - startTime) / 100;
             }
-            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 1000)){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 1000;
+            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 10000)){
+                stepSize = (threadRKParameters.timeFinal - startTime) / 10000;
             }
 
             if((curTime + stepSize) > threadRKParameters.timeFinal)
