@@ -1,22 +1,25 @@
 #include "earthInfo.h"
 #include "orbitalMotion.h"
     
-
+#include <iostream>  
+#include <iomanip> // setprecision(int)  
+using namespace std;
 
 EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc)
 {
-    //elements<double> *earthCon;
-    startTime = beginTime;
-    endTime = stopTime;
-    timeRes = timeAcc;
-    tolData = (endTime-startTime)/timeRes;
+    //Setting up initial information
+    startTime = beginTime; //Starting time (s)
+    endTime = stopTime; //Ending time (s)
+    timeRes = timeAcc; //Time resolution (s)
+    tolData = ((endTime-startTime)/timeRes) + 1; //Total Number of Data points in earthCon, plus one for the last 'section'
 
+    //Alocate memory for earthCon, one entry for every data point
     earthCon = new elements<double> [tolData]();
     
     //TODO: iterative runge kutta to speed up execution speed, reuse previous solution.
 
     for(int i=0; i<tolData; i++)
-    {
+    { 
         earthCon[i]=earthInitial(calc_time(i));
     }
 }
@@ -34,8 +37,8 @@ elements<double> EarthInfo::getCondition(const double & currentTime)
     index = calcIndex(currentTime);
     lower = earthCon[index];
     upper = earthCon[index + 1];
-    double lowerWeight = (currentTime-calc_time(index))/timeRes;
-    double upperWeight = (calc_time(index+1)-currentTime)/timeRes;
+    double lowerWeight = 1 - ((currentTime-calc_time(index))/timeRes);
+    double upperWeight = 1 - ((calc_time(index+1)-currentTime)/timeRes);
 
     return interpolate(lower,upper,lowerWeight,upperWeight);
 }
@@ -49,6 +52,10 @@ int EarthInfo::calcIndex(const double & currentTime)
 double EarthInfo::calc_time(const int & currentIndex)
 {
     return startTime + (currentIndex*timeRes);
+}
+
+int EarthInfo::getTolData(){
+    return tolData;
 }
 
 EarthInfo::~EarthInfo()
