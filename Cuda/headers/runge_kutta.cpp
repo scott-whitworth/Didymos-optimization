@@ -74,14 +74,14 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         stepSize *= calc_scalingFactor(v,u-v,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/2)
+        if (stepSize>(timeFinal-timeInitial)/100)
         {
-            stepSize = (timeFinal-timeInitial)/2;
+            stepSize = (timeFinal-timeInitial)/100;
             maxStep++;
         }
-        else if (stepSize<((timeFinal-timeInitial)/1000))
+        else if (stepSize<((timeFinal-timeInitial)/10000))
         {
-            stepSize = (timeFinal-timeInitial)/1000;
+            stepSize = (timeFinal-timeInitial)/10000;
             minStep++;
         }
         if((curTime+stepSize)>timeFinal)
@@ -134,10 +134,10 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/2)
-            stepSize = (timeFinal-timeInitial)/2;
-        else if (stepSize<((timeFinal-timeInitial)/1000))
-            stepSize = (timeFinal-timeInitial)/1000;
+        if (stepSize>(timeFinal-timeInitial)/100)
+            stepSize = (timeFinal-timeInitial)/100;
+        else if (stepSize<((timeFinal-timeInitial)/10000))
+            stepSize = (timeFinal-timeInitial)/10000;
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)>timeFinal)
             stepSize = (timeFinal-curTime);
@@ -174,10 +174,10 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
         stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize);
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize>(timeFinal-timeInitial)/2)
-            stepSize = -(timeFinal-timeInitial)/2;
-        else if (-stepSize<((timeFinal-timeInitial)/1000))
-            stepSize = -(timeFinal-timeInitial)/1000;
+        if (-stepSize>(timeFinal-timeInitial)/100)
+            stepSize = -(timeFinal-timeInitial)/100;
+        else if (-stepSize<((timeFinal-timeInitial)/10000))
+            stepSize = -(timeFinal-timeInitial)/10000;
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
