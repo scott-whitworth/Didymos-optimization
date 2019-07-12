@@ -1,8 +1,3 @@
-//Didymos-Optimization_Project:
-//Last Editor: Mateo
-//Tasks Completed: 
-    //No recent changes
-
 #include "elements.h"
 #include <iomanip> // setprecision(int)
 

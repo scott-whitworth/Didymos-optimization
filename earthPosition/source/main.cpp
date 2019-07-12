@@ -7,8 +7,6 @@
 
 int main()
 {
-    // Answers may not align between launchCon() and earthInitial if the startTime and endTime differ
-
     double startTime = 31557600; // one year (s)
     double endTime = 94672800; // three years (s)
     double timeRes = 3600; // minute resolution
@@ -19,11 +17,19 @@ int main()
     elements<double> result;
     result = launchCon.getCondition(testPoint);
 
-    /*for(int i = 0 ; i < launchCon.getTolData(); i++){
+
+    std::ofstream output;
+  
+    output.open ("getEarthInfo.bin", std::ios::binary); 
+    double timetime =0;
+    for(int i = 0 ; i < launchCon.getTolData(); i++)
+    {
+        timetime = startTime + (i * timeRes);
         elements<double> result;
-        result = launchCon.getCondition(startTime + (i * timeRes) + 25);
+        result = launchCon.getCondition(timetime);
+        output.write((char*)&result, sizeof (elements<double>));
+        output.write((char*)&timetime, sizeof (double));
 
-        std::cout << i << "th possible output: " << result << std::endl;
-    }*/
-
+    }
+    output.close();
 }

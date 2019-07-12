@@ -1,9 +1,3 @@
-//Didymos-Optimization_Project:
-//Last Editor: Ben and Lauren
-//Tasks Completed: 
-    //Functionalized rkCaLc() which is called by all three of the runge-kutta functions.
-    //Added the z component to the calcAccel() function calls
-
 #include "runge_kutta.h"
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
@@ -30,13 +24,13 @@ T stepSize, elements<T> & y, const T & absTol)
 
         //Alter the step size for the next iteration
         //Expected to be negative
-        stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize);
+        stepSize *= calc_scalingFactor(v,y-v,absTol,stepSize)/50;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize>(timeFinal-timeInitial)/2)
-            stepSize = -(timeFinal-timeInitial)/2;
-        else if (-stepSize<((timeFinal-timeInitial)/1000))
-            stepSize = -(timeFinal-timeInitial)/1000;
+        if (-stepSize>(timeFinal-timeInitial)/100)
+            stepSize = -(timeFinal-timeInitial)/100;
+        else if (-stepSize<((timeFinal-timeInitial)/100000))
+            stepSize = -(timeFinal-timeInitial)/100000;
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
