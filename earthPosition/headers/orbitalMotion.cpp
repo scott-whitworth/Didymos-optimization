@@ -1,8 +1,3 @@
-//Didymos-Optimization_Project:
-//Last Editor: Mateo, Lauren, and Ben
-//Tasks Completed: 
-    //No recent changes
-
 #include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
