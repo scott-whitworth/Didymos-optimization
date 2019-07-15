@@ -10,6 +10,8 @@
 
 double callRK(const int numThreads, const int blockThreads){
 
+    std::cout << "Start of callRK(" << numThreads << ", " << blockThreads << ")" << std::endl;
+
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
@@ -25,26 +27,28 @@ double callRK(const int numThreads, const int blockThreads){
     
     
     //for setting every thread's parameters to the same values
-    /*
-    double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
-    double tau[] = {3, 3, 3, 3, 3};
-    double coast[] = {5, 5, 5, 5, 5};
+    coefficients<double> testcoeff;
+    for(int i = 0; i < testcoeff.gammaSize; i++){
+        testcoeff.gamma[i] = 10;
+    }
+    for(int i = 0; i < testcoeff.tauSize; i++){
+        testcoeff.tau[i] = 10;
+    }
+    for(int i = 0; i < testcoeff.coastSize; i++){
+        testcoeff.coast[i] = 10;
+    }
+    testcoeff.coastThreshold = .5;
 
     elements<double> earth = earthInitial(timeFinal);
+    elements<double> spaceTest(earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
+                               earth.vr+sin(0.75)*vEscape, earth.vtheta+cos(0.75)*vEscape, earth.vz);
 
-    // timeFinal, accel, wetMass, 
-    // r, theta, z, 
-    // vr, vtheta, vz, 
-    // gamma[], tau[], coast[], coastThreshold0
-    rkParameters<double> example // contains all input parameters besides those which are always common amongst every thread
-    (timeFinal, 0.0, WET_MASS, 
-    earth.r+ESOI*cos(10), earth.theta+asin(sin(M_PI-10)*ESOI/earth.r), earth.z,
-    earth.vr+sin(3)*vEscape, earth.vtheta+cos(3)*vEscape, earth.vz,
-    gamma, tau, coast, 0.05);
-    */
+    rkParameters<double> example(timeFinal, WET_MASS,spaceTest, testcoeff); 
 
+    std::cout << "Allocating " << numThreads << " rkParameters" << std::endl;
     rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
+    std::cout << "Filling    " << numThreads << " rkParameters" << std::endl;
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
         
         /*double gamma[] = {i, i, i, i, i, i, i, i, i};
@@ -58,7 +62,7 @@ double callRK(const int numThreads, const int blockThreads){
         earth.vr+sin(i%4)*vEscape, earth.vtheta+cos(i%4)*vEscape, earth.vz,
         gamma, tau, coast, 0.005 * i);*/
 
-        double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
+        /*double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
         double tau[] = {5, 5, 5, 5, 5};
         double coast[] = {3, 3, 3, 3, 3};    
     
@@ -67,10 +71,10 @@ double callRK(const int numThreads, const int blockThreads){
         inputParameters[i] = rkParameters<double>(timeFinal, WET_MASS,
         earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
         earth.vr+sin(0.1)*vEscape, earth.vtheta+cos(0.1)*vEscape, earth.vz,
-        gamma, tau, coast, 0.05);
+        gamma, tau, coast, 0.05);*/
         
         // doesn't work
-        //inputParameters[i] = example;
+        inputParameters[i] = example;
     }
     /*-------------------------------------------------------------------------------------*/
 
@@ -89,6 +93,8 @@ double callRK(const int numThreads, const int blockThreads){
     double *devAbsTol;
     elements<double> *devFinalPos;
    
+    std::cout << "Starting to alocate and copy" << std::endl;
+
     // allocate memory for the parameters passed to the device
     cudaEventRecord(Malloc_e);
     cudaMalloc((void**) &devInputParameters, numThreads * sizeof(rkParameters<double>));
@@ -106,6 +112,7 @@ double callRK(const int numThreads, const int blockThreads){
 
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
+    std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
     rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, numThreads);
 
 
@@ -123,42 +130,70 @@ double callRK(const int numThreads, const int blockThreads){
     // CPU version of rk4Simple()
     elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
     for(int i = 0; i < numThreads; i++){
-        inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+        //std::cout << i << " answer: " << finalPos[i] << std::endl;
+        if(static_cast<int>(i) != static_cast<int>(finalPos[i].r)){
+            std::cout << i << " index Error: " << finalPos[i] << std::endl;
+            return 1.0;
+        }
+        if(static_cast<int>(blockThreads) != static_cast<int>(finalPos[i].vr)){
+            std::cout << i << " blockThreads Error: " << finalPos[i] << std::endl;
+            return 1.0;
+        }
+        
     }
 
+    /*
+    // CPU version of rk4Simple()
+    //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
+    elements<double> rk4SimpleOutput;
+    inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
+
+    //for(int i = 0; i < numThreads; i++){
+    //    inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+    //}
+
     // display final r, theta, z, vr, vtheta, and vz
-    double maxError = 0.001; // how much difference is allowable between the CPU and GPU results
+    double maxError = 0.1; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
-        if(abs(rk4SimpleOutput[i].r - finalPos[i].r) > maxError){
+        if(abs(rk4SimpleOutput.r - finalPos[i].r) > maxError){
             errorFound = true;
         }
-        else if(abs(rk4SimpleOutput[i].theta - finalPos[i].theta) > maxError){
+        else if(abs(rk4SimpleOutput.theta - finalPos[i].theta) > maxError){
             errorFound = true;
         }
-        else if(abs(rk4SimpleOutput[i].z - finalPos[i].z) > maxError){
+        else if(abs(rk4SimpleOutput.z - finalPos[i].z) > maxError){
             errorFound = true;
         }
-        else if(abs(rk4SimpleOutput[i].vr - finalPos[i].vr) > maxError){
+        else if(abs(rk4SimpleOutput.vr - finalPos[i].vr) > maxError){
             errorFound = true;
         }
-        else if(abs(rk4SimpleOutput[i].vtheta - finalPos[i].vtheta) > maxError){
+        else if(abs(rk4SimpleOutput.vtheta - finalPos[i].vtheta) > maxError){
             errorFound = true;
         }
-        else if(abs(rk4SimpleOutput[i].vz - finalPos[i].vz) > maxError){
+        else if(abs(rk4SimpleOutput.vz - finalPos[i].vz) > maxError){
             errorFound = true;
         }
 
         if(errorFound){
             std::cout << "!!ERROR FOUND!!" << std::endl;
             std::cout << "CPU output " << i << std::endl;
-            std::cout << rk4SimpleOutput[i] << std::endl;
+            std::cout << rk4SimpleOutput << std::endl;
             std::cout << "GPU output " << i << std::endl;
             std::cout << finalPos[i] << std::endl;
+            std::cout << "Diff: " << i << std::endl;
+            std::cout << finalPos[i]-rk4SimpleOutput << std::endl;
+
 
             errorFound = false;
         }
+
+        if (finalPos[i].r < 0.000001){
+            std::cout << "Output Error!" << std::endl;
+            return -1;
+        }
     }
+    */
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
     
@@ -233,8 +268,9 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
                 stepSize = (threadRKParameters.timeFinal - startTime) / 10000;
             }
 
-            if((curTime + stepSize) > threadRKParameters.timeFinal)
+            if((curTime + stepSize) > threadRKParameters.timeFinal){
                 stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
+            }
 
             // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
             if (curPos.r < 0.5)
@@ -243,6 +279,13 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
             }
         }
 
+        //curPos.r = threadId;
+        //curPos.theta = threadIdx.x;
+        //curPos.z = blockIdx.x;
+        //curPos.vr = blockDim.x;
     finalPos[threadId] = curPos; // output to this thread's index
+        return;
     }
+    //Thread out of bounds
+    return;
 }
