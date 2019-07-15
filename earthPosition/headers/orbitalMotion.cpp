@@ -16,7 +16,6 @@ elements<double> earthInitial(double tripTime)
   double timeInitial= 0; 
   double deltaT; // time step
   deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
-  //deltaT = -3600; // set to one hour in order to match the JPL database
 
   // declaring the solution vector
   elements<double> yp;

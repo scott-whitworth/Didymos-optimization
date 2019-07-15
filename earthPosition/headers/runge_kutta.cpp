@@ -36,8 +36,6 @@ T stepSize, elements<T> & y, const T & absTol)
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
 
-        //stepSize = -3600; // set to one hour in order to match the JPL database, no adaptive stepping
-
     }//end of while 
 }
 
