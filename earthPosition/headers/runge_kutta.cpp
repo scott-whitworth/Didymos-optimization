@@ -34,6 +34,8 @@ T stepSize, elements<T> & y, const T & absTol)
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
+
+        stepSize = -3600;
     }//end of while 
 }
 

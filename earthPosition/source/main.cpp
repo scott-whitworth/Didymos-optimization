@@ -7,11 +7,8 @@
 
 int main()
 {
-    // impact 2459857.500000000 (Julain days)
     double startTime = 31557600; // one year (s)
     double endTime = 94672800; // three years (s)
-    //double startTime = 0; // one year (s) JULIAN TIME
-    //double endTime = 94694400; // three years (s) JULIAN TIME
     double timeRes = 3600; // seconds to hours conversion
 
     EarthInfo launchCon(startTime,endTime,timeRes);
