@@ -26,10 +26,10 @@ int main ()
 
     int blockThreads = 0;
     int numThreads = 0;
-    //int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
+    int blockThreadNums[] = {16, 32, 64, 256, 384, 512, 768, 1024};
+    int threadNums[] = {100, 500};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    int threadNums[] = {100};
-    int blockThreadNums[] = {32};
+    //int blockThreadNums[] = { 32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000};
   
     //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
@@ -145,14 +145,14 @@ void optimizeStartConditions(){
     trajectoryPrint(start, numSteps, cost);
 
     output << "start values:" << std::endl;
-    for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
+    for(int j = 0; j < OPTIM_VARS / 2 + 1; j++)
     {
-      output << i + 1 << ": " << start[i] << ", ";
+      output << j + 1 << ": " << start[j] << ", ";
     }
     output << std::endl;
-    for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
+    for(int j = OPTIM_VARS / 2 + i; i < OPTIM_VARS; j++)
     {
-      output << i + 1<< ": " << start[i] << ", ";
+      output << j + 1<< ": " << start[j] << ", ";
     }
     output << std::endl << "cost value: " << cost << std::endl;
     output << "---------------------------------------------------------------------------------" << std::endl;

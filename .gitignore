@@ -2,6 +2,8 @@
 **/.vscode
 *.exe
 *.json
+*.csv
+**/CUDA/**/*.lib
 *final-optimization.bin
 *final-optimization.txt
 *orbitalMotion-accel.bin

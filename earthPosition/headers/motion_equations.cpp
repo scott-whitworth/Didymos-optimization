@@ -1,8 +1,3 @@
-//Didymos-Optimization_Project:
-//Last Editor: Mateo and Lauren
-//Tasks Completed: 
-	//No recent changes
-	
 #include <math.h> // used for sine, cosine, and pow functions
 #include "motion_equations.h"
 
