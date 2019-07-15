@@ -61,6 +61,10 @@ template <class T> elements<T> elements<T>::operator/(const T & i){
     return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
 }
 
+
+//overload operators to do math on all the elements in the struct seperately WITH CONST
+//Treating each element as a matrix operation
+
 //constructor which takes in an element
 template <class T> 
 elements<T> elements<T>::operator+(const elements<T> & e)const{

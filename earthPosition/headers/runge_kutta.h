@@ -10,15 +10,13 @@
     // Parameters: 
     //      timeInitial: start time (s)
     //      timeFinal: end time (s)
-    //      times:an array that contains the time for each data point
+    //      times: an array that contains the time for each data point
     //      y0: initial conditions (position,velocity)
     //      stepSize: first time interval between data points (s)
     //      y: an array which contains the soultion to the dependent variable
     //      absTol: Sets the error tolerence for Runge-Kutta
-    //      coeff: passes the structure containing the fourier coefficients for gamma and tau
-    //      accel: spacecraft's acceleration (au/s^2)
-    //      wetMass: mass of the spacecraft including fuel (kg)
-    // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements, which are not prefered in CUDA.
+    // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements,
+    // which are not prefered in CUDA.
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
 T stepSize, elements<T> &y, const T & absTol);
 
