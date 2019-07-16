@@ -184,26 +184,33 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, const T & 
 }
 
 template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & v, elements<T> & u){
-    // Runge-Kutta algorithm      
-    elements<T> k1, k2, k3, k4, k5, k6, k7; 
-    //k1 = h*f(t, y)
-    k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);        
-    //k2 = h*f(t+1/5, y+k1*1/5)
-    k2 = calc_k(stepSize, y+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal);   
-    //k3 = h*f(t+3/10, y+k1*3/40+k2*9/40)
+   
+    elements<T> k1, k2, k3, k4, k5, k6, k7;
+
+    //          k1 = h*f(y, t)
+    k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);      
+
+    //           k2 = h*f(y+k1*1/5, t+1/5)
+    k2 = calc_k(stepSize, y+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal); 
+
+    //           k3 = h*f(y+k1*3/40+k2*9/40, t+3/10)
     k3 = calc_k(stepSize, y+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
-    //k4 = h*f(t+4/5, y+k1*44/45+k2*-56/15+k3*32/9)
-    k4 = calc_k(stepSize,y+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal);    
-    //k5 = h*f(t+8/9, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729)
-    k5 = calc_k(stepSize, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal);        
-    //k6 = h*f(t, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656)
-    k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);        
-    //k7 = h*f(t, y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84)
+
+    //          k4 = h*f(y+k1*44/45+k2*-56/15+k3*32/9, t+4/5)
+    k4 = calc_k(stepSize,y+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal); 
+
+    //           k5 = h*f(y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729, t+8/9)
+    k5 = calc_k(stepSize, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal); 
+
+    //           k6 = h*f(y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656, t)
+    k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);  
+          
+    //          k7 = h*f(y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84, t)
     k7 = calc_k(stepSize,y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
 
-    // Previous value 
-    //v = y + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
-    v = y + k1*5179/57600 + k3*7571/16695 + k4*393/640 - k5*92097/339200 + k6*187/2100 + k7*1/40;     
+    // error 
+    // v = y + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
+    v = y + k1*71/57600 + k3*-71/16695 + k4*71/1920 - k5*-17253/339200 + k6*22/525 + k7*-1/40;          
 
     //Current value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6

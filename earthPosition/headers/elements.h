@@ -7,11 +7,13 @@
 template <class T> struct elements {
     // All in relation to the plane of the sun in cylindrical coordinates
     // Units are dependent upon context
+
     // Positions
     T r; //radius (in plane)
     T theta; //angular position (in plane)
     T z; //axial position (out-of-plane)
-    //velocities
+
+    // Velocities
     T vr; //radial velocity (in plane)
     T vtheta; //angular velocity (in plane)
     T vz; // axial velocity (out-of-plane)
@@ -36,7 +38,9 @@ template <class T> struct elements {
     elements<T> operator*(const T& i);
     elements<T> operator/(const T& i);
 
-        // Operator overloads, used in runge kutta for the math between elements
+    //TODO: Is this correct for inputing const into the overloads?
+    
+    // Operator overloads, used in runge kutta for the math between elements
     elements<T> operator+(const elements<T>& e)const;
     elements<T> operator-(const elements<T>& e)const;
     elements<T> operator*(const elements<T>& e)const;
