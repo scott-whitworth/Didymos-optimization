@@ -11,21 +11,18 @@
 void optimize(const int numThreads, const int blockThreads){
     std::cout << "Start of callRK(" << numThreads << ", " << blockThreads << ")" << std::endl;
 
-    // input parameters for rk4Simple which are the same for each thread
-    double timeInitial = 0; // the starting time of the trip is always defined as zero
-    double timeFinal = 2.5*365.25*24*60*60;
-    double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
-    double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
-
     bool maxErrorMet = false;
     elements<double> *output;
     elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
 
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
+     // input parameters for rk4Simple which are the same for each thread
+    double timeInitial = 0; // the starting time of the trip is always defined as zero
     //double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
     double timeFinal = 75178800-3600;
-    
+    double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
+    double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
     
     //for setting every thread's parameters to the same values
     coefficients<double> testcoeff;
@@ -45,6 +42,7 @@ void optimize(const int numThreads, const int blockThreads){
                                earth.vr+sin(0.75)*vEscape, earth.vtheta+cos(0.75)*vEscape, earth.vz);
 
     rkParameters<double> example(timeFinal, WET_MASS,spaceTest, testcoeff); 
+    /*-------------------------------------------------------------------------------------*/
 
     std::cout << "Allocating " << numThreads << " rkParameters" << std::endl;
     rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
@@ -78,11 +76,11 @@ void optimize(const int numThreads, const int blockThreads){
         inputParameters[i] = example;
     }
 
-    while(!maxErrorMet){
+    //while(!maxErrorMet){
         output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol);
         inputParameters = getNewStarts(inputParameters, output);
         delete [] output;
-    }
+    //}
 }
 
 rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions){
@@ -140,33 +138,19 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
-    
 
-    for(int i = 0; i < numThreads; i++){
-        //std::cout << i << " answer: " << finalPos[i] << std::endl;
-        if(static_cast<int>(i) != static_cast<int>(finalPos[i].r)){
-            std::cout << i << " index Error: " << finalPos[i] << std::endl;
-            return 1.0;
-        }
-        if(static_cast<int>(blockThreads) != static_cast<int>(finalPos[i].vr)){
-            std::cout << i << " blockThreads Error: " << finalPos[i] << std::endl;
-            return 1.0;
-        }
-        
-    }
-
-    /*
     // CPU version of rk4Simple()
     //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
-    elements<double> rk4SimpleOutput;
-    inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
+    //elements<double> rk4SimpleOutput;
+    //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
     //for(int i = 0; i < numThreads; i++){
     //    inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
     //      std::cout << rk4SimpleOutput[i];
     //}
 
-    // display final r, theta, z, vr, vtheta, and vz
+    /*
+    // check for discrepencies between CPU and GPU results
     double maxError = 0.1; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
@@ -201,14 +185,13 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 
             errorFound = false;
         }
-
-        if (finalPos[i].r < 0.000001){
-            std::cout << "Output Error!" << std::endl;
-            return -1;
-        }
     }
-    
     */
+
+    for(int i = 0; i < numThreads; i++){
+        std::cout << "GPU output " << i << std::endl;
+        std::cout << finalPos[i] << std::endl;
+    }
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
     
@@ -228,7 +211,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
     
 
-    delete [] rk4SimpleOutput;
+    //delete [] rk4SimpleOutput;
     //delete [] finalPos;
     delete [] inputParameters;
     
