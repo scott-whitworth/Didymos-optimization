@@ -3,7 +3,10 @@
 *.exe
 *.json
 *.csv
-**/CUDA/**/*.lib
+*.exp
+*.lib
+#**/CUDA/**/*.lib
+#**/CUDA/**/*.exp
 *final-optimization.bin
 *final-optimization.txt
 *orbitalMotion-accel.bin
