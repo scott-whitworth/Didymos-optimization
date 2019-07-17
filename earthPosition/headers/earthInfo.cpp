@@ -21,7 +21,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     for(int i=0; i<tolData; i++)
     { 
         earthCon[i]=earthInitial(calc_time(i));//Obtaining conditions of the earth every hour
-        std::cout << " number of runs: " << i << "results: " << earthCon[i] << std::endl;
+        std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
     }
 }
 
