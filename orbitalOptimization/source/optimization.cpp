@@ -78,9 +78,9 @@ void optimizeStartConditions(){
     step[GAMMA_OFFSET+5] = 1.0E01/2;
     step[GAMMA_OFFSET+6] = 1.0E01/2;
 
-    step[TAU_OFFSET] = 1.0E0/5;
-    step[TAU_OFFSET+1] = 1.0E0/5;
-    step[TAU_OFFSET+2] = 1.0E0/5;
+    step[TAU_OFFSET] = 1.0E0;
+    step[TAU_OFFSET+1] = 1.0E0;
+    step[TAU_OFFSET+2] = 1.0E0;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
@@ -244,7 +244,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 50000+std::rand()%100;
+  kcount = 5000+std::rand()%100;
 
     //****************
     // Move into its own function

@@ -8,8 +8,10 @@
 int main()
 {
     // Define variables to be passed into EarthInfo
-    double startTime = 47304000; // 1.5 year (s)
-    double endTime = 78840000; // 2.5 years (s)
+    //double startTime = 47304000; // 1.5 year (s)
+    //double endTime = 78840000; // 2.5 years (s)
+    double startTime = 0; // 0 year (s)
+    double endTime = 94608000; // 3 years (s)
     double timeRes = 3600; // seconds to hours conversion
 
     // initializes EarthInfo
