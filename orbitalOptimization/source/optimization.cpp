@@ -53,11 +53,13 @@ void optimizeStartConditions(){
 
 
     start[TAU_OFFSET] = std::rand() % 21/1.0 - 10.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = std::rand() % 21/1.0 - 10.0;
+    start[TAU_OFFSET+2] = std::rand() % 21/1.0 - 10.0;
 
     start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 15001 / 10000.0 + 1); // 0.5 - 2.5 years converted to seconds
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
 
     start[COAST_OFFSET] = std::rand() % 21/2.0 - 10/2.0; //-5 - 5
     start[COAST_OFFSET+1] = std::rand() % 21/2.0 - 10/2.0;
@@ -77,10 +79,14 @@ void optimizeStartConditions(){
     step[GAMMA_OFFSET+6] = 1.0E01/2;
 
     step[TAU_OFFSET] = 1.0E0/5;
+    step[TAU_OFFSET+1] = 1.0E0/5;
+    step[TAU_OFFSET+2] = 1.0E0/5;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
+
     step[TRIPTIME_OFFSET] = 1.0E07;
+
     step[COAST_OFFSET] = 1.0E01;
     step[COAST_OFFSET+1] = 1.0E01;
     step[COAST_OFFSET+2] = 1.0E01;
@@ -145,14 +151,6 @@ void iterativeOptimize(){
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
 
-  // x[0]-x[8]: gamma coefficients used to calculate fourier series
-  // x[9]-x[11]: tau coefficients used to calculate fourier series
-  // x[12]: alpha - launch angle (declination) position 
-  // x[13]: beta - launch angle (declination) velocity 
-  // x[14]: trip time - total time from launch to impact, sets the initial earth position
-  // x[15-19]: coast coefficients used to calculate fourier series
-  // x[20]: coast threshold - value set to determine when coasting occurs
-  // x[21]: wet mass - mass of spacecraft including fuel
   // Initial guesses for variables based off of previous runs which have small cost values
   start[GAMMA_OFFSET] = 10;
   start[GAMMA_OFFSET+1] = 10;
@@ -161,12 +159,16 @@ void iterativeOptimize(){
   start[GAMMA_OFFSET+4] = 10;
   start[GAMMA_OFFSET+5] = 10;
   start[GAMMA_OFFSET+6] = 10;
+
   start[TAU_OFFSET] = 10;
-  start[TAU_OFFSET+1] = 10;
-  start[TAU_OFFSET+2] = 10;
+  start[TAU_OFFSET] = 10;
+  start[TAU_OFFSET] = 10;
+
   start[ALPHA_OFFSET] = 0.5;
   start[BETA_OFFSET] = 0.5;
-  start[TRIPTIME_OFFSET] = 365*24*3600*1.5; // 2 YEARS
+
+  start[TRIPTIME_OFFSET] = 365*24*3600*1.5;
+
   start[COAST_OFFSET] = 0.5;
   start[COAST_OFFSET+1] = 0.5;
   start[COAST_OFFSET+2] = 0.5;
@@ -182,12 +184,14 @@ void iterativeOptimize(){
   step[GAMMA_OFFSET+4] = 1.0E02;
   step[GAMMA_OFFSET+5] = 1.0E02;
   step[GAMMA_OFFSET+6] = 1.0E02;
+
   step[TAU_OFFSET] = 1.0E02;
-  step[TAU_OFFSET+1] = 1.0E02;
-  step[TAU_OFFSET+2] = 1.0E02;
+
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
+
   step[TRIPTIME_OFFSET] = 1.0E07;
+
   step[COAST_OFFSET] = 1.0E02;
   step[COAST_OFFSET+1] = 1.0E02;
   step[COAST_OFFSET+2] = 1.0E02;
@@ -240,7 +244,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 5000+std::rand()%100;
+  kcount = 50000+std::rand()%100;
 
     //****************
     // Move into its own function
