@@ -8,23 +8,21 @@
 #include <iostream>
 #include <fstream> // for outputing to .csv file
 
-double callRK(const int numThreads, const int blockThreads){
-
+void optimize(const int numThreads, const int blockThreads){
     std::cout << "Start of callRK(" << numThreads << ", " << blockThreads << ")" << std::endl;
 
-    // input parameters for rk4Simple which are the same for each thread
-    double timeInitial = 0; // the starting time of the trip is always defined as zero
-    double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
-    double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
-
+    bool maxErrorMet = false;
+    elements<double> *output;
     elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
 
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
-    //double timeFinal = 2.5; // number of years the trip takes
+     // input parameters for rk4Simple which are the same for each thread
+    double timeInitial = 0; // the starting time of the trip is always defined as zero
     //double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
     double timeFinal = 75178800-3600;
-    
+    double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
+    double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
     
     //for setting every thread's parameters to the same values
     coefficients<double> testcoeff;
@@ -44,6 +42,7 @@ double callRK(const int numThreads, const int blockThreads){
                                earth.vr+sin(0.75)*vEscape, earth.vtheta+cos(0.75)*vEscape, earth.vz);
 
     rkParameters<double> example(timeFinal, WET_MASS,spaceTest, testcoeff); 
+    /*-------------------------------------------------------------------------------------*/
 
     std::cout << "Allocating " << numThreads << " rkParameters" << std::endl;
     rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
@@ -76,9 +75,24 @@ double callRK(const int numThreads, const int blockThreads){
         // doesn't work
         inputParameters[i] = example;
     }
-    /*-------------------------------------------------------------------------------------*/
 
+    //while(!maxErrorMet){
+        output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol);
+        inputParameters = getNewStarts(inputParameters, output);
+        delete [] output;
+    //}
+}
+
+rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions){
+    //implement genetic algorithm
+    return startParameters;
+}
+
+elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol){
+
+    elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
     
+    //events for timing functions
     cudaEvent_t Malloc_e, MemCpyDev_e, Kernel_e, MemCpyHost_e, MemCpyHostStop_e;
     cudaEventCreate(&Malloc_e);
     cudaEventCreate(&MemCpyDev_e);
@@ -86,7 +100,6 @@ double callRK(const int numThreads, const int blockThreads){
     cudaEventCreate(&MemCpyHost_e);
     cudaEventCreate(&MemCpyHostStop_e);
     
-
     rkParameters<double> *devInputParameters; 
     double *devTimeInitial;
     double *devStepSize;
@@ -115,7 +128,6 @@ double callRK(const int numThreads, const int blockThreads){
     std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
     rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, numThreads);
 
-
     // copy the result of the kernel onto the host
     cudaEventRecord(MemCpyHost_e);
     cudaMemcpy(finalPos, devFinalPos, numThreads * sizeof(elements<double>), cudaMemcpyDeviceToHost);
@@ -128,31 +140,17 @@ double callRK(const int numThreads, const int blockThreads){
     cudaFree(devAbsTol);
 
     // CPU version of rk4Simple()
-    elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
-    for(int i = 0; i < numThreads; i++){
-        //std::cout << i << " answer: " << finalPos[i] << std::endl;
-        if(static_cast<int>(i) != static_cast<int>(finalPos[i].r)){
-            std::cout << i << " index Error: " << finalPos[i] << std::endl;
-            return 1.0;
-        }
-        if(static_cast<int>(blockThreads) != static_cast<int>(finalPos[i].vr)){
-            std::cout << i << " blockThreads Error: " << finalPos[i] << std::endl;
-            return 1.0;
-        }
-        
-    }
-
-    /*
-    // CPU version of rk4Simple()
     //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
-    elements<double> rk4SimpleOutput;
-    inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
+    //elements<double> rk4SimpleOutput;
+    //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
     //for(int i = 0; i < numThreads; i++){
     //    inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+    //      std::cout << rk4SimpleOutput[i];
     //}
 
-    // display final r, theta, z, vr, vtheta, and vz
+    /*
+    // check for discrepencies between CPU and GPU results
     double maxError = 0.1; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
@@ -187,13 +185,13 @@ double callRK(const int numThreads, const int blockThreads){
 
             errorFound = false;
         }
-
-        if (finalPos[i].r < 0.000001){
-            std::cout << "Output Error!" << std::endl;
-            return -1;
-        }
     }
     */
+
+    for(int i = 0; i < numThreads; i++){
+        std::cout << "GPU output " << i << std::endl;
+        std::cout << finalPos[i] << std::endl;
+    }
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
     
@@ -211,12 +209,14 @@ double callRK(const int numThreads, const int blockThreads){
     std::cout << "Host memory copy time: " << memCpyHostT << " ms" << std::endl;
     std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
     std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
+    
 
-    delete [] rk4SimpleOutput;
-    delete [] finalPos;
+    //delete [] rk4SimpleOutput;
+    //delete [] finalPos;
     delete [] inputParameters;
     
-    return rkPerS;
+    //return rkPerS;
+    return finalPos;
 }
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
