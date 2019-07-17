@@ -12,14 +12,14 @@ T stepSize, elements<T> & y_new, const T & absTol)
     //--> timeFinal=tripTime.
     //--> y0 contains the conditions of the earth on the asteroid impact date.
     //--> stepSize is <0 and contains the initial guess for deltaT based on MAX_NUMSTEPS.
-    //--> yp is merely a return vector.
+    //--> y_new is merely a return vector.
 
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y_new = y0;
 
     // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
-    
+
     elements<T> error; 
 
     T curTime = timeFinal; // setting time equal to the start time
@@ -34,7 +34,7 @@ T stepSize, elements<T> & y_new, const T & absTol)
         curTime += stepSize;
 
         //Alter the step size (<0) for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         //Set limits on the stepSize returned from the previous step
         if (-stepSize>(timeFinal-timeInitial)/1000)
@@ -44,8 +44,6 @@ T stepSize, elements<T> & y_new, const T & absTol)
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
-
-        stepSize = -3600;
     }//end of while 
 }
 
