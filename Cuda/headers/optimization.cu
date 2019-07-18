@@ -22,7 +22,7 @@ int main ()
     //iterativeOptimize();
     //optimizeStartConditions();
 
-    /*
+    
     int blockThreads = 0;
     int numThreads = 0;
     int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
@@ -52,9 +52,9 @@ int main ()
     }
 
     efficiencyGraph.close();
-    */
+    
 
-    rkCalcComparison();
+    //rkCalcComparison();
 
     return 0;
 }
