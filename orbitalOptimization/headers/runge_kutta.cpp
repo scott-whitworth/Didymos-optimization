@@ -53,7 +53,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         accel = calc_accel(y_new[n].r,y_new[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
         
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error);
+        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime += stepSize;
@@ -126,7 +126,7 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
 
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error); 
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
 
         //array of time output as t         
         curTime += stepSize;
@@ -165,7 +165,7 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
     {
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error);
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime += stepSize;
@@ -185,9 +185,10 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
     }//end of while 
 }
 
-template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, elements<T> & error){
+template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
+elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
    
-    elements<T> k1, k2, k3, k4, k5, k6, k7;
+
 
     k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal);      
     k2 = calc_k(stepSize, y_new+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal); 
