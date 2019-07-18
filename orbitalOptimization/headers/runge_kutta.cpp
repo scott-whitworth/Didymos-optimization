@@ -14,7 +14,6 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
-    elements<T> error;
 
     T curTime = timeInitial; // setting time equal to the start time
     int n=0; // setting the initial iteration number equal to 0
@@ -29,31 +28,32 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     T massFuelSpent =0;
 
     // Set the first element of the solution vector to the initial conditions
-    elements<T> y[0] = y0;
+    y_new[0] = y0;
     times[0]=timeInitial;
     // array of gamma for binary output
     gamma[0] = calc_gamma(coeff,timeInitial, timeFinal);
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
     // array of acceleration for binary output
-    accel_output[0] = calc_accel(y[0].r,y[0].z, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
+    accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
+
+    elements<T> u, error;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // defining deltaT for calc_accel as the stepsize
         T deltaT = stepSize;
 
+        u = y_new[n];
+
         // defining coast using calc_coast()
         bool coast = calc_coast(coeff, curTime, timeFinal);
         
         // defining acceleration using calc_accel()
-        accel = calc_accel(y[n].r,y[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
-
-        // to hold previous and  current  values
-        elements<T> v;
+        accel = calc_accel(y_new[n].r,y_new[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
         
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y[n], coeff, accel, *y_new, error);
+        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime += stepSize;
@@ -68,7 +68,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y[n],error,absTol,stepSize);
+        stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/10)
@@ -86,7 +86,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
 
         //Calculates the y[n] for the next round of calculations
-        y[n+1] = y_new[n];   
+        y_new[n+1] = u;   
         n++;
     }//end of while 
     lastStep = n;
@@ -99,10 +99,9 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
 T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass)
 {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
-    elements<T> y = y0;
+    y_new = y0;
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
     elements<T> k1, k2, k3, k4, k5, k6, k7;
-    elements<T> error;
     T curTime = timeInitial; // setting time equal to the start time
 
     // corresponds NEXT thruster to type 1 in thruster.h
@@ -111,6 +110,8 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     //mass of fuel expended (kg)
     //set to 0 initially
     T massFuelSpent =0;
+
+    elements<T> error;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
@@ -121,18 +122,17 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
         bool coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y.r,y.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
-        elements<T> v;
+        accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
 
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y, coeff, accel, y_new, error); 
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
 
         //array of time output as t         
         curTime += stepSize;
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y,error,absTol,stepSize);
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/10)
@@ -144,9 +144,9 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
             stepSize = (timeFinal-curTime);
 
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
-        if (y.r<0.5)
+        if (y_new.r<0.5)
         {
-            y.r = 1000;
+            y_new.r = 1000;
         }
     }//end of while 
 }
@@ -155,7 +155,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const T & accel)
 {
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
-    elements<T> y = y0;
+    y_new = y0;
     // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     elements<T> error;
@@ -165,14 +165,14 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
     {
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y, coeff, accel, y_new, error);
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime += stepSize;
 
         //Alter the step size for the next iteration
         //Expected to be negative
-        stepSize *= calc_scalingFactor(y,error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize)/2;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (-stepSize>(timeFinal-timeInitial)/10)
@@ -185,26 +185,27 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
     }//end of while 
 }
 
-template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> y, coefficients<T> & coeff, const T & accel, elements<T> & y_new, elements<T> & error){
+template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
+elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
    
-    elements<T> k1, k2, k3, k4, k5, k6, k7;
-    elements<T> v;
 
-    k1 = calc_k(stepSize, y, coeff, accel, curTime, timeFinal);      
-    k2 = calc_k(stepSize, y+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal); 
-    k3 = calc_k(stepSize, y+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
-    k4 = calc_k(stepSize,y+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal); 
-    k5 = calc_k(stepSize, y+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal); 
-    k6 = calc_k(stepSize, y+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);  
-    k7 = calc_k(stepSize,y+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
+
+    k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal);      
+    k2 = calc_k(stepSize, y_new+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal); 
+    k3 = calc_k(stepSize, y_new+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
+    k4 = calc_k(stepSize,y_new+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal); 
+    k5 = calc_k(stepSize, y_new+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal); 
+    k6 = calc_k(stepSize, y_new+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);  
+    k7 = calc_k(stepSize,y_new+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
 
     //New value
-    y_new = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
+    //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
+    y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
     //Error 
     //See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
-    v = y + k1*5179/57600 + k3*7571/16695 + k4*393/640 - k5*92097/339200 + k6*187/2100 + k7*1/40;     
-    error = y_new-v;
+    error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525 + k7*-1./40;  
+
 }
 
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
