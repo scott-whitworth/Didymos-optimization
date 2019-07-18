@@ -25,16 +25,16 @@ template <class T> struct elements {
 
     // Overload operators to do math on all the elements in the struct seperately
     // Treating each element as a matrix operation
-
+    
     // Operator overloads, used in runge kutta for the math between elements
-    elements<T> operator+(const elements<T>& e);
-    elements<T> operator-(const elements<T>& e);
-    elements<T> operator*(const elements<T>& e);
-    elements<T> operator/(const elements<T>& e);
+    elements<T> operator+(const elements<T>& e) const;
+    elements<T> operator-(const elements<T>& e) const;
+    elements<T> operator*(const elements<T>& e) const;
+    elements<T> operator/(const elements<T>& e) const;
 
     // Operator overloads, for scalars
-    elements<T> operator*(const T& i);
-    elements<T> operator/(const T& i);
+    elements<T> operator*(const T& i) const;
+    elements<T> operator/(const T& i) const;
 
     // Overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const elements<T> & e); 
