@@ -13,7 +13,6 @@ void optimize(const int numThreads, const int blockThreads){
 
     bool maxErrorMet = false;
     elements<double> *output;
-    elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
 
     // reasonable example values for runge kutta algorithm
     /*-------------------------------------------------------------------------------------*/
@@ -72,15 +71,16 @@ void optimize(const int numThreads, const int blockThreads){
         earth.vr+sin(0.1)*vEscape, earth.vtheta+cos(0.1)*vEscape, earth.vz,
         gamma, tau, coast, 0.05);*/
         
-        // doesn't work
         inputParameters[i] = example;
     }
 
     //while(!maxErrorMet){
         output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol);
+        //delete [] inputParameters;
         inputParameters = getNewStarts(inputParameters, output);
         delete [] output;
     //}
+    delete [] inputParameters;
 }
 
 rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions){
@@ -140,10 +140,10 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     cudaFree(devAbsTol);
 
     // CPU version of rk4Simple()
-    //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
     //elements<double> rk4SimpleOutput;
     //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
+    //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
     //for(int i = 0; i < numThreads; i++){
     //    inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
     //      std::cout << rk4SimpleOutput[i];
@@ -213,7 +213,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 
     //delete [] rk4SimpleOutput;
     //delete [] finalPos;
-    delete [] inputParameters;
+    //delete [] inputParameters;
     
     //return rkPerS;
     return finalPos;
@@ -222,7 +222,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
 __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, int n){
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
-    if(threadId <= n)
+    if(threadId < n)
     {
         rkParameters<double> threadRKParameters = rkParametersList[threadId]; // get the parameters for this thread
 
@@ -288,4 +288,132 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
     }
     //Thread out of bounds
     return;
+}
+
+void rkCalcComparison(){
+    int n = 32;
+
+    //parameter setup
+
+    elements<double> *curPos = new elements<double>[n];
+    elements<double> *hostCurPos = new elements<double>[n];
+    for(int i = 0; i < n; i++){
+        curPos[i].r = 0.99;
+        curPos[i].theta = -1.9;
+        curPos[i].z = -0.003;
+        curPos[i].vr = 0.000000018;
+        curPos[i].vtheta = 0.00000021;
+        curPos[i].vz = -0.000000002;
+
+        hostCurPos[i].r = 0.99;
+        hostCurPos[i].theta = -1.9;
+        hostCurPos[i].z = -0.003;
+        hostCurPos[i].vr = 0.000000018;
+        hostCurPos[i].vtheta = 0.00000021;
+        hostCurPos[i].vz = -0.000000002;
+    }
+
+    coefficients<double> testCoeff;
+    for(int i = 0; i < testCoeff.gammaSize; i++){
+        testCoeff.gamma[i] = 10;
+    }
+    for(int i = 0; i < testCoeff.tauSize; i++){
+        testCoeff.tau[i] = 10;
+    }
+    for(int i = 0; i < testCoeff.coastSize; i++){
+        testCoeff.coast[i] = 0.5;
+    }
+    testCoeff.coastThreshold = 0.05;
+
+    double curTime = 1.0;
+    double timeFinal = 2.0;
+    double stepSize = 4500.0;
+    double accel = 5.0e-16;
+    elements<double> *v = new elements<double>[n];
+
+
+    double *devCurTime;
+    double *devTimeFinal;
+    double *devStepSize;
+    double *devAccel;
+    int *devN;
+    elements<double> *devV;
+    elements<double> *devCurPos;
+    coefficients<double> *devTestCoeff;
+
+    cudaMalloc((void**) &devCurTime, sizeof(double));
+    cudaMalloc((void**) &devTimeFinal, sizeof(double));
+    cudaMalloc((void**) &devStepSize, sizeof(double));
+    cudaMalloc((void**) &devAccel, sizeof(double));
+    cudaMalloc((void**) &devN, sizeof(int));
+    cudaMalloc((void**) &devV, n * sizeof(elements<double>));
+    cudaMalloc((void**) &devCurPos, n * sizeof(elements<double>));
+    cudaMalloc((void**) &devTestCoeff, sizeof(coefficients<double>));
+
+    cudaMemcpy(devCurTime, &curTime, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devN, &n, sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(devTimeFinal, &timeFinal, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devAccel, &accel, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devCurPos, &curPos, sizeof(elements<double>), cudaMemcpyHostToDevice);
+    cudaMemcpy(devTestCoeff, &testCoeff, sizeof(coefficients<double>), cudaMemcpyHostToDevice);
+    std::cout << "memCpy on" << std::endl;
+    rkCalcTest<<<n,1>>>(devCurTime, devTimeFinal, devStepSize, devTestCoeff, devAccel, devV, devCurPos, devN);
+    std::cout << "kernel call" << std::endl;
+    std::cout << curTime << std::endl;
+    std::cout << timeFinal << std::endl;
+    std::cout << stepSize << std::endl;
+    std::cout << accel << std::endl;
+    cudaMemcpy(v, devV, n * sizeof(elements<double>), cudaMemcpyDeviceToHost);
+    std::cout << "memCpy off #1" << std::endl;
+    cudaMemcpy(curPos, devCurPos, n * sizeof(elements<double>), cudaMemcpyDeviceToHost); 
+    std::cout << "memCpy off #2" << std::endl;
+
+    elements<double> *hostV = new elements<double>[n];
+
+    std::cout << curTime << std::endl;
+    std::cout << timeFinal << std::endl;
+    std::cout << stepSize << std::endl;
+    std::cout << accel << std::endl;
+    //std::cout << testCoeff << std::endl;
+
+    for(int i = 0; i < n; i++){
+        std::cout << "i: " << i << std::endl;
+        std::cout << hostV[i] << std::endl;
+        std::cout << hostCurPos[i] << std::endl;
+
+        rkCalc(curTime, timeFinal, stepSize, hostCurPos[i], testCoeff, accel, hostV[i], hostCurPos[i]);
+    }
+
+    for(int i = 0; i < n; i++){
+        std::cout << "Thread: " << i + 1 << std::endl;
+        std::cout << "GPU v: " << v[i] << std::endl;
+        std::cout << "CPU v: " << hostV[i] << std::endl;
+        std::cout << "difference: " << v[i] - hostV[i] << std::endl;
+        std::cout << "GPU curPos: " << curPos[i] << std::endl;
+        std::cout << "CPU curPos: " << hostCurPos[i] << std::endl;
+        std::cout << "difference: " << curPos[i] - hostCurPos[i] << std::endl;
+    }
+
+    cudaFree(devCurTime);
+    cudaFree(devTimeFinal);
+    cudaFree(devStepSize);
+    cudaFree(devAccel);
+    cudaFree(devN);
+    cudaFree(devV);
+    cudaFree(devCurPos);
+    cudaFree(devTestCoeff);
+
+    delete [] curPos;
+    delete [] hostCurPos;
+    delete [] hostV;
+    delete [] v;
+}
+
+__global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n){
+    int threadId = threadIdx.x + blockIdx.x * blockDim.x;
+    if(threadId < *n){
+        rkCalc(*curTime, *timeFinal, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], curPos[threadId]);
+        //v[threadId].r = threadId;
+    }
 }

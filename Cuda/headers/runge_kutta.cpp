@@ -147,6 +147,8 @@ T stepSize, elements<T> & y, const T & absTol, coefficients<T> coeff, T & accel,
         {
             y.r = 1000;
         }
+
+        std::cout << "accel: " << accel << "\t" << "stepSize: " << stepSize << std::endl;
     }//end of while 
 }
 
@@ -205,10 +207,10 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     // Previous value 
     //v = y + 5179/57600*k1 + 7571/16695*k3 + 393/640*k4 - 92097/339200*k5 + 187/2100*k6 + 1/40*k7
     v = y + k1*5179/57600 + k3*7571/16695 + k4*393/640 - k5*92097/339200 + k6*187/2100 + k7*1/40;     
-
+    
     //Current value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
-    u = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187/6784 + k6*11/84;  
+    u = y + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187/6784 + k6*11/84; 
 }
 
 template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
