@@ -25,7 +25,7 @@ T stepSize, elements<T> & y_new, const T & absTol)
     {
         
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y_new, error);
+        rkCalc(curTime, timeFinal, stepSize, y_new, error,k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime += stepSize;
@@ -44,9 +44,9 @@ T stepSize, elements<T> & y_new, const T & absTol)
     }//end of while 
 }
 
-template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error){
+template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
+elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7){
     // Runge-Kutta algorithm      
-    elements<T> k1, k2, k3, k4, k5, k6, k7; 
     elements<T> v;
 
     //calc_k multiplies all values by the stepSize internally.
@@ -67,18 +67,18 @@ template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, ele
     y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
    
-    error = y_new-v;
+    error = (y_new-v);
 }
 
-template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & difference, const T & absTol, T & stepSize)
+template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & error, const T & absTol, T & stepSize)
 {
     // relative total error is the total error of all coponents of y which is used in scale.
     // scale is used to determine the next step size.
     T normTotError, scale;
 
     // relative error (unitless) 
-    elements<T> pmError(difference.r/previous.r, difference.theta/previous.theta, difference.z/previous.z, 
-    difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
+    elements<T> pmError(error.r/previous.r, error.theta/previous.theta, error.z/previous.z, 
+    error.vr/previous.vr,  error.vtheta/previous.vtheta, error.vz/previous.vz);
 
     // square root of sum of squares of the error from the 6 elements to determine the scale for the time step of the next iteration
     normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),(T)1/2);
