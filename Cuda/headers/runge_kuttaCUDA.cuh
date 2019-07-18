@@ -13,5 +13,9 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 // the simple version of the runge_kutta algorithm, on GPU
 __global__ void rk4SimpleCUDA(rkParameters<double> *rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, int n);
 
+//unit tests
+
+__global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n);
+
 #include "runge_kuttaCUDA.cu"
 #endif

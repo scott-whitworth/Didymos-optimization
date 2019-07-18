@@ -25,8 +25,8 @@ T stepSize, elements<T> &y_new, const T & absTol);
 
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
-template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error, elements<T> & k1,elements<T> & k2,
-elements<T> & k3,elements<T> & k4, elements<T> & k5,elements<T> & k6,elements<T> & k7);
+template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
+elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7);
 
 
 /**********************************************************************************************************************************/
@@ -34,11 +34,11 @@ elements<T> & k3,elements<T> & k4, elements<T> & k5,elements<T> & k6,elements<T>
 // Calculates the scaling factor for the stepSize
 // Parameters:
 //      previous: The previous result of the Runge-Kutta 
-//      difference: The new result minus the previous result (v-u)
+//      error: The new result minus the previous result (v-u)
 //      absTol: Sets the error tolerence for Runge-Kutta
 //      stepSize: time interval between data points (s)
 // Output: Unitless scaling coefficient which changes the time step each iteration
-template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & difference, const T & absTol, T & stepSize);
+template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & error, const T & absTol, T & stepSize);
 
 #include "runge_kutta.cpp"
 #endif

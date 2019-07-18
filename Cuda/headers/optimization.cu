@@ -1,9 +1,7 @@
 //Didymos-Optimization_Project:
-//Last Editor: Ben and Mateo
+//Last Editor: Ben
 //Tasks Completed: 
-  //Created iterativeOptimization() and optimizeStartConditions().
-  //Changed all starts and steps to be defined constants instead of magic numbers.
-  //Changed the initial guess of a parameter to be a random number within a resonable range of values.
+    //Put for loop in main to call new optimize() function
 
 
 #include "optimization.h" 
@@ -11,7 +9,7 @@
 #include "constants.h" //used for wetMass
 #include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include <iostream> // cout
-#include <iomanip> //used for setw(), sets spaces between values
+#include <iomanip> //used for setw(), sets spaces between values output
 #include <time.h> //for seeding the random number generator
 
 
@@ -24,6 +22,7 @@ int main ()
     //iterativeOptimize();
     //optimizeStartConditions();
 
+    
     int blockThreads = 0;
     int numThreads = 0;
     int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
@@ -40,20 +39,22 @@ int main ()
 
     for(int i = 0; i < std::size(blockThreadNums); i++){
         for(int j = 0; j < std::size(threadNums); j++){
-            /*
+            //blockThreads = blockThreadNums[i];
+            //numThreads = threadNums[j];
+            //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+            //efficiencyGraph << blockThreads << "," << numThreads << "," << callRK(numThreads, blockThreads) << "\n";
+            
             blockThreads = blockThreadNums[i];
             numThreads = threadNums[j];
-            std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-            efficiencyGraph << blockThreads << "," << numThreads << "," << callRK(numThreads, blockThreads) << "\n";
-            */
-            blockThreads = blockThreadNums[i];
-            numThreads = threadNums[j];
-            std::cout << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+            std::cout << std::endl << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
             optimize(numThreads, blockThreads);
         }
     }
 
     efficiencyGraph.close();
+    
+
+    //rkCalcComparison();
 
     return 0;
 }
