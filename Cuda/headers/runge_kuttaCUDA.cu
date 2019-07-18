@@ -9,8 +9,6 @@
 #include <fstream> // for outputing to .csv file
 
 void optimize(const int numThreads, const int blockThreads){
-    std::cout << "Start of callRK(" << numThreads << ", " << blockThreads << ")" << std::endl;
-
     bool maxErrorMet = false;
     elements<double> *output;
 
@@ -43,10 +41,10 @@ void optimize(const int numThreads, const int blockThreads){
     rkParameters<double> example(timeFinal, WET_MASS,spaceTest, testcoeff); 
     /*---------------------------------------------------------------------------------------*/
 
-    std::cout << "Allocating " << numThreads << " rkParameters" << std::endl;
+
     rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    std::cout << "Filling    " << numThreads << " rkParameters" << std::endl;
+
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
         
         /*double gamma[] = {i, i, i, i, i, i, i, i, i};
@@ -111,8 +109,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     double *devStepSize;
     double *devAbsTol;
     elements<double> *devFinalPos;
-   
-    std::cout << "Starting to alocate and copy" << std::endl;
+
 
     // allocate memory for the parameters passed to the device
     cudaEventRecord(Malloc_e);
@@ -190,11 +187,6 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 
             errorFound = false;
         }
-    }
-
-    for(int i = 0; i < numThreads; i++){
-        std::cout << "GPU output " << i << std::endl;
-        std::cout << finalPos[i] << std::endl;
     }
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
