@@ -26,42 +26,6 @@ elements<T>::elements(){
     vz = static_cast<T>(0);
 }
 
-
-//overload operators to do math on all the elements in the struct seperately
-//Treating each element as a matrix operation
-
-//constructor which takes in an element
-template <class T> 
-elements<T> elements<T>::operator+(const elements<T> & e){
-    return elements<T>(this->r + e.r, this->theta + e.theta, this->z + e.z, this->vr + e.vr, this->vtheta + e.vtheta, this->vz + e.vz);
-}
-
-template <class T> 
-elements<T> elements<T>::operator-(const elements & e){
-    return elements<T>(this->r - e.r, this->theta - e.theta, this->z - e.z, this->vr - e.vr, this->vtheta - e.vtheta, this->vz - e.vz);
-}
-
-template <class T> 
-elements<T> elements<T>::operator*(const elements<T> & e){
-    return elements<T>(this->r * e.r, this->theta * e.theta, this->z * e.z, this->vr * e.vr, this->vtheta * e.vtheta, this->vz * e.vz);
-}
-
-template <class T> 
-elements<T> elements<T>::operator/(const elements<T> & e){
-    return elements<T>(this->r / e.r, this->theta / e.theta, this->z / e.z, this->vr / e.vr, this->vtheta / e.vtheta, this->vz / e.vz);
-}
-
-//constructor which takes in an scalar
-template <class T> 
-elements<T> elements<T>::operator*(const T & i){
-    return elements<T>(this->r * i,  this->theta * i, this->z * i, this->vr * i, this->vtheta * i, this->vz * i);
-}
-
-template <class T> elements<T> elements<T>::operator/(const T & i){
-    return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
-}
-
-
 //overload operators to do math on all the elements in the struct seperately WITH CONST
 //Treating each element as a matrix operation
 

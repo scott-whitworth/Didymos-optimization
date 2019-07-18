@@ -10,20 +10,23 @@
     // Parameters: 
     //      timeInitial: start time (s)
     //      timeFinal: end time (s)
-    //      times: an array that contains the time for each data point
+    //      times:an array that contains the time for each data point
     //      y0: initial conditions (position,velocity)
     //      stepSize: first time interval between data points (s)
     //      y: an array which contains the soultion to the dependent variable
     //      absTol: Sets the error tolerence for Runge-Kutta
-    // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements,
-    // which are not prefered in CUDA.
+    //      coeff: passes the structure containing the fourier coefficients for gamma and tau
+    //      accel: spacecraft's acceleration (au/s^2)
+    //      wetMass: mass of the spacecraft including fuel (kg)
+    // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements, which are not prefered in CUDA.
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> &y, const T & absTol);
+T stepSize, elements<T> &y_new, const T & absTol);
 
 
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
-template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elements<T> y, elements<T> & v, elements<T> & u);
+template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error, elements<T> & k1,elements<T> & k2,
+elements<T> & k3,elements<T> & k4, elements<T> & k5,elements<T> & k6,elements<T> & k7);
 
 
 /**********************************************************************************************************************************/
@@ -35,7 +38,7 @@ template <class T> void rkCalc(T *curTime, const T & timeFinal, T stepSize, elem
 //      absTol: Sets the error tolerence for Runge-Kutta
 //      stepSize: time interval between data points (s)
 // Output: Unitless scaling coefficient which changes the time step each iteration
-template <class T> T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
+template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & difference, const T & absTol, T & stepSize);
 
 #include "runge_kutta.cpp"
 #endif

@@ -1,4 +1,5 @@
-#include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
+#include "runge_kutta.h" 
+
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
 #include <math.h> // used for M_PI
@@ -16,6 +17,7 @@ elements<double> earthInitial(double tripTime)
   double timeInitial= 0; 
   double deltaT; // time step
   deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
+
 
   // declaring the solution vector
   elements<double> yp;

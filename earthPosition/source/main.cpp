@@ -8,8 +8,8 @@
 int main()
 {
     // Define variables to be passed into EarthInfo
-    double startTime = 31536000; // 1 year (s) Date: Oct. 5, 2020
-    double endTime = 94694400; // three years (s) Date: Oct. 5, 2022 (aligns with JPL file)
+    double startTime = 47304000; // 1.5 year (s)
+    double endTime = 78840000; // 2.5 years (s)
     double timeRes = 3600; // seconds to hours conversion
 
     // initializes EarthInfo
@@ -20,7 +20,7 @@ int main()
     std::ofstream output;
     output.open ("getEarthInfo.bin", std::ios::binary); 
     double timetime =0.;
-    for(int i = 0 ; i <= launchCon.getTolData(); i++)
+    for(int i = 0 ; i < launchCon.getTolData(); i++)
     {
         timetime = startTime + (i * timeRes);//creating a timeline in seconds, with a tick every hour
         elements<double> result;
