@@ -6,23 +6,23 @@
 #include <math.h> // used for sine, cosine, and pow functions
 #include "motion_equations.h"
 
-template <class T> elements<T> calc_k(const T & h, const elements<T>  & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal)
+template <class T>  __host__ __device__ elements<T> calc_k(const T & h, const elements<T>  & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal)
 {
 	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 
 	h*calcRate_vr(y,coeff,accel,curTime, timeFinal), h*calcRate_vtheta(y,coeff,accel,curTime, timeFinal),  h*calcRate_vz(y,coeff,accel,curTime, timeFinal));
 }
 
-template <class T> T calcRate_r(const elements<T> & y)
+template <class T>  __host__ __device__ T calcRate_r(const elements<T> & y)
 {
 	return y.vr;
 }
 
-template <class T> T calcRate_theta(const elements<T> & y)
+template <class T>  __host__ __device__ T calcRate_theta(const elements<T> & y)
 {
 	return y.vtheta / y.r;
 }
 
-template <class T> T calcRate_z(const elements<T> & y)
+template <class T>  __host__ __device__ T calcRate_z(const elements<T> & y)
 {
 	return y.vz;
 }
