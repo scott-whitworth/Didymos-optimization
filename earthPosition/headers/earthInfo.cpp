@@ -14,14 +14,16 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     tolData = ((endTime-startTime)/timeRes) + 1; //Total Number of Data points (in hours) in earthCon, plus one for the last 'section'
 
     //Alocate memory for earthCon, one entry for every data point
-    earthCon = new elements<double> [tolData]();
-    
-    //TODO: iterative runge kutta to speed up execution speed, reuse previous solution.
+    earthCon = new elements<double> [tolData];
 
-    for(int i=0; i<tolData; i++)
+    elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
+    // This one is at triptime 0 or at the startTime
+    earthCon[0]=earthInitial(startTime,startTime,earth);//Obtaining conditions of the earth every hour
+    for(int i=1; i<tolData; i++)
     { 
-        earthCon[i]=earthInitial(calc_time(i));//Obtaining conditions of the earth every hour
-        std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
+        earthCon[i]=earthInitial(calc_time(i)-timeRes,calc_time(i),earth);//Obtaining conditions of the earth every hour
+        //std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
+        earth=earthCon[i];
     }
 }
 
