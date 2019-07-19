@@ -31,12 +31,11 @@ int main ()
     
     int blockThreads = 0;
     int numThreads = 0;
-    int blockThreadNums[] = {32};
-    //int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
-    int threadNums[] = {100, 1000, 2000};
-    //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    //int blockThreadNums[] = { 32};
-    //int threadNums[] = {100, 500, 1000, 2000, 3000};
+    //int blockThreadNums[] = {32, 64, 192, 256, 384, 512, 768, 1024};
+    int blockThreadNums[] = {32, 64, 192, 256};
+    //int threadNums[] = {100, 500};
+    int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
+
   
     //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     //callRK(numThreads, blockThreads);
@@ -44,17 +43,15 @@ int main ()
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");
 
+    double calcPerS;
+
     for(int i = 0; i < std::size(blockThreadNums); i++){
-        for(int j = 0; j < std::size(threadNums); j++){
-            //blockThreads = blockThreadNums[i];
-            //numThreads = threadNums[j];
-            //std::cout << "testing rk4SimpleCUDA() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-            //efficiencyGraph << blockThreads << "," << numThreads << "," << callRK(numThreads, blockThreads) << "\n";
-            
+        for(int j = 0; j < std::size(threadNums); j++){    
             blockThreads = blockThreadNums[i];
             numThreads = threadNums[j];
             std::cout << std::endl << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-            optimize(numThreads, blockThreads);
+            calcPerS = optimize(numThreads, blockThreads);
+            efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS << "\n";
         }
     }
 
@@ -69,6 +66,7 @@ int main ()
 void optimizeStartConditions(){
   //Pre-allocating memory for starting parameters and steps
   //start - starting parameters for optimization, order and contents defined in constants.h
+  
   //step - starting step sizes for starting parameters
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
