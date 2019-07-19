@@ -8,7 +8,9 @@
 #include <iostream>
 #include <fstream> // for outputing to .csv file
 
-void optimize(const int numThreads, const int blockThreads){
+double optimize(const int numThreads, const int blockThreads){
+    double calcPerS = 0;
+
     bool maxErrorMet = false;
     elements<double> *output;
 
@@ -74,12 +76,14 @@ void optimize(const int numThreads, const int blockThreads){
     }
 
     //while(!maxErrorMet){
-    for(int i = 0; i < 3; i++){
-        output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol);
+    for(int i = 0; i < 1; i++){
+        output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
         inputParameters = getNewStarts(inputParameters, output);
         delete [] output;
     }
     delete [] inputParameters;
+
+    return calcPerS;
 }
 
 rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions){
@@ -92,7 +96,7 @@ rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elemen
     return startParameters;
 }
 
-elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol){
+elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol, double & calcPerS){
 
     elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
     
@@ -205,6 +209,8 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     std::cout << "Host memory copy time: " << memCpyHostT << " ms" << std::endl;
     std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
     std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
+
+    calcPerS = rkPerS;
     
 
     //delete [] rk4SimpleOutput;
@@ -372,7 +378,7 @@ void rkCalcComparison(){
     double errorTol = 0.01;
     for(int i = 0; i < n; i++){
         if(abs(v[i].r - hostV[i].r) > errorTol){
-            std::cout << "Thread: " << i + 1 << std::endl;
+            std::cout << "Thread: " << i << std::endl;
             std::cout << "GPU v: " << v[i] << std::endl;
             std::cout << "CPU v: " << hostV[i] << std::endl;
             std::cout << "difference: " << v[i] - hostV[i] << std::endl;
