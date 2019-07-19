@@ -9,6 +9,10 @@
 
 //struct to hold all the values required for the runge-kutta functions
 template <class T> struct rkParameters {
+    
+    //////////////////
+    // Constructors //
+    //////////////////
     // Constructor which sets all the components according to values taken in
    __host__ __device__ rkParameters<T>(T timeFinal0, T wetMass0, 
                    T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
@@ -24,21 +28,42 @@ template <class T> struct rkParameters {
 
     // constructor which sets everything to zero
     __host__ __device__ rkParameters<T>();
-
-    // elements contains r, theta, z, vr, vtheta, and vz
+    
+    /////////////
+    // Members //
+    /////////////
+    // Initial Position/Velocity elements
+    // Contains r, theta, z, vr, vtheta, and vz
     elements<T> y0;
 
-    // coefficients contains arrays of Fourier series for:
+    // Initial Optimization Coefficients
+    // Contains arrays for Fourier series:
     //    gamma
     //    tau
     //    coasting
-    //and a value for coast_threshold
+    // and a value for coast_threshold
     coefficients<T> coeff;
 
+    // Final Time of simulation (s)
     T timeFinal;
+    // Initial Wet Mass of spacecraft (kg)
     T wetMass;
 
-    // use the values in a rkParameters struct to call the serial rk4Simple() for comparison
+    /////////////////////
+    // Utility Methods //
+    /////////////////////
+    // Comparison function
+    // Param: other - another rkParameter to be compared to
+    // Param: comp_Thresh - comparison threshold
+    // Returns true all elements of other are the same as *this, within the threshold comp_Thresh
+    // Not exact, as there are a number of different magnitudes represented in parameters
+    bool compare(const rkParameters<T> & other, T comp_Thresh);
+
+    // Based on *this parameters, calculates the final position of the spacecraft using CPU based Methods
+    // Param: timeInitial - start time of simulation (s)
+    // Param: stepSize - first time interval between data points (s)
+    // Param: absTol - error tolerence for Runge-Kutta
+    // Output: y will contain the final position of the simulation, y initial value will be overwritten
     void parametersRK4Simple(T timeInitial, T stepSize, T absTol, elements<T> & y);
 };
 

@@ -22,11 +22,18 @@ int main ()
     //iterativeOptimize();
     //optimizeStartConditions();
 
+    cudaDeviceProp properties;
+    cudaGetDeviceProperties(&properties,0);
+
+    std::cout << "Device Name: " << properties.name << std::endl;
+    std::cout << "regs per block: " << properties.regsPerBlock << std::endl;
+
     
     int blockThreads = 0;
     int numThreads = 0;
-    int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
-    int threadNums[] = {100, 500};
+    int blockThreadNums[] = {32};
+    //int blockThreadNums[] = {32, 64, 256, 384, 512, 768, 1024};
+    int threadNums[] = {100, 1000, 2000};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
     //int blockThreadNums[] = { 32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000};
