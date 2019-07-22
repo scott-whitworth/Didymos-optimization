@@ -112,18 +112,16 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     T massFuelSpent =0;
 
     elements<T> error;
-
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // defining deltaT for calc_accel as the stepsize
-        T deltaT = stepSize;
+        // change this and unsed stepSize instead of delta T, change back if there are problems T deltaT = stepSize;
 
         // defining coast using calc_coast()
         bool coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
-
+        accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, stepSize /*change deltaT here*/, coast, wetMass);
 
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
