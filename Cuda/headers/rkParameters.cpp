@@ -54,6 +54,44 @@ template <class T> rkParameters<T>::rkParameters()
     coeff.coastThreshold = 0;
 }
 
+template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, T comp_Thresh){
+    //First Check Coefficient element
+    for(int i = 0; i < this->coeff.gammaSize; i++){
+        if( abs(this->coeff.gamma[i] - other.coeff.gamma[i]) > comp_Thresh){
+            return false;
+        }
+    }
+    for(int i = 0; i < this->coeff.tauSize; i++){
+        if( abs(this->coeff.tau[i] - other.coeff.tau[i]) > comp_Thresh){
+            return false;
+        }
+    }
+    for(int i = 0; i < this->coeff.coastSize; i++){
+        if( abs(this->coeff.coast[i] - other.coeff.coast[i]) > comp_Thresh){
+            return false;
+        }
+    }
+    if( abs(this->coeff.coastThreshold - other.coeff.coastThreshold) > comp_Thresh){
+        return false;
+    }
+
+    //Check Starting pos/vel
+    if( !this->y0.compare(other.y0,comp_Thresh) ){
+        return false;
+    }
+
+    //Other Conditions
+    if( abs(this->timeFinal - other.timeFinal) > comp_Thresh){
+        return false;
+    }
+    if( abs(this->wetMass - other.wetMass) > comp_Thresh){
+        return false;
+    }
+
+    //If we have made it this far, everthing is good
+    return true;
+}
+
 template <class T> void rkParameters<T>::parametersRK4Simple(T timeInitial, T stepSize, T absTol, elements<T> & y){
     double accel = 0;
     rk4Simple(timeInitial, timeFinal, y0, stepSize, y, absTol, coeff, accel, wetMass);

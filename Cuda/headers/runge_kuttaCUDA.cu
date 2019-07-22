@@ -7,6 +7,7 @@
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
+#include <chrono>
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
@@ -73,6 +74,13 @@ double optimize(const int numThreads, const int blockThreads){
         
         //set all inputs to the same values
         inputParameters[i] = example;
+    }
+
+    //Check to see if the input data is all the same
+    for(int i = 0; i < numThreads-1; i++){
+        if(!inputParameters[i].compare(inputParameters[i+1],1.0)){
+            std::cout << "Things are off in the starting set" << std::endl;
+        }
     }
 
     //while(!maxErrorMet){
@@ -158,46 +166,38 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
 
     // CPU version of rk4Simple()
     // only calculate once since all input parameters are currently the same
-    elements<double> rk4SimpleOutput;
-    inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
+    //elements<double> rk4SimpleOutput;
+    //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
-    //elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
-    //for(int i = 0; i < numThreads; i++){
-    //    inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
-    //      std::cout << rk4SimpleOutput[i];
-    //}
+    elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
+
+    auto start_timer = std::chrono::high_resolution_clock::now();
+
+    for(int i = 0; i < numThreads; i++){
+        inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+          //std::cout << rk4SimpleOutput[i];
+    }
+
+    auto elapsed_time =  std::chrono::high_resolution_clock::now() - start_timer;
+    std::cout << "CPU Calculation of " << numThreads << " RK Calculations took: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() << " ms" << std::endl;
+    std::cout << "CPU Calculations: " << numThreads / (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()/1000.0) << " RK Calcs / second" <<  std::endl;
 
     // compare every GPU result with the one CPU result
-    double maxError = 0.1; // how much difference is allowable between the CPU and GPU results
+    double maxError = 0.01; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
-        if(abs(rk4SimpleOutput.r - finalPos[i].r) > maxError){
-            errorFound = true;
-        }
-        else if(abs(rk4SimpleOutput.theta - finalPos[i].theta) > maxError){
-            errorFound = true;
-        }
-        else if(abs(rk4SimpleOutput.z - finalPos[i].z) > maxError){
-            errorFound = true;
-        }
-        else if(abs(rk4SimpleOutput.vr - finalPos[i].vr) > maxError){
-            errorFound = true;
-        }
-        else if(abs(rk4SimpleOutput.vtheta - finalPos[i].vtheta) > maxError){
-            errorFound = true;
-        }
-        else if(abs(rk4SimpleOutput.vz - finalPos[i].vz) > maxError){
+        if(!finalPos[i].compare(rk4SimpleOutput[i],maxError)){
             errorFound = true;
         }
 
         if(errorFound){
             std::cout << "!!ERROR FOUND!!" << std::endl;
             std::cout << "CPU output " << i << std::endl;
-            std::cout << rk4SimpleOutput << std::endl;
+            std::cout << rk4SimpleOutput[i] << std::endl;
             std::cout << "GPU output " << i << std::endl;
             std::cout << finalPos[i] << std::endl;
             std::cout << "Diff: " << std::endl;
-            std::cout << finalPos[i]-rk4SimpleOutput << std::endl;
+            std::cout << finalPos[i]-rk4SimpleOutput[i] << std::endl;
 
             errorFound = false;
         }
@@ -298,7 +298,9 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
         finalPos[threadId] = curPos; // output to this thread's index
         finalPDiff[threadId] =  sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2));
         finalVDiff[threadId] =  sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
+        return;
     }
+    return;
 }
 
 
