@@ -51,7 +51,7 @@ int main ()
             numThreads = threadNums[j];
             std::cout << std::endl << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
             calcPerS = optimize(numThreads, blockThreads);
-            efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS << "\n";
+            efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
         }
     }
 

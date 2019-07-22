@@ -36,7 +36,7 @@ void optimizeStartConditions(){
 
   std::srand(std::time(NULL)); //seed the random number generator
 
-  std::ofstream output;
+  std::ofstream;
   output.open ("optimized-start-conditions.txt");
 
   int executions = 5;
@@ -66,6 +66,7 @@ void optimizeStartConditions(){
     start[COAST_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
     start[COAST_OFFSET+3] = std::rand() % 201/10.0 - 10.0;
     start[COAST_OFFSET+4] = std::rand() % 201/10.0 - 10.0;
+
 
 
     // Initial change in variable size based on the variable start value

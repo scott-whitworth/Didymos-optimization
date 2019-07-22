@@ -33,7 +33,11 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
     Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); // Power avaliable = P_in / (radius/1 au)
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
+<<<<<<< HEAD
+    if(radius<1&& offPlane<1){
+=======
     if(radius<=1 && offPlane<=1){
+>>>>>>> 5c7a489939ea862c796239f2608b0e12123b88b4
         Pin = thrusterType.P0/1;
     }
 

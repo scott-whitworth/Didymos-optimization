@@ -11,7 +11,7 @@ rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elemen
 elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol, double & calcPerS);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(rkParameters<double> *rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, int n);
+__global__ void rk4SimpleCUDA(rkParameters<double> *rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, double *finalPDiff, double *finalVDiff, int n);
 
 //unit tests
 
