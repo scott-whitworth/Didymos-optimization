@@ -27,14 +27,21 @@ template <class T> struct elements {
     // Treating each element as a matrix operation
 
     // Operator overloads, used in runge kutta for the math between elements
-    __host__ __device__ elements<T> operator+(const elements<T>& e);
-    __host__ __device__ elements<T> operator-(const elements<T>& e);
-    __host__ __device__ elements<T> operator*(const elements<T>& e);
-    __host__ __device__ elements<T> operator/(const elements<T>& e);
+    __host__ __device__ elements<T> operator+(const elements<T>& e) const;
+    __host__ __device__ elements<T> operator-(const elements<T>& e) const;
+    __host__ __device__ elements<T> operator*(const elements<T>& e) const;
+    __host__ __device__ elements<T> operator/(const elements<T>& e) const;
 
     // Operator overloads, for scalars
-    __host__ __device__ elements<T> operator*(const T& i);
-    __host__ __device__ elements<T> operator/(const T& i);
+    __host__ __device__ elements<T> operator*(const T& i) const;
+    __host__ __device__ elements<T> operator/(const T& i) const;
+
+    //Comparison function
+    // Param: other - another element to be compared to
+    // Param: comp_Thresh - comparison threshold
+    // Returns true all elements of other are the same as *this, within the threshold comp_Thresh
+    // Not perfect as elements have wildly different magnitudes
+    bool compare(const elements<T> & other, T comp_Thresh);
 
     // Overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const elements<T> & e); 
