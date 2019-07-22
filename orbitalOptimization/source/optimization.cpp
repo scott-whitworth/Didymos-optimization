@@ -36,7 +36,7 @@ void optimizeStartConditions(){
 
   std::srand(std::time(NULL)); //seed the random number generator
 
-  std::ofstream;
+  std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
   int executions = 5;
