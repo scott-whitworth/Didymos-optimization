@@ -2,16 +2,17 @@
 #define runge_kuttaCUDA_cuh
 #include "motion_equations.h" // Utility functions for calc_k()
 #include "rkParameters.h" // rkParameters struct
+#include "individuals.h"
 
 double optimize(const int numThreads, const int blockThreads);
 
-rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions);
+Individual* getNewStarts(Individual *prevGen);
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
-elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol, double & calcPerS);
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(rkParameters<double> *rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, double *finalPDiff, double *finalVDiff, int n);
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n);
 
 //unit tests
 

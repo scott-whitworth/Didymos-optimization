@@ -4,7 +4,6 @@
 #include "acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
 #include "orbitalMotion.h"
-#include "individuals.h"
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
@@ -13,8 +12,7 @@
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
 
-    bool maxErrorMet = false;
-    elements<double> *output;
+    //bool maxErrorMet = false;
 
     // reasonable example values for runge kutta algorithm
     /*---------------------------------------------------------------------------------------*/
@@ -46,7 +44,7 @@ double optimize(const int numThreads, const int blockThreads){
     /*---------------------------------------------------------------------------------------*/
 
 
-    rkParameters<double> *inputParameters = new rkParameters<double>[numThreads]; // contains all input parameters besides those which are always common amongst every thread
+    Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
 
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
@@ -74,43 +72,37 @@ double optimize(const int numThreads, const int blockThreads){
         gamma, tau, coast, 0.05);*/
         
         //set all inputs to the same values
-        inputParameters[i] = example;
+        inputParameters[i].startParams = example;
     }
 
     //Check to see if the input data is all the same
     for(int i = 0; i < numThreads-1; i++){
-        if(!inputParameters[i].compare(inputParameters[i+1],1.0)){
+        if(!inputParameters[i].startParams.compare(inputParameters[i+1].startParams,1.0)){
             std::cout << "Things are off in the starting set" << std::endl;
         }
     }
 
     //while(!maxErrorMet){
     for(int i = 0; i < 1; i++){
-        output = callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
-        inputParameters = getNewStarts(inputParameters, output);
-        delete [] output;
+        callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
+        inputParameters = getNewStarts(inputParameters);
     }
     delete [] inputParameters;
 
     return calcPerS;
 }
 
-rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elements<double> *finalPositions){
+Individual* getNewStarts(Individual *prevGen){
     //implement genetic algorithm
-    //rkParameters<double> *newParameters = new rkParameters<double>[];
+    //Individual *newParameters = new Individual[];
 
     
-    //delete [] startParameters;
+    //delete [] prevGen;
 
-    return startParameters;
+    return prevGen;
 }
 
-elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol, double & calcPerS){
-
-    elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
-    Individual *generation = new Individual[numThreads];
-    double *pDiff= new double[numThreads]; //difference in position between spacecraft and asteroid at end of trajectory
-    double *vDiff = new double[numThreads]; //difference in velocity between spacecraft and asteroid at end of trajectory
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
     
     //events for timing functions
     cudaEvent_t Malloc_e, MemCpyDev_e, Kernel_e, MemCpyHost_e, MemCpyHostStop_e;
@@ -120,30 +112,23 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     cudaEventCreate(&MemCpyHost_e);
     cudaEventCreate(&MemCpyHostStop_e);
     
-    rkParameters<double> *devInputParameters; 
+    Individual *devGeneration; 
     double *devTimeInitial;
     double *devStepSize;
     double *devAbsTol;
-    elements<double> *devFinalPos;
-    Individual *devGeneration;
-    double *devPDiff;
-    double *devVDiff;
-
 
     // allocate memory for the parameters passed to the device
     cudaEventRecord(Malloc_e);
-    cudaMalloc((void**) &devInputParameters, numThreads * sizeof(rkParameters<double>));
+    cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
     cudaMalloc((void**) &devTimeInitial, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
-    cudaMalloc((void**) &devFinalPos, numThreads * sizeof(elements<double>));
     cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
-    cudaMalloc((void**) &devPDiff, numThreads * sizeof(double));
-    cudaMalloc((void**) &devVDiff, numThreads * sizeof(double));
+
 
     // copy values of parameters passed to device onto device
     cudaEventRecord(MemCpyDev_e);
-    cudaMemcpy(devInputParameters, inputParameters, numThreads * sizeof(rkParameters<double>), cudaMemcpyHostToDevice);
+    cudaMemcpy(devGeneration, generation, numThreads * sizeof(Individual), cudaMemcpyHostToDevice);
     cudaMemcpy(devTimeInitial, &timeInitial, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devAbsTol, &absTol, sizeof(double), cudaMemcpyHostToDevice);
@@ -151,25 +136,20 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
     std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
-    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devInputParameters, devTimeInitial, devStepSize, devAbsTol, devFinalPos, devPDiff, devVDiff, numThreads);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
 
     // copy the result of the kernel onto the host
     cudaEventRecord(MemCpyHost_e);
-    cudaMemcpy(finalPos, devFinalPos, numThreads * sizeof(elements<double>), cudaMemcpyDeviceToHost);
     cudaMemcpy(generation, devGeneration, numThreads * sizeof(Individual), cudaMemcpyDeviceToHost);
-    cudaMemcpy(pDiff, devPDiff, numThreads * sizeof(double), cudaMemcpyDeviceToHost);
-    cudaMemcpy(vDiff, devVDiff, numThreads * sizeof(double), cudaMemcpyDeviceToHost);
     cudaEventRecord(MemCpyHostStop_e);
     
     // free memory from device
-    cudaFree(devInputParameters);
+    cudaFree(devGeneration);
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
-    cudaFree(devFinalPos);
     cudaFree(devGeneration);
-    cudaFree(devPDiff);
-    cudaFree(devVDiff);
+
 
     // CPU version of rk4Simple()
     // only calculate once since all input parameters are currently the same
@@ -181,7 +161,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     auto start_timer = std::chrono::high_resolution_clock::now();
 
     for(int i = 0; i < numThreads; i++){
-        inputParameters[i].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
+        generation[i].startParams.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
           //std::cout << rk4SimpleOutput[i];
     }
 
@@ -193,7 +173,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     double maxError = 0.01; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
-        if(!finalPos[i].compare(rk4SimpleOutput[i],maxError)){
+        if(!generation[i].finalPos.compare(rk4SimpleOutput[i],maxError)){
             errorFound = true;
         }
 
@@ -202,18 +182,18 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
             std::cout << "CPU output " << i << std::endl;
             std::cout << rk4SimpleOutput[i] << std::endl;
             std::cout << "GPU output " << i << std::endl;
-            std::cout << finalPos[i] << std::endl;
+            std::cout << generation[i].finalPos << std::endl;
             std::cout << "Diff: " << std::endl;
-            std::cout << finalPos[i]-rk4SimpleOutput[i] << std::endl;
+            std::cout << generation[i].finalPos-rk4SimpleOutput[i] << std::endl;
 
             errorFound = false;
         }
 
         //testing
         
-        std::cout << "final position" << finalPos[i] << std::endl;
-        std::cout << "position difference" << pDiff[i] << std::endl;
-        std::cout << "velocity difference" << vDiff[i] << std::endl << std::endl << std::endl;
+        std::cout << "final position" << generation[i].finalPos << std::endl;
+        std::cout << "position difference" << generation[i].posDiff << std::endl;
+        std::cout << "velocity difference" << generation[i].velDiff << std::endl << std::endl << std::endl;
         
     }
 
@@ -237,20 +217,15 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     calcPerS = rkPerS;
     
 
-    //delete [] rk4SimpleOutput;
-    delete [] pDiff;
-    delete [] vDiff;
-    
-    //return rkPerS;
-    return finalPos; //make sure to delete outside of this function
+    delete [] rk4SimpleOutput;
 }
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *timeInitial, double *startStepSize, double *absTolInput, elements<double> *finalPos, double *finalPDiff, double *finalVDiff, int n){
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n){
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if(threadId < n)
     {
-        rkParameters<double> threadRKParameters = rkParametersList[threadId]; // get the parameters for this thread
+        rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
 
         elements<double> curPos = threadRKParameters.y0; // start with the initial conditions of the spacecraft
 
@@ -304,9 +279,9 @@ __global__ void rk4SimpleCUDA(rkParameters<double> * rkParametersList, double *t
                 curPos.r = 1000;
             }
         }
-        finalPos[threadId] = curPos; // output to this thread's index
-        finalPDiff[threadId] =  sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2));
-        finalVDiff[threadId] =  sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
+        individuals[threadId].finalPos = curPos; // output to this thread's index
+        individuals[threadId].posDiff =  sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2));
+        individuals[threadId].velDiff =  sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
         return;
     }
     return;
