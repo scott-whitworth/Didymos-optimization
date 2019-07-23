@@ -13,13 +13,15 @@
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
 #include <time.h> //for seeding the random number generator
+#include <random>
+#include <chrono>
 
 
 int main ()
 {
-
-  //iterativeOptimize(); // manually set initial conditions
-  optimizeStartConditions(); // random values within a given range for initial conditions
+  
+  iterativeOptimize(); // manually set initial conditions
+  //optimizeStartConditions(); // random values within a given range for initial conditions
 
   return 0;
 }
@@ -34,7 +36,7 @@ void optimizeStartConditions(){
   double bestCost = 1.0E9;
   //double *bestStart = new double[OPTIM_VARS];
 
-  std::srand(std::time(NULL)); //seed the random number generator
+  std::mt19937 mt_rand(time(0)); //seed the random number generator
 
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
@@ -43,29 +45,29 @@ void optimizeStartConditions(){
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
-    start[GAMMA_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10 - 10
-    start[GAMMA_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+3] = std::rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+4] = std::rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+5] = std::rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+6] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
+    start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
 
 
-    start[TAU_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
-    start[TAU_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
+    start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
 
-    start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
-    start[BETA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14;
+    start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
+    start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
 
     start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
 
-    start[COAST_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-    start[COAST_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+3] = std::rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+4] = std::rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
 
 
 
@@ -152,56 +154,61 @@ void iterativeOptimize(){
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
 
+  std::mt19937 mt_rand(time(0)); //seed the random number generator
+
   // Initial guesses for variables based off of previous runs which have small cost values
-  start[GAMMA_OFFSET] = 10;
-  start[GAMMA_OFFSET+1] = 10;
-  start[GAMMA_OFFSET+2] = 10;
-  start[GAMMA_OFFSET+3] = 10;
-  start[GAMMA_OFFSET+4] = 10;
-  start[GAMMA_OFFSET+5] = 10;
-  start[GAMMA_OFFSET+6] = 10;
+      // Initial guesses for variables based off of previous runs which have small cost values
+  start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
+  start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
 
-  start[TAU_OFFSET] = 10;
-  start[TAU_OFFSET] = 10;
-  start[TAU_OFFSET] = 10;
 
-  start[ALPHA_OFFSET] = 0.5;
-  start[BETA_OFFSET] = 0.5;
+  start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+  start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
 
-  start[TRIPTIME_OFFSET] = 365*24*3600*1.5;
+  start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
+  start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
 
-  start[COAST_OFFSET] = 0.5;
-  start[COAST_OFFSET+1] = 0.5;
-  start[COAST_OFFSET+2] = 0.5;
-  start[COAST_OFFSET+3] = 0.5;
-  start[COAST_OFFSET+4] = 0.5;
+  start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
+
+  start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+  start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
-  step[GAMMA_OFFSET] = 1.0E02;
-  step[GAMMA_OFFSET+1] = 1.0E02;
-  step[GAMMA_OFFSET+2] = 1.0E02;
-  step[GAMMA_OFFSET+3] = 1.0E02;
-  step[GAMMA_OFFSET+4] = 1.0E02;
-  step[GAMMA_OFFSET+5] = 1.0E02;
-  step[GAMMA_OFFSET+6] = 1.0E02;
+  step[GAMMA_OFFSET] = 1.0E01/2;
+  step[GAMMA_OFFSET+1] = 1.0E01/2;
+  step[GAMMA_OFFSET+2] = 1.0E01/2;
+  step[GAMMA_OFFSET+3] = 1.0E01/2;
+  step[GAMMA_OFFSET+4] = 1.0E01/2;
+  step[GAMMA_OFFSET+5] = 1.0E01/2;
+  step[GAMMA_OFFSET+6] = 1.0E01/2;
 
-  step[TAU_OFFSET] = 1.0E02;
+  step[TAU_OFFSET] = 1.0E0;
+  step[TAU_OFFSET+1] = 1.0E0;
+  step[TAU_OFFSET+2] = 1.0E0;
 
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
 
   step[TRIPTIME_OFFSET] = 1.0E07;
 
-  step[COAST_OFFSET] = 1.0E02;
-  step[COAST_OFFSET+1] = 1.0E02;
-  step[COAST_OFFSET+2] = 1.0E02;
-  step[COAST_OFFSET+3] = 1.0E02;
-  step[COAST_OFFSET+4] = 1.0E02;
-
+  step[COAST_OFFSET] = 1.0E01;
+  step[COAST_OFFSET+1] = 1.0E01;
+  step[COAST_OFFSET+2] = 1.0E01;
+  step[COAST_OFFSET+3] = 1.0E01;
+  step[COAST_OFFSET+4] = 1.0E01;
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
-  int executions = 1;
+  int executions = 10;
   for(int i = 0; i < executions; i++)
   {
     optimizing(start, step);
@@ -245,7 +252,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 10000+std::rand()%100;
+  kcount = 15000+std::rand()%100;
 
     //****************
     // Move into its own function
