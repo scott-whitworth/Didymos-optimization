@@ -55,4 +55,6 @@
 #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
 #define WET_MASS 3000 // mass of the spacecraft including fuel (kg)
 
+#define POSITION_THRESH 1.0E-8
+
 #endif

@@ -4,6 +4,7 @@
 #include "acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
 #include "orbitalMotion.h"
+#include "individuals.h"
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
@@ -107,6 +108,7 @@ rkParameters<double>* getNewStarts(rkParameters<double> *startParameters, elemen
 elements<double>* callRK(const int numThreads, const int blockThreads, rkParameters<double> *inputParameters, double timeInitial, double stepSize, double absTol, double & calcPerS){
 
     elements<double> *finalPos = new elements<double>[numThreads]; // to store the output of final position and velocity for each run
+    Individual *generation = new Individual[numThreads];
     double *pDiff= new double[numThreads]; //difference in position between spacecraft and asteroid at end of trajectory
     double *vDiff = new double[numThreads]; //difference in velocity between spacecraft and asteroid at end of trajectory
     
@@ -123,6 +125,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     double *devStepSize;
     double *devAbsTol;
     elements<double> *devFinalPos;
+    Individual *devGeneration;
     double *devPDiff;
     double *devVDiff;
 
@@ -134,6 +137,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
     cudaMalloc((void**) &devFinalPos, numThreads * sizeof(elements<double>));
+    cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
     cudaMalloc((void**) &devPDiff, numThreads * sizeof(double));
     cudaMalloc((void**) &devVDiff, numThreads * sizeof(double));
 
@@ -152,6 +156,7 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     // copy the result of the kernel onto the host
     cudaEventRecord(MemCpyHost_e);
     cudaMemcpy(finalPos, devFinalPos, numThreads * sizeof(elements<double>), cudaMemcpyDeviceToHost);
+    cudaMemcpy(generation, devGeneration, numThreads * sizeof(Individual), cudaMemcpyDeviceToHost);
     cudaMemcpy(pDiff, devPDiff, numThreads * sizeof(double), cudaMemcpyDeviceToHost);
     cudaMemcpy(vDiff, devVDiff, numThreads * sizeof(double), cudaMemcpyDeviceToHost);
     cudaEventRecord(MemCpyHostStop_e);
@@ -161,6 +166,8 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
+    cudaFree(devFinalPos);
+    cudaFree(devGeneration);
     cudaFree(devPDiff);
     cudaFree(devVDiff);
 
@@ -203,9 +210,11 @@ elements<double>* callRK(const int numThreads, const int blockThreads, rkParamet
         }
 
         //testing
+        
         std::cout << "final position" << finalPos[i] << std::endl;
         std::cout << "position difference" << pDiff[i] << std::endl;
         std::cout << "velocity difference" << vDiff[i] << std::endl << std::endl << std::endl;
+        
     }
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;

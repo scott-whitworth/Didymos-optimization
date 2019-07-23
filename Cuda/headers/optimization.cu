@@ -32,6 +32,7 @@ int main ()
     int blockThreads = 0;
     int numThreads = 0;
     //int blockThreadNums[] = {32, 64, 192, 256, 384, 512, 768, 1024};
+    
     int blockThreadNums[] = {32, 64, 192, 256};
     //int threadNums[] = {100, 500};
     int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
