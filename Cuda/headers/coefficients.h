@@ -2,6 +2,8 @@
 #define coefficients_h
 
 #include "constants.h"
+#include <iostream>
+
 //Utility to calculate the coefficients vector
 //Coefficients struct holds gamma and tau values
 template <class T> struct coefficients {

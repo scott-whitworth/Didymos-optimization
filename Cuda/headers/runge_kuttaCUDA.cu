@@ -8,6 +8,10 @@
 #include <iostream>
 #include <fstream> // for outputing to .csv file
 #include <chrono>
+#include <algorithm> // sort()
+
+// genetic algorithm constraints
+#define REPLACE_RATE 60 // number of individuals to replace each generation
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
@@ -69,23 +73,25 @@ double optimize(const int numThreads, const int blockThreads){
         inputParameters[i] = rkParameters<double>(timeFinal, WET_MASS,
         earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
         earth.vr+sin(0.1)*vEscape, earth.vtheta+cos(0.1)*vEscape, earth.vz,
-        gamma, tau, coast, 0.05);*/
+        gamma, tau, coast, 0.05);*/ 
         
         //set all inputs to the same values
         inputParameters[i].startParams = example;
     }
 
-    //Check to see if the input data is all the same
-    for(int i = 0; i < numThreads-1; i++){
-        if(!inputParameters[i].startParams.compare(inputParameters[i+1].startParams,1.0)){
-            std::cout << "Things are off in the starting set" << std::endl;
-        }
-    }
-
     //while(!maxErrorMet){
     for(int i = 0; i < 1; i++){
         callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
-        inputParameters = getNewStarts(inputParameters);
+        
+        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
+
+        for(int i = 0; i < numThreads; i++){
+            std::cout << i << std::endl;
+            std::cout << "posDiff" << inputParameters[i].posDiff << std::endl;
+            std::cout << "velDiff" << inputParameters[i].velDiff << std::endl;
+        }
+        
+        //inputParameters = getNewStarts(inputParameters);
     }
     delete [] inputParameters;
 

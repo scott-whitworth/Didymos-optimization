@@ -65,6 +65,9 @@ template <class T> struct rkParameters {
     // Param: absTol - error tolerence for Runge-Kutta
     // Output: y will contain the final position of the simulation, y initial value will be overwritten
     void parametersRK4Simple(T timeInitial, T stepSize, T absTol, elements<T> & y);
+
+    //overload the stream output for elements used for writing to a file
+    template <class U> friend std::ostream & operator<<(std::ostream & Str, const rkParameters<T> & e); 
 };
 
 #include "rkParameters.cpp"

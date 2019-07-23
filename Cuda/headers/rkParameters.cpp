@@ -96,3 +96,12 @@ template <class T> void rkParameters<T>::parametersRK4Simple(T timeInitial, T st
     double accel = 0;
     rk4Simple(timeInitial, timeFinal, y0, stepSize, y, absTol, coeff, accel, wetMass);
 }
+
+template <class T> std::ostream & operator<<(std::ostream & Str, const rkParameters<T> & e){
+    Str << std::fixed;
+    Str << std::setprecision(16); // number of decimals output into text file
+    Str << "Coeff: \n" << e.coeff;
+    Str << "Elements:\n\t" << e.y0;
+    Str << "Final Time: " << e.timeFinal << " WetMass: " << e.wetMass << endl;
+    return Str;
+}
