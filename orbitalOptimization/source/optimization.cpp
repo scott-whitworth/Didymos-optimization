@@ -43,29 +43,30 @@ void optimizeStartConditions(){
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
-    start[GAMMA_OFFSET] = std::rand() % 21 - 10; // -10 - 10
-    start[GAMMA_OFFSET+1] = std::rand() % 21 - 10;
-    start[GAMMA_OFFSET+2] = std::rand() % 21 - 10;
-    start[GAMMA_OFFSET+3] = std::rand() % 21 - 10;
-    start[GAMMA_OFFSET+4] = std::rand() % 21 - 10;
-    start[GAMMA_OFFSET+5] = std::rand() % 21 - 10;
-    start[GAMMA_OFFSET+6] = std::rand() % 21 - 10;
+    start[GAMMA_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10 - 10
+    start[GAMMA_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+3] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+4] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+5] = std::rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+6] = std::rand() % 201/10.0 - 10.0;
 
 
-    start[TAU_OFFSET] = std::rand() % 21/1.0 - 10.0; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = std::rand() % 21/1.0 - 10.0;
-    start[TAU_OFFSET+2] = std::rand() % 21/1.0 - 10.0;
+    start[TAU_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
+    start[TAU_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
 
     start[ALPHA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (std::rand() % 629) / 100.0 - 3.14;
 
     start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
 
-    start[COAST_OFFSET] = std::rand() % 21/2.0 - 10/2.0; //-5 - 5
-    start[COAST_OFFSET+1] = std::rand() % 21/2.0 - 10/2.0;
-    start[COAST_OFFSET+2] = std::rand() % 21/2.0 - 10/2.0;
-    start[COAST_OFFSET+3] = std::rand() % 21/2.0 - 10/2.0;
-    start[COAST_OFFSET+4] = std::rand() % 21/2.0 - 10/2.0;
+    start[COAST_OFFSET] = std::rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[COAST_OFFSET+1] = std::rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+2] = std::rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+3] = std::rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+4] = std::rand() % 201/10.0 - 10.0;
+
 
 
     // Initial change in variable size based on the variable start value
