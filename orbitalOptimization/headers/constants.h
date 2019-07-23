@@ -37,7 +37,7 @@
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
 
 // starting location in the optimization array
-#define OPTIM_VARS 18//Number of variables in the optimization
+#define OPTIM_VARS 19//Number of variables in the optimization
 #define GAMMA_ARRAY_SIZE 7 // Length of the array of coefficients for gamma
 #define TAU_ARRAY_SIZE 3 // Length of the array of coefficients for tau
 #define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
@@ -46,8 +46,9 @@
 #define TAU_OFFSET 7 // x[9-13] first order fourier for out-of-plane angle
 #define ALPHA_OFFSET 10 // x[14] position escape earth angle
 #define BETA_OFFSET 11 // x[15] velocity escape earth angle
-#define TRIPTIME_OFFSET 12 // x[16] total duration of the trip
-#define COAST_OFFSET 13 // x[17-21] second order fourier for coasting determination
+#define ZETA_OFFSET 12
+#define TRIPTIME_OFFSET 13 // x[16] total duration of the trip
+#define COAST_OFFSET 14 // x[17-21] second order fourier for coasting determination
 
 // Value at which if the coast output is below it returns acceleration as 0.
 #define COAST_THRESHOLD 0.5

@@ -44,14 +44,14 @@ double trajectory( double x[])
   is defined to be 0 when the velocity is entirely angular
   and 90 when it is entirely radial. This equation calculates the ships
   initial radius from the sun by combining these values.*/
-  earth.vr+cos(orbitalInclination)*sin(x[BETA_OFFSET])*vEscape, // earth.vr + sin(beta)*vEscape
+  earth.vr+cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, // earth.vr + sin(beta)*vEscape
 
   /*Calculates initial specific angular momementum of ship using earth's
   specific angular momementum, the ships scalar velocity, escape angle,
   and initial radius.*/
-  earth.vtheta+cos(orbitalInclination)*cos(x[BETA_OFFSET])*vEscape, // earth.vtheta + cos(beta)*vEscape
+  earth.vtheta+cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape, // earth.vtheta + cos(beta)*vEscape
 
-  earth.vz+sin(orbitalInclination)*vEscape);
+  earth.vz+sin(x[ZETA_OFFSET])*vEscape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -93,7 +93,6 @@ double trajectory( double x[])
 
   // Calling rk4simple for efficieny, calculates the trip data based on the final optimized value of y
   rk4Simple(timeInitial,x[TRIPTIME_OFFSET],spaceCraft,deltaT,yp,absTol,coeff,accel,wetMass);
-
   // Cost equation determines how close a given run is to impact.
   // Based off the position components of the spacecraft and asteroid.
   double cost, cost_pos, cost_vel;
@@ -134,7 +133,7 @@ double trajectoryPrint( double x[], int & n, double & cost)
 
   // setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),earth.z,
-  earth.vr+cos(orbitalInclination)*sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(orbitalInclination)*cos(x[BETA_OFFSET])*vEscape,earth.vz+sin(orbitalInclination)*vEscape);
+  earth.vr+cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape,earth.vz+sin(x[ZETA_OFFSET])*vEscape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -194,6 +193,7 @@ double trajectoryPrint( double x[], int & n, double & cost)
   // used to get yFinal
   int lastStep = 0;
 
+  std::cout<<"Everything is fine \n";
   // used to track the cost function throughout a run via output and outputs to a binary
   rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, wetMass);
 

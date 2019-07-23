@@ -60,6 +60,7 @@ void optimizeStartConditions(){
 
     start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
+    start[BETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
     start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
 
@@ -87,6 +88,7 @@ void optimizeStartConditions(){
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
+    step[ZETA_OFFSET] = 1.0E00;
 
     step[TRIPTIME_OFFSET] = 1.0E07;
 
@@ -98,7 +100,7 @@ void optimizeStartConditions(){
 
 
     optimizing(start, step);
-
+    std::cout<<"No problems in optimizing\n";
     // writes the solution based on optimized variables to a binary file
     int numSteps = 0;
     double cost; // to store the cost caluclated by trajectoryPrint()
@@ -173,6 +175,7 @@ void iterativeOptimize(){
 
   start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
   start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
+  start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
   start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
 
@@ -198,6 +201,7 @@ void iterativeOptimize(){
 
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
+  step[ZETA_OFFSET] = 1.0E00;
 
   step[TRIPTIME_OFFSET] = 1.0E07;
 
