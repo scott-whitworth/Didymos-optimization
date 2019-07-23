@@ -1,22 +1,21 @@
-#include "individual.h"
-#include "constants.h"
+#include "individuals.h"
 
-Individual* Individual::greater(Individual *other){
+bool greaterInd(Individual first, Individual second){
     double posRatio = getPosRatio(other);
-    double thisSum = this.posDiff * posRatio + this.velDiff * (1.0 - posRatio);
-    double otherSum = other->posDiff * posRatio + other->velDiff * (1.0 - posRatio);
-    if(thisSum < otherSum){
-        return &this;
+    double firstSum = first.posDiff * posRatio + first.velDiff * (1.0 - posRatio);
+    double secondSum = second.posDiff * posRatio + second.velDiff * (1.0 - posRatio);
+    if(firstSum < secondSum){
+        return true;
     }
     else{
-        return other;
+        return false;
     }
 }
 
-double Individual::getPosRatio(Individual *other){
-    double greaterDiff = this.posDiff; // get the greater position difference
-    if(other->posDiff > greaterDiff){
-        greaterDiff = other->posDiff;
+double getPosRatio(Individual first, Individual second){
+    double greaterDiff = first.posDiff; // get the greater position difference
+    if(second.posDiff > greaterDiff){
+        greaterDiff = second.posDiff;
     }
 
     if(greaterDiff > POSITION_THRESH){
