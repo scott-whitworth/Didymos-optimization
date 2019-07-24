@@ -60,9 +60,9 @@ void optimizeStartConditions(){
 
     start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
-    start[BETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
+    start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // 1.5 - 2.5 years converted to seconds
 
     start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
     start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
@@ -177,7 +177,7 @@ void iterativeOptimize(){
   start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
   start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
-  start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5); // 1.5 - 2.5 years converted to seconds
+  start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1); // 1.5 - 2.5 years converted to seconds
 
   start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
   start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
