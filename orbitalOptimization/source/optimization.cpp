@@ -20,8 +20,8 @@
 int main ()
 {
   
-  iterativeOptimize(); // manually set initial conditions
-  //optimizeStartConditions(); // random values within a given range for initial conditions
+  //iterativeOptimize(); // manually set initial conditions
+  optimizeStartConditions(); // random values within a given range for initial conditions
 
   return 0;
 }
@@ -41,7 +41,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 5;
+  int executions = 20;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -256,7 +256,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 15000+std::rand()%100;
+  kcount = 30000+std::rand()%100;
 
     //****************
     // Move into its own function

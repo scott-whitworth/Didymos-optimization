@@ -43,12 +43,12 @@
 #define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
 
 #define GAMMA_OFFSET 0 // x[0-8] fourth order fourier for in-plane angle
-#define TAU_OFFSET 7 // x[9-13] first order fourier for out-of-plane angle
-#define ALPHA_OFFSET 10 // x[14] position escape earth angle
-#define BETA_OFFSET 11 // x[15] velocity escape earth angle
-#define ZETA_OFFSET 12
-#define TRIPTIME_OFFSET 13 // x[16] total duration of the trip
-#define COAST_OFFSET 14 // x[17-21] second order fourier for coasting determination
+#define TAU_OFFSET 7 // x[7-9] first order fourier for out-of-plane angle
+#define ALPHA_OFFSET 10 // x[10] position escape earth angle
+#define BETA_OFFSET 11 // x[11] velocity escape earth angle
+#define ZETA_OFFSET 12 // x[12] velocity escape off plane earth angle
+#define TRIPTIME_OFFSET 13 // x[13] total duration of the trip
+#define COAST_OFFSET 14 // x[14-16] second order fourier for coasting determination
 
 // Value at which if the coast output is below it returns acceleration as 0.
 #define COAST_THRESHOLD 0.5
