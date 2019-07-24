@@ -188,7 +188,23 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
+void crossover(Individual *survivors, Individual *pool, int selectionSize, int poolSize){
+    mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+
+    int mask[RK_SIZE];
+    
+    //get masks for every crossover
+    for(int i = 0; i < (selectionSize / 4); i++){
+        for(int j = 0; j < 4; j++){
+            crossOver_wholeRandom(mask, rng);
+            pool[poolSize - 1 - (4 * i) - j] = Individual();
+            pool[poolSize - 1 - (4 * i) - j].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        }
+    }
+}
+
 //Unit Test for ga_crossover
+/*
 int main(){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
     
@@ -258,3 +274,4 @@ int main(){
 
 
 }
+*/
