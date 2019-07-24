@@ -4,18 +4,21 @@
 #include "acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
 #include "orbitalMotion.h"
+#include "geneticAlgorithm.h" // selectWinners()
+#include "ga_crossover.h" // crossover()
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
 #include <chrono>
-#include <algorithm> // sort()
+#include <algorithm> // sort(), shuffle()
+#include <random>
 
 // genetic algorithm constraints
-#define REPLACE_RATE 60 // number of individuals to replace each generation
+#define REPLACE_RATE 60 // number of individuals to replace each generation--MUST BE DIVISIBLE BY 4
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
-
+    std::mt19937_64 mt_rand(time(0));
     //bool maxErrorMet = false;
 
     // reasonable example values for runge kutta algorithm
@@ -23,28 +26,12 @@ double optimize(const int numThreads, const int blockThreads){
      // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero
     //double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
-    double timeFinal = 75178800-3600;
+    
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
     
     //for setting every thread's parameters to the same values
-    coefficients<double> testcoeff;
-    for(int i = 0; i < testcoeff.gammaSize; i++){
-        testcoeff.gamma[i] = 10;
-    }
-    for(int i = 0; i < testcoeff.tauSize; i++){
-        testcoeff.tau[i] = 10;
-    }
-    for(int i = 0; i < testcoeff.coastSize; i++){
-        testcoeff.coast[i] = 10;
-    }
-    testcoeff.coastThreshold = .5;
-
-    elements<double> earth = earthInitial(timeFinal);
-    elements<double> spaceTest(earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
-                               earth.vr+sin(0.75)*vEscape, earth.vtheta+cos(0.75)*vEscape, earth.vz);
-
-    rkParameters<double> example(timeFinal, WET_MASS,spaceTest, testcoeff); 
+  
     /*---------------------------------------------------------------------------------------*/
 
 
@@ -52,48 +39,67 @@ double optimize(const int numThreads, const int blockThreads){
 
 
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
-        
-        /*double gamma[] = {i, i, i, i, i, i, i, i, i};
-        double tau[] = {i%4, i%4, i%4, i%4, i%4};
-        double coast[] = {i%6, i%6, i%6, i%6, i%6};    
-    
-        elements<double> earth = earthInitial(timeFinal);
-        
-        inputParameters[i] = rkParameters<double>(timeFinal - i / 32, 0.0, WET_MASS,
-        earth.r+ESOI*cos(i), earth.theta+asin(sin(M_PI-i)*ESOI/earth.r), earth.z,
-        earth.vr+sin(i%4)*vEscape, earth.vtheta+cos(i%4)*vEscape, earth.vz,
-        gamma, tau, coast, 0.005 * i);*/
+        double timeFinal = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5);
+        double alpha = (mt_rand() % 629) / 100.0 - 3.14;
+        double beta = (mt_rand() % 629) / 100.0 - 3.14;
 
-        /*double gamma[] = {10, 10, 10, 10, 10, 10, 10, 10, 10};
-        double tau[] = {5, 5, 5, 5, 5};
-        double coast[] = {3, 3, 3, 3, 3};    
+        coefficients<double> testcoeff;
+        for(int j = 0; j < testcoeff.gammaSize; j++){
+            testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+        }
+        for(int j = 0; j < testcoeff.tauSize; j++){
+            testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+        }
+        for(int j = 0; j < testcoeff.coastSize; j++){
+            testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+        }
+        testcoeff.coastThreshold = .5;
     
         elements<double> earth = earthInitial(timeFinal);
-        
-        inputParameters[i] = rkParameters<double>(timeFinal, WET_MASS,
-        earth.r+ESOI*cos(0.5), earth.theta+asin(sin(M_PI-0.5)*ESOI/earth.r), earth.z,
-        earth.vr+sin(0.1)*vEscape, earth.vtheta+cos(0.1)*vEscape, earth.vz,
-        gamma, tau, coast, 0.05);*/ 
-        
-        //set all inputs to the same values
+        elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
+            earth.vr+cos(orbitalInclination)*sin(beta)*vEscape, earth.vtheta+cos(orbitalInclination)*cos(beta)*vEscape, earth.vz+sin(orbitalInclination)*vEscape);
+    
+        rkParameters<double> example(timeFinal, WET_MASS, spaceTest, testcoeff); 
+
         inputParameters[i].startParams = example;
     }
 
-    //while(!maxErrorMet){
-    for(int i = 0; i < 1; i++){
-        callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
-        
-        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
 
+
+    Individual *survivors = new Individual[REPLACE_RATE / 2];
+
+    //while(!maxErrorMet){
+    for(int i = 0; i <3000; i++){
+        callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
+
+        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
+
+        selectWinners(inputParameters, REPLACE_RATE, survivors);
+
+        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
+        
+        std::cout << i << std::endl;
+        std::cout << "posDiff" << inputParameters[0].posDiff << std::endl;
+        std::cout << "velDiff" << inputParameters[0].velDiff << std::endl << std::endl;
+        // test sorting and shuffling
+        /*
         for(int i = 0; i < numThreads; i++){
             std::cout << i << std::endl;
             std::cout << "posDiff" << inputParameters[i].posDiff << std::endl;
             std::cout << "velDiff" << inputParameters[i].velDiff << std::endl;
         }
-        
-        //inputParameters = getNewStarts(inputParameters);
+
+        for(int i = 0; i < REPLACE_RATE / 2; i++){
+            std::cout << i << std::endl;
+            std::cout << "posDiff" << survivors[i].posDiff << std::endl;
+            std::cout << "velDiff" << survivors[i].velDiff << std::endl;
+        }
+        */
+
+        crossover(survivors, inputParameters, REPLACE_RATE, numThreads);
     }
     delete [] inputParameters;
+    delete [] survivors;
 
     return calcPerS;
 }
@@ -141,7 +147,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
-    std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
+    //std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
     rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
 
     // copy the result of the kernel onto the host
@@ -172,8 +178,10 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     }
 
     auto elapsed_time =  std::chrono::high_resolution_clock::now() - start_timer;
+    /*
     std::cout << "CPU Calculation of " << numThreads << " RK Calculations took: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() << " ms" << std::endl;
     std::cout << "CPU Calculations: " << numThreads / (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()/1000.0) << " RK Calcs / second" <<  std::endl;
+    */
 
     // compare every GPU result with the one CPU result
     double maxError = 0.01; // how much difference is allowable between the CPU and GPU results
@@ -196,11 +204,11 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
         }
 
         //testing
-        
+        /*
         std::cout << "final position" << generation[i].finalPos << std::endl;
         std::cout << "position difference" << generation[i].posDiff << std::endl;
         std::cout << "velocity difference" << generation[i].velDiff << std::endl << std::endl << std::endl;
-        
+        */
     }
 
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
@@ -214,11 +222,13 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     
     double rkPerS = numThreads / (kernelT / 1000.0); // how many times the Runge Kutta algorithm ran in the kernel per second
 
+    /*
     std::cout << "Device memory allocation time: " << mallocT << " ms" << std::endl;
     std::cout << "Device memory copy time: " << memCpyDevT << " ms" << std::endl;
     std::cout << "Host memory copy time: " << memCpyHostT << " ms" << std::endl;
     std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
     std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
+    */
 
     calcPerS = rkPerS;
     

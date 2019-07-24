@@ -11,6 +11,7 @@
 #define constG 1.99349603314131e-44 //gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
 #define massSun 1.98892e30// mass of the sun (kg)
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
+#define orbitalInclination 0.0594906//orbital inclination of the asteroid (rad)
 
 #define MAX_NUMSTEPS 1e9 // The highest precision the runge kutta method is going to use for the first step
 #define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
