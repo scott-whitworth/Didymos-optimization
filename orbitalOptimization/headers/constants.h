@@ -17,7 +17,7 @@
 #define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
 #define F_MIN 1e-20 // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
 
-//final conditions of the asteroid on impact date
+// Final conditions of the asteroid on impact date
 #define R_FIN_AST 1.02696822710421 // radial position (au)
 #define THETA_FIN_AST 0.238839574416454 // angular postion (rad)
 #define Z_FIN_AST -0.0526614832914496 // axial position (au)
@@ -25,7 +25,7 @@
 #define VTHETA_FIN_AST 2.29132593453064e-07 // angular velocity (au/s)
 #define VZ_FIN_AST 8.00663905822009e-09 // axial velocity (au/s)
 
-//final conditions of the earth on impact date
+// Final conditions of the earth on impact date
 #define R_FIN_EARTH 1.00021392223428 // radial position (au)
 #define THETA_FIN_EARTH 0.199470650149394 // angular postion (rad)
 #define Z_FIN_EARTH -1.54878511585620e-05 // axial position (au)
@@ -33,10 +33,10 @@
 #define VTHETA_FIN_EARTH 1.99029138292504e-07 // angular velocity (au/s)
 #define VZ_FIN_EARTH -9.71518257891386e-12 // axial velocity (au/s)
 
-//Official DART mission data
+// Official DART mission data
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
 
-// starting location in the optimization array
+// Starting location in the optimization array
 #define OPTIM_VARS 19//Number of variables in the optimization
 #define GAMMA_ARRAY_SIZE 7 // Length of the array of coefficients for gamma
 #define TAU_ARRAY_SIZE 3 // Length of the array of coefficients for tau

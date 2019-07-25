@@ -1,8 +1,7 @@
-//Didymos-Optimization_Project:
-//Last Editor: Ben and Lauren
-//Tasks Completed: 
-    //Functionalized rkCaLc() which is called by all three of the runge-kutta functions.
-    //Added the z component to the calcAccel() function calls
+// Didymos-Optimization_Project:
+// Last Editor: Mateo and Lauren
+// Tasks Completed: 
+    // Re-defined the variables going in and out of rkCalc() as well as all functions which call rkCalc() to make intuitive sense.
 
 #include "runge_kutta.h"
 #include "acceleration.h" //used for calc_accel() and calc_coast()
