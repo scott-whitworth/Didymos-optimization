@@ -12,7 +12,7 @@ int main()
     // Define variables to be passed into EarthInfo
     double startTime = 47304000; // 1.5 year (s)
     double endTime = 78840000; // 2.5 years (s)
-    double timeRes = 20; // seconds to hours conversion
+    double timeRes = 1; // position of earth is calculated for every second
 
     // initializes EarthInfo
     EarthInfo launchCon(startTime,endTime,timeRes);
