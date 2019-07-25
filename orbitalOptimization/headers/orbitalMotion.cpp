@@ -1,7 +1,7 @@
-//Didymos-Optimization_Project:
-//Last Editor: Mateo, Lauren, and Ben
-//Tasks Completed: 
-    //No recent changes
+// Didymos-Optimization_Project:
+// Last Editor: Mateo and Lauren
+// Tasks Completed: 
+    // Added the zeta launch angle
 
 #include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().

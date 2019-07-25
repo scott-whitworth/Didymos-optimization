@@ -46,14 +46,14 @@ double trajectory( double x[])
   is defined to be 0 when the velocity is entirely angular
   and 90 when it is entirely radial. This equation calculates the ships
   initial radius from the sun by combining these values.*/
-  earth.vr+sin(x[BETA_OFFSET])*vEscape, // earth.vr + sin(beta)*vEscape
+  earth.vr+cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, // earth.vr + sin(beta)*vEscape
 
   /*Calculates initial specific angular momementum of ship using earth's
   specific angular momementum, the ships scalar velocity, escape angle,
   and initial radius.*/
-  earth.vtheta+cos(x[BETA_OFFSET])*vEscape, // earth.vtheta + cos(beta)*vEscape
+  earth.vtheta+cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape, // earth.vtheta + cos(beta)*vEscape
 
-  earth.vz);
+  earth.vz+sin(x[ZETA_OFFSET])*vEscape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -79,8 +79,7 @@ double trajectory( double x[])
 
   }
   // Assigning optimized coast threshold
-  coeff.coastThreshold = x[THRESHOLD_OFFSET];
-  // coeff.coastThreshold = -1.;
+  coeff.coastThreshold = COAST_THRESHOLD;
  
   // Sssigning optimized wetMass
   double wetMass = WET_MASS;
@@ -165,7 +164,7 @@ double trajectoryPrint( double x[], int & n, double & cost)
   //  coeff.coast[i]=0.;
   }
   // assigning optimized coast threshold
-  coeff.coastThreshold = x[THRESHOLD_OFFSET];
+  coeff.coastThreshold = COAST_THRESHOLD;
   //coeff.coastThreshold = -1.;
  
   // assigning optimized wetMass

@@ -11,6 +11,8 @@
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
 #include <time.h> //for seeding the random number generator
+#include <random>
+#include <chrono>
 
 
 #include "runge_kuttaCUDA.cuh" //for testing rk4simple
@@ -68,7 +70,7 @@ void optimizeStartConditions(){
   double bestCost = 1.0E9;
   //double *bestStart = new double[OPTIM_VARS];
 
-  std::srand(std::time(NULL)); //seed the random number generator
+  std::mt19937 mt_rand(time(0)); //seed the random number generator
 
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
@@ -76,65 +78,57 @@ void optimizeStartConditions(){
   int executions = 1;
   for(int i = 0; i < executions; i++){
     // random initial guesses for variables within a reasonable range
-    start[GAMMA_OFFSET] = std::rand() % 201 - 100; // -100 - 100
-    start[GAMMA_OFFSET+1] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+2] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+3] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+4] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+5] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+6] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+7] = std::rand() % 201 - 100;
-    start[GAMMA_OFFSET+8] = std::rand() % 201 - 100;
+    start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
+    start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
 
-    start[TAU_OFFSET] = (std::rand() % 201) / 10.0 - 10; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+2] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+3] = (std::rand() % 201) / 10.0 - 10;
-    start[TAU_OFFSET+4] = (std::rand() % 201) / 10.0 - 10;
 
-    start[ALPHA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
-    start[BETA_OFFSET] = (std::rand() % 201) / 10.0 - 10;
+    start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 20001 / 10000.0 + 1); // 1.0000 - 3.0000 years converted to seconds
+    start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
+    start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
+    start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
-    start[COAST_OFFSET] = (std::rand() % 101) / 10.0; //0.0 - 10.0
-    start[COAST_OFFSET+1] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+2] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+3] = (std::rand() % 101) / 10.0;
-    start[COAST_OFFSET+4] = (std::rand() % 101) / 10.0;
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // 1.0 - 2.0 years converted to seconds
 
-    start[THRESHOLD_OFFSET] = (std::rand() % 101) / 100.0;
+    start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+    start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space
-    step[GAMMA_OFFSET] = 1.0E02;
-    step[GAMMA_OFFSET+1] = 1.0E02;
-    step[GAMMA_OFFSET+2] = 1.0E02;
-    step[GAMMA_OFFSET+3] = 1.0E02;
-    step[GAMMA_OFFSET+4] = 1.0E02;
-    step[GAMMA_OFFSET+5] = 1.0E02;
-    step[GAMMA_OFFSET+6] = 1.0E02;
-    step[GAMMA_OFFSET+7] = 1.0E02;
-    step[GAMMA_OFFSET+8] = 1.0E02;
+    step[GAMMA_OFFSET] = 1.0E01/2;
+    step[GAMMA_OFFSET+1] = 1.0E01/2;
+    step[GAMMA_OFFSET+2] = 1.0E01/2;
+    step[GAMMA_OFFSET+3] = 1.0E01/2;
+    step[GAMMA_OFFSET+4] = 1.0E01/2;
+    step[GAMMA_OFFSET+5] = 1.0E01/2;
+    step[GAMMA_OFFSET+6] = 1.0E01/2;
 
-    step[TAU_OFFSET] = 1.0E02;
-    step[TAU_OFFSET+1] = 1.0E02;
-    step[TAU_OFFSET+2] = 1.0E02;
-    step[TAU_OFFSET+3] = 1.0E02;
-    step[TAU_OFFSET+4] = 1.0E02;
+    step[TAU_OFFSET] = 1.0E0;
+    step[TAU_OFFSET+1] = 1.0E0;
+    step[TAU_OFFSET+2] = 1.0E0;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
+    step[ZETA_OFFSET] = 1.0E00;
 
     step[TRIPTIME_OFFSET] = 1.0E07;
 
-    step[COAST_OFFSET] = 1.0E02;
-    step[COAST_OFFSET+1] = 1.0E02;
-    step[COAST_OFFSET+2] = 1.0E02;
-    step[COAST_OFFSET+3] = 1.0E02;
-    step[COAST_OFFSET+4] = 1.0E02;
-
-    step[THRESHOLD_OFFSET] = 1.0E-02;
+    step[COAST_OFFSET] = 1.0E01;
+    step[COAST_OFFSET+1] = 1.0E01;
+    step[COAST_OFFSET+2] = 1.0E01;
+    step[COAST_OFFSET+3] = 1.0E01;
+    step[COAST_OFFSET+4] = 1.0E01;
 
     optimizing(start, step);
 
@@ -188,7 +182,10 @@ void optimizeStartConditions(){
   delete [] step;
 }
 
-void iterativeOptimize(){
+void iterativeOptimize()
+{
+  std::mt19937 mt_rand(time(0)); //seed the random number generator
+
   // allocating memory according to number of variables
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
@@ -202,55 +199,56 @@ void iterativeOptimize(){
   // x[20]: coast threshold - value set to determine when coasting occurs
   // x[21]: wet mass - mass of spacecraft including fuel
   // Initial guesses for variables based off of previous runs which have small cost values
-  start[GAMMA_OFFSET] = 10;
-  start[GAMMA_OFFSET+1] = 10;
-  start[GAMMA_OFFSET+2] = 10;
-  start[GAMMA_OFFSET+3] = 10;
-  start[GAMMA_OFFSET+4] = 10;
-  start[GAMMA_OFFSET+5] = 10;
-  start[GAMMA_OFFSET+6] = 10;
-  start[GAMMA_OFFSET+7] = 10;
-  start[GAMMA_OFFSET+8] = 10;
-  start[TAU_OFFSET] = 10;
-  start[TAU_OFFSET+1] = 10;
-  start[TAU_OFFSET+2] = 10;
-  start[TAU_OFFSET+3] = 10;
-  start[TAU_OFFSET+4] = 10;
-  start[ALPHA_OFFSET] = 0.5;
-  start[BETA_OFFSET] = 0.5;
-  start[TRIPTIME_OFFSET] = 365*24*3600*1.5; // 2 YEARS
-  start[COAST_OFFSET] = 0.5;
-  start[COAST_OFFSET+1] = 0.5;
-  start[COAST_OFFSET+2] = 0.5;
-  start[COAST_OFFSET+3] = 0.5;
-  start[COAST_OFFSET+4] = 0.5;
-  start[THRESHOLD_OFFSET] = 0.05;
+  start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
+  start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
+  start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
+
+
+  start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+  start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+
+  start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
+  start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
+  start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
+
+  start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1); // 1.5 - 2.5 years converted to seconds
+
+  start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
+  start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
-  step[GAMMA_OFFSET] = 1.0E02;
-  step[GAMMA_OFFSET+1] = 1.0E02;
-  step[GAMMA_OFFSET+2] = 1.0E02;
-  step[GAMMA_OFFSET+3] = 1.0E02;
-  step[GAMMA_OFFSET+4] = 1.0E02;
-  step[GAMMA_OFFSET+5] = 1.0E02;
-  step[GAMMA_OFFSET+6] = 1.0E02;
-  step[GAMMA_OFFSET+7] = 1.0E02;
-  step[GAMMA_OFFSET+8] = 1.0E02;
-  step[TAU_OFFSET] = 1.0E02;
-  step[TAU_OFFSET+1] = 1.0E02;
-  step[TAU_OFFSET+2] = 1.0E02;
-  step[TAU_OFFSET+3] = 1.0E02;
-  step[TAU_OFFSET+4] = 1.0E02;
+  step[GAMMA_OFFSET] = 1.0E01/2;
+  step[GAMMA_OFFSET+1] = 1.0E01/2;
+  step[GAMMA_OFFSET+2] = 1.0E01/2;
+  step[GAMMA_OFFSET+3] = 1.0E01/2;
+  step[GAMMA_OFFSET+4] = 1.0E01/2;
+  step[GAMMA_OFFSET+5] = 1.0E01/2;
+  step[GAMMA_OFFSET+6] = 1.0E01/2;
+
+  step[TAU_OFFSET] = 1.0E0;
+  step[TAU_OFFSET+1] = 1.0E0;
+  step[TAU_OFFSET+2] = 1.0E0;
+
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
+  step[ZETA_OFFSET] = 1.0E00;
+
   step[TRIPTIME_OFFSET] = 1.0E07;
-  step[COAST_OFFSET] = 1.0E02;
-  step[COAST_OFFSET+1] = 1.0E02;
-  step[COAST_OFFSET+2] = 1.0E02;
-  step[COAST_OFFSET+3] = 1.0E02;
-  step[COAST_OFFSET+4] = 1.0E02;
-  step[THRESHOLD_OFFSET] = 1.0E-02;
+
+  step[COAST_OFFSET] = 1.0E01;
+  step[COAST_OFFSET+1] = 1.0E01;
+  step[COAST_OFFSET+2] = 1.0E01;
+  step[COAST_OFFSET+3] = 1.0E01;
+  step[COAST_OFFSET+4] = 1.0E01;
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
   int executions = 1;

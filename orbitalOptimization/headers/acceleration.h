@@ -1,7 +1,7 @@
 #ifndef acceleration_h
 #define acceleration_h
 
-#include "thruster.h" // used for P0, calc_eff(), and calc_m_Dot()
+#include "thruster.h" // Used for P0, calc_eff(), and calc_m_Dot()
 
 // Calculates acceleration of the spacecraft due to thrusting.
 // Parameters:
@@ -14,7 +14,7 @@
 //         deltaT: stepsize for a given iteration, used in the calculation of massExpelled.
 //         thrusting: evaluated in calc_coast() to determine whether calc_accel() will be called.
 //         wetMass: mass of the spacecraft including the fuel (optimized).
-// output: acceleration of the spacecraft due to thrusting.
+// Output: acceleration of the spacecraft due to thrusting.
 
 template <class T> T calc_accel(const T & radius, const T & offPlane, const thruster<T> & thrusterType, const T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass);
 

@@ -1,9 +1,9 @@
-//Didymos-Optimization_Project:
-//Last Editor: Mateo and Lauren
-//Tasks Completed: 
-	//No recent changes
+// Didymos-Optimization_Project:
+// Last Editor: Mateo and Lauren
+// Tasks Completed: 
+	// No recent changes
 	
-#include <math.h> // used for sine, cosine, and pow functions
+#include <math.h> // Used for sine, cosine, and pow functions
 #include "motion_equations.h"
 
 template <class T> elements<T> calc_k(const T & h, const elements<T>  & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal)

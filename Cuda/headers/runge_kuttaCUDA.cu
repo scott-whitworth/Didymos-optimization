@@ -42,6 +42,7 @@ double optimize(const int numThreads, const int blockThreads){
         double timeFinal = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5);
         double alpha = (mt_rand() % 629) / 100.0 - 3.14;
         double beta = (mt_rand() % 629) / 100.0 - 3.14;
+        double zeta = (mt_rand() % 315) / 100.0 - 1.57;
 
         coefficients<double> testcoeff;
         for(int j = 0; j < testcoeff.gammaSize; j++){
@@ -53,11 +54,10 @@ double optimize(const int numThreads, const int blockThreads){
         for(int j = 0; j < testcoeff.coastSize; j++){
             testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
         }
-        testcoeff.coastThreshold = .5;
     
         elements<double> earth = earthInitial(timeFinal);
         elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
-            earth.vr+cos(orbitalInclination)*sin(beta)*vEscape, earth.vtheta+cos(orbitalInclination)*cos(beta)*vEscape, earth.vz+sin(orbitalInclination)*vEscape);
+            earth.vr+cos(zeta)*sin(beta)*vEscape, earth.vtheta+cos(zeta)*cos(beta)*vEscape, earth.vz+sin(zeta)*vEscape);
     
         rkParameters<double> example(timeFinal, WET_MASS, spaceTest, testcoeff); 
 
@@ -171,7 +171,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
 
     auto start_timer = std::chrono::high_resolution_clock::now();
-
+    
     for(int i = 0; i < numThreads; i++){
         generation[i].startParams.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
           //std::cout << rk4SimpleOutput[i];
