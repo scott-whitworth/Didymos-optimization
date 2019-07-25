@@ -34,7 +34,7 @@ int main ()
     //int blockThreadNums[] = {32, 64, 192, 256, 384, 512, 768, 1024};
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    int threadNums[] = {3000};
+    int threadNums[] = {300};
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");

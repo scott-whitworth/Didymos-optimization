@@ -14,7 +14,7 @@
 #include <random>
 
 // genetic algorithm constraints
-#define REPLACE_RATE 60 // number of individuals to replace each generation--MUST BE DIVISIBLE BY 4
+#define REPLACE_RATE 40 // number of individuals to replace each generation--MUST BE DIVISIBLE BY 4
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
@@ -184,7 +184,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     */
 
     // compare every GPU result with the one CPU result
-    double maxError = 0.01; // how much difference is allowable between the CPU and GPU results
+    double maxError = 1e-10; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
         if(!generation[i].finalPos.compare(rk4SimpleOutput[i],maxError)){
@@ -261,7 +261,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         //double deltaT; // change in time for calc_accel()
 
-        double coast; // to hold the result from calc_coast()
+        bool coast; // to hold the result from calc_coast()
 
         elements<double> v; // holds output of previous value from rkCalc
 
@@ -281,10 +281,10 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             if (stepSize > (threadRKParameters.timeFinal - startTime) / 100){
                 stepSize = (threadRKParameters.timeFinal - startTime) / 100;
             }
-            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 10000)){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 10000;
+            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 1000)){
+                stepSize = (threadRKParameters.timeFinal - startTime) / 1000;
             }
-
+            
             if((curTime + stepSize) > threadRKParameters.timeFinal){
                 stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
             }
@@ -399,7 +399,7 @@ void rkCalcComparison(){
         rkCalc(curTime, timeFinal, stepSize, hostCurPos[i], testCoeff, accel, hostV[i], k1, k2, k3, k4, k5, k6, k7);
     }
 
-    double errorTol = 0.01;
+    double errorTol = 1e-10;
     for(int i = 0; i < n; i++){
         if(abs(v[i].r - hostV[i].r) > errorTol){
             std::cout << "Thread: " << i << std::endl;

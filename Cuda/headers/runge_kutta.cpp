@@ -135,13 +135,15 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
         stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/10)
-            stepSize = (timeFinal-timeInitial)/10;
+        if (stepSize>(timeFinal-timeInitial)/100)
+            stepSize = (timeFinal-timeInitial)/100;
         else if (stepSize<((timeFinal-timeInitial)/1000))
             stepSize = (timeFinal-timeInitial)/1000;
+        
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)>timeFinal)
             stepSize = (timeFinal-curTime);
+        
 
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
         if (y_new.r<0.5)
