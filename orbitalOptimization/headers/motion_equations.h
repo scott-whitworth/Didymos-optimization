@@ -1,7 +1,7 @@
 #ifndef motion_equations_h
 #define motion_equations_h
 
-#include <ostream> // used in overload of stream output for elements
+#include <ostream> // Used in overload of stream output for elements
 #include <iomanip> // setprecision(int)
 
 #include "elements.h"
@@ -9,7 +9,7 @@
 #include "calcFourier.h"
 #include "constants.h"
 
-//Calculates the corresponding k for the Runge-Kutta computation
+// Calculates the corresponding k for the Runge-Kutta computation
 // Units for k
 //      k.r = au
 //      k.theta = rad
@@ -24,7 +24,7 @@
 //      accel: acceleration of the spacecraft (au/s^s)
 //      curTime: current time stamp (s)
 //      totalTime: the complete time frame of the simulation (s), used to normalize curTime
-//Output: returns k1,k2,k3,k4 for y[n+1] calculation
+// Output: returns k1,k2,k3,k4 for y[n+1] calculation
 template <class T> elements<T> calc_k(const T & h, const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
 // Dot = derivative of element with respect to time
@@ -43,7 +43,7 @@ template <class T> T calcRate_theta(const elements<T> & y);
 // Output: zDot
 template <class T> T calcRate_z(const elements<T> & y);
 
-// other parameters for following equations:
+// Other parameters for following equations:
 //      coeff: coefficients structure components for the current time stamp
 //      accel: acceleration of the spacecraft (au/s^s)
 //      curTime: current time stamp (s)

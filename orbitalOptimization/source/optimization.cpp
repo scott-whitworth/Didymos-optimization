@@ -53,7 +53,6 @@ void optimizeStartConditions(){
     start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
     start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
 
-
     start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
     start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
     start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
@@ -69,8 +68,6 @@ void optimizeStartConditions(){
     start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
     start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
     start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
-
-
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space

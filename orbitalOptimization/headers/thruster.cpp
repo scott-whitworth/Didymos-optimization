@@ -1,10 +1,10 @@
-//Didymos-Optimization_Project:
-//Last Editor: Ben and Lauren
-//Tasks Completed: 
-      //Created thruster file which sets the thruster being used in the optimization.
-      //NEXT:
-        //Inserted a function which relates effciency to the power going in to the spacecraft based off of an excel best fit line.
-        //Created a variable mDot by adding if statements which relate the power going in to the spacecraft to the amount of fuel consumption for a given iteration.
+// Didymos-Optimization_Project:
+// Last Editor: Ben and Lauren
+// Tasks Completed: 
+      // Created thruster file which sets the thruster being used in the optimization.
+      // NEXT:
+        // Inserted a function which relates effciency to the power going in to the spacecraft based off of an excel best fit line.
+        // Created a variable mDot by adding if statements which relate the power going in to the spacecraft to the amount of fuel consumption for a given iteration.
 
 #include "thruster.h"
 #include <iomanip> // used for setPrecision()
