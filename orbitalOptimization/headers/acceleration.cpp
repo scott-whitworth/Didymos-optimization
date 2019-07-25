@@ -31,9 +31,10 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
     Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); 
 
-    // If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
-    // This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
-    if(radius<=1 && offPlane<=1){
+    //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
+    //This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
+    if(radius<=1 && offPlane<=1)
+    {
         Pin = thrusterType.P0/1;
     }
 

@@ -21,8 +21,8 @@ template <class T> struct coefficients {
     const static int coastSize=COAST_ARRAY_SIZE;
     T coast[coastSize];
 
-    // Threshold: after cosine squared of the fourier series is evaluated, if above the threshold, acceleration occurs. When below, coasting occurs.
-    T coastThreshold;
+    // threshold: after cosine squared of the fourier series is evaluated, if above the threshold, acceleration occurs. When below, coasting occurs.
+    T coastThreshold = COAST_THRESHOLD;
 
     // Overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e); 

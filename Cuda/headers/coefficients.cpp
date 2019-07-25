@@ -31,6 +31,7 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const coefficie
         }
     }
     Str << endl;
+    // TODO: fix coasting threshold to be a constant
     Str << "Coasting Threshold: " << e.coastThreshold << endl;
     return Str;
 }
