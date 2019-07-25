@@ -16,7 +16,7 @@ template <class T> struct rkParameters {
     // Constructor which sets all the components according to values taken in
    __host__ __device__ rkParameters<T>(T timeFinal0, T wetMass0, 
                    T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
-                   T *gamma0, T *tau0, T *coast0, T coastThreshold0); // coefficients<T>
+                   T *gamma0, T *tau0, T *coast0); // coefficients<T>
 
     // Alternate Constructor
     // timeFinal0           - Total time of mission (s)

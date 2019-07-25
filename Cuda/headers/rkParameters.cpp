@@ -2,7 +2,7 @@
 
 template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0, 
                                                  T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
-                                                 T *gamma0, T *tau0, T *coast0, T coastThreshold0) // coefficients<T>
+                                                 T *gamma0, T *tau0, T *coast0) // coefficients<T>
 {
     timeFinal = timeFinal0;
     wetMass = wetMass0;
@@ -24,7 +24,7 @@ template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0,
         coeff.coast[i] = coast0[i];
     }
 
-    coeff.coastThreshold = coastThreshold0;
+    coeff.coastThreshold = COAST_THRESHOLD;
 }
 
 template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0, elements<T> initialCondition, coefficients<T> coeff0){
@@ -51,7 +51,7 @@ template <class T> rkParameters<T>::rkParameters()
     //coeff.gamma = NULL;
     //coeff.tau = NULL;
     //coeff.coast = NULL;
-    coeff.coastThreshold = 0;
+    coeff.coastThreshold = COAST_THRESHOLD;
 }
 
 template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, T comp_Thresh){
@@ -71,9 +71,7 @@ template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, 
             return false;
         }
     }
-    if( abs(this->coeff.coastThreshold - other.coeff.coastThreshold) > comp_Thresh){
-        return false;
-    }
+
 
     //Check Starting pos/vel
     if( !this->y0.compare(other.y0,comp_Thresh) ){
