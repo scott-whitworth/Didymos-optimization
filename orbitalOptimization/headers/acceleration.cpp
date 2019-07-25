@@ -34,7 +34,8 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
     //This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
-    if(radius<=1 && offPlane<=1){
+    if(radius<=1 && offPlane<=1)
+    {
         Pin = thrusterType.P0/1;
     }
 

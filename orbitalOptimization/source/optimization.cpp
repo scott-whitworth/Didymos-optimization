@@ -41,7 +41,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 20;
+  int executions = 80;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -62,7 +62,7 @@ void optimizeStartConditions(){
     start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
     start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
 
-    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // 1.5 - 2.5 years converted to seconds
+    start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // 1.0 - 2.0 years converted to seconds
 
     start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
     start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
