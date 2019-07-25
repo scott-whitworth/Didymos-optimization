@@ -253,7 +253,7 @@ void optimizing (double *&start, double *step)
   // how often the equation checks for a convergence
   konvge = 20+std::rand()%2;
   // maximum number of iterations for convergence
-  kcount = 10000+std::rand()%100;
+  kcount = 30000+std::rand()%100;
 
     //****************
     // Move into its own function
