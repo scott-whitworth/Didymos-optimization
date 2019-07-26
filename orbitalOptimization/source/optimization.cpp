@@ -166,9 +166,9 @@ void iterativeOptimize(){
   start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
 
 
-  start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-  start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-  start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+  start[TAU_OFFSET] = mt_rand() % 201/10.0 - 15.0; // -5.0 - 5.0
+  start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 15.0;
+  start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 15.0;
 
   start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
   start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
