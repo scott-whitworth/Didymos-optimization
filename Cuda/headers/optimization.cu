@@ -8,6 +8,8 @@
 #include "nelder_mead.h" // used for nelmin()
 #include "constants.h" //used for wetMass
 #include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
+#include "earthInfo.h"
+
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
 #include <time.h> //for seeding the random number generator
@@ -20,6 +22,19 @@
 
 int main ()
 {
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //Global variable needs to be initialized
+
+    // Define variables to be passed into EarthInfo
+    double startTime = 31536000; // 1.0 year (s)
+    double endTime = 63072000; // 2.0 years (s)
+    double timeRes = 60; // position of earth is calculated for every minute
+
+    // initializes EarthInfo
+    launchCon = new EarthInfo(startTime, endTime, timeRes);
+    ////////////////////////////////////////////////////////////////////////////////////
+
     //optimizing();
     //iterativeOptimize();
     //optimizeStartConditions();
@@ -55,7 +70,7 @@ int main ()
 
     efficiencyGraph.close();
     
-
+    delete launchCon;
     return 0;
 }
 

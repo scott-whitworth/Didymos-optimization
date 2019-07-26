@@ -287,3 +287,41 @@ elements<double> earthInitial(double tripTime)
 
   return yp;
 }
+
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth)
+{
+
+
+  // setup of thrust angle calculations based off of optimized coefficients
+  // all set to zero because the earth has no acceleration due to thrusting.
+  coefficients<double> earthCoeff;
+  for (int i=0;i<earthCoeff.gammaSize;i++){
+    earthCoeff.gamma[i]=0;
+  }
+  for (int i=0;i<earthCoeff.tauSize;i++){
+    earthCoeff.tau[i]=0;
+  }
+
+  // set to zero because the earth has no acceleration due to thrusting.
+  double earthAccel = 0;
+
+  //setting initial conditions for calculation of earth on launch date with orbital elements of the earth on the asteroid impact date of 2022-10-05.
+ 
+
+  // setting intiial time parameters
+
+  double deltaT; // time step
+  //deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
+  deltaT = -3600;
+
+  // declaring the solution vector
+  elements<double> yp;
+
+  // setting Runge-Kutta tolerance
+  double absTol = RK_TOL;
+
+  // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
+ 
+  return yp;
+}

@@ -1,8 +1,8 @@
 // Collection of functions to perform crossover operations on rkParameters
 // A crossover mask is an array of elements equal to the number of elements in the rkParameters list
 // The mask defines what elements come from partent n and parent m
-// [ {elements}     {coefficients}          {other parameters} ]
-// [   0-5          6-14,15-19,20-24, 25,    26, 27                                             ]
+// [ {gamma}    {tau}       {alpha}     {beta}      {zeta}      {tripTime}      {coast} ]
+// [   0-6       7-9           10         11          12            13           14-18  ]                                         ]
 
 #include "rkParameters.h"
 #include "ga_crossover.h"
@@ -20,9 +20,9 @@ using namespace std;
 //              - Based on random index, first selection will be 1's, last selection will be 2's
 //              - ex: [1, 1, 1, 1, 2, 2]
 void crossOver_randHalf(int mask[], mt19937_64 & rng){
-    int crossIndex = rng() % (RK_SIZE-1);
-    //cout << "Random Index: " << crossIndex << endl;
-    for(int i = 0; i < RK_SIZE; i++){
+    int crossIndex = rng() % (OPTIM_VARS-1);
+    cout << "Random Index: " << crossIndex << endl;
+    for(int i = 0; i < OPTIM_VARS; i++){
         if(i > crossIndex){
             mask[i] = 2;
         } else {
@@ -37,7 +37,7 @@ void crossOver_randHalf(int mask[], mt19937_64 & rng){
 // in/out : All data overwritten, set randomly
 // input: rng - a constructed mt19937_64 random number generator
 void crossOver_wholeRandom(int mask[], mt19937_64 & rng){
-    for(int i = 0; i < RK_SIZE; i++ ){
+    for(int i = 0; i < OPTIM_VARS; i++ ){
         if(rng()%2){ //Coin flip, either 1/0
             mask[i] = 2;
         } else {
@@ -51,8 +51,8 @@ void crossOver_wholeRandom(int mask[], mt19937_64 & rng){
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
 // 2's correspond to Gamma coefficients
 void crossOver_gammaPos(int mask[]){
-    for(int i = 0; i < RK_SIZE; i++){
-        if((i >= 6) && (i <= 14 ) ){
+    for(int i = 0; i < OPTIM_VARS; i++){
+        if((i >= 0) && (i <= 6 ) ){
             mask[i] = 2;
         } else {
             mask[i] = 1;
@@ -65,8 +65,8 @@ void crossOver_gammaPos(int mask[]){
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
 // 2's correspond to tau coefficients
 void crossOver_tauPos(int mask[]){
-    for(int i = 0; i < RK_SIZE; i++){
-        if((i >= 15) && (i <= 19 ) ){
+    for(int i = 0; i < OPTIM_VARS; i++){
+        if((i >= 7) && (i <= 9 ) ){
             mask[i] = 2;
         } else {
             mask[i] = 1;
@@ -76,10 +76,10 @@ void crossOver_tauPos(int mask[]){
 }
 
 //Utility to flip the polarity of a mask
-// input:  mask is an array of size RK_SIZE, input with either 1 or 2 as a mask
+// input:  mask is an array of size OPTIM_VARS, input with either 1 or 2 as a mask
 // output: each 1 in mask will be reassigned to be a 2, each 2 will be reassigned 1
 void flipMask(int mask[]){
-    for(int i = 0; i < RK_SIZE; i++){
+    for(int i = 0; i < OPTIM_VARS; i++){
         if(mask[i] == 1){
             mask[i] = 2;
         } else {
@@ -91,16 +91,16 @@ void flipMask(int mask[]){
 
 //Copy contents of maskIn into maskOut
 void copyMask(int maskIn[], int maskOut[]){
-    for(int i = 0; i < RK_SIZE; i++){
+    for(int i = 0; i < OPTIM_VARS; i++){
         maskOut[i] = maskIn[i];
     }
 }
 
 void printMask(int mask[]){
     cout << "[";
-    for(int i = 0; i < RK_SIZE; i++){
+    for(int i = 0; i < OPTIM_VARS; i++){
         cout << mask[i];
-        if(i < RK_SIZE-1){
+        if(i < OPTIM_VARS-1){
             cout <<", ";
         }
     }
@@ -111,48 +111,32 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     rkParameters<double> newInd = p1;
 
     // itterate over set of make values
-    for(int i = 0; i < RK_SIZE; i++){
+    for(int i = 0; i < OPTIM_VARS; i++){
         if(mask[i] == 2){
-            //Check elemnents            
-            switch(i){
-                case 0: //element[0] = r
-                    newInd.y0.r = p2.y0.r;
-                    break;
-                case 1: //element[11 = theta
-                    newInd.y0.theta = p2.y0.theta;
-                    break;
-                case 2: //element[2] = z
-                    newInd.y0.z = p2.y0.z;
-                    break;
-                case 3: //element[3] = v_r
-                    newInd.y0.vr = p2.y0.vr;
-                    break;                
-                case 4: //element[4] = v_theta
-                    newInd.y0.vtheta = p2.y0.vtheta;
-                    break;                
-                case 5: //element[5] = v_z
-                    newInd.y0.vz = p2.y0.vz;
-                    break;                
-            }
             //check coeff
-            if( (i > 5) && (i <26) ){
-                if(i < 15) {//Gamma (6-14)
-                    newInd.coeff.gamma[i-6] = p2.coeff.gamma[i-6];
-                } else if(i < 20) {//Tau (15-19)
-                    newInd.coeff.tau[i-15] = p2.coeff.tau[i-15];
-                } else if(i < 25) {//Coasting (20-24)
-                    newInd.coeff.coast[i-20] = p2.coeff.coast[i-20];
-                } else if(i < 26) {//Coasting Threshold (25)
-                    //newInd.coeff.coastThreshold = p2.coeff.coastThreshold;    // coast threshold does not change                                 
-                } else {
-                    //ERROR
+            if( (i >= 0) && (i <= 9) ){
+                if(i <= 6) {//Gamma (0-6)
+                    newInd.coeff.gamma[i] = p2.coeff.gamma[i];
+                } else if(i <= 9) {//Tau (7-9)
+                    newInd.coeff.tau[i-7] = p2.coeff.tau[i-7];
                 }
             }
-            if(i == 26){ //Wetmass
-                //newInd.wetMass = p2.wetMass;  // wet mass is not changing
+            if( (i>= 14) && (i<= 18) ){
+                newInd.coeff.coast[i-14] = p2.coeff.coast[i-14];
             }
-            if(i == 27){ //Time final
-                newInd.timeFinal = p2.timeFinal;
+
+            //check other variables
+            if(i == 13){ //tripTime
+                newInd.tripTime = p2.tripTime;
+            }
+            if(i == 12){ //zeta
+                newInd.zeta = p2.zeta;
+            }
+            if(i == 11){ //beta
+                newInd.beta = p2.beta;
+            }
+            if(i == 10){ //alpha
+                newInd.alpha = p2.alpha;
             }
         }
     }
@@ -176,17 +160,17 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
 
     int mutatedGenes[3]; // index of genes to mutate
 
-    mutatedGenes[0] = rng()%RK_SIZE;
+    mutatedGenes[0] = rng()%OPTIM_VARS;
 
     if(genesToMutate > 1){
         do{
-            mutatedGenes[1] = rng()%RK_SIZE;
+            mutatedGenes[1] = rng()%OPTIM_VARS;
         } while(mutatedGenes[1] == mutatedGenes[0]); // make sure that each mutated gene is unique
     }
 
     if(genesToMutate > 2){
         do{
-            mutatedGenes[2] = rng()%RK_SIZE;
+            mutatedGenes[2] = rng()%OPTIM_VARS;
         } while(mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
 
@@ -231,7 +215,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
             //newInd.wetMass += ; wet mass is not changing
         }
         if(mutatedValue == 27){ //Time final
-            newInd.timeFinal += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
+            newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
         }
     }
 
@@ -245,13 +229,6 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
 rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2){
     rkParameters<double> newInd;
 
-    newInd.y0.r         = (p1.y0.r/2.0)      + (p2.y0.r/2.0);
-    newInd.y0.theta     = (p1.y0.theta/2.0)  + (p2.y0.theta/2.0);
-    newInd.y0.z         = (p1.y0.z/2.0)      + (p2.y0.z/2.0);
-    newInd.y0.vr        = (p1.y0.vr/2.0)     + (p2.y0.vr/2.0);
-    newInd.y0.vtheta    = (p1.y0.vtheta/2.0) + (p2.y0.vtheta/2.0);
-    newInd.y0.vz        = (p1.y0.vz/2.0)     + (p2.y0.vz/2.0);
-
     for(int i = 0; i < p1.coeff.gammaSize; i++){
         newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
     }
@@ -261,9 +238,11 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     for(int i = 0; i < p1.coeff.coastSize; i++){
         newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
     }
-    newInd.coeff.coastThreshold = (p1.coeff.coastThreshold/2.0) + (p2.coeff.coastThreshold/2.0);
-    newInd.wetMass = (p1.wetMass/2.0) + (p2.wetMass/2.0);
-    newInd.timeFinal = (p1.timeFinal/2.0) + (p2.timeFinal/2.0);
+    
+    newInd.alpha = (p1.alpha/2.0) + (p2.alpha/2.0);
+    newInd.beta = (p1.beta/2.0) + (p2.beta/2.0);
+    newInd.zeta = (p1.zeta/2.0) + (p2.zeta/2.0);
+    newInd.tripTime = (p1.tripTime/2.0) + (p2.tripTime/2.0);
 
     return newInd;    
 }
@@ -277,7 +256,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 void crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-    int mask[RK_SIZE];
+    int mask[OPTIM_VARS];
 
     int index = 0;
 
@@ -397,7 +376,7 @@ int main(){
 
     //Set Up Mask
     int test_mask[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    int test_maskOther[RK_SIZE];
+    int test_maskOther[OPTIM_VARS];
     cout << "               |  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7" << endl;
     cout << "Starting Mask  : ";
     printMask(test_mask);

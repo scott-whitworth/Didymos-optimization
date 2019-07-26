@@ -24,7 +24,7 @@ double optimize(const int numThreads, const int blockThreads){
     /*---------------------------------------------------------------------------------------*/
      // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero
-    //double timeFinal = 2.5*365.25*24*60*60; // number of years the trip takes
+    //double tripTime = 2.5*365.25*24*60*60; // number of years the trip takes
     
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
@@ -38,7 +38,7 @@ double optimize(const int numThreads, const int blockThreads){
 
 
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
-        double timeFinal = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5);
+        double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5);
         double alpha = (mt_rand() % 629) / 100.0 - 3.14;
         double beta = (mt_rand() % 629) / 100.0 - 3.14;
         double zeta = (mt_rand() % 315) / 100.0 - 1.57;
@@ -54,11 +54,11 @@ double optimize(const int numThreads, const int blockThreads){
             testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
         }
     
-        elements<double> earth = earthInitial(timeFinal);
-        elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
-            earth.vr+cos(zeta)*sin(beta)*vEscape, earth.vtheta+cos(zeta)*cos(beta)*vEscape, earth.vz+sin(zeta)*vEscape);
+        //elements<double> earth = earthInitial(tripTime);
+        //elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
+            //earth.vr+cos(zeta)*sin(beta)*vEscape, earth.vtheta+cos(zeta)*cos(beta)*vEscape, earth.vz+sin(zeta)*vEscape);
     
-        rkParameters<double> example(timeFinal, WET_MASS, spaceTest, testcoeff); 
+        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
         inputParameters[i].startParams = example;
     }
@@ -69,6 +69,8 @@ double optimize(const int numThreads, const int blockThreads){
 
     //while(!maxErrorMet){
     for(int i = 0; i <3000; i++){
+        initializePosition(inputParameters,numThreads);
+
         callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
 
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
@@ -264,30 +266,30 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         elements<double> error; // holds output of previous value from rkCalc
 
-        while(curTime < threadRKParameters.timeFinal){
+        while(curTime < threadRKParameters.tripTime){
             //deltaT = stepSize;
 
-            coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.timeFinal);
-            curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, threadRKParameters.wetMass);
+            coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime);
+            curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
             //curAccel = 0.;
 
             // calculate k values and get new value of y
-            rkCalc(curTime, threadRKParameters.timeFinal, stepSize, curPos, threadRKParameters.coeff, curAccel, error, k1, k2, k3, k4, k5, k6, k7); 
+            rkCalc(curTime, threadRKParameters.tripTime, stepSize, curPos, threadRKParameters.coeff, curAccel, error, k1, k2, k3, k4, k5, k6, k7); 
 
             curTime += stepSize; // update the current time in the simulation
             
             stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize)/2; // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.timeFinal - startTime) / 1000){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 1000;
+            if (stepSize > (threadRKParameters.tripTime - startTime) / 1000){
+                stepSize = (threadRKParameters.tripTime - startTime) / 1000;
             }
-            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 10000)){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 10000;
+            else if (stepSize < ((threadRKParameters.tripTime - startTime) / 10000)){
+                stepSize = (threadRKParameters.tripTime - startTime) / 10000;
             }
             
-            if((curTime + stepSize) > threadRKParameters.timeFinal){
-                stepSize = (threadRKParameters.timeFinal - curTime); // shorten the last step to end exactly at time final
+            if((curTime + stepSize) > threadRKParameters.tripTime){
+                stepSize = (threadRKParameters.tripTime - curTime); // shorten the last step to end exactly at time final
             }
 
             // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
@@ -340,7 +342,7 @@ void rkCalcComparison(){
     testCoeff.coastThreshold = 0.05;
 
     double curTime = 1.0;
-    double timeFinal = 2.0;
+    double tripTime = 2.0;
     double stepSize = 4500.0;
     double accel = 5.0e-16;
     elements<double> *v = new elements<double>[n];
@@ -348,7 +350,7 @@ void rkCalcComparison(){
 
 
     double *devCurTime;
-    double *devTimeFinal;
+    double *devtripTime;
     double *devStepSize;
     double *devAccel;
     int *devN;
@@ -357,7 +359,7 @@ void rkCalcComparison(){
     coefficients<double> *devTestCoeff;
 
     cudaMalloc((void**) &devCurTime, sizeof(double));
-    cudaMalloc((void**) &devTimeFinal, sizeof(double));
+    cudaMalloc((void**) &devtripTime, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAccel, sizeof(double));
     cudaMalloc((void**) &devN, sizeof(int));
@@ -367,16 +369,16 @@ void rkCalcComparison(){
 
     cudaMemcpy(devCurTime, &curTime, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devN, &n, sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(devTimeFinal, &timeFinal, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devtripTime, &tripTime, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devAccel, &accel, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devCurPos, curPos, n * sizeof(elements<double>), cudaMemcpyHostToDevice);
     cudaMemcpy(devTestCoeff, &testCoeff, sizeof(coefficients<double>), cudaMemcpyHostToDevice);
     std::cout << "memCpy on" << std::endl;
-    rkCalcTest<<<n,1>>>(devCurTime, devTimeFinal, devStepSize, devTestCoeff, devAccel, devV, devCurPos, devN);
+    rkCalcTest<<<n,1>>>(devCurTime, devtripTime, devStepSize, devTestCoeff, devAccel, devV, devCurPos, devN);
     std::cout << "kernel call" << std::endl;
     std::cout << curTime << std::endl;
-    std::cout << timeFinal << std::endl;
+    std::cout << tripTime << std::endl;
     std::cout << stepSize << std::endl;
     std::cout << accel << std::endl;
     cudaMemcpy(v, devV, n * sizeof(elements<double>), cudaMemcpyDeviceToHost);
@@ -387,7 +389,7 @@ void rkCalcComparison(){
     elements<double> *hostV = new elements<double>[n];
 
     std::cout << curTime << std::endl;
-    std::cout << timeFinal << std::endl;
+    std::cout << tripTime << std::endl;
     std::cout << stepSize << std::endl;
     std::cout << accel << std::endl;
     //std::cout << testCoeff << std::endl;
@@ -397,7 +399,7 @@ void rkCalcComparison(){
         std::cout << hostV[i] << std::endl;
         std::cout << hostCurPos[i] << std::endl;
 
-        rkCalc(curTime, timeFinal, stepSize, hostCurPos[i], testCoeff, accel, hostV[i], k1, k2, k3, k4, k5, k6, k7);
+        rkCalc(curTime, tripTime, stepSize, hostCurPos[i], testCoeff, accel, hostV[i], k1, k2, k3, k4, k5, k6, k7);
     }
 
     double errorTol = 1e-10;
@@ -415,7 +417,7 @@ void rkCalcComparison(){
     std::cout << "done checking for errors" <<std::endl;
 
     cudaFree(devCurTime);
-    cudaFree(devTimeFinal);
+    cudaFree(devtripTime);
     cudaFree(devStepSize);
     cudaFree(devAccel);
     cudaFree(devN);
@@ -429,10 +431,16 @@ void rkCalcComparison(){
     delete [] v;
 }
 
-__global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n){
+__global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n){
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if(threadId < *n){
         elements<double> k1, k2, k3, k4, k5, k6, k7;
-        rkCalc(*curTime, *timeFinal, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
+        rkCalc(*curTime, *tripTime, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
+    }
+}
+
+__host__ void initializePosition(Individual *individuals, int size){
+    for(int i=0; i<size;i++){
+        individuals[i].initialize();
     }
 }

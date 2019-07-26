@@ -116,7 +116,7 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-double trajectoryPrint( double x[], int & n, double & cost)
+double trajectoryPrint( double x[], int & n, double & cost, int j)
 {
   // defining the acceleration
     double accel;
@@ -218,7 +218,7 @@ double trajectoryPrint( double x[], int & n, double & cost)
   // Output of yp to a binary file
   std::ofstream output;
   
-  output.open ("orbitalMotion-accel.bin", std::ios::binary); 
+  output.open ("orbitalMotion-accel"+std::to_string(j)+".bin", std::ios::binary); 
 
   for(int i=0; i <= lastStep; i++)
   {

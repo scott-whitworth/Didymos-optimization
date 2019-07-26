@@ -1,11 +1,31 @@
 #include "rkParameters.h"
 
-template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0, 
-                                                 T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
+template <class T> rkParameters<T>::rkParameters(T tripTime0,T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
                                                  T *gamma0, T *tau0, T *coast0) // coefficients<T>
 {
-    timeFinal = timeFinal0;
-    wetMass = wetMass0;
+    tripTime = tripTime0;
+
+    y0.r = r0;
+    y0.theta = theta0;
+    y0.z = z0;
+    y0.vr = vr0;
+    y0.vtheta = vtheta0;
+    y0.vz = vz0;
+
+    for(int i = 0; i < coeff.gammaSize; i++){
+        coeff.gamma[i] = gamma0[i];
+    }
+    for(int i = 0; i < coeff.tauSize; i++){
+        coeff.tau[i] = tau0[i];
+    }
+    for(int i = 0; i < coeff.coastSize; i++){
+        coeff.coast[i] = coast0[i];
+    }
+}
+
+template <class T> rkParameters<T>::rkParameters(T tripTime0,  T r0, T theta0, T z0, T vr0, T vtheta0, T vz0,T *gamma0, T *tau0, T *coast0, T alpha0, T beta0, T zeta0){
+    
+    tripTime = tripTime0;
 
     y0.r = r0;
     y0.theta = theta0;
@@ -24,21 +44,36 @@ template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0,
         coeff.coast[i] = coast0[i];
     }
 
-    coeff.coastThreshold = COAST_THRESHOLD;
-}
+    alpha = alpha0;
+    beta = beta0;
+    zeta = zeta0;
+} 
 
-template <class T> rkParameters<T>::rkParameters(T timeFinal0, T wetMass0, elements<T> initialCondition, coefficients<T> coeff0){
-    timeFinal = timeFinal0;
-    wetMass = wetMass0;
+template <class T> rkParameters<T>::rkParameters(T tripTime0, elements<T> initialCondition, coefficients<T> coeff0){
+    tripTime = tripTime0;
 
     y0 = initialCondition;
     coeff = coeff0;
 }
 
+template <class T> rkParameters<T>::rkParameters(T tripTime0, T alpha0, T beta0, T zeta0, coefficients<T> coeff0){
+    tripTime = tripTime0;
+    alpha = alpha0;
+    beta = beta0;
+    zeta = zeta0;
+    coeff = coeff0;
+
+    y0.r = 0;
+    y0.theta = 0;
+    y0.z = 0;
+    y0.vr = 0;
+    y0.vtheta = 0;
+    y0.vz = 0;
+} 
+
 template <class T> rkParameters<T>::rkParameters()
 {
-    timeFinal = 0;
-    wetMass = 0;
+    tripTime = 0;
 
     y0.r = 0;
     y0.theta = 0;
@@ -47,11 +82,14 @@ template <class T> rkParameters<T>::rkParameters()
     y0.vtheta = 0;
     y0.vz = 0;
 
+    alpha = 0;
+    beta = 0;
+    zeta = 0;
+
     //causes error: "expression must be a modifiable lvalue"
     //coeff.gamma = NULL;
     //coeff.tau = NULL;
     //coeff.coast = NULL;
-    coeff.coastThreshold = COAST_THRESHOLD;
 }
 
 template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, T comp_Thresh){
@@ -79,7 +117,7 @@ template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, 
     }
 
     //Other Conditions
-    if( abs(this->timeFinal - other.timeFinal) > comp_Thresh){
+    if( abs(this->tripTime - other.tripTime) > comp_Thresh){
         return false;
     }
     if( abs(this->wetMass - other.wetMass) > comp_Thresh){
@@ -92,7 +130,7 @@ template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, 
 
 template <class T> void rkParameters<T>::parametersRK4Simple(T timeInitial, T stepSize, T absTol, elements<T> & y){
     double accel = 0;
-    rk4Simple(timeInitial, timeFinal, y0, stepSize, y, absTol, coeff, accel, wetMass);
+    rk4Simple(timeInitial, tripTime, y0, stepSize, y, absTol, coeff, accel, static_cast<double>(WET_MASS));
 }
 
 template <class T> std::ostream & operator<<(std::ostream & Str, const rkParameters<T> & e){
@@ -100,6 +138,6 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const rkParamet
     Str << std::setprecision(16); // number of decimals output into text file
     Str << "Coeff: \n" << e.coeff;
     Str << "Elements:\n\t" << e.y0;
-    Str << "Final Time: " << e.timeFinal << " WetMass: " << e.wetMass << endl;
+    Str << "Final Time: " << e.tripTime << " WetMass: " << e.wetMass << endl;
     return Str;
 }

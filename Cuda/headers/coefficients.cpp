@@ -2,6 +2,8 @@
 //Last Editor: Ben and Mateo
 //Tasks Completed: 
     //Changed the magic numbers to defined constants
+#ifndef coefficients_cpp
+#define coefficients_cpp
 
 #include "coefficients.h"
 #include <iomanip> // setprecision(int)
@@ -35,3 +37,5 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const coefficie
     Str << "Coasting Threshold: " << e.coastThreshold << endl;
     return Str;
 }
+
+#endif
