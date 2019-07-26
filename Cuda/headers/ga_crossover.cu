@@ -6,6 +6,7 @@
 
 #include "rkParameters.h"
 #include "ga_crossover.h"
+#include "gaConstants.h" // MUTATION_RATE
 #include <iostream>
 #include <random>
 #include <chrono>
@@ -143,59 +144,84 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
-/*
+// in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
+// mutate a gene by adding or subtracting a small, random value from a parameter
 rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
     rkParameters<double> newInd = p1;
 
-    for(int i = 0; i < 1; i++){
-        int mutatedValue = rng()%28; // the gene to mutate
+    int genesToMutate = 1; // number of genes to mutate
 
+    if(rng()%100 < TRIPLE_MUTATION_RATE * 100){
+        genesToMutate = 3;
+    }
+    else if(rng()%100 < DOUBLE_MUTATION_RATE * 100){
+        genesToMutate = 2;
+    }
+
+    int mutatedGenes[3]; // index of genes to mutate
+
+    mutatedGenes[0] = rng()%OPTIM_VARS;
+
+    if(genesToMutate > 1){
+        do{
+            mutatedGenes[1] = rng()%OPTIM_VARS;
+        } while(mutatedGenes[1] == mutatedGenes[0]); // make sure that each mutated gene is unique
+    }
+
+    if(genesToMutate > 2){
+        do{
+            mutatedGenes[2] = rng()%OPTIM_VARS;
+        } while(mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
+    }
+
+    for(int i = 0; i < genesToMutate; i++){
+        int mutatedValue = mutatedGenes[i]; // the gene to mutate
         //Check elements            
         switch(mutatedValue){
             case 0: //element[0] = r
-                newInd.y0.r += rng() % 201/20000000000.0 - 0.1;
+                newInd.y0.r += rng() % 201/20000000000.0 - 0.00000001;
                 break;
             case 1: //element[11 = theta
-                newInd.y0.theta +=  rng() % 201/20000000000.0 - 0.1;
+                newInd.y0.theta +=  rng() % 201/20000000000.0 - 0.00000001;
                 break;
             case 2: //element[2] = z
-                newInd.y0.z +=  rng() % 201/20000000000.0 - 0.1;
+                newInd.y0.z +=  rng() % 201/20000000000.0 - 0.00000001;
                 break;
             case 3: //element[3] = v_r
-                newInd.y0.vr +=  ;
+                newInd.y0.vr +=  rng() % 201/200000000000000.0 - 0.000000000001;
                 break;                
             case 4: //element[4] = v_theta
-                newInd.y0.vtheta +=  ;
+                newInd.y0.vtheta +=  rng() % 201/200000000000000.0 - 0.000000000001;
                 break;                
             case 5: //element[5] = v_z
-                newInd.y0.vz +=  ;
+                newInd.y0.vz +=  rng() % 201/200000000000000.0 - 0.000000000001;
                 break;                
         }
         //check coeff
-        if( (i > 5) && (i <26) ){
-            if(i < 15) {//Gamma (6-14)
-                newInd.coeff.gamma[i-6] += rng() % 201/1000.0 - 0.1;
-            } else if(i < 20) {//Tau (15-19)
-                newInd.coeff.tau[i-15] += rng() % 201/1000.0 - 0.1;
-            } else if(i < 25) {//Coasting (20-24)
-                newInd.coeff.coast[i-20] += rng() % 201/1000.0 - 0.1;
-            } else if(i < 26) {//Coasting Threshold (25)
+        if( (mutatedValue > 5) && (mutatedValue <26) ){
+            if(mutatedValue < 15) {//Gamma (6-14)
+                newInd.coeff.gamma[mutatedValue-6] += rng() % 201/1000.0 - 0.1;
+            } else if(mutatedValue < 20) {//Tau (15-19)
+                newInd.coeff.tau[mutatedValue-15] += rng() % 201/1000.0 - 0.1;
+            } else if(mutatedValue < 25) {//Coasting (20-24)
+                newInd.coeff.coast[mutatedValue-20] += rng() % 201/1000.0 - 0.1;
+            } else if(mutatedValue < 26) {//Coasting Threshold (25)
                 //newInd.coeff.coastThreshold += ;        // coasting threshold does not change                           
             } else {
                 //ERROR
             }
         }
-        if(i == 26){ //Wetmass
+        if(mutatedValue == 26){ //Wetmass
             //newInd.wetMass += ; wet mass is not changing
         }
-        if(i == 27){ //Time final
+        if(mutatedValue == 27){ //Time final
             newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
         }
     }
 
     return newInd;    
 }
-*/
+
 
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
@@ -221,19 +247,92 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
-void crossover(Individual *survivors, Individual *pool, int selectionSize, int poolSize){
+// uses the different crossover methods to get offspring from a set of survivors AND replaces the worst Individuals in the pool with the new offspring
+// the number of Indiviudals to replace may change, but that is all handled inside this function
+// INPUT: survivors: the Individuals to crossover
+//        pool: the total collection of current Individuals
+//        survivorSize: the number of Individuals in survivors 
+//        poolSize: the number of Individuals in pool
+void crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
-    
-    //get masks for every crossover
-    for(int i = 0; i < (selectionSize / 4); i++){
-        for(int j = 0; j < 4; j++){
-            crossOver_wholeRandom(mask, rng);
-            pool[poolSize - 1 - (4 * i) - j] = Individual();
-            pool[poolSize - 1 - (4 * i) - j].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-            //pool[poolSize - 1 - (4 * i) - j].startParams = mutate(pool[poolSize - 1 - (4 * i) - j].startParams, rng);
+
+    int index = 0;
+
+
+    // Generate two offspring through each crossover method, total of 8 offspring per parent pair
+
+    for(int i = 0; i < survivorSize / 2; i++){
+        crossOver_wholeRandom(mask, rng);
+        pool[poolSize - 1 - (2 * index)] = Individual();
+        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
         }
+
+        flipMask(mask); // get the opposite offspring
+        pool[poolSize - 1 - (2 * index) - 1] = Individual();
+        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+        }
+
+        index++;
+    }
+
+    for(int i = 0; i < survivorSize / 2; i++){
+        crossOver_randHalf(mask, rng);
+        pool[poolSize - 1 - (2 * index)] = Individual();
+        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+        }
+
+        flipMask(mask); // get the opposite offspring
+        pool[poolSize - 1 - (2 * index) - 1] = Individual();
+        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+        }
+
+        index++;
+    }
+
+    for(int i = 0; i < survivorSize / 2; i++){
+        crossOver_gammaPos(mask);
+        pool[poolSize - 1 - (2 * index)] = Individual();
+        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+        }
+
+        flipMask(mask); // get the opposite offspring
+        pool[poolSize - 1 - (2 * index) - 1] = Individual();
+        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+        }
+
+        index++;
+    }
+
+    for(int i = 0; i < survivorSize / 2; i++){
+        crossOver_tauPos(mask);
+        pool[poolSize - 1 - (2 * index)] = Individual();
+        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+        }
+
+        flipMask(mask); // get the opposite offspring
+        pool[poolSize - 1 - (2 * index) - 1] = Individual();
+        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+        if(rng()%100 < MUTATION_RATE * 100){
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+        }
+
+        index++;
     }
 }
 
