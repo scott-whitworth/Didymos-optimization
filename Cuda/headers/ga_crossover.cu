@@ -142,13 +142,13 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
                 } else if(i < 25) {//Coasting (20-24)
                     newInd.coeff.coast[i-20] = p2.coeff.coast[i-20];
                 } else if(i < 26) {//Coasting Threshold (25)
-                    newInd.coeff.coastThreshold = p2.coeff.coastThreshold;                                   
+                    //newInd.coeff.coastThreshold = p2.coeff.coastThreshold;    // coast threshold does not change                                 
                 } else {
                     //ERROR
                 }
             }
             if(i == 26){ //Wetmass
-                newInd.wetMass = p2.wetMass;
+                //newInd.wetMass = p2.wetMass;  // wet mass is not changing
             }
             if(i == 27){ //Time final
                 newInd.timeFinal = p2.timeFinal;
@@ -158,6 +158,60 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 
     return newInd;    
 }
+
+/*
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
+    rkParameters<double> newInd = p1;
+
+    for(int i = 0; i < 1; i++){
+        int mutatedValue = rng()%28; // the gene to mutate
+
+        //Check elements            
+        switch(mutatedValue){
+            case 0: //element[0] = r
+                newInd.y0.r += rng() % 201/20000000000.0 - 0.1;
+                break;
+            case 1: //element[11 = theta
+                newInd.y0.theta +=  rng() % 201/20000000000.0 - 0.1;
+                break;
+            case 2: //element[2] = z
+                newInd.y0.z +=  rng() % 201/20000000000.0 - 0.1;
+                break;
+            case 3: //element[3] = v_r
+                newInd.y0.vr +=  ;
+                break;                
+            case 4: //element[4] = v_theta
+                newInd.y0.vtheta +=  ;
+                break;                
+            case 5: //element[5] = v_z
+                newInd.y0.vz +=  ;
+                break;                
+        }
+        //check coeff
+        if( (i > 5) && (i <26) ){
+            if(i < 15) {//Gamma (6-14)
+                newInd.coeff.gamma[i-6] += rng() % 201/1000.0 - 0.1;
+            } else if(i < 20) {//Tau (15-19)
+                newInd.coeff.tau[i-15] += rng() % 201/1000.0 - 0.1;
+            } else if(i < 25) {//Coasting (20-24)
+                newInd.coeff.coast[i-20] += rng() % 201/1000.0 - 0.1;
+            } else if(i < 26) {//Coasting Threshold (25)
+                //newInd.coeff.coastThreshold += ;        // coasting threshold does not change                           
+            } else {
+                //ERROR
+            }
+        }
+        if(i == 26){ //Wetmass
+            //newInd.wetMass += ; wet mass is not changing
+        }
+        if(i == 27){ //Time final
+            newInd.timeFinal += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
+        }
+    }
+
+    return newInd;    
+}
+*/
 
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
@@ -199,6 +253,7 @@ void crossover(Individual *survivors, Individual *pool, int selectionSize, int p
             crossOver_wholeRandom(mask, rng);
             pool[poolSize - 1 - (4 * i) - j] = Individual();
             pool[poolSize - 1 - (4 * i) - j].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+            //pool[poolSize - 1 - (4 * i) - j].startParams = mutate(pool[poolSize - 1 - (4 * i) - j].startParams, rng);
         }
     }
 }

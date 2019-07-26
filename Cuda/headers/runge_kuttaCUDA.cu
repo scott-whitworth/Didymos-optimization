@@ -184,7 +184,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     */
 
     // compare every GPU result with the one CPU result
-    double maxError = 1e-10; // how much difference is allowable between the CPU and GPU results
+    double maxError = 1e-12; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
         if(!generation[i].finalPos.compare(rk4SimpleOutput[i],maxError)){
@@ -263,26 +263,28 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         bool coast; // to hold the result from calc_coast()
 
-        elements<double> v; // holds output of previous value from rkCalc
+        elements<double> error; // holds output of previous value from rkCalc
 
         while(curTime < threadRKParameters.timeFinal){
             //deltaT = stepSize;
 
             coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.timeFinal);
             curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, threadRKParameters.wetMass);
+            //curAccel = 0.;
 
             // calculate k values and get new value of y
-            rkCalc(curTime, threadRKParameters.timeFinal, stepSize, curPos, threadRKParameters.coeff, curAccel, v, k1, k2, k3, k4, k5, k6, k7); 
+            rkCalc(curTime, threadRKParameters.timeFinal, stepSize, curPos, threadRKParameters.coeff, curAccel, error, k1, k2, k3, k4, k5, k6, k7); 
 
             curTime += stepSize; // update the current time in the simulation
-            stepSize *= calc_scalingFactor(curPos-v,v,absTol,stepSize); // Alter the step size for the next iteration
+            
+            stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize)/2; // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.timeFinal - startTime) / 100){
-                stepSize = (threadRKParameters.timeFinal - startTime) / 100;
-            }
-            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 1000)){
+            if (stepSize > (threadRKParameters.timeFinal - startTime) / 1000){
                 stepSize = (threadRKParameters.timeFinal - startTime) / 1000;
+            }
+            else if (stepSize < ((threadRKParameters.timeFinal - startTime) / 10000)){
+                stepSize = (threadRKParameters.timeFinal - startTime) / 10000;
             }
             
             if((curTime + stepSize) > threadRKParameters.timeFinal){
