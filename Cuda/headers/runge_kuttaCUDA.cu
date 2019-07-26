@@ -39,7 +39,7 @@ double optimize(const int numThreads, const int blockThreads){
 
 
     for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
-        double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.5);
+        double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
         double alpha = (mt_rand() % 629) / 100.0 - 3.14;
         double beta = (mt_rand() % 629) / 100.0 - 3.14;
         double zeta = (mt_rand() % 315) / 100.0 - 1.57;
@@ -70,6 +70,7 @@ double optimize(const int numThreads, const int blockThreads){
 
     //while(!maxErrorMet){
     for(int i = 0; i <3000; i++){
+        
         initializePosition(inputParameters,numThreads);
 
         callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
@@ -441,7 +442,7 @@ __global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, 
 }
 
 __host__ void initializePosition(Individual *individuals, int size){
-    for(int i=0; i<size;i++){
+    for(int i=0; i<size ;i++){
         individuals[i].initialize();
     }
 }

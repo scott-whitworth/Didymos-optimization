@@ -42,13 +42,18 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     // Output: writes in y the initial position of earth at the time of spacecraft launch based on an optimized trip time
     // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements, which are not prefered in CUDA.
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const T & accel);
+T stepSize, elements<T> & y_new, const T & absTol);
 
 
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
 elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7);
+
+
+
+template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
+elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7);
 
 
 /**********************************************************************************************************************************/

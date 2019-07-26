@@ -22,12 +22,19 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
     // This one is at triptime 0 or at the startTime
     earthCon[0]=earthInitial_incremental(startTime,startTime,earth);//Obtaining conditions of the earth every hour
+    std::cout << std::endl;
+    std::cout << "calculating earth positions for the trip time range" << std::endl;
+    std::cout << "          10 20 30 40 50 60 70 80 90 100" << std::endl;
+    std::cout << "progress:[";
     for(int i=1; i<tolData; i++)
     { 
         earthCon[i]=earthInitial_incremental(calc_time(i)-timeRes,calc_time(i),earth);//Obtaining conditions of the earth
-        //std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
+        if((i % (tolData/10)) == 0){
+        std::cout << ">>>";
+        }
         earth=earthCon[i];
     }
+    std::cout << "]" << std::endl << std::endl;
 }
 
 elements<double> EarthInfo::getCondition(const double & currentTime)

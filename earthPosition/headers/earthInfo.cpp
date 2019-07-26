@@ -22,7 +22,9 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     for(int i=1; i<tolData; i++)
     { 
         earthCon[i]=earthInitial(calc_time(i)-timeRes,calc_time(i),earth);//Obtaining conditions of the earth
-        //std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
+        if(i % 100 == 0){
+        std::cout << "Number of runs: " << i << ", results: " << earthCon[i] << std::endl;
+        }
         earth=earthCon[i];
     }
 }

@@ -18,7 +18,7 @@ double trajectoryPrint (double x[], int & n, double & cost);
 // Input for earthInitial:
 // x[14]: trip time - total time from launch to impact, sets the initial earth position
 // calculates the earth's initial conditions for launch date based on impact date (oct. 5, 2022) minus the optimized trip time
-elements<double> earthInitial(double tripTime);
+//elements<double> earthInitial(double tripTime);
 
 elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth);
 

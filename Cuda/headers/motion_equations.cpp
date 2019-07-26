@@ -12,6 +12,12 @@ template <class T>  __host__ __device__ elements<T> calc_k(const T & h, const el
 	h*calcRate_vr(y,coeff,accel,curTime, timeFinal), h*calcRate_vtheta(y,coeff,accel,curTime, timeFinal),  h*calcRate_vz(y,coeff,accel,curTime, timeFinal));
 }
 
+template <class T> __host__ __device__ elements<T> calc_kEarth(const T & h, const elements<T>  & y, const T & curTime, const T & timeFinal)
+{
+	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 
+	h*calcRate_vrEarth(y,curTime, timeFinal), h*calcRate_vthetaEarth(y,curTime, timeFinal),  h*calcRate_vzEarth(y,curTime, timeFinal));
+}
+
 template <class T>  __host__ __device__ T calcRate_r(const elements<T> & y)
 {
 	return y.vr;
@@ -43,5 +49,23 @@ template <class T> __host__ __device__ T calcRate_vtheta(const elements<T> & y, 
 template <class T> __host__ __device__ T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal)
 {
 	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2)) + accel*sin(calc_tau(coeff,curTime, timeFinal));
+	
+}
+
+template <class T> __host__ __device__ T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal)
+{
+	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2))) + (pow(y.vtheta,2) / y.r);
+	
+}
+
+template <class T> __host__ __device__ T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal)
+{
+	return -y.vr*y.vtheta / y.r;
+
+}
+
+template <class T> __host__ __device__ T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal)
+{
+	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), (T)3/2));
 	
 }

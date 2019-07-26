@@ -34,7 +34,7 @@ void Individual::initialize(){
     this->startParams.y0 = elements<double>(earth.r+ESOI*cos(this->startParams.alpha),earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),earth.z,
   earth.vr+cos(this->startParams.zeta)*sin(this->startParams.beta)*vEscape, earth.vtheta+cos(this->startParams.zeta)*cos(this->startParams.beta)*vEscape,earth.vz+
   sin(this->startParams.zeta)*vEscape);
-    
+
 }
 
 #endif
