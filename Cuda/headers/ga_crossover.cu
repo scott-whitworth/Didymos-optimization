@@ -121,7 +121,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
                     newInd.coeff.tau[i-7] = p2.coeff.tau[i-7];
                 }
             }
-            if( (i>= 14) && (i<= 18) ){
+            if( (i>= 14) && (i<= 18) ){//coast (14-18)
                 newInd.coeff.coast[i-14] = p2.coeff.coast[i-14];
             }
 
@@ -176,46 +176,30 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
 
     for(int i = 0; i < genesToMutate; i++){
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
-        //Check elements            
-        switch(mutatedValue){
-            case 0: //element[0] = r
-                newInd.y0.r += rng() % 201/20000000000.0 - 0.00000001;
-                break;
-            case 1: //element[11 = theta
-                newInd.y0.theta +=  rng() % 201/20000000000.0 - 0.00000001;
-                break;
-            case 2: //element[2] = z
-                newInd.y0.z +=  rng() % 201/20000000000.0 - 0.00000001;
-                break;
-            case 3: //element[3] = v_r
-                newInd.y0.vr +=  rng() % 201/200000000000000.0 - 0.000000000001;
-                break;                
-            case 4: //element[4] = v_theta
-                newInd.y0.vtheta +=  rng() % 201/200000000000000.0 - 0.000000000001;
-                break;                
-            case 5: //element[5] = v_z
-                newInd.y0.vz +=  rng() % 201/200000000000000.0 - 0.000000000001;
-                break;                
-        }
+ 
         //check coeff
-        if( (mutatedValue > 5) && (mutatedValue <26) ){
-            if(mutatedValue < 15) {//Gamma (6-14)
-                newInd.coeff.gamma[mutatedValue-6] += rng() % 201/1000.0 - 0.1;
-            } else if(mutatedValue < 20) {//Tau (15-19)
-                newInd.coeff.tau[mutatedValue-15] += rng() % 201/1000.0 - 0.1;
-            } else if(mutatedValue < 25) {//Coasting (20-24)
-                newInd.coeff.coast[mutatedValue-20] += rng() % 201/1000.0 - 0.1;
-            } else if(mutatedValue < 26) {//Coasting Threshold (25)
-                //newInd.coeff.coastThreshold += ;        // coasting threshold does not change                           
-            } else {
-                //ERROR
+        if( (mutatedValue >= 0) && (mutatedValue <= 9) ){
+            if(mutatedValue <= 6) {//Gamma (0-6)
+                newInd.coeff.gamma[mutatedValue] += rng() % 201/1000.0 - 0.1;
+            }
+            else if(mutatedValue <= 9) {//Tau (7-9)
+                newInd.coeff.tau[mutatedValue-7] += rng() % 201/1000.0 - 0.1;
             }
         }
-        if(mutatedValue == 26){ //Wetmass
-            //newInd.wetMass += ; wet mass is not changing
+        if(mutatedValue >= 14 && mutatedValue <= 18){//coast (14-18)
+            newInd.coeff.coast[mutatedValue-14] += rng() % 201/1000.0 - 0.1;
         }
-        if(mutatedValue == 27){ //Time final
-            newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
+        if(mutatedValue == 13){ //Time final
+            newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + 0.015);
+        }
+        if(mutatedValue == 12){ //zeta
+            newInd.zeta += rng() % 315 / 10000.0 - 0.0157;
+        }
+        if(mutatedValue == 11){ //beta
+            newInd.beta += rng() % 629 / 10000.0 - 0.0314;
+        }
+        if(mutatedValue == 10){ //alpha
+            newInd.alpha += rng() % 629 / 10000.0 - 0.0314;
         }
     }
 
