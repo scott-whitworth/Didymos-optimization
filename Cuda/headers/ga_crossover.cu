@@ -151,7 +151,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
                 //newInd.wetMass = p2.wetMass;  // wet mass is not changing
             }
             if(i == 27){ //Time final
-                newInd.timeFinal = p2.timeFinal;
+                newInd.tripTime = p2.tripTime;
             }
         }
     }
@@ -205,7 +205,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
             //newInd.wetMass += ; wet mass is not changing
         }
         if(i == 27){ //Time final
-            newInd.timeFinal += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
+            newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + .015);
         }
     }
 
@@ -236,8 +236,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
         newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
     }
     newInd.coeff.coastThreshold = (p1.coeff.coastThreshold/2.0) + (p2.coeff.coastThreshold/2.0);
-    newInd.wetMass = (p1.wetMass/2.0) + (p2.wetMass/2.0);
-    newInd.timeFinal = (p1.timeFinal/2.0) + (p2.timeFinal/2.0);
+    newInd.tripTime = (p1.tripTime/2.0) + (p2.tripTime/2.0);
 
     return newInd;    
 }

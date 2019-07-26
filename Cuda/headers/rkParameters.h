@@ -13,18 +13,32 @@ template <class T> struct rkParameters {
     //////////////////
     // Constructors //
     //////////////////
+
+    // Updated constructor which sets all the components according to values taken in
+   __host__ __device__ rkParameters<T>(T tripTime0, 
+                   T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
+                   T *gamma0, T *tau0, T *coast0, T alpha0, T beta0, T zeta0); // coefficients<T>
+
+
     // Constructor which sets all the components according to values taken in
-   __host__ __device__ rkParameters<T>(T timeFinal0, T wetMass0, 
+   __host__ __device__ rkParameters<T>(T tripTime0, 
                    T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
                    T *gamma0, T *tau0, T *coast0); // coefficients<T>
 
     // Alternate Constructor
     // timeFinal0           - Total time of mission (s)
-    // wetMass              - Total mass of spacecraft at launch (kg)
     // initialCondition     - Initial position of the spacecraft at start of calculation (escape position/velocity)
     // coeff0               - Coefficients for the thrust angles and  acceleration
-    __host__ __device__ rkParameters<T>(T timeFinal0, T wetMass0,
-                  elements<T> initialCondition, coefficients<T> coeff0);          
+    __host__ __device__ rkParameters<T>(T tripTime0,
+                  elements<T> initialCondition, coefficients<T> coeff0);  
+
+    // Updated alternate Constructor
+    // timeFinal0           - Total time of mission (s)
+    // coeff0               - Coefficients for the thrust angles and  acceleration
+    // alpha,beta,zeta      - Launch angles at SOI 
+    __host__ __device__ rkParameters<T>(T tripTime0, T alpha0, T beta0, T zeta0, coefficients<T> coeff0);  
+
+
 
     // constructor which sets everything to zero
     __host__ __device__ rkParameters<T>();
@@ -32,9 +46,14 @@ template <class T> struct rkParameters {
     /////////////
     // Members //
     /////////////
+
+    // Dependent Variables:
+
     // Initial Position/Velocity elements
     // Contains r, theta, z, vr, vtheta, and vz
     elements<T> y0;
+
+    // Optimized Variables:
 
     // Initial Optimization Coefficients
     // Contains arrays for Fourier series:
@@ -45,9 +64,12 @@ template <class T> struct rkParameters {
     coefficients<T> coeff;
 
     // Final Time of simulation (s)
-    T timeFinal;
-    // Initial Wet Mass of spacecraft (kg)
-    T wetMass;
+    T tripTime;
+
+    // launch angles at SOI
+    T alpha;
+    T beta;
+    T zeta;
 
     /////////////////////
     // Utility Methods //

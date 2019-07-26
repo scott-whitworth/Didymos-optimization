@@ -18,5 +18,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
 __global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n);
 
+__host__ void initializePosition(Individual *individuals, int size);
+
 #include "runge_kuttaCUDA.cu"
 #endif
