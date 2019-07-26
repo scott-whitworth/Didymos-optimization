@@ -15,6 +15,7 @@
 #include <time.h> //for seeding the random number generator
 #include <random>
 #include <chrono>
+#include <string>
 
 
 int main ()
@@ -41,21 +42,21 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 80;
+  int executions = 4;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
-    start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
-    start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
-    start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
+    start[GAMMA_OFFSET] = mt_rand() % 201/100.0 - 1.0; // -10 - 10
+    start[GAMMA_OFFSET+1] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+2] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+3] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+4] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+5] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+6] = mt_rand() % 201/100.0 - 1.0;
 
-    start[TAU_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-    start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-    start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
+    start[TAU_OFFSET] = mt_rand() % 201/100.0 - 1.0; // -10.0 - 10.0
+    start[TAU_OFFSET+1] = mt_rand() % 201/100.0 - 1.0;
+    start[TAU_OFFSET+2] = mt_rand() % 201/100.0 - 1.0;
 
     start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
     start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
@@ -63,25 +64,25 @@ void optimizeStartConditions(){
 
     start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // 1.0 - 2.0 years converted to seconds
 
-    start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-    start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
-    start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+    start[COAST_OFFSET] = mt_rand() % 201/100.0 - 1.0; // -10.0 - 10.0
+    start[COAST_OFFSET+1] = mt_rand() % 201/100.0 - 1.0;
+    start[COAST_OFFSET+2] = mt_rand() % 201/100.0 - 1.0;
+    start[COAST_OFFSET+3] = mt_rand() % 201/100.0 - 1.0;
+    start[COAST_OFFSET+4] = mt_rand() % 201/100.0 - 1.0;
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space
-    step[GAMMA_OFFSET] = 1.0E01/2;
-    step[GAMMA_OFFSET+1] = 1.0E01/2;
-    step[GAMMA_OFFSET+2] = 1.0E01/2;
-    step[GAMMA_OFFSET+3] = 1.0E01/2;
-    step[GAMMA_OFFSET+4] = 1.0E01/2;
-    step[GAMMA_OFFSET+5] = 1.0E01/2;
-    step[GAMMA_OFFSET+6] = 1.0E01/2;
+    step[GAMMA_OFFSET] = 2.0E00;
+    step[GAMMA_OFFSET+1] = 2.0E00;
+    step[GAMMA_OFFSET+2] = 2.0E00;
+    step[GAMMA_OFFSET+3] = 2.0E00;
+    step[GAMMA_OFFSET+4] = 2.0E00;
+    step[GAMMA_OFFSET+5] = 2.0E00;
+    step[GAMMA_OFFSET+6] = 2.0E00;
 
-    step[TAU_OFFSET] = 1.0E0;
-    step[TAU_OFFSET+1] = 1.0E0;
-    step[TAU_OFFSET+2] = 1.0E0;
+    step[TAU_OFFSET] = 1.0E00;
+    step[TAU_OFFSET+1] = 1.0E00;
+    step[TAU_OFFSET+2] = 1.0E00;
 
     step[ALPHA_OFFSET] = 1.0E00;
     step[BETA_OFFSET] = 1.0E00;
@@ -89,34 +90,36 @@ void optimizeStartConditions(){
 
     step[TRIPTIME_OFFSET] = 1.0E07;
 
-    step[COAST_OFFSET] = 1.0E01;
-    step[COAST_OFFSET+1] = 1.0E01;
-    step[COAST_OFFSET+2] = 1.0E01;
-    step[COAST_OFFSET+3] = 1.0E01;
-    step[COAST_OFFSET+4] = 1.0E01;
+    step[COAST_OFFSET] = 2.0E00;
+    step[COAST_OFFSET+1] = 2.0E00;
+    step[COAST_OFFSET+2] = 2.0E00;
+    step[COAST_OFFSET+3] = 2.0E00;
+    step[COAST_OFFSET+4] = 2.0E00;
 
 
     optimizing(start, step);
-    std::cout<<"No problems in optimizing\n";
     // writes the solution based on optimized variables to a binary file
     int numSteps = 0;
     double cost; // to store the cost caluclated by trajectoryPrint()
 
-    writeTrajectoryToFile(start, cost);
-
-    output << "start values:" << std::endl;
-    for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
+    if(trajectory(start)<10^(-16))
     {
-      output << i + 1 << ": " << start[i] << ", ";
+      writeTrajectoryToFile(start, cost,i);
     }
-    output << std::endl;
-    for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
     {
-      output << i + 1<< ": " << start[i] << ", ";
+      output << "start values:" << std::endl;
+      for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
+      {
+        output << i + 1 << ": " << start[i] << ", ";
+      }
+      output << std::endl;
+      for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
+      {
+        output << i + 1<< ": " << start[i] << ", ";
+      }
+      output << std::endl << "cost value: " << cost << std::endl;
+      output << "---------------------------------------------------------------------------------" << std::endl;
     }
-    output << std::endl << "cost value: " << cost << std::endl;
-    output << "---------------------------------------------------------------------------------" << std::endl;
-
     if(cost < bestCost){
       bestCost = cost;
       // code not outputing the right start values
@@ -217,7 +220,7 @@ void iterativeOptimize(){
 
   // writes the solution based on optimized variables to a binary file
   double cost = 0;
-  writeTrajectoryToFile(start,cost);
+  writeTrajectoryToFile(start,cost,0);
 
   delete [] start;
   delete [] step;
@@ -291,20 +294,20 @@ void optimizing (double *&start, double *step)
 }
 
 
-void writeTrajectoryToFile(double *start, double & cost)
+void writeTrajectoryToFile(double *start, double & cost, int i)
 {
   int numSteps = 0;
 
-  trajectoryPrint(start, numSteps, cost);
+  trajectoryPrint(start, numSteps, cost,i);
 
   //writes final optimization values to a seperate file
   std::ofstream output;
 
-  output.open ("final-optimization.bin", std::ios::binary);
+  output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
   for(int i=0; i < OPTIM_VARS; i++)
   {
     output.write((char*)&start[i], sizeof (double));
   }
-  output.write((char*)&numSteps, sizeof (int));
+  output.write((char*)&numSteps, sizeof (numSteps));
   output.close();
 }
