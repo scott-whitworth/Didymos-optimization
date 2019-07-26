@@ -10,9 +10,9 @@ int main()
 {
     auto start = std::chrono::high_resolution_clock::now();
     // Define variables to be passed into EarthInfo
-    double startTime = 47304000; // 1.5 year (s)
-    double endTime = 78840000; // 2.5 years (s)
-    double timeRes = 20; // seconds to hours conversion
+    double startTime = 31536000; // 1.0 year (s)
+    double endTime = 63072000; // 2.0 years (s)
+    double timeRes = 60; // position of earth is calculated for every minute
 
     // initializes EarthInfo
     EarthInfo launchCon(startTime,endTime,timeRes);
