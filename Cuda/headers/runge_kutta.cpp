@@ -189,28 +189,32 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
 elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
    
+   elements<T> y_prev;
+
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
-    k1 = calc_k(stepSize, y_new,                                                                                                        coeff, accel, curTime,              timeFinal);      
-    k2 = calc_k(stepSize, y_new+k1*(1./5),                                                                                              coeff, accel, curTime+1./5*stepSize, timeFinal); 
-    k3 = calc_k(stepSize, y_new+k1*(3./40)      +k2*(9./40),                                                                            coeff, accel, curTime+3./10*stepSize,timeFinal);   
-    k4 = calc_k(stepSize, y_new+k1*(44./45)     +k2*(-56./15)     +k3*(32./9),                                                          coeff, accel, curTime+4./5*stepSize, timeFinal); 
-    k5 = calc_k(stepSize, y_new+k1*(19372./6561)+k2*(-25360./2187)+k3*(64448./6561)  +k4*(-212./729),                                   coeff, accel, curTime+8./9*stepSize, timeFinal); 
-    k6 = calc_k(stepSize, y_new+k1*(9017./3168) +k2*(-355./33)    +k3*(46732./5247)  +k4*(49./176)   +k5*(-5103./18656),                coeff, accel, curTime+stepSize,     timeFinal);  
-    k7 = calc_k(stepSize, y_new+k1*(35./384)                      +k3*(500./1113)     +k4*(125./192)  +k5*(-2187./6784)  +k6*(11./84),   coeff, accel, curTime+stepSize,     timeFinal);  
+    k1 = calc_k(stepSize, y_new,coeff, accel, curTime,timeFinal); 
+    k2 = calc_k(stepSize, y_new+k1*1./5,coeff, accel, curTime+1./5*stepSize, timeFinal); 
+    k3 = calc_k(stepSize, y_new+k1*3./40+k2*9./40,coeff, accel, curTime+3./10*stepSize,timeFinal);   
+    k4 = calc_k(stepSize, y_new+k1*44./45+k2*-56./15+k3*32./9,coeff, accel, curTime+4./5*stepSize, timeFinal); 
+    k5 = calc_k(stepSize, y_new+k1*19372./6561+k2*-25360./2187+k3*64448./6561+k4*-212./729,coeff, accel, curTime+8./9*stepSize, timeFinal); 
+    k6 = calc_k(stepSize, y_new+k1*9017./3168 +k2*-355./33+k3*46732./5247+k4*49./176+k5*-5103./18656,coeff, accel, curTime+stepSize,timeFinal);  
+    k7 = calc_k(stepSize, y_new+k1*35./384+k3*500./1113+k4*125./192+k5*-2187./6784+k6*11./84,coeff, accel, curTime+stepSize,timeFinal);  
 
     // New value
-    // u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
-    y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*(125./192) - k5*(2187./6784) + k6*(11./84);  
+    y_new = y_new + k1*35./384 + k3*500./1113 + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
+    // Dormand-Prince : no error between GPU and CPU
+    y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
+    error = y_new-y_prev;
+
+
 
     // MATLAB code : ERROR between GPU and CPU
-    //error = k1*(71./57600) + k3*(-71./16695) + k4*(71./1920) - k5*(17253./339200) + k6*(22./525) + k7*(-1./40);
-
-    // Dormand-Prince : no error between GPU and CPU
-    error = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
+    //error = k1*(71)/(57600) + k3*(-71)/(16695) + k4*(71)/(1920)
+    //- k5*(17253)/(339200) + k6*(22)/(525) + k7*(-1)/(40);
 
     // Without k7 : no error between GPU and CPU
     //error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525;    
