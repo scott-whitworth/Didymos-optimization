@@ -6,6 +6,7 @@
 #include "orbitalMotion.h"
 #include "geneticAlgorithm.h" // selectWinners()
 #include "ga_crossover.h" // crossover()
+#include "gaConstants.h" // SURVIVOR_COUNT
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
@@ -13,8 +14,6 @@
 #include <algorithm> // sort(), shuffle()
 #include <random>
 
-// genetic algorithm constraints
-#define REPLACE_RATE 40 // number of individuals to replace each generation--MUST BE DIVISIBLE BY 4
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
@@ -66,7 +65,7 @@ double optimize(const int numThreads, const int blockThreads){
 
 
 
-    Individual *survivors = new Individual[REPLACE_RATE / 2];
+    Individual *survivors = new Individual[SURVIVOR_COUNT];
 
     //while(!maxErrorMet){
     for(int i = 0; i <3000; i++){
@@ -74,7 +73,7 @@ double optimize(const int numThreads, const int blockThreads){
 
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
 
-        selectWinners(inputParameters, REPLACE_RATE, survivors);
+        selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
         std::sort(inputParameters, inputParameters + numThreads, greaterInd);
         
@@ -89,14 +88,14 @@ double optimize(const int numThreads, const int blockThreads){
             std::cout << "velDiff" << inputParameters[i].velDiff << std::endl;
         }
 
-        for(int i = 0; i < REPLACE_RATE / 2; i++){
+        for(int i = 0; i < SURVIVOR_COUNT; i++){
             std::cout << i << std::endl;
             std::cout << "posDiff" << survivors[i].posDiff << std::endl;
             std::cout << "velDiff" << survivors[i].velDiff << std::endl;
         }
         */
 
-        crossover(survivors, inputParameters, REPLACE_RATE, numThreads);
+        crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
     }
     delete [] inputParameters;
     delete [] survivors;
