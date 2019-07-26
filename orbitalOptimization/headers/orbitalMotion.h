@@ -12,7 +12,7 @@
 // Only tracks the last set of optimized variables 
 double trajectory( double x[]);
 // Writes the array of values from optimization to a binary file
-double trajectoryPrint (double x[], int & n, double & cost);
+double trajectoryPrint (double x[], int & n, double & cost, int j);
 
 
 // Input for earthInitial:

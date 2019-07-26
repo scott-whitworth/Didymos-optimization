@@ -12,5 +12,5 @@ void optimizeStartConditions();
 // Runs optimizing() iteratively using previous results as new starting point
 void iterativeOptimize();
 
-void writeTrajectoryToFile(double *start, double & cost);
+void writeTrajectoryToFile(double *start, double & cost, int i);
 #endif
