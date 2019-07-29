@@ -1,10 +1,10 @@
 #ifndef INDIVIDUAL_H
 #define INDIVIDUAL_H
 
-#include "rkParameters.h"
-#include "elements.h"
-#include "constants.h"
-#include "earthInfo.h"
+#include "../Runge_Kutta/rkParameters.h"
+#include "../Motion_Eqns/elements.h"
+#include "../constants.h"
+#include "../Earth_calculations/earthInfo.h"
 
 #define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs
 

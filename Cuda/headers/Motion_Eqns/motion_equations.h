@@ -5,9 +5,9 @@
 #include <iomanip> // setprecision(int)
 
 #include "elements.h"
-#include "coefficients.h"
-#include "calcFourier.h"
-#include "constants.h"
+#include "../Thrust_Files/coefficients.h"
+#include "../Thrust_Files/calcFourier.h"
+#include "../constants.h"
 
 //Calculates the corresponding k for the Runge-Kutta computation
 // Units for k

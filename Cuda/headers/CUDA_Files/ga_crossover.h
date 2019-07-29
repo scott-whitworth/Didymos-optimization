@@ -7,7 +7,7 @@
 // [ {elements}     {coefficients}          {other parameters} ]
 // [   0-5          6-14,15-19,20-24, 25,    26, 27                                             ]
 
-#include "rkParameters.h"
+#include "../Runge_Kutta/rkParameters.h"
 #include "individuals.h"
 
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);

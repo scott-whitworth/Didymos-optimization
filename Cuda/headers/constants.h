@@ -12,6 +12,7 @@
 #define massSun 1.98892e30// mass of the sun (kg)
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define orbitalInclination 0.0594906//orbital inclination of the asteroid (rad)
+#define _USE_MATH_DEFINES // for use of M_PI
 
 #define MAX_NUMSTEPS 1e9 // The highest precision the runge kutta method is going to use for the first step
 #define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
@@ -35,7 +36,6 @@
 
 //Official DART mission data
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
-//#define V_IMPACT 6.0e-08 //test impact velocity in AU/s
 
 // starting location in the optimization array
 #define OPTIM_VARS 19//Number of variables in the optimization

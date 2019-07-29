@@ -4,7 +4,7 @@
 // [ {gamma}    {tau}       {alpha}     {beta}      {zeta}      {tripTime}      {coast} ]
 // [   0-6       7-9           10         11          12            13           14-18  ]                                         ]
 
-#include "rkParameters.h"
+#include "../Runge_Kutta/rkParameters.h"
 #include "ga_crossover.h"
 #include "gaConstants.h" // MUTATION_RATE
 #include <iostream>

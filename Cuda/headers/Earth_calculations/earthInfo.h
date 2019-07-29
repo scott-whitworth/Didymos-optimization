@@ -1,7 +1,7 @@
 #ifndef earthInfo_h
 #define earthInfo_h
 
-#include "elements.h"
+#include "../Motion_Eqns/elements.h"
 
 class EarthInfo
 {

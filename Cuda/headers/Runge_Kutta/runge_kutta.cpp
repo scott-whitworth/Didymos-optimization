@@ -5,7 +5,7 @@
     //Added the z component to the calcAccel() function calls
 
 #include "runge_kutta.h"
-#include "acceleration.h" //used for calc_accel() and calc_coast()
+#include "../Thrust_Files/acceleration.h" //used for calc_accel() and calc_coast()
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 

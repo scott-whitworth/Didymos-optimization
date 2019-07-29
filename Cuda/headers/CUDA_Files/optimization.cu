@@ -3,11 +3,10 @@
 //Tasks Completed: 
     //Put for loop in main to call new optimize() function
 
-
-#include "optimization.h" 
-#include "constants.h" //used for wetMass
-#include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
-#include "earthInfo.h"
+#include "../constants.h" //used for wetMass
+#include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
+#include "../Earth_calculations/earthInfo.h"
+#include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
@@ -16,12 +15,8 @@
 #include <chrono>
 
 
-#include "runge_kuttaCUDA.cuh" //for testing rk4simple
-
-
 int main ()
 {
-
     //////////////////////////////////////////////////////////////////////////////////
     //Global variable needs to be initialized
 
@@ -36,9 +31,7 @@ int main ()
 
     int blockThreads = 0;
     int numThreads = 0;
-    //int blockThreadNums[] = {32, 64, 192, 256, 384, 512, 768, 1024};
     int blockThreadNums[] = {32};
-    //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
     int threadNums[] = {300};
 
     std::ofstream efficiencyGraph;

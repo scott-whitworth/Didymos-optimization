@@ -1,6 +1,6 @@
 #ifndef runge_kutta_h
 #define runge_kutta_h
-#include "motion_equations.h" // Utility functions for calc_k()
+#include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 
 
 // Three variations of fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
