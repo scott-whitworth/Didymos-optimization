@@ -52,7 +52,7 @@
 #define COAST_OFFSET 14 // x[14-16] second order fourier for coasting determination
 
 // Value at which if the coast output is below it returns acceleration as 0.
-#define COAST_THRESHOLD 0.5
+#define COAST_THRESHOLD 0.20
 
 // Spacecraft constants
 #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
