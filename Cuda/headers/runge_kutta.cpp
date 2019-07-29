@@ -112,14 +112,14 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     T massFuelSpent =0;
 
     elements<T> error;
-
+    bool coast;
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // defining deltaT for calc_accel as the stepsize
         T deltaT = stepSize;
 
         // defining coast using calc_coast()
-        bool coast = calc_coast(coeff, curTime, timeFinal);
+        coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, deltaT, coast, wetMass);
