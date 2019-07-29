@@ -20,10 +20,11 @@ T stepSize, elements<T> & y_new, const T & absTol)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     elements<T> error; 
     T curTime = timeFinal; // setting time equal to the start time
+    int count;
 
     while(curTime>timeInitial) // iterates in reverse
     {
-        
+        count++;
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, y_new, error,k1, k2, k3, k4, k5, k6, k7);
 
@@ -31,23 +32,24 @@ T stepSize, elements<T> & y_new, const T & absTol)
         curTime += stepSize;
 
         //Alter the step size (<0) for the next iteration
-        stepSize *= calc_scalingFactor(y_new,error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize)/2;
 
         //Set limits on the stepSize returned from the previous step
-        if (-stepSize>(timeFinal-timeInitial)/1000)
-            stepSize = -(timeFinal-timeInitial)/1000;//Maximum allowed (absolute) value
-        else if (-stepSize<((timeFinal-timeInitial)/100000))
-            stepSize = -(timeFinal-timeInitial)/100000;//Minimum allowed (absolute) value
+        if (-stepSize>(timeFinal-timeInitial)/100)
+            stepSize = -(timeFinal-timeInitial)/100;//Maximum allowed (absolute) value
+        else if (-stepSize<((timeFinal-timeInitial)/1000))
+            stepSize = -(timeFinal-timeInitial)/1000;//Minimum allowed (absolute) value
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
     }//end of while 
+    std::cout << "number of iterations: " << count << std::endl;
 }
 
 template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
 elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7){
     // Runge-Kutta algorithm      
-    elements<T> v;
+    elements<T> y_prev;
 
     //calc_k multiplies all values by the stepSize internally.
     k1 = calc_k(stepSize, y_new, curTime, timeFinal);        
@@ -66,9 +68,11 @@ elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> 
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
     y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
-   
-    //error = (y_new-v);
-    error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525 + k7*-1./40;
+    // Error 
+    // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
+    // Dormand-Prince : no error between GPU and CPU
+    y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
+    error = y_new-y_prev;
 }
 
 template <class T> T calc_scalingFactor(const elements<T> & previous, const elements<T> & error, const T & absTol, T & stepSize)

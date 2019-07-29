@@ -16,8 +16,8 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
   // setting intiial time parameters
 
   double deltaT; // time step
-  //deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
-  deltaT = -3600;
+  deltaT = -(tripTime-timeInitial)/60; // initial guess for time step, small is preferable
+  //deltaT = -3600;
 
   // declaring the solution vector
   elements<double> yp;
