@@ -42,7 +42,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 4;
+  int executions = 8;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -90,11 +90,11 @@ void optimizeStartConditions(){
 
     step[TRIPTIME_OFFSET] = 1.0E07;
 
-    step[COAST_OFFSET] = 2.0E00;
-    step[COAST_OFFSET+1] = 2.0E00;
-    step[COAST_OFFSET+2] = 2.0E00;
-    step[COAST_OFFSET+3] = 2.0E00;
-    step[COAST_OFFSET+4] = 2.0E00;
+    step[COAST_OFFSET] = 1.0E00;
+    step[COAST_OFFSET+1] = 1.0E00;
+    step[COAST_OFFSET+2] = 1.0E00;
+    step[COAST_OFFSET+3] = 1.0E00;
+    step[COAST_OFFSET+4] = 1.0E00;
 
 
     optimizing(start, step);
@@ -102,7 +102,7 @@ void optimizeStartConditions(){
     int numSteps = 0;
     double cost; // to store the cost caluclated by trajectoryPrint()
 
-    if(trajectory(start)<10^(-16))
+    if(trajectory(start)<pow(10,-18))
     {
       writeTrajectoryToFile(start, cost,i);
     }
@@ -297,8 +297,8 @@ void optimizing (double *&start, double *step)
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
   int numSteps = 0;
-
-  trajectoryPrint(start, numSteps, cost,i);
+  elements<double> yp;
+  trajectoryPrint(start, numSteps, cost,i,yp);
 
   //writes final optimization values to a seperate file
   std::ofstream output;

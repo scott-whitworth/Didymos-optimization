@@ -115,8 +115,8 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-double trajectoryPrint( double x[], int & n, double & cost, int j)
+// TODO: add a yFinal to trajectoryPrint to sorth through solutiosn 
+double trajectoryPrint( double x[], int & n, double & cost, int j, elements<double> & yOut)
 {
   // defining the acceleration
     double accel;
@@ -203,9 +203,9 @@ double trajectoryPrint( double x[], int & n, double & cost, int j)
  
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost_pos, cost_vel;
+  double cost_pos, vel;
   cost_pos = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-yFinal.theta,2)+pow(asteroid.z-yFinal.z,2);         
-  cost_vel = pow((sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2))-V_IMPACT)/V_IMPACT,2);
+  vel = sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2));
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
@@ -215,6 +215,7 @@ double trajectoryPrint( double x[], int & n, double & cost, int j)
 
   n = lastStep;
 
+  std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
   // Output of yp to a binary file
   std::ofstream output;
   
