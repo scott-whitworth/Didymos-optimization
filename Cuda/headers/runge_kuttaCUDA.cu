@@ -7,7 +7,7 @@
 #include "geneticAlgorithm.h" // selectWinners()
 #include "ga_crossover.h" // crossover()
 #include "gaConstants.h" // SURVIVOR_COUNT
-#include <math.h>
+#include <math.h> // isnan(), sqrt()
 #include <iostream>
 #include <fstream> // for outputing to .csv file
 #include <chrono>
@@ -64,56 +64,104 @@ double optimize(const int numThreads, const int blockThreads){
     }
 
 
-
     Individual *survivors = new Individual[SURVIVOR_COUNT];
+    int newInd = numThreads; // the whole population is new the first time through the loop
 
     //while(!maxErrorMet){
-    for(int i = 0; i <3000; i++){
+    for(int i = 0; i < 10000; i++){
+        auto start = std::chrono::high_resolution_clock::now();
+        initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
-        initializePosition(inputParameters,numThreads);
-
-        callRK(numThreads, blockThreads, inputParameters, timeInitial, stepSize, absTol, calcPerS);
-
-        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
-
-        selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
-
-        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
-        
-        std::cout << i << std::endl;
-        std::cout << "posDiff" << inputParameters[0].posDiff << std::endl;
-        std::cout << "velDiff" << inputParameters[0].velDiff << std::endl << std::endl;
-        // test sorting and shuffling
+        // testing
         /*
-        for(int i = 0; i < numThreads; i++){
-            std::cout << i << std::endl;
-            std::cout << "posDiff" << inputParameters[i].posDiff << std::endl;
-            std::cout << "velDiff" << inputParameters[i].velDiff << std::endl;
-        }
-
-        for(int i = 0; i < SURVIVOR_COUNT; i++){
-            std::cout << i << std::endl;
-            std::cout << "posDiff" << survivors[i].posDiff << std::endl;
-            std::cout << "velDiff" << survivors[i].velDiff << std::endl;
+        std::cout << "generation " << i << std::endl << std::endl;
+        for(int j = 0; j < numThreads; j++){ 
+            std::cout << inputParameters[j].startParams.y0 << std::endl;
         }
         */
+        auto RK = std::chrono::high_resolution_clock::now();
+        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
+        
+        auto NaNCheck = std::chrono::high_resolution_clock::now();
+        for(int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
+                                            // and set the final position to be way off so it gets replaced by a new Individual
+            if(isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
+             || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
+                
+                std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
-        crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
+                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
+                double alpha = (mt_rand() % 629) / 100.0 - 3.14;
+                double beta = (mt_rand() % 629) / 100.0 - 3.14;
+                double zeta = (mt_rand() % 315) / 100.0 - 1.57;
+        
+                coefficients<double> testcoeff;
+                for(int j = 0; j < testcoeff.gammaSize; j++){
+                    testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+                for(int j = 0; j < testcoeff.tauSize; j++){
+                    testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+                for(int j = 0; j < testcoeff.coastSize; j++){
+                    testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+            
+                rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+        
+                inputParameters[k].startParams = example;
+
+                inputParameters[k].posDiff = 1.0e10;
+                inputParameters[k].velDiff = 0.0;
+             }
+        }
+        auto shuffleT = std::chrono::high_resolution_clock::now();
+        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
+
+        auto competition = std::chrono::high_resolution_clock::now();
+        selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
+
+        auto sort = std::chrono::high_resolution_clock::now();
+        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
+        
+        auto display = std::chrono::high_resolution_clock::now();
+        std::cout << "generation: " << i << std::endl;
+        std::cout << "best:" << std::endl;
+        std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
+        std::cout << "velDiff: " << inputParameters[0].velDiff << std::endl;
+        std::cout << "finalPos: " <<inputParameters[0].finalPos << std::endl;
+        std::cout << "worst:" << std::endl;
+        std::cout << "posDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
+        std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
+        std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
+
+        auto crossoverT = std::chrono::high_resolution_clock::now();
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
+        auto end = std::chrono::high_resolution_clock::now();
+
+
+        // display timing metrics
+        std::chrono::duration<double> elapsedTime = RK - start;
+        std::cout << "Execution speeds (seconds):" << std::endl;
+        std::cout << "initializePosition(): " << elapsedTime.count() << std::endl;
+        elapsedTime = NaNCheck - RK;
+        std::cout << "callRK(): " << elapsedTime.count() << std::endl;
+        elapsedTime = shuffleT - NaNCheck;
+        std::cout << "NaN check: " << elapsedTime.count() << std::endl;
+        elapsedTime = competition - shuffleT;
+        std::cout << "shuffle(): " << elapsedTime.count() << std::endl;
+        elapsedTime = sort - competition;
+        std::cout << "selectWinners(): " << elapsedTime.count() << std::endl;
+        elapsedTime = display - sort;
+        std::cout << "sort(): " << elapsedTime.count() << std::endl;
+        elapsedTime = crossoverT - display;
+        std::cout << "display(): " << elapsedTime.count() << std::endl;
+        elapsedTime = end - crossoverT;
+        std::cout << "crossover(): " << elapsedTime.count() << std::endl << std::endl;
     }
     delete [] inputParameters;
     delete [] survivors;
 
     return calcPerS;
-}
-
-Individual* getNewStarts(Individual *prevGen){
-    //implement genetic algorithm
-    //Individual *newParameters = new Individual[];
-
-    
-    //delete [] prevGen;
-
-    return prevGen;
 }
 
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
@@ -137,7 +185,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaMalloc((void**) &devTimeInitial, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
-    cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
 
 
     // copy values of parameters passed to device onto device
@@ -300,7 +347,8 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             }
         }
         individuals[threadId].finalPos = curPos; // output to this thread's index
-        individuals[threadId].posDiff =  sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2));
+
+        individuals[threadId].posDiff =  sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
         individuals[threadId].velDiff =  sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
         return;
     }

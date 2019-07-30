@@ -5,8 +5,8 @@
 
 bool greaterInd(Individual first, Individual second){
     double posRatio = getPosRatio(first, second);
-    double firstSum = first.posDiff * posRatio + first.velDiff * (1.0 - posRatio);
-    double secondSum = second.posDiff * posRatio + second.velDiff * (1.0 - posRatio);
+    double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio);
+    double secondSum = second.posDiff * posRatio - second.velDiff * (1.0 - posRatio);
     if(firstSum < secondSum){
         return true;
     }

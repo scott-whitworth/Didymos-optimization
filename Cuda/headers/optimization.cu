@@ -39,7 +39,7 @@ int main ()
     //int blockThreadNums[] = {32, 64, 192, 256, 384, 512, 768, 1024};
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    int threadNums[] = {300};
+    int threadNums[] = {2000};
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");
@@ -51,8 +51,9 @@ int main ()
             blockThreads = blockThreadNums[i];
             numThreads = threadNums[j];
             std::cout << std::endl << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-            calcPerS = optimize(numThreads, blockThreads);
-            efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
+            //calcPerS = optimize(numThreads, blockThreads);
+            optimize(numThreads, blockThreads);
+            //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
         }
     }
 

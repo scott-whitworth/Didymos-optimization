@@ -8,7 +8,6 @@
 #include "ga_crossover.h"
 #include "gaConstants.h" // MUTATION_RATE
 #include <iostream>
-#include <random>
 #include <chrono>
 
 using namespace std;
@@ -21,7 +20,7 @@ using namespace std;
 //              - ex: [1, 1, 1, 1, 2, 2]
 void crossOver_randHalf(int mask[], mt19937_64 & rng){
     int crossIndex = rng() % (OPTIM_VARS-1);
-    cout << "Random Index: " << crossIndex << endl;
+    //cout << "Random Index: " << crossIndex << endl;
     for(int i = 0; i < OPTIM_VARS; i++){
         if(i > crossIndex){
             mask[i] = 2;
@@ -207,6 +206,8 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
 }
 
 
+// if using this, consider that theta is the same as theta + 2 pi
+
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
 // output: average of the two
@@ -231,13 +232,8 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
-// uses the different crossover methods to get offspring from a set of survivors AND replaces the worst Individuals in the pool with the new offspring
-// the number of Indiviudals to replace may change, but that is all handled inside this function
-// INPUT: survivors: the Individuals to crossover
-//        pool: the total collection of current Individuals
-//        survivorSize: the number of Individuals in survivors 
-//        poolSize: the number of Individuals in pool
-void crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize){
+
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
@@ -318,6 +314,8 @@ void crossover(Individual *survivors, Individual *pool, int survivorSize, int po
 
         index++;
     }
+
+    return index * 2;
 }
 
 //Unit Test for ga_crossover

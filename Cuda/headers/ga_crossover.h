@@ -9,11 +9,20 @@
 
 #include "rkParameters.h"
 #include "individuals.h"
+#include <random>
 
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);
 
-// gets a number of new Individuals equal to selectionSize by crossover of survivors
-void crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize);
+// uses the different crossover methods to get offspring from a set of survivors AND replaces the worst Individuals in the pool with the new offspring
+// the number of Indiviudals to replace may change, but that is all handled inside this function
+// INPUT: survivors: the Individuals to crossover
+//        pool: the total collection of current Individuals
+//        survivorSize: the number of Individuals in survivors 
+//        poolSize: the number of Individuals in pool
+// RETURNS: the number of new individuals put in the pool
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize);
+
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng);
 
 #include "ga_crossover.cu"
 #endif

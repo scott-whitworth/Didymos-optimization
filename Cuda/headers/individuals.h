@@ -19,16 +19,15 @@ struct Individual {
     void initialize();
 };
 
-    // utility function for greater()
+    // utility function for greaterInd()
     // returns the amount of weight placed on the posDiff rather than velDiff in comparison
     // output: 0.0 - 1.0
     //double getPosRatio(Individual first, Individual second);
     double getPosRatio(Individual first, Individual second);
 
-        // compares two individuals
+    // compares two individuals
     // other is the Individual to be compared to
-    // returns a reference to the better (more desirable output; higher fitness) Individual
-    //bool greaterInd(Individual first, Individual second);
+    // returns true if the first Individual has a higher fitness
     bool greaterInd(Individual first, Individual second);
 
 #include "individuals.cpp"
