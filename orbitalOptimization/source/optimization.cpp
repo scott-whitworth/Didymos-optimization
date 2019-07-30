@@ -42,7 +42,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 40;
+  int executions = 300;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -297,9 +297,10 @@ void optimizing (double *&start, double *step)
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
   int numSteps = 0;
+  double num = 0;
   elements<double> yp;
   trajectoryPrint(start, numSteps, cost,i,yp);
-
+  num = numSteps;
   //writes final optimization values to a seperate file
   std::ofstream output;
 
@@ -308,6 +309,6 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   {
     output.write((char*)&start[i], sizeof (double));
   }
-  output.write((char*)&numSteps, sizeof (numSteps));
+  output.write((char*)&num, sizeof (double));
   output.close();
 }
