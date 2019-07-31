@@ -189,13 +189,15 @@ double trajectoryPrint( double x[], int & n, double & cost, int j, elements<doub
   // Initialize memory for acceleration array
   double *accel_output;
   accel_output = new double[numSteps];
+  double *fuelSpent;
+  fuelSpent = new double[numSteps];
 
   // used to get yFinal
   int lastStep = 0;
 
   std::cout<<"Everything is fine \n";
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, wetMass);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,fuelSpent, wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
   elements<double> yFinal;
@@ -229,6 +231,7 @@ double trajectoryPrint( double x[], int & n, double & cost, int j, elements<doub
     output.write((char*)&gamma[i], sizeof (double));
     output.write((char*)&tau[i], sizeof (double));
     output.write((char*)&accel_output[i], sizeof (double));
+    output.write((char*)&fuelSpent[i], sizeof (double));
   }
   output.close();
 

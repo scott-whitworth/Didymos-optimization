@@ -9,7 +9,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass)
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass)
 {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
@@ -35,7 +35,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
     tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
     // array of acceleration for binary output
     accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
-
+    fuelSpent[0]=massFuelSpent;
     elements<T> u, error;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
@@ -50,7 +50,8 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new[n].r,y_new[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
-        
+        // Record the updated massFuelSpent to the output array
+        fuelSpent[n]=massFuelSpent;
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
 
