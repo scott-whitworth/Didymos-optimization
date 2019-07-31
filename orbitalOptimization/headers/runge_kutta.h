@@ -30,7 +30,7 @@
     //      accel_output: an array which contains all accel values for a given run
     // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass);
+const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass);
 
 // 2.
     // Output: writes in y the final position  of the spacecraft

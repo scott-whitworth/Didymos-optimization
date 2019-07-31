@@ -13,7 +13,7 @@ template <class T> T calc_Series(const T series[], const int series_size, const 
 
     // f(x) = a_0 + sum{a_n*cos(n*t)+b_n*sin(n*t)}
     for(int i=1;i<=(series_size-1)/2;i++){
-        coeff+=series[2*i-1]*cos(i*curTime/timeFinal)+series[2*i]*sin(i*curTime/timeFinal);
+        coeff+=series[2*i-1]*cos(2*M_PI*i*curTime/timeFinal)+series[2*i]*sin(2*M_PI*i*curTime/timeFinal);
     }
     return coeff;
 }

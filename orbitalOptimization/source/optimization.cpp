@@ -42,7 +42,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 4;
+  int executions = 40;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -50,7 +50,7 @@ void optimizeStartConditions(){
     start[GAMMA_OFFSET+1] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+2] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+3] = mt_rand() % 201/100.0 - 1.0;
-    start[GAMMA_OFFSET+4] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+4] = mt_rand() % 201/100.0 - 1.0; 
     start[GAMMA_OFFSET+5] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+6] = mt_rand() % 201/100.0 - 1.0;
 
@@ -90,19 +90,19 @@ void optimizeStartConditions(){
 
     step[TRIPTIME_OFFSET] = 1.0E07;
 
-    step[COAST_OFFSET] = 2.0E00;
-    step[COAST_OFFSET+1] = 2.0E00;
-    step[COAST_OFFSET+2] = 2.0E00;
-    step[COAST_OFFSET+3] = 2.0E00;
-    step[COAST_OFFSET+4] = 2.0E00;
+    step[COAST_OFFSET] = 1.0E00;
+    step[COAST_OFFSET+1] = 1.0E00;
+    step[COAST_OFFSET+2] = 1.0E00;
+    step[COAST_OFFSET+3] = 1.0E00;
+    step[COAST_OFFSET+4] = 1.0E00;
 
 
     optimizing(start, step);
     // writes the solution based on optimized variables to a binary file
     int numSteps = 0;
-    double cost; // to store the cost caluclated by trajectoryPrint()
+    double cost = trajectory(start); // to store the cost caluclated by trajectoryPrint()
 
-    if(trajectory(start)<10^(-16))
+    if(trajectory(start)<pow(10,-18))
     {
       writeTrajectoryToFile(start, cost,i);
     }
@@ -297,9 +297,10 @@ void optimizing (double *&start, double *step)
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
   int numSteps = 0;
-
-  trajectoryPrint(start, numSteps, cost,i);
-
+  double num = 0;
+  elements<double> yp;
+  trajectoryPrint(start, numSteps, cost,i,yp);
+  num = numSteps;
   //writes final optimization values to a seperate file
   std::ofstream output;
 
@@ -308,6 +309,6 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   {
     output.write((char*)&start[i], sizeof (double));
   }
-  output.write((char*)&numSteps, sizeof (numSteps));
+  output.write((char*)&num, sizeof (double));
   output.close();
 }

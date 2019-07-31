@@ -1,8 +1,8 @@
 #ifndef runge_kuttaCUDA_cuh
 #define runge_kuttaCUDA_cuh
-#include "motion_equations.h" // Utility functions for calc_k()
+#include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 #include "rkParameters.h" // rkParameters struct
-#include "individuals.h"
+#include "../CUDA_Files/individuals.h"
 
 double optimize(const int numThreads, const int blockThreads);
 

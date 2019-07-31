@@ -2,8 +2,8 @@
 #define rkParameters_h
 
 //structs
-#include "coefficients.h"
-#include "elements.h"
+#include "../Thrust_Files/coefficients.h"
+#include "../Motion_Eqns/elements.h"
 
 #include "runge_kutta.h"//used for rk4Simple()
 

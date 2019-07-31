@@ -5,7 +5,7 @@
     //Added the z component to the calcAccel() function calls
 
 #include "runge_kutta.h"
-#include "acceleration.h" //used for calc_accel() and calc_coast()
+#include "../Thrust_Files/acceleration.h" //used for calc_accel() and calc_coast()
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 
@@ -113,11 +113,11 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     T massFuelSpent =0;
 
     elements<T> error;
-
+    bool coast;
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // defining coast using calc_coast()
-        bool coast = calc_coast(coeff, curTime, timeFinal);
+        coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, stepSize, coast, wetMass);

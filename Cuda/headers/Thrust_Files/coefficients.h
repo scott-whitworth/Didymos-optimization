@@ -1,7 +1,7 @@
 #ifndef coefficients_h
 #define coefficients_h
 
-#include "constants.h"
+#include "../constants.h"
 #include <iostream>
 
 //Utility to calculate the coefficients vector
