@@ -67,8 +67,13 @@ double optimize(const int numThreads, const int blockThreads){
     Individual *survivors = new Individual[SURVIVOR_COUNT];
     int newInd = numThreads; // the whole population is new the first time through the loop
 
+    // printing individual pos and vel difference data to a csv
+    std::ofstream individualDifference;
+    individualDifference.open("individualDifference.csv");
+    individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
+
     //while(!maxErrorMet){
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < generationsNum; i++){
         auto start = std::chrono::high_resolution_clock::now();
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
@@ -134,6 +139,22 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
         std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
 
+
+        // For csv file "individualDifference.csv"
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if(i % 50 == 0)
+        {   
+            for(int j = 0; j < numThreads; j++)
+            {
+                individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << "," << inputParameters[j].finalPos.r << "," <<
+                 inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << "," << inputParameters[j].finalPos.vr << "," << 
+                 inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
+            }
+            individualDifference << "\n";
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
         auto crossoverT = std::chrono::high_resolution_clock::now();
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
         auto end = std::chrono::high_resolution_clock::now();
@@ -160,6 +181,9 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "crossover(): " << elapsedTime.count() << std::endl << std::endl;
         
     }
+
+    individualDifference.close();
+
     delete [] inputParameters;
     delete [] survivors;
 
@@ -225,7 +249,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 
-    //auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
+    auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
     // CPU version of rk4Simple()
     // only calculate once since all input parameters are currently the same
     //elements<double> rk4SimpleOutput;

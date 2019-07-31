@@ -59,4 +59,7 @@
 #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
 #define WET_MASS 3000 // mass of the spacecraft including fuel (kg)
 
+// Number of generations run in the GPU 
+#define generationsNum 17500
+
 #endif
