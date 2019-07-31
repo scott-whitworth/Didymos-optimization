@@ -6,6 +6,7 @@
 // The mask defines what elements come from partent n and parent m
 // [ {elements}     {coefficients}          {other parameters} ]
 // [   0-5          6-14,15-19,20-24, 25,    26, 27                                             ]
+#include <random>
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "individuals.h"
@@ -13,7 +14,7 @@
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);
 
 // gets a number of new Individuals equal to selectionSize by crossover of survivors
-void crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize);
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize);
 
 #include "ga_crossover.cu"
 #endif
