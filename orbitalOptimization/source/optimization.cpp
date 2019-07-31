@@ -42,7 +42,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 8;
+  int executions = 40;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -50,7 +50,7 @@ void optimizeStartConditions(){
     start[GAMMA_OFFSET+1] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+2] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+3] = mt_rand() % 201/100.0 - 1.0;
-    start[GAMMA_OFFSET+4] = mt_rand() % 201/100.0 - 1.0;
+    start[GAMMA_OFFSET+4] = mt_rand() % 201/100.0 - 1.0; 
     start[GAMMA_OFFSET+5] = mt_rand() % 201/100.0 - 1.0;
     start[GAMMA_OFFSET+6] = mt_rand() % 201/100.0 - 1.0;
 
@@ -100,7 +100,7 @@ void optimizeStartConditions(){
     optimizing(start, step);
     // writes the solution based on optimized variables to a binary file
     int numSteps = 0;
-    double cost; // to store the cost caluclated by trajectoryPrint()
+    double cost = trajectory(start); // to store the cost caluclated by trajectoryPrint()
 
     if(trajectory(start)<pow(10,-18))
     {
