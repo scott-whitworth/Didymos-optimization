@@ -13,4 +13,7 @@ void optimizeStartConditions();
 void iterativeOptimize();
 
 void writeTrajectoryToFile(double *start, double & cost, int i);
+
+void setStep(double step[]);
+
 #endif

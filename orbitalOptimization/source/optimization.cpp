@@ -34,15 +34,12 @@ void optimizeStartConditions(){
   double *start = new double[OPTIM_VARS];
   double *step = new double[OPTIM_VARS];
 
-  double bestCost = 1.0E9;
-  //double *bestStart = new double[OPTIM_VARS];
-
   std::mt19937 mt_rand(time(0)); //seed the random number generator
 
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 40;
+  int executions = 2;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -72,78 +69,35 @@ void optimizeStartConditions(){
 
     // Initial change in variable size based on the variable start value
     // Delimits the search space
-    step[GAMMA_OFFSET] = 2.0E00;
-    step[GAMMA_OFFSET+1] = 2.0E00;
-    step[GAMMA_OFFSET+2] = 2.0E00;
-    step[GAMMA_OFFSET+3] = 2.0E00;
-    step[GAMMA_OFFSET+4] = 2.0E00;
-    step[GAMMA_OFFSET+5] = 2.0E00;
-    step[GAMMA_OFFSET+6] = 2.0E00;
 
-    step[TAU_OFFSET] = 1.0E00;
-    step[TAU_OFFSET+1] = 1.0E00;
-    step[TAU_OFFSET+2] = 1.0E00;
-
-    step[ALPHA_OFFSET] = 1.0E00;
-    step[BETA_OFFSET] = 1.0E00;
-    step[ZETA_OFFSET] = 1.0E00;
-
-    step[TRIPTIME_OFFSET] = 1.0E07;
-
-    step[COAST_OFFSET] = 1.0E00;
-    step[COAST_OFFSET+1] = 1.0E00;
-    step[COAST_OFFSET+2] = 1.0E00;
-    step[COAST_OFFSET+3] = 1.0E00;
-    step[COAST_OFFSET+4] = 1.0E00;
-
+    setStep(step);
 
     optimizing(start, step);
     // writes the solution based on optimized variables to a binary file
-    int numSteps = 0;
     double cost = trajectory(start); // to store the cost caluclated by trajectoryPrint()
 
     if(trajectory(start)<pow(10,-18))
     {
       writeTrajectoryToFile(start, cost,i);
     }
+    
+    output << "start values:" << std::endl;
+    for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
     {
-      output << "start values:" << std::endl;
-      for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
-      {
-        output << i + 1 << ": " << start[i] << ", ";
-      }
-      output << std::endl;
-      for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
-      {
-        output << i + 1<< ": " << start[i] << ", ";
-      }
-      output << std::endl << "cost value: " << cost << std::endl;
-      output << "---------------------------------------------------------------------------------" << std::endl;
+      output << i + 1 << ": " << start[i] << ", ";
     }
-    if(cost < bestCost){
-      bestCost = cost;
-      // code not outputing the right start values
-      //bestStart = start;
+    output << std::endl;
+    for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
+    {
+      output << i + 1<< ": " << start[i] << ", ";
     }
-
+    output << std::endl << "cost value: " << cost << std::endl;
+    output << "---------------------------------------------------------------------------------" << std::endl;
     std::cout << "run " << i + 1 << " complete" << std::endl;
   }
   output << "---------------------------------------------------------------------------------" << std::endl;
   output << "---------------------------------------------------------------------------------" << std::endl;
-  output << "BEST RESULTS:" << std::endl;
-  /*
-  output << "start values:" << std::endl;
-  for(int i = 0; i < OPTIM_VARS / 2 + 1; i++)
-  {
-    output << i + 1 << ": " << bestStart[i] << ", ";
-  }
-  output << std::endl;
-  for(int i = OPTIM_VARS / 2 + 1; i < OPTIM_VARS; i++)
-  {
-    output << i + 1<< ": " << bestStart[i] << ", ";
-  }
-  */
-  output << std::endl << "cost value: " << bestCost << std::endl;
+
   output.close();
 
   delete [] start;
@@ -187,29 +141,8 @@ void iterativeOptimize(){
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
-  step[GAMMA_OFFSET] = 1.0E01/2;
-  step[GAMMA_OFFSET+1] = 1.0E01/2;
-  step[GAMMA_OFFSET+2] = 1.0E01/2;
-  step[GAMMA_OFFSET+3] = 1.0E01/2;
-  step[GAMMA_OFFSET+4] = 1.0E01/2;
-  step[GAMMA_OFFSET+5] = 1.0E01/2;
-  step[GAMMA_OFFSET+6] = 1.0E01/2;
 
-  step[TAU_OFFSET] = 1.0E0;
-  step[TAU_OFFSET+1] = 1.0E0;
-  step[TAU_OFFSET+2] = 1.0E0;
-
-  step[ALPHA_OFFSET] = 1.0E00;
-  step[BETA_OFFSET] = 1.0E00;
-  step[ZETA_OFFSET] = 1.0E00;
-
-  step[TRIPTIME_OFFSET] = 1.0E07;
-
-  step[COAST_OFFSET] = 1.0E01;
-  step[COAST_OFFSET+1] = 1.0E01;
-  step[COAST_OFFSET+2] = 1.0E01;
-  step[COAST_OFFSET+3] = 1.0E01;
-  step[COAST_OFFSET+4] = 1.0E01;
+  setStep(step);
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
   int executions = 10;
@@ -296,11 +229,9 @@ void optimizing (double *&start, double *step)
 
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
-  int numSteps = 0;
-  double num = 0;
+  double numStep = 0;
   elements<double> yp;
-  trajectoryPrint(start, numSteps, cost,i,yp);
-  num = numSteps;
+  trajectoryPrint(start, numStep, cost,i,yp);
   //writes final optimization values to a seperate file
   std::ofstream output;
 
@@ -309,6 +240,33 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   {
     output.write((char*)&start[i], sizeof (double));
   }
-  output.write((char*)&num, sizeof (double));
+  output.write((char*)&numStep, sizeof (double));
   output.close();
+}
+
+void setStep(double step[])
+{
+  step[GAMMA_OFFSET] = 2.0E00;
+  step[GAMMA_OFFSET+1] = 2.0E00;
+  step[GAMMA_OFFSET+2] = 2.0E00;
+  step[GAMMA_OFFSET+3] = 2.0E00;
+  step[GAMMA_OFFSET+4] = 2.0E00;
+  step[GAMMA_OFFSET+5] = 2.0E00;
+  step[GAMMA_OFFSET+6] = 2.0E00;
+
+  step[TAU_OFFSET] = 1.0E00;
+  step[TAU_OFFSET+1] = 1.0E00;
+  step[TAU_OFFSET+2] = 1.0E00;
+
+  step[ALPHA_OFFSET] = 1.0E00;
+  step[BETA_OFFSET] = 1.0E00;
+  step[ZETA_OFFSET] = 1.0E00;
+
+  step[TRIPTIME_OFFSET] = 1.0E07;
+
+  step[COAST_OFFSET] = 1.0E00;
+  step[COAST_OFFSET+1] = 1.0E00;
+  step[COAST_OFFSET+2] = 1.0E00;
+  step[COAST_OFFSET+3] = 1.0E00;
+  step[COAST_OFFSET+4] = 1.0E00;
 }
