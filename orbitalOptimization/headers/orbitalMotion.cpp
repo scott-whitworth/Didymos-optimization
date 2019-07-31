@@ -62,21 +62,8 @@ double trajectory( double x[])
   // Setup of thrust angle calculations based off of optimized coefficients
   // In-plane angle
   coefficients<double> coeff;
-  for (int i=0;i<coeff.gammaSize;i++){
-    coeff.gamma[i]=x[i+GAMMA_OFFSET];
-  }
-  // Out-of-plane angle
-  for (int i=0;i<coeff.tauSize;i++){
-    coeff.tau[i]=x[i+TAU_OFFSET];
-  }
-
-  // Setup of coast determination calculations based off of optimized coefficients
-  for (int i=0;i<coeff.coastSize;i++){
-    coeff.coast[i]=x[i+COAST_OFFSET];
-
-  }
-  // Assigning coast threshold
-  coeff.coastThreshold = COAST_THRESHOLD;
+  initCoefficient(x,coeff);
+  // Assigning coast threshold (now done in coefficients because is a constant)
  
   // Sssigning wetMass
   double wetMass = WET_MASS;
@@ -116,11 +103,8 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TODO: add a yFinal to trajectoryPrint to sorth through solutiosn 
-double trajectoryPrint( double x[], int & n, double & cost, int j, elements<double> & yOut)
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut)
 {
-  // defining the acceleration
-    double accel;
-
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
@@ -143,65 +127,36 @@ double trajectoryPrint( double x[], int & n, double & cost, int j, elements<doub
   deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
-  // in-plane angle
   coefficients<double> coeff;
-  for (int i=0;i<coeff.gammaSize;i++){
-    coeff.gamma[i]=x[i+GAMMA_OFFSET];
-  }
-  // out-of-plane angle
-  for (int i=0;i<coeff.tauSize;i++){
-    coeff.tau[i]=x[i+TAU_OFFSET];
-  }
+  initCoefficient(x,coeff);
+  // Assigning coast threshold (now done in coefficients because is a constant)
 
-  // setup of coast determination calculations based off of optimized coefficients
-  for (int i=0;i<coeff.coastSize;i++){
-    coeff.coast[i]=x[i+COAST_OFFSET];
-  }
-  // assigning coast threshold
-   coeff.coastThreshold = COAST_THRESHOLD;
- 
-  // assigning wetMass
+  // Assigning wetMass
   double wetMass = WET_MASS;
-  // setting a resonable range for wetMass
-  if(wetMass<DRY_MASS|| wetMass>3000)
-  {
-      return 100;
-  }
-
   // setting Runge-Kutta tolerance
   double absTol = RK_TOL;
-
   //set optmization minimum
   double Fmin = F_MIN;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
   yp = new elements<double>[numSteps];
-  // Initialize memory for time array
-  double *times;
-  times = new double[numSteps];
-  // Initialize memory for gamma array
-  double *gamma;
-  gamma = new double[numSteps];
-  // Initialize memory for tau array
-  double *tau;
-  tau = new double[numSteps];
-  // Initialize memory for acceleration array
-  double *accel_output;
-  accel_output = new double[numSteps];
-  double *fuelSpent;
-  fuelSpent = new double[numSteps];
+  
+  double *times, *gamma, *tau, *accel_output, *fuelSpent;
+  times = new double[numSteps]; // Initialize memory for time array
+  gamma = new double[numSteps]; // Initialize memory for gamma array
+  tau = new double[numSteps]; // Initialize memory for tau array
+  accel_output = new double[numSteps]; // Initialize memory for acceleration array
+  fuelSpent = new double[numSteps];  // Initialize memory for fuelSpent array
 
-  // used to get yFinal
-  int lastStep = 0;
+  double accel; // Initialize memory for  acceleration
 
-  std::cout<<"Everything is fine \n";
   // used to track the cost function throughout a run via output and outputs to a binary
   rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,fuelSpent, wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
   elements<double> yFinal;
-  yFinal = yp[lastStep];
+  yFinal = yp[(int)lastStep];
  
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
@@ -214,8 +169,6 @@ double trajectoryPrint( double x[], int & n, double & cost, int j, elements<doub
   // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
    if (cost < Fmin)
     cost = 0;
-
-  n = lastStep;
 
   std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
   // Output of yp to a binary file

@@ -25,8 +25,6 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
     T Pin;
     T Pthrust;
     T thrust;
-    T m_spaceCraft;
-    T accel;
 
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
     Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); 
@@ -51,12 +49,10 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
     massExpelled += thrusterType.m_Dot*deltaT;
 
     // Calculates the current mass of the spacecraft given the amount of fuel used subtracted from the wetMass(defined in constants.h).
-    m_spaceCraft = wetMass - massExpelled;
+    // m_spaceCraft  wetMass - massExpelled;
     
     // Acceleration of the spacecraft due to thrusting calculated by thrust divided by the mass of the spacecraft.
     // AU converts the acceleration from m/s^2 to au/s^2.
-    accel = thrust/(AU*m_spaceCraft);
-
-return accel;
+     return thrust/(AU*(wetMass - massExpelled));
 }
 

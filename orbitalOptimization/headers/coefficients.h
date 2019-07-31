@@ -4,7 +4,8 @@
 #include "constants.h"
 // Utility to calculate the coefficients vector
 // Coefficients struct holds gamma and tau values
-template <class T> struct coefficients {
+template <class T> struct coefficients 
+{
     
     // Third order fourier series
     // Setting the size of gamma array (in-plane coefficients angle)
@@ -25,7 +26,10 @@ template <class T> struct coefficients {
     T coastThreshold = COAST_THRESHOLD;
 
     // Overload the stream output for elements used for writing to a file
-    template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e); 
+    template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e);
+
+    // Loads the coefficients struct
+    void initCoefficient(double x[],  coefficients<T> &coeff);
 };
 
 #include "coefficients.cpp"
