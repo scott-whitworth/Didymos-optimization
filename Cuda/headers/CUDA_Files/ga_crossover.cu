@@ -150,10 +150,12 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
 
     int genesToMutate = 1; // number of genes to mutate
 
-    if(rng()%100 < TRIPLE_MUTATION_RATE * 100){
+    int mutateChance = rng()%100;
+
+    if(mutateChance< TRIPLE_MUTATION_RATE * 100){
         genesToMutate = 3;
     }
-    else if(rng()%100 < DOUBLE_MUTATION_RATE * 100){
+    else if(mutateChance < DOUBLE_MUTATION_RATE * 100){
         genesToMutate = 2;
     }
 

@@ -69,7 +69,7 @@ double optimize(const int numThreads, const int blockThreads){
 
     //while(!maxErrorMet){
     for(int i = 0; i < 10000; i++){
-        auto start = std::chrono::high_resolution_clock::now();
+        //auto start = std::chrono::high_resolution_clock::now();
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
         // testing
@@ -79,10 +79,10 @@ double optimize(const int numThreads, const int blockThreads){
             std::cout << inputParameters[j].startParams.y0 << std::endl;
         }
         */
-        auto RK = std::chrono::high_resolution_clock::now();
+        //auto RK = std::chrono::high_resolution_clock::now();
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
         
-        auto NaNCheck = std::chrono::high_resolution_clock::now();
+        //auto NaNCheck = std::chrono::high_resolution_clock::now();
         for(int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
                                             // and set the final position to be way off so it gets replaced by a new Individual
             if(isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
@@ -114,16 +114,16 @@ double optimize(const int numThreads, const int blockThreads){
                 inputParameters[k].velDiff = 0.0;
              }
         }
-        auto shuffleT = std::chrono::high_resolution_clock::now();
+        //auto shuffleT = std::chrono::high_resolution_clock::now();
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
 
-        auto competition = std::chrono::high_resolution_clock::now();
+        //auto competition = std::chrono::high_resolution_clock::now();
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
-        auto sort = std::chrono::high_resolution_clock::now();
+        //auto sort = std::chrono::high_resolution_clock::now();
         std::sort(inputParameters, inputParameters + numThreads, greaterInd);
         
-        auto display = std::chrono::high_resolution_clock::now();
+        //auto display = std::chrono::high_resolution_clock::now();
         std::cout << "generation: " << i << std::endl;
         std::cout << "best:" << std::endl;
         std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
@@ -134,12 +134,13 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
         std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
 
-        auto crossoverT = std::chrono::high_resolution_clock::now();
+        //auto crossoverT = std::chrono::high_resolution_clock::now();
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
-        auto end = std::chrono::high_resolution_clock::now();
+        //auto end = std::chrono::high_resolution_clock::now();
 
 
         // display timing metrics
+        /*
         std::chrono::duration<double> elapsedTime = RK - start;
         std::cout << "Execution speeds (seconds):" << std::endl;
         std::cout << "initializePosition(): " << elapsedTime.count() << std::endl;
@@ -157,6 +158,7 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "display(): " << elapsedTime.count() << std::endl;
         elapsedTime = end - crossoverT;
         std::cout << "crossover(): " << elapsedTime.count() << std::endl << std::endl;
+        */
     }
     delete [] inputParameters;
     delete [] survivors;
