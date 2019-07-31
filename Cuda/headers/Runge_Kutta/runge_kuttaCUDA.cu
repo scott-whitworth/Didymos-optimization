@@ -68,7 +68,7 @@ double optimize(const int numThreads, const int blockThreads){
     int newInd = numThreads; // the whole population is new the first time through the loop
 
     //while(!maxErrorMet){
-    for(int i = 0; i < 3000; i++){
+    for(int i = 0; i < 3; i++){
         auto start = std::chrono::high_resolution_clock::now();
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
@@ -225,7 +225,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 
-    auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
+    //auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
     // CPU version of rk4Simple()
     // only calculate once since all input parameters are currently the same
     //elements<double> rk4SimpleOutput;
@@ -274,6 +274,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     }
      */
 
+    
     auto resultCheck = std::chrono::high_resolution_clock::now();
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
     
@@ -305,31 +306,31 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
     std::chrono::duration<double> elapsedTime = indiv - start2;
     std::cout << "Execution speeds (seconds):" << std::endl;
-    std::cout << "individuals: " << elapsedTime.count() << std::endl;
+    std::cout << "start: " << elapsedTime.count() << std::endl;
 
     elapsedTime = allocating - indiv;
-    std::cout << "allocating variables: " << elapsedTime.count() << std::endl;
+    std::cout << "individuals: " << elapsedTime.count() << std::endl;
 
     elapsedTime = copyParam - allocating;
-    std::cout << "copying parameters: " << elapsedTime.count() << std::endl;
+    std::cout << "allocating: " << elapsedTime.count() << std::endl;
 
     elapsedTime = rkSIM - copyParam;
-    std::cout << "cuda rksimple(): " << elapsedTime.count() << std::endl;
+    std::cout << "Copy parameters: " << elapsedTime.count() << std::endl;
 
     elapsedTime = copyRes - rkSIM;
-    std::cout << "copying results: " << elapsedTime.count() << std::endl;
+    std::cout << "RK simple: " << elapsedTime.count() << std::endl;
 
     elapsedTime = freeMem - copyRes;
-    std::cout << "freeing memory: " << elapsedTime.count() << std::endl;
+    std::cout << "copy results: " << elapsedTime.count() << std::endl;
 
     elapsedTime = rkSIM_CPU - freeMem;
-    std::cout << "CPU rksimple(): " << elapsedTime.count() << std::endl;
+    std::cout << "Freeing memory: " << elapsedTime.count() << std::endl;
 
     elapsedTime = resultCheck - rkSIM_CPU;
-    std::cout << "resultCheck: " << elapsedTime.count() << std::endl;
+    std::cout << "RK simple CPU: " << elapsedTime.count() << std::endl;
 
     elapsedTime = end - resultCheck;
-    std::cout << "end: " << elapsedTime.count() << std::endl << std::endl;
+    std::cout << "result check: " << elapsedTime.count() << std::endl << std::endl;
 
 }
 
