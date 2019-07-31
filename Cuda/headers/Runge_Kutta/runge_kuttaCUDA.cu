@@ -68,8 +68,8 @@ double optimize(const int numThreads, const int blockThreads){
     int newInd = numThreads; // the whole population is new the first time through the loop
 
     //while(!maxErrorMet){
-    for(int i = 0; i < 10000; i++){
-        //auto start = std::chrono::high_resolution_clock::now();
+    for(int i = 0; i < 3000; i++){
+        auto start = std::chrono::high_resolution_clock::now();
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
         // testing
@@ -79,10 +79,10 @@ double optimize(const int numThreads, const int blockThreads){
             std::cout << inputParameters[j].startParams.y0 << std::endl;
         }
         */
-        //auto RK = std::chrono::high_resolution_clock::now();
+        auto RK = std::chrono::high_resolution_clock::now();
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
         
-        //auto NaNCheck = std::chrono::high_resolution_clock::now();
+        auto NaNCheck = std::chrono::high_resolution_clock::now();
         for(int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
                                             // and set the final position to be way off so it gets replaced by a new Individual
             if(isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
@@ -114,16 +114,16 @@ double optimize(const int numThreads, const int blockThreads){
                 inputParameters[k].velDiff = 0.0;
              }
         }
-        //auto shuffleT = std::chrono::high_resolution_clock::now();
+        auto shuffleT = std::chrono::high_resolution_clock::now();
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
 
-        //auto competition = std::chrono::high_resolution_clock::now();
+        auto competition = std::chrono::high_resolution_clock::now();
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
-        //auto sort = std::chrono::high_resolution_clock::now();
+        auto sort = std::chrono::high_resolution_clock::now();
         std::sort(inputParameters, inputParameters + numThreads, greaterInd);
         
-        //auto display = std::chrono::high_resolution_clock::now();
+        auto display = std::chrono::high_resolution_clock::now();
         std::cout << "generation: " << i << std::endl;
         std::cout << "best:" << std::endl;
         std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
@@ -134,13 +134,13 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
         std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
 
-        //auto crossoverT = std::chrono::high_resolution_clock::now();
+        auto crossoverT = std::chrono::high_resolution_clock::now();
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
-        //auto end = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::high_resolution_clock::now();
 
 
         // display timing metrics
-        /*
+        
         std::chrono::duration<double> elapsedTime = RK - start;
         std::cout << "Execution speeds (seconds):" << std::endl;
         std::cout << "initializePosition(): " << elapsedTime.count() << std::endl;
@@ -158,7 +158,7 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "display(): " << elapsedTime.count() << std::endl;
         elapsedTime = end - crossoverT;
         std::cout << "crossover(): " << elapsedTime.count() << std::endl << std::endl;
-        */
+        
     }
     delete [] inputParameters;
     delete [] survivors;
@@ -168,6 +168,8 @@ double optimize(const int numThreads, const int blockThreads){
 
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
     
+
+    auto start2 = std::chrono::high_resolution_clock::now();
     //events for timing functions
     cudaEvent_t Malloc_e, MemCpyDev_e, Kernel_e, MemCpyHost_e, MemCpyHostStop_e;
     cudaEventCreate(&Malloc_e);
@@ -175,12 +177,14 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaEventCreate(&Kernel_e);
     cudaEventCreate(&MemCpyHost_e);
     cudaEventCreate(&MemCpyHostStop_e);
-    
+
+    auto indiv = std::chrono::high_resolution_clock::now();
     Individual *devGeneration; 
     double *devTimeInitial;
     double *devStepSize;
     double *devAbsTol;
 
+    auto allocating = std::chrono::high_resolution_clock::now();
     // allocate memory for the parameters passed to the device
     cudaEventRecord(Malloc_e);
     cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
@@ -188,7 +192,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
 
-
+    auto copyParam = std::chrono::high_resolution_clock::now();
     // copy values of parameters passed to device onto device
     cudaEventRecord(MemCpyDev_e);
     cudaMemcpy(devGeneration, generation, numThreads * sizeof(Individual), cudaMemcpyHostToDevice);
@@ -196,16 +200,22 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devAbsTol, &absTol, sizeof(double), cudaMemcpyHostToDevice);
 
+
+    auto rkSIM = std::chrono::high_resolution_clock::now();
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
     //std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
     rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
 
+
+    auto copyRes = std::chrono::high_resolution_clock::now();
     // copy the result of the kernel onto the host
     cudaEventRecord(MemCpyHost_e);
     cudaMemcpy(generation, devGeneration, numThreads * sizeof(Individual), cudaMemcpyDeviceToHost);
     cudaEventRecord(MemCpyHostStop_e);
     
+
+    auto freeMem = std::chrono::high_resolution_clock::now();
     // free memory from device
     cudaFree(devGeneration);
     cudaFree(devTimeInitial);
@@ -214,26 +224,27 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaFree(devGeneration);
 
 
+
+    auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
     // CPU version of rk4Simple()
     // only calculate once since all input parameters are currently the same
     //elements<double> rk4SimpleOutput;
     //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
-    elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
-
-    auto start_timer = std::chrono::high_resolution_clock::now();
+    /*elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
     
     for(int i = 0; i < numThreads; i++){
         generation[i].startParams.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
           //std::cout << rk4SimpleOutput[i];
     }
-
-    auto elapsed_time =  std::chrono::high_resolution_clock::now() - start_timer;
+    */
     /*
     std::cout << "CPU Calculation of " << numThreads << " RK Calculations took: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() << " ms" << std::endl;
     std::cout << "CPU Calculations: " << numThreads / (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()/1000.0) << " RK Calcs / second" <<  std::endl;
     */
 
+   /*
+    auto errorFinding = std::chrono::high_resolution_clock::now();
     // compare every GPU result with the one CPU result
     double maxError = 1e-12; // how much difference is allowable between the CPU and GPU results
     bool errorFound = false;
@@ -255,13 +266,15 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
         }
 
         //testing
-        /*
+     
         std::cout << "final position" << generation[i].finalPos << std::endl;
         std::cout << "position difference" << generation[i].posDiff << std::endl;
         std::cout << "velocity difference" << generation[i].velDiff << std::endl << std::endl << std::endl;
-        */
+   
     }
+     */
 
+    auto resultCheck = std::chrono::high_resolution_clock::now();
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
     
     cudaEventSynchronize(MemCpyHostStop_e);
@@ -282,10 +295,45 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     */
 
     calcPerS = rkPerS;
-    
+    auto end = std::chrono::high_resolution_clock::now();
 
-    delete [] rk4SimpleOutput;
+    
+    //delete [] rk4SimpleOutput;
+
+
+    // display timing metrics
+
+    std::chrono::duration<double> elapsedTime = indiv - start2;
+    std::cout << "Execution speeds (seconds):" << std::endl;
+    std::cout << "individuals: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = allocating - indiv;
+    std::cout << "allocating variables: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = copyParam - allocating;
+    std::cout << "copying parameters: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = rkSIM - copyParam;
+    std::cout << "cuda rksimple(): " << elapsedTime.count() << std::endl;
+
+    elapsedTime = copyRes - rkSIM;
+    std::cout << "copying results: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = freeMem - copyRes;
+    std::cout << "freeing memory: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = rkSIM_CPU - freeMem;
+    std::cout << "CPU rksimple(): " << elapsedTime.count() << std::endl;
+
+    elapsedTime = resultCheck - rkSIM_CPU;
+    std::cout << "resultCheck: " << elapsedTime.count() << std::endl;
+
+    elapsedTime = end - resultCheck;
+    std::cout << "end: " << elapsedTime.count() << std::endl << std::endl;
+
 }
+
+
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
 __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n){

@@ -17,6 +17,13 @@
 
 int main ()
 {
+
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    std::cout << "Device Number: 0 \n";
+    std::cout << "- Device name: " << prop.name << std::endl;
+    cudaSetDevice(0);
+
     //////////////////////////////////////////////////////////////////////////////////
     //Global variable needs to be initialized
 
