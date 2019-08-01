@@ -39,7 +39,7 @@ int main ()
     int numThreads = 0;
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    int threadNums[] = {2880}; // the number of CUDA cores on a Tesla k40
+    int threadNums[] = {2000}; // the number of cores on a Tesla k40
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");
