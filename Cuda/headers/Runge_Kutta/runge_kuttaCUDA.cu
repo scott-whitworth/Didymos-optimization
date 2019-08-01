@@ -72,6 +72,8 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
 
+    double annealMax = ANNEAL_MAX;
+    double annealMin = ANNEAL_MIN;
     //while(!maxErrorMet){
     for(int i = 0; i < generationsNum; i++){
         auto start = std::chrono::high_resolution_clock::now();
@@ -156,7 +158,7 @@ double optimize(const int numThreads, const int blockThreads){
 
 
         auto crossoverT = std::chrono::high_resolution_clock::now();
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads);
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin));
         auto end = std::chrono::high_resolution_clock::now();
 
 

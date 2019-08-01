@@ -14,7 +14,7 @@
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);
 
 // gets a number of new Individuals equal to selectionSize by crossover of survivors
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize);
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing);
 
 #include "ga_crossover.cu"
 #endif

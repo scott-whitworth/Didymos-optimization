@@ -143,9 +143,17 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
+// utility function for mutate() to get a random double with as high a resolution as possible
+// INPUT:
+// max: the absolute value of the min and max(min = -max) of the range
+double getRand(double max, mt19937_64 & rng){
+    return static_cast<double>(rng()) / rng.max() * max * 2.0 - max;
+}
+
+
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing){
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -181,26 +189,26 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng){
         //check coeff
         if( (mutatedValue >= 0) && (mutatedValue <= 9) ){
             if(mutatedValue <= 6) {//Gamma (0-6)
-                newInd.coeff.gamma[mutatedValue] += rng() % 201/1000.0 - 0.1;
+                newInd.coeff.gamma[mutatedValue] += getRand(10.0 * annealing, rng);
             }
             else if(mutatedValue <= 9) {//Tau (7-9)
-                newInd.coeff.tau[mutatedValue-7] += rng() % 201/1000.0 - 0.1;
+                newInd.coeff.tau[mutatedValue-7] += getRand(10.0 * annealing, rng);
             }
         }
         if(mutatedValue >= 14 && mutatedValue <= 18){//coast (14-18)
-            newInd.coeff.coast[mutatedValue-14] += rng() % 201/1000.0 - 0.1;
+            newInd.coeff.coast[mutatedValue-14] += getRand(10.0 * annealing, rng);
         }
         if(mutatedValue == 13){ //Time final
-            newInd.tripTime += 365*24*3600*(rng() % 10001 / 1000000.0 + 0.015);
+            newInd.tripTime += 365*24*3600*getRand(0.5 * annealing, rng);
         }
         if(mutatedValue == 12){ //zeta
-            newInd.zeta += rng() % 315 / 10000.0 - 0.0157;
+            newInd.zeta += getRand(1.57 * annealing, rng);
         }
         if(mutatedValue == 11){ //beta
-            newInd.beta += rng() % 629 / 10000.0 - 0.0314;
+            newInd.beta += getRand(3.14 * annealing, rng);
         }
         if(mutatedValue == 10){ //alpha
-            newInd.alpha += rng() % 629 / 10000.0 - 0.0314;
+            newInd.alpha += getRand(3.14 * annealing, rng);
         }
     }
 
@@ -235,7 +243,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 }
 
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize){
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
@@ -250,14 +258,14 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
         pool[poolSize - 1 - (2 * index)] = Individual();
         pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
         }
 
         flipMask(mask); // get the opposite offspring
         pool[poolSize - 1 - (2 * index) - 1] = Individual();
         pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
         }
 
         index++;
@@ -268,14 +276,14 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
         pool[poolSize - 1 - (2 * index)] = Individual();
         pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
         }
 
         flipMask(mask); // get the opposite offspring
         pool[poolSize - 1 - (2 * index) - 1] = Individual();
         pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
         }
 
         index++;
@@ -286,14 +294,14 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
         pool[poolSize - 1 - (2 * index)] = Individual();
         pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
         }
 
         flipMask(mask); // get the opposite offspring
         pool[poolSize - 1 - (2 * index) - 1] = Individual();
         pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
         }
 
         index++;
@@ -304,14 +312,14 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
         pool[poolSize - 1 - (2 * index)] = Individual();
         pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng);
+            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
         }
 
         flipMask(mask); // get the opposite offspring
         pool[poolSize - 1 - (2 * index) - 1] = Individual();
         pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng);
+            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
         }
 
         index++;
