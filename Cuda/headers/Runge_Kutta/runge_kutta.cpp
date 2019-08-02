@@ -91,7 +91,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         n++;
     }//end of while 
     lastStep = n;
-    std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
+    //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
 
 
@@ -161,11 +161,9 @@ T stepSize, elements<T> & y_new, const T & absTol)
     elements<T> k1, k2, k3, k4, k5, k6, k7;
     elements<T> error;
     T curTime = timeFinal; // setting time equal to the start time
-    int count = 0;
 
     while(curTime>timeInitial) // iterates in reverse
     {
-        count++;
         
         //calculate k values
         rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
@@ -187,6 +185,9 @@ T stepSize, elements<T> & y_new, const T & absTol)
         if((curTime+stepSize)<timeInitial)
             stepSize = -(curTime-timeInitial);
     } //end of while 
+       //if(isnan(y_new.r) || isnan(y_new.theta) || isnan(y_new.z) || isnan(y_new.vr) || isnan(y_new.vtheta) || isnan(y_new.vz)){
+       //    std::cout << "ERROR " << y_new << std::endl << std::endl<< std::endl<< std::endl<< std::endl;
+       //}
 }
 
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 

@@ -7,6 +7,8 @@ bool greaterInd(Individual first, Individual second){
     double posRatio = getPosRatio(first, second);
     double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio);
     double secondSum = second.posDiff * posRatio - second.velDiff * (1.0 - posRatio);
+    //double firstSum = first.posDiff;
+    //double secondSum = second.posDiff;
     if(firstSum < secondSum){
         return true;
     }
@@ -31,10 +33,24 @@ double getPosRatio(Individual first, Individual second){
 
 void Individual::initialize(){
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime);
-    this->startParams.y0 = elements<double>(earth.r+ESOI*cos(this->startParams.alpha),earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),earth.z,
-  earth.vr+cos(this->startParams.zeta)*sin(this->startParams.beta)*vEscape, earth.vtheta+cos(this->startParams.zeta)*cos(this->startParams.beta)*vEscape,earth.vz+
-  sin(this->startParams.zeta)*vEscape);
 
+
+
+    this->startParams.y0 = elements<double>(
+    earth.r+ESOI*cos(this->startParams.alpha),
+    earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),
+    earth.z,
+    earth.vr+cos(this->startParams.zeta)*sin(this->startParams.beta)*vEscape, 
+    earth.vtheta+cos(this->startParams.zeta)*cos(this->startParams.beta)*vEscape,
+    earth.vz+sin(this->startParams.zeta)*vEscape);
+/*
+    std::cout << "Earth r:  " << earth.r << std::endl;
+    std::cout << "Earth theta:  " << earth.theta << std::endl;
+    std::cout << "Earth z:  " << earth.z << std::endl;
+    std::cout << "Earth vr:  " << earth.vr << std::endl;
+    std::cout << "Earth vtheta:  " << earth.vtheta << std::endl;
+    std::cout << "Earth vz:  " << earth.vz << std::endl;
+*/
 }
 
 #endif

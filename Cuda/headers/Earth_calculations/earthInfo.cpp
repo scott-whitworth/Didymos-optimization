@@ -41,8 +41,8 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
         earthCon[i]=earthInitial_incremental(calc_time(i)-timeRes,calc_time(i),earth);// Obtaining conditions of the earth
 
         // Filling progress bar
-        if((i % (tolData/10)) == 0){
-        std::cout << ">>>";
+        if((i % (tolData/30)) == 0){
+        std::cout << ">";
         }
 
         // Sets earth equal to the conditions calculated for a given time.
@@ -70,8 +70,16 @@ elements<double> EarthInfo::getCondition(const double & currentTime)
     // Weights are used for interpolation
     double lowerWeight = 1 - ((currentTime-calc_time(index))/timeRes);
     double upperWeight = 1 - ((calc_time(index+1)-currentTime)/timeRes);
-
-    return interpolate(lower,upper,lowerWeight,upperWeight);
+    elements<double> result = interpolate(lower,upper,lowerWeight,upperWeight);
+/*    
+    if(result.r<=0.1)
+    {
+        std::cout<<"NaN incoming \n" << result;
+        std::cout<<"LowerW : "<<lowerWeight<<"  UpperW : "<<upperWeight << "\n";
+        std::cout<<"Timne 1 : "<<calc_time(index)<<"  Time 2 : "<<calc_time(index+1) << "\n";
+    }
+*/
+    return result;
 }
 
 int EarthInfo::calcIndex(const double & currentTime)

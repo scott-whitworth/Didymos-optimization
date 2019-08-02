@@ -22,13 +22,13 @@ int main ()
     std::cout << "Device Number: 0 \n";
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
-
+    
     //////////////////////////////////////////////////////////////////////////////////
     //Global variable needs to be initialized
 
     // Define variables to be passed into EarthInfo
-    double startTime = 31536000; // 1.0 year (s)
-    double endTime = 63072000; // 2.0 years (s)
+    double startTime = 15778800; // 1.0 year (s)
+    double endTime = 78894000; // 2.0 years (s)
     double timeRes = 3600; // position of earth is calculated for every minute
 
     // initializes EarthInfo
@@ -39,7 +39,8 @@ int main ()
     int numThreads = 0;
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    int threadNums[] = {2000}; // the number of cores on a Tesla k40
+    //int threadNums[] = {2880}; // the number of cores on a Tesla k40
+    int threadNums[] = {2000};
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");

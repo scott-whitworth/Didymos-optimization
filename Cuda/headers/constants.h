@@ -16,7 +16,7 @@
 
 // Various constants (pi and tolerance)
 #define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
-#define MAX_NUMSTEPS 1e9 // used for time stepping in runge_kuttaCuda.cu
+#define MAX_NUMSTEPS 1e4 // used for time stepping in runge_kuttaCuda.cu
 #define _USE_MATH_DEFINES // for use of M_PI
 
 // Final conditions of the asteroid on impact date
