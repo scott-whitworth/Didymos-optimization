@@ -110,7 +110,7 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     //mass of fuel expended (kg)
     //set to 0 initially
     T massFuelSpent =0;
-
+    bool coast;
     elements<T> error;
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
@@ -118,7 +118,7 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
         // change this and unsed stepSize instead of delta T, change back if there are problems T deltaT = stepSize;
 
         // defining coast using calc_coast()
-        bool coast = calc_coast(coeff, curTime, timeFinal);
+        coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, stepSize /*change deltaT here*/, coast, wetMass);
@@ -189,12 +189,12 @@ elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T>
 
 
     k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal);      
-    k2 = calc_k(stepSize, y_new+k1*1/5,coeff, accel, curTime+1/5*stepSize, timeFinal); 
-    k3 = calc_k(stepSize, y_new+k1*3/40+k2*9/40,coeff, accel, curTime+3/10*stepSize, timeFinal);   
-    k4 = calc_k(stepSize,y_new+k1*44/45+k2*-56/15+k3*32/9,coeff, accel, curTime+4/5*stepSize, timeFinal); 
-    k5 = calc_k(stepSize, y_new+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729,coeff, accel, curTime+8/9*stepSize, timeFinal); 
-    k6 = calc_k(stepSize, y_new+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656,coeff, accel, curTime+stepSize, timeFinal);  
-    k7 = calc_k(stepSize,y_new+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84,coeff, accel, curTime+stepSize, timeFinal);  
+    k2 = calc_k(stepSize, y_new+k1*1./5.,coeff, accel, curTime+1./5.*stepSize, timeFinal); 
+    k3 = calc_k(stepSize, y_new+k1*3./40+k2*9./40.,coeff, accel, curTime+3./10.*stepSize, timeFinal);   
+    k4 = calc_k(stepSize,y_new+k1*44./45+k2*-56./15+k3*32./9,coeff, accel, curTime+4./5*stepSize, timeFinal); 
+    k5 = calc_k(stepSize, y_new+k1*19372./6561+k2*-25360./2187+k3*64448./6561+k4*-212./729,coeff, accel, curTime+8./9*stepSize, timeFinal); 
+    k6 = calc_k(stepSize, y_new+k1*9017./3168+k2*-355./33+k3*46732./5247+k4*49./176+k5*-5103./18656,coeff, accel, curTime+stepSize, timeFinal);  
+    k7 = calc_k(stepSize,y_new+k1*35./384+k3*500./1113+k4*125./192+k5*-2187./6784+k6*11./84,coeff, accel, curTime+stepSize, timeFinal);  
 
     //New value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6

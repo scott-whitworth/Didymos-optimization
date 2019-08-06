@@ -16,13 +16,57 @@
 #include <random>
 #include <chrono>
 #include <string>
+#include <fstream>
 
 
 int main ()
 {
   
-  //iterativeOptimize(); // manually set initial conditions
-  optimizeStartConditions(); // random values within a given range for initial conditions
+std::ifstream starts;
+starts.open("optimizedVector.bin", std::ifstream::in|std::ios::binary);
+
+double startDoubles;
+
+// sort the data into 2 dimensions
+// one row is one set of starting parameters
+// each column is a specific variable:
+// 0-6 gamma
+// 7-9 tau
+// 10-12 launch angles
+// 13 trip time
+// 14-19 coast
+
+double arrayCPU[34][19];
+double singleArray[19];
+for(int i = 0; i < 19; i++)
+{  // rows
+  for(int j = 0; j < 34; j++)
+  { // columns
+    starts.read( reinterpret_cast<char*>(&startDoubles ), sizeof startDoubles );
+    arrayCPU[j][i] = startDoubles;
+    //std::cout<< arrayCPU[j][i]<<"\n";
+  }
+}
+
+starts.close();
+
+double cost;
+
+for (int j = 0; j < 34; j++)
+{
+  for(int i = 0; i < 19; i++)
+  {
+    singleArray[i]=arrayCPU[j][i];
+  }
+  cost = trajectory(singleArray);
+  //writeTrajectoryToFile(singleArray, cost,j);
+  std::cout<<cost<<std::endl;
+  
+} 
+
+  
+ //iterativeOptimize(); // manually set initial conditions
+ // optimizeStartConditions(); // random values within a given range for initial conditions
 
   return 0;
 }
@@ -39,7 +83,7 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 80;
+  int executions = 70;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -76,7 +120,7 @@ void optimizeStartConditions(){
     // writes the solution based on optimized variables to a binary file
     double cost = trajectory(start); // to store the cost caluclated by trajectoryPrint()
 
-    if(trajectory(start)<pow(10,-18))
+    if(trajectory(start)<2*pow(10,-20))
     {
       writeTrajectoryToFile(start, cost,i);
     }
@@ -114,30 +158,30 @@ void iterativeOptimize(){
 
   // Initial guesses for variables based off of previous runs which have small cost values
       // Initial guesses for variables based off of previous runs which have small cost values
-  start[GAMMA_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10 - 10
-  start[GAMMA_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-  start[GAMMA_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
-  start[GAMMA_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
-  start[GAMMA_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
-  start[GAMMA_OFFSET+5] = mt_rand() % 201/10.0 - 10.0;
-  start[GAMMA_OFFSET+6] = mt_rand() % 201/10.0 - 10.0;
+  //start[GAMMA_OFFSET] = 0.273664,-1.0756,0.6822,-1.27997,-1.45467,-0.0136089,-0.884055,-0.162799,0.00384891,1.04031,-0.726513,1.07761,-1.49482,3.27689e+007,-0.736647,-0.763116,1.37091,0.0260613,-0.418265,; // -10 - 10
+  start[GAMMA_OFFSET+1] = -2.7824020148443617816980122370e-01;
+  start[GAMMA_OFFSET+2] = 3.9706971844867466892026186542e-01;
+  start[GAMMA_OFFSET+3] = -2.6246406920124598638466295597e-01;
+  start[GAMMA_OFFSET+4] = -1.6050991385640158704006807966e+00;
+  start[GAMMA_OFFSET+5] = 3.1371729669213965774332564251e-01;
+  start[GAMMA_OFFSET+6] = 3.7885357138619657479949864864e-01;
 
 
-  start[TAU_OFFSET] = mt_rand() % 201/10.0 - 15.0; // -5.0 - 5.0
-  start[TAU_OFFSET+1] = mt_rand() % 201/10.0 - 15.0;
-  start[TAU_OFFSET+2] = mt_rand() % 201/10.0 - 15.0;
+  start[TAU_OFFSET] = -3.3390650367959540112394734024e-01; // -5.0 - 5.0
+  start[TAU_OFFSET+1] = 5.5499614221243376288583704081e-01;
+  start[TAU_OFFSET+2] = 5.1361430331364199552979243890e-01;
 
-  start[ALPHA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14; // -pi - pi
-  start[BETA_OFFSET] = (mt_rand() % 629) / 100.0 - 3.14;
-  start[ZETA_OFFSET] = (mt_rand() % 315) / 100.0 - 1.57;
+  start[ALPHA_OFFSET] = 1.7574222525172265019222095361e+00; // -pi - pi
+  start[BETA_OFFSET] = -1.6837629692054056906869163868e+00;
+  start[ZETA_OFFSET] = 9.8003867179619408300794702882e-01;
 
-  start[TRIPTIME_OFFSET] = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1); // 1.5 - 2.5 years converted to seconds
+  start[TRIPTIME_OFFSET] = 2.8695261326080441474914550781e+07; // 1.5 - 2.5 years converted to seconds
 
-  start[COAST_OFFSET] = mt_rand() % 201/10.0 - 10.0; // -10.0 - 10.0
-  start[COAST_OFFSET+1] = mt_rand() % 201/10.0 - 10.0;
-  start[COAST_OFFSET+2] = mt_rand() % 201/10.0 - 10.0;
-  start[COAST_OFFSET+3] = mt_rand() % 201/10.0 - 10.0;
-  start[COAST_OFFSET+4] = mt_rand() % 201/10.0 - 10.0;
+  start[COAST_OFFSET] = -8.6302487703370944771563699760e-01; // -10.0 - 10.0
+  start[COAST_OFFSET+1] = 4.1165731650421222287405953466e-01;
+  start[COAST_OFFSET+2] = 2.8647589778377002822651320457e-01;
+  start[COAST_OFFSET+3] = -4.2160094983718154892926577304e-01;
+  start[COAST_OFFSET+4] = 2.5491324082429184239018127300e-01;
 
   // Initial change in variable size based on the variable start value
   // Delimits the search space
@@ -145,7 +189,7 @@ void iterativeOptimize(){
   setStep(step);
 
   // For loop to reutilize the final value of the c vector as the guess for the next optimization 
-  int executions = 10;
+  int executions = 1;
   for(int i = 0; i < executions; i++)
   {
     optimizing(start, step);
