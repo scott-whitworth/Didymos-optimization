@@ -14,6 +14,7 @@
 #include <random>
 #include <chrono>
 
+
 int main ()
 {
 
@@ -28,8 +29,9 @@ int main ()
 
     // Define variables to be passed into EarthInfo
     double startTime = 15778800; // 1.0 year (s)
+    //double startTime = 0.0; // 0 years
     double endTime = 78894000; // 2.0 years (s)
-    double timeRes = 3600; // position of earth is calculated for every minute
+    double timeRes = 3600; // position of earth is calculated for every hour
 
     // initializes EarthInfo
     launchCon = new EarthInfo(startTime, endTime, timeRes);
@@ -40,12 +42,12 @@ int main ()
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
     //int threadNums[] = {2880}; // the number of cores on a Tesla k40
-    int threadNums[] = {2000};
+    int threadNums[] = {1920}; // 384 cores on K620 * 5 = 1920
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");
 
-    double calcPerS;
+    //double calcPerS;
 
     for(int i = 0; i < std::size(blockThreadNums); i++){
         for(int j = 0; j < std::size(threadNums); j++){    

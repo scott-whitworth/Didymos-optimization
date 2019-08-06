@@ -44,102 +44,73 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
-    //std::mt19937_64 mt_rand(time(0));
-    std::mt19937_64 mt_rand(0);
-    //bool maxErrorMet = false;
+    std::mt19937_64 mt_rand(time(0));
 
-    // reasonable example values for runge kutta algorithm
-    /*---------------------------------------------------------------------------------------*/
      // input parameters for rk4Simple which are the same for each thread
-    double timeInitial = 0; // the starting time of the trip is always defined as zero
-    //double tripTime = 2.5*365.25*24*60*60; // number of years the trip takes
-    
+    double timeInitial = 0; // the starting time of the trip is always defined as zero   
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
-    
-    //for setting every thread's parameters to the same values
-  
-    /*---------------------------------------------------------------------------------------*/
 
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    double arrayCPU[16][19] =  {{-0.11618,-0.93813,0.16112,0.66778,-0.78756,0.99569,0.4093,0.91157,-0.2663,0.60454,-0.53152,1.8883,-0.87309,3.392e+07,0.67193,0.45975,0.96308,0.35944,0.16128},
-                                {1.6306,1.3656,-1.0624,0.067411,1.3817,-0.47046,-1.7251,0.76606,1.1041,-0.48066,2.9519,-1.3519,0.73574,5.5207e+07,-0.35152,-0.4905,-0.74388,-0.28909,-0.2466},
-                                {-0.7665,-0.74499,0.78058,-0.57389,-0.067605,1.1937,1.529,0.7803,1.2685,-0.32151,-1.8358,-1.5837,0.89957,2.6405e+07,0.17785,0.25197,0.80231,-1.1902,-0.76714},
-                                {0.8741,1.9769,1.8014,-0.76438,-0.0086669,0.67533,0.12452,-0.019435,0.74589,-0.27469,-0.74055,2.1006,-1.1899,4.1777e+07,-0.20959,-0.55904,0.21765,0.31739,0.10648},
-                                {0.16945,-0.16863,-0.049979,-0.1288,0.041762,0.22557,-0.11758,0.059362,-0.66864,-0.51101,1.1111,3.7917,0.56411,5.0875e+07,-1.0008,-0.0013711,-1.0439,-0.519,-0.69473},
-                                {1.3611,-0.31388,1.0975,0.67393,-1.066,0.76805,1.0808,-0.63892,0.023753,-0.49204,-0.21729,-1.1225,1.8982,2.7365e+07,0.70863,-0.54919,-0.22024,0.043853,-0.17199},
-                                {0.26668,0.303,-0.24341,0.75273,0.80444,0.8867,-0.12381,-0.40879,-0.75649,-0.051487,-2.5249,1.6057,-0.61328,6.6164e+07,0.038794,0.80025,-0.1774,0.25521,-0.79408},
-                                {-0.33794,-0.10588,0.11451,-0.11982,0.11674,0.020274,-0.18984,-0.22741,-0.24874,0.19079,2.0114,-2.0955,-0.68952,4.3259e+07,-0.76951,-0.080516,0.78251,-0.66553,-0.556},
-                                {0.24924,-0.53743,0.03409,-0.43815,0.43498,0.18907,0.087696,0.27394,-0.31364,-0.048284,-2.1545,2.1532,0.96415,5.251e+07,0.0064018,0.22662,-0.66381,-0.49153,-0.52606},
-                                {2.6971,0.33445,1.4728,-0.20598,-0.59999,0.13327,-0.28345,0.78588,-0.71313,-0.37493,-0.50709,-1.5517,1.0289,2.5667e+07,-0.30889,-0.18324,-0.83499,1.0481,0.11909},
-                                {0.20526,-0.15981,0.16457,0.60735,0.32903,0.30262,0.20892,-0.1483,-0.24254,-0.27927,-0.009502,3.3074,0.65589,5.3982e+07,0.76371,-0.33244,0.57125,0.068041,0.69824},
-                                {0.47673,-0.1147,0.22333,0.080363,0.64068,0.21915,0.18892,0.22581,0.34533,0.59555,0.49483,-0.39331,-1.8962,4.2546e+07,-0.20768,-0.77094,-0.37879,-0.56058,0.39925},
-                                {-0.12378,1.2322,-0.12036,0.61289,-0.2552,0.37191,0.23688,0.072462,0.28729,0.50243,2.5028,1.7963,0.68139,5.5981e+07,0.021783,-0.12746,-0.60296,-0.13233,-0.53686},
-                                {0.12762,-0.19833,0.44299,-0.20322,0.13699,-0.085633,0.49096,0.55722,-0.56092,0.67755,-0.45509,-2.0707,-0.62307,4.1228e+07,1.0357,0.36585,-0.77794,0.54923,0.93459},
-                                {0.14021,-0.12283,0.13903,0.13796,-0.45269,-0.44853,0.20326,-0.31895,0.26559,0.94838,1.116,-2.2627,-0.3194,3.5226e+07,-0.98734,0.8642,-0.2093,1.1429,0.10095},
-                                {-0.084377,0.63781,-0.084106,0.56619,-0.84042,-0.0043268,1.1472,-0.14925,-0.33214,0.25764,-2.1727,1.6719,1.273,5.1044e+07,-0.399,0.55074,0.41427,0.62746,-0.52202}};
+    std::ifstream starts;
+    starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary);
 
-for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
-    //double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
-    int row = mt_rand() % 16;
-    double tripTime = arrayCPU[row][13];
-    //std::cout << "tripTime: " << tripTime << std::endl;
-    //double alpha = (mt_rand() % 629) / 100.0 - 3.14;
-    double alpha = arrayCPU[row][10];
-    //std::cout << "alpha: " << alpha << std::endl;
-    //double beta = (mt_rand() % 629) / 100.0 - 3.14;
-    double beta = arrayCPU[row][11];
-    //std::cout << "beta: " << beta << std::endl;
-    //double zeta = (mt_rand() % 315) / 100.0 - 1.57;
-    double zeta = arrayCPU[row][12];
-    //std::cout << "zeta: " << zeta << std::endl;
+    double startDoubles;
+
+    // sort the data into 2 dimensions
+    // one row is one set of starting parameters
+    // each column is a specific variable:
+    //    0-6 gamma
+    //    7-9 tau
+    //    10-12 launch angles
+    //    13 trip time
+    //    14-19 coast
+    double arrayCPU[34][19];
+    for(int i = 0; i < 19; i++){ // rows
+        for(int j = 0; j < 34; j++){ // columns
+            starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
+            arrayCPU[j][i] = startDoubles;
+        }
+    }
+    starts.close();
+
+     // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
+    for(int i = 0; i < numThreads; i++){
+        int row = mt_rand() % 34;
+
+        double tripTime = arrayCPU[row][13];
+
+        double alpha = arrayCPU[row][10];
+
+        double beta = arrayCPU[row][11];
+
+        double zeta = arrayCPU[row][12];
+
+        coefficients<double> testcoeff;
+        for(int j = 0; j < testcoeff.gammaSize; j++){
+        testcoeff.gamma[j] = arrayCPU[row][j];
+        }
+
+        for(int j = 0; j < testcoeff.tauSize; j++){
+        testcoeff.tau[j] =  arrayCPU[row][j+7];
+        }
+
+        for(int j = 0; j < testcoeff.coastSize; j++){
+        testcoeff.coast[j] = arrayCPU[row][j+14];
+        }
+
+        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+
+        inputParameters[i].startParams = example;
+
+        //std::cout << "example: " << std::endl << example << std::endl; // check that the values were read in correctly
+    }
+
+    // set every thread's input parameters to random values within a reasonable range
     /*
-    coefficients<double> testcoeff;
-    for(int j = 0; j < testcoeff.gammaSize; j++){
-    testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-    }
-    */
-    coefficients<double> testcoeff;
-    for(int j = 0; j < testcoeff.gammaSize; j++){
-    testcoeff.gamma[j] = arrayCPU[row][j];
-    //std::cout << "gamma: " << testcoeff.gamma[j] << std::endl;
-    }
-    /*
-    for(int j = 0; j < testcoeff.tauSize; j++){
-    testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-    }
-    */
-    for(int j = 0; j < testcoeff.tauSize; j++){
-    testcoeff.tau[j] =  arrayCPU[row][j+7];
-    //std::cout << "tau: " << testcoeff.tau[j] << std::endl;
-    }
-
-    /*
-    for(int j = 0; j < testcoeff.coastSize; j++){
-    testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
-    }
-    */
-    for(int j = 0; j < testcoeff.coastSize; j++){
-    testcoeff.coast[j] = arrayCPU[row][j+14];
-    //std::cout << "coast: " << testcoeff.coast[j] << std::endl;
-    }
-
-
-    //elements<double> earth = earthInitial(tripTime);
-    //elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
-    //earth.vr+cos(zeta)*sin(beta)*vEscape, earth.vtheta+cos(zeta)*cos(beta)*vEscape, earth.vz+sin(zeta)*vEscape);
-
-    rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-
-    inputParameters[i].startParams = example;
-
-    //std::cout << "example: " << example << std::endl;
-}
-
-    /*
-    for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
+    for(int i = 0; i < numThreads; i++){ 
         double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
         double alpha = (mt_rand() % 629) / 100.0 - 3.14;
         double beta = (mt_rand() % 629) / 100.0 - 3.14;
@@ -156,10 +127,6 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
             testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
         }
     
-        //elements<double> earth = earthInitial(tripTime);
-        //elements<double> spaceTest(earth.r+ESOI*cos(alpha), earth.theta+asin(sin(M_PI-alpha)*ESOI/earth.r), earth.z,
-            //earth.vr+cos(zeta)*sin(beta)*vEscape, earth.vtheta+cos(zeta)*cos(beta)*vEscape, earth.vz+sin(zeta)*vEscape);
-    
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
         inputParameters[i].startParams = example;
@@ -167,32 +134,30 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
     */
 
 
-    Individual *survivors = new Individual[SURVIVOR_COUNT];
+    Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-    // printing individual pos and vel difference data to a csv
+    // setup output of results
     std::ofstream individualDifference;
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
-
-    double annealMax = ANNEAL_MAX;
-    double annealMin = ANNEAL_MIN;
-    //while(!maxErrorMet){
-    for(int i = 0; i < generationsNum; i++){
-        auto start = std::chrono::high_resolution_clock::now();
+    
+    //for(int i = 0; i < generationsNum; i++){
+    for(int i = 0; i < 1; i++){
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
         
         // testing
         /*
-        std::cout << "generation " << i << std::endl << std::endl;
-        for(int j = 0; j < numThreads; j++){ 
-            std::cout << inputParameters[j].startParams.y0 << std::endl;
+        for(int j = 0; j < numThreads; j++){
+            std::cout << "member " << j << std::endl;
+            std::cout << "parameters: " << inputParameters[j].startParams << std::endl;
+            std::cout << "posDiff: " << inputParameters[j].posDiff << std::endl;
+            std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
         }
         */
-        auto RK = std::chrono::high_resolution_clock::now();
+
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
-        
-        auto NaNCheck = std::chrono::high_resolution_clock::now();
+
         for(int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
                                             // and set the final position to be way off so it gets replaced by a new Individual
             if(isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
@@ -224,16 +189,14 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
                 inputParameters[k].velDiff = 0.0;
              }
         }
-        auto shuffleT = std::chrono::high_resolution_clock::now();
+
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
 
-        auto competition = std::chrono::high_resolution_clock::now();
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
-        auto sort = std::chrono::high_resolution_clock::now();
         std::sort(inputParameters, inputParameters + numThreads, greaterInd);
 
-        // finding the best variable to cahnge in the best Individual
+        // finding the best variable to change in the best Individual
 
 
 
@@ -243,8 +206,9 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
 
 
         
-        auto display = std::chrono::high_resolution_clock::now();
+
         std::cout << "generation: " << i << std::endl;
+        /*
         std::cout << "best:" << std::endl;
         std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
         std::cout << "velDiff: " << inputParameters[0].velDiff << std::endl;
@@ -253,49 +217,33 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
         std::cout << "posDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
         std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
         std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
+        */
+        
+        
+        for(int j = 0; j < numThreads; j++){
+            std::cout << "member " << j << std::endl;
+            //std::cout << "parameters: " << inputParameters[j].startParams << std::endl;
+            std::cout << "posDiff: " << inputParameters[j].posDiff << std::endl;
+            std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
+        }
+        
 
 
-        // For csv file "individualDifference.csv"
+        // printing individual pos and vel difference data to a csv to view progress over generations
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if(i % 50 == 0)
         {   
             for(int j = 0; j < numThreads; j++)
             {
-                individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << "," << inputParameters[j].finalPos.r << "," <<
-                 inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << "," << inputParameters[j].finalPos.vr << "," << 
-                 inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
+                individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
+                << inputParameters[j].finalPos.r << "," << inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << ","
+                << inputParameters[j].finalPos.vr << "," << inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
             }
             individualDifference << "\n";
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-        auto crossoverT = std::chrono::high_resolution_clock::now();
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin));
-        auto end = std::chrono::high_resolution_clock::now();
-
-
-        // display timing metrics
-       /* 
-        std::chrono::duration<double> elapsedTime = RK - start;
-        std::cout << "Execution speeds (seconds):" << std::endl;
-        std::cout << "initializePosition(): " << elapsedTime.count() << std::endl;
-        elapsedTime = NaNCheck - RK;
-        std::cout << "callRK(): " << elapsedTime.count() << std::endl;
-        elapsedTime = shuffleT - NaNCheck;
-        std::cout << "NaN check: " << elapsedTime.count() << std::endl;
-        elapsedTime = competition - shuffleT;
-        std::cout << "shuffle(): " << elapsedTime.count() << std::endl;
-        elapsedTime = sort - competition;
-        std::cout << "selectWinners(): " << elapsedTime.count() << std::endl;
-        elapsedTime = display - sort;
-        std::cout << "sort(): " << elapsedTime.count() << std::endl;
-        elapsedTime = crossoverT - display;
-        std::cout << "display(): " << elapsedTime.count() << std::endl;
-        elapsedTime = end - crossoverT;
-        std::cout << "crossover(): " << elapsedTime.count() << std::endl << std::endl;
-        */
-        
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN));
     }
 
     individualDifference.close();
@@ -308,7 +256,6 @@ for(int i = 0; i < numThreads; i++){ // set every thread's input parameters
 
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
     
-
     auto start2 = std::chrono::high_resolution_clock::now();
     //events for timing functions
     cudaEvent_t Malloc_e, MemCpyDev_e, Kernel_e, MemCpyHost_e, MemCpyHostStop_e;
@@ -323,11 +270,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     double *devTimeInitial;
     double *devStepSize;
     double *devAbsTol;
-    
-    
-    int *devTestVal;
-    int *testVal = new int[numThreads];
-
 
     auto allocating = std::chrono::high_resolution_clock::now();
     // allocate memory for the parameters passed to the device
@@ -336,7 +278,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaMalloc((void**) &devTimeInitial, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
-    cudaMalloc((void**) &devTestVal, numThreads * sizeof(int));
 
     auto copyParam = std::chrono::high_resolution_clock::now();
     // copy values of parameters passed to device onto device
@@ -351,14 +292,13 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     // GPU version of rk4Simple()
     cudaEventRecord(Kernel_e);
     //std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
-    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, devTestVal);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
 
 
     auto copyRes = std::chrono::high_resolution_clock::now();
     // copy the result of the kernel onto the host
     cudaEventRecord(MemCpyHost_e);
     cudaMemcpy(generation, devGeneration, numThreads * sizeof(Individual), cudaMemcpyDeviceToHost);
-    cudaMemcpy(testVal, devTestVal, numThreads * sizeof(int), cudaMemcpyDeviceToHost);
     cudaEventRecord(MemCpyHostStop_e);
     
 
@@ -368,7 +308,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
-    cudaFree(devTestVal);
 
 
 
@@ -378,29 +317,27 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     //elements<double> rk4SimpleOutput;
     //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
 
-    /*elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
+    /*
+    elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
     
     for(int i = 0; i < numThreads; i++){
         generation[i].startParams.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
           //std::cout << rk4SimpleOutput[i];
     }
     */
+
     /*
     std::cout << "CPU Calculation of " << numThreads << " RK Calculations took: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() << " ms" << std::endl;
     std::cout << "CPU Calculations: " << numThreads / (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()/1000.0) << " RK Calcs / second" <<  std::endl;
     */
 
-   /*
+   
     auto errorFinding = std::chrono::high_resolution_clock::now();
     // compare every GPU result with the one CPU result
+    /*
     double maxError = 1e-12; // how much difference is allowable between the CPU and GPU results
-    bool errorFound = false;
     for(int i = 0; i < numThreads; i++){
         if(!generation[i].finalPos.compare(rk4SimpleOutput[i],maxError)){
-            errorFound = true;
-        }
-
-        if(errorFound){
             std::cout << "!!ERROR FOUND!!" << std::endl;
             std::cout << "CPU output " << i << std::endl;
             std::cout << rk4SimpleOutput[i] << std::endl;
@@ -408,19 +345,9 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
             std::cout << generation[i].finalPos << std::endl;
             std::cout << "Diff: " << std::endl;
             std::cout << generation[i].finalPos-rk4SimpleOutput[i] << std::endl;
-
-            errorFound = false;
         }
-
-        //testing
-     
-        std::cout << "final position" << generation[i].finalPos << std::endl;
-        std::cout << "position difference" << generation[i].posDiff << std::endl;
-        std::cout << "velocity difference" << generation[i].velDiff << std::endl << std::endl << std::endl;
-   
     }
-     */
-
+    */
     
     auto resultCheck = std::chrono::high_resolution_clock::now();
     float mallocT, memCpyDevT, kernelT, memCpyHostT;
@@ -485,13 +412,12 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     //   std::cout << "iterations before NAN: " << testVal[i] << "\terror.vr: " << generation[i].finalPos.r << "\tprevious error.vr: " << generation[i].finalPos.theta << std::endl;
     //}
 
-    delete [] testVal;
 }
 
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, int *testVal){
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n){
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if(threadId < n)
     {
@@ -506,27 +432,17 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         double startTime = *timeInitial;
         double curAccel = 0;
 
-        int iteration = 0;
-        bool stop = false;
-
-
         elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
 
         thruster<double> NEXT = thruster<double>(1); // corresponds NEXT thruster to type 1 in thruster.h
 
         double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
 
-        //double deltaT; // change in time for calc_accel()
-
         bool coast; // to hold the result from calc_coast()
 
         elements<double> error; // holds output of previous value from rkCalc
-        elements<double> testEl2 = curPos;
 
-        double startStep = stepSize;
-
-        while(curTime < threadRKParameters.tripTime && !stop){
-            //deltaT = stepSize;
+        while(curTime < threadRKParameters.tripTime){
 
             coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime);
             curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
@@ -537,7 +453,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
             curTime += stepSize; // update the current time in the simulation
             
-            stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize)/2; // Alter the step size for the next iteration
+            stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
             if (stepSize > (threadRKParameters.tripTime - startTime) / 1000){
@@ -556,21 +472,11 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             {
                 curPos.r = 1000;
             }
-            
-            
-            if(isnan(curPos.r) || isnan(curPos.theta) || isnan(curPos.z) 
-             || isnan(curPos.vr) || isnan(curPos.vtheta) || isnan(curPos.vz)){
-                 stop = true;
-             }
-
-            if(!stop){
-                iteration++;
-            }
         }
         individuals[threadId].finalPos = curPos; // output to this thread's index
-        testVal[threadId] = iteration;
 
         individuals[threadId].posDiff = pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2);
+        //individuals[threadId].posDiff = pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2);
         individuals[threadId].velDiff =  pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2);
 
 
@@ -667,7 +573,7 @@ void rkCalcComparison(){
     std::cout << accel << std::endl;
     //std::cout << testCoeff << std::endl;
 
-       for(int i = 0; i < n; i++){
+    for(int i = 0; i < n; i++){
         std::cout << "i: " << i << std::endl;
         std::cout << hostV[i] << std::endl;
         std::cout << hostCurPos[i] << std::endl;

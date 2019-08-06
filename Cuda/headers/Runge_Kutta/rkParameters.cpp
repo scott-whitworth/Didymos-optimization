@@ -120,9 +120,11 @@ template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, 
     if( abs(this->tripTime - other.tripTime) > comp_Thresh){
         return false;
     }
+    /*
     if( abs(this->wetMass - other.wetMass) > comp_Thresh){
         return false;
     }
+    */
 
     //If we have made it this far, everthing is good
     return true;
@@ -138,6 +140,8 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const rkParamet
     Str << std::setprecision(16); // number of decimals output into text file
     Str << "Coeff: \n" << e.coeff;
     Str << "Elements:\n\t" << e.y0;
-    Str << "Final Time: " << e.tripTime << " WetMass: " << e.wetMass << endl;
+    Str << "Final Time: " << e.tripTime << endl;
+    Str << "Launch angles:\n\tAlpha: " << e.alpha << "\n\tBeta: " << e.beta << "\n\tZeta: " << e.zeta << endl;
+    //" WetMass: " << e.wetMass << endl;
     return Str;
 }
