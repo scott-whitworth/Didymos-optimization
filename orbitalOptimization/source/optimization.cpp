@@ -10,6 +10,7 @@
 #include "nelder_mead.h" // used for nelmin()
 #include "constants.h" //used for wetMass
 #include "orbitalMotion.h" //used for trajectory() and trajectoryPrint()
+#include "earthInfo.h"
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values
 #include <time.h> //for seeding the random number generator
@@ -21,11 +22,24 @@
 
 int main ()
 {
- //checkBinaryFile(14);
-  
- //iterativeOptimize(); // manually set initial conditions
-  optimizeStartConditions(10); // random values within a given range for initial conditions
+    //////////////////////////////////////////////////////////////////////////////////
+    //Global variable needs to be initialized
 
+    // Define variables to be passed into EarthInfo
+    double startTime = 15778800; // 0.5 year (s)
+    //double startTime = 0.0; // 0 years
+    double endTime = 78894000; // 2.5 years (s)
+    double timeRes = 3600; // position of earth is calculated for every hour
+
+    // initializes EarthInfo
+    launchCon = new EarthInfo(startTime, endTime, timeRes);
+    ////////////////////////////////////////////////////////////////////////////////////
+  
+  checkBinaryFile(14);
+  //iterativeOptimize(); // manually set initial conditions
+  //optimizeStartConditions(2); // random values within a given range for initial conditions
+
+  delete launchCon;
   return 0;
 }
 
@@ -322,7 +336,7 @@ for (int j = 0; j < size; j++)
   std::cout<<std::endl<<"Run: "<< j <<std::endl;
   std::cout<<cost<<std::endl;
   std::cout<<yOut<<std::endl;
-  
+  std::cout<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
 } 
 
 }
