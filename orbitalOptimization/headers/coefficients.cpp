@@ -1,9 +1,11 @@
-// Didymos-Optimization_Project:
-// Last Editor: Ben and Mateo
-// Tasks Completed: 
-    // Changed the magic numbers to defined constants
-
+//Didymos-Optimization_Project:
+//Last Editor: Ben and Mateo
+//Tasks Completed: 
+    //Changed the magic numbers to defined constants
+#ifndef coefficients_cpp
+#define coefficients_cpp
 #include "coefficients.h"
+
 #include <iomanip> // setprecision(int)
 
 template <class T> std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e) {
@@ -32,3 +34,5 @@ template <class T> void initCoefficient(double x[], coefficients<T> & coeff)
         coeff.coast[i]=x[i+COAST_OFFSET];
     }
 }
+
+#endif

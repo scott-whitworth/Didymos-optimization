@@ -102,7 +102,6 @@ double trajectory( double x[])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: add a yFinal to trajectoryPrint to sorth through solutiosn 
 double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut)
 {
   /*set the asteroid and inital conditions for the earth and spacecraft:
@@ -155,14 +154,12 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,fuelSpent, wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
-  elements<double> yFinal;
-  yFinal = yp[(int)lastStep];
-  yOut = yFinal;
+  yOut = yp[(int)lastStep];
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
   double cost_pos, vel;
-  cost_pos = pow(asteroid.r-yFinal.r,2)+pow(asteroid.theta-fmod(yFinal.theta,2*M_PI),2)+pow(asteroid.z-yFinal.z,2);         
-  vel = sqrt(pow(asteroid.vr-yFinal.vr,2)+pow(asteroid.vtheta-yFinal.vtheta,2)+pow(asteroid.vz-yFinal.vz,2));
+  cost_pos = pow(asteroid.r-yOut.r,2)+pow(asteroid.theta-fmod(yOut.theta,2*M_PI),2)+pow(asteroid.z-yOut.z,2);         
+  vel = sqrt(pow(asteroid.vr-yOut.vr,2)+pow(asteroid.vtheta-yOut.vtheta,2)+pow(asteroid.vz-yOut.vz,2));
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
