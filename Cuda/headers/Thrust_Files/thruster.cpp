@@ -16,7 +16,7 @@ thruster<T>::thruster(int newType){
         m_Dot = NEXTm_Dot0;
         P0 = NEXTP0;
     }
-type = newType;
+    type = newType;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin){
@@ -25,9 +25,7 @@ template <class T> T thruster<T>::calc_eff(const T & Pin){
        // Polynomial fit
     return  -1.328086e-23*pow(Pin,6) + 6.207694e-19*pow(Pin,5) - 9.991813e-15*pow(Pin,4) +  7.701266e-11*pow(Pin,3) - 3.136031e-07*pow(Pin,2) +  6.805225e-04*Pin;
    }
-   else{
-       return 0;
-   }
+   return 0;
 }
 
 template <class T> void thruster<T>::calc_m_Dot(const T & Pin){

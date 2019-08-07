@@ -68,17 +68,17 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/1000)
+        if (stepSize>(timeFinal-timeInitial)/10)
         {
-            stepSize = (timeFinal-timeInitial)/1000;
+            stepSize = (timeFinal-timeInitial)/10;
             maxStep++;
         }
-        else if (stepSize<((timeFinal-timeInitial)/10000))
+        else if (stepSize<((timeFinal-timeInitial)/1000))
         {
-            stepSize = (timeFinal-timeInitial)/10000;
+            stepSize = (timeFinal-timeInitial)/1000;
             minStep++;
         }
         
@@ -131,7 +131,7 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
 
         
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (stepSize>(timeFinal-timeInitial)/1000)
@@ -214,8 +214,6 @@ elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T>
     y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
     error = y_new-y_prev;
 
-
-
     // MATLAB code : ERROR between GPU and CPU
     //error = k1*(71)/(57600) + k3*(-71)/(16695) + k4*(71)/(1920)
     //- k5*(17253)/(339200) + k6*(22)/(525) + k7*(-1)/(40);
@@ -231,12 +229,12 @@ elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> 
 
     //calc_k multiplies all values by the stepSize internally.
     k1 = calc_kEarth(stepSize, y_new, curTime, timeFinal);        
-    k2 = calc_kEarth(stepSize, y_new+k1*1/5, curTime+1/5*stepSize, timeFinal);   
-    k3 = calc_kEarth(stepSize, y_new+k1*3/40+k2*9/40, curTime+3/10*stepSize, timeFinal);   
-    k4 = calc_kEarth(stepSize, y_new+k1*44/45+k2*-56/15+k3*32/9, curTime+4/5*stepSize, timeFinal);    
-    k5 = calc_kEarth(stepSize, y_new+k1*19372/6561+k2*-25360/2187+k3*64448/6561+k4*-212/729, curTime+8/9*stepSize, timeFinal);        
-    k6 = calc_kEarth(stepSize, y_new+k1*9017/3168+k2*-355/33+k3*46732/5247+k4*49/176+k5*-5103/18656, curTime+stepSize, timeFinal);        
-    k7 = calc_kEarth(stepSize, y_new+k1*35/384+k3*500/1113+k4*125/192+k5*-2187/6784+k6*11/84, curTime+stepSize, timeFinal);  
+    k2 = calc_kEarth(stepSize, y_new+k1*1./5, curTime+1./5*stepSize, timeFinal);   
+    k3 = calc_kEarth(stepSize, y_new+k1*3./40+k2*9./40, curTime+3./10*stepSize, timeFinal);   
+    k4 = calc_kEarth(stepSize, y_new+k1*44./45+k2*-56./15+k3*32./9, curTime+4./5*stepSize, timeFinal);    
+    k5 = calc_kEarth(stepSize, y_new+k1*19372./6561+k2*-25360./2187+k3*64448./6561+k4*-212./729, curTime+8./9*stepSize, timeFinal);        
+    k6 = calc_kEarth(stepSize, y_new+k1*9017./3168+k2*-355./33+k3*46732./5247+k4*49./176+k5*-5103./18656, curTime+stepSize, timeFinal);        
+    k7 = calc_kEarth(stepSize, y_new+k1*35./384+k3*500./1113+k4*125./192+k5*-2187./6784+k6*11./84, curTime+stepSize, timeFinal);  
 
     //Error 
     //See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
@@ -244,14 +242,13 @@ elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> 
 
     //New value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
-    y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
+    y_new = y_new + k1*35./384 + k3*500./1113 + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
     // Dormand-Prince : no error between GPU and CPU
     y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
     error = y_new-y_prev;
-
 }
 
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)

@@ -12,7 +12,7 @@ Individual* getNewStarts(Individual *prevGen);
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, int *testVal);
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n);
 
 //unit tests
 
