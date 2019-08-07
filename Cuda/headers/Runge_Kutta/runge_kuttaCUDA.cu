@@ -44,7 +44,10 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
-    std::mt19937_64 mt_rand(time(0));
+    time_t timeSeed = time(0);
+    std::cout << "Time seed for this run: " << timeSeed << std::endl;
+    std::cout << "------------------------------------------------------------------------" << std::endl;
+    std::mt19937_64 mt_rand(timeSeed);
 
      // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   

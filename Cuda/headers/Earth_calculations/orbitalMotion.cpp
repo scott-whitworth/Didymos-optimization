@@ -22,3 +22,20 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime,co
  
   return yp;
 }
+
+elements<double> earthInitial(double timeInitial, double tripTime,const elements<double> & earth)
+{
+  // Time step
+  double deltaT; 
+
+  // Initial guess for time step, cannot be greater than the time resolution.
+  deltaT = -(tripTime - timeInitial)/MAX_NUMSTEPS; 
+
+  // Declaring the solution vector.
+  elements<double> yp;
+
+  // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
+ 
+  return yp;
+}

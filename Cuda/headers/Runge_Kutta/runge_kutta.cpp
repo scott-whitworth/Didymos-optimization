@@ -195,7 +195,7 @@ T stepSize, elements<T> & y_new, const T & absTol)
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
 elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
    
-   elements<T> y_prev;
+   //elements<T> y_prev;
 
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
@@ -213,21 +213,21 @@ elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T>
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
     // Dormand-Prince : no error between GPU and CPU
-    y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
-    error = y_new-y_prev;
+    //y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
+    //error = y_new-y_prev;
 
     // MATLAB code : ERROR between GPU and CPU
     //error = k1*(71)/(57600) + k3*(-71)/(16695) + k4*(71)/(1920)
     //- k5*(17253)/(339200) + k6*(22)/(525) + k7*(-1)/(40);
 
     // Without k7 : no error between GPU and CPU
-    //error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525;    
+    error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525 + k7*-1./40;    
 }
 
 template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
 elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7){
     // Runge-Kutta algorithm      
-    elements<T> y_prev;
+    //elements<T> y_prev;
 
     //calc_k multiplies all values by the stepSize internally.
     k1 = calc_kEarth(stepSize, y_new, curTime, timeFinal);        
@@ -249,8 +249,10 @@ elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
     // Dormand-Prince : no error between GPU and CPU
-    y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
-    error = y_new-y_prev;
+    //y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
+    //error = y_new-y_prev;
+
+    error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525 + k7*-1./40;    
 }
 
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)

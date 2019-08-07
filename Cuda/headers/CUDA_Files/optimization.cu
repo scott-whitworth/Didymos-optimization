@@ -17,52 +17,31 @@
 
 int main ()
 {
-
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     std::cout << "Device Number: 0 \n";
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
     
-    //////////////////////////////////////////////////////////////////////////////////
-    //Global variable needs to be initialized
-
     // Define variables to be passed into EarthInfo
     double startTime = 15778800; // 0.5 year (s)
-    //double startTime = 0.0; // 0 years
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // position of earth is calculated for every hour
+    launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
 
-    // initializes EarthInfo
-    launchCon = new EarthInfo(startTime, endTime, timeRes);
-    ////////////////////////////////////////////////////////////////////////////////////
+    int blockThreads = 32;
+    //int numThreads = 2880; // the number of cores on a Tesla k40
+    //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
+    int numThreads = 14;
 
-    int blockThreads = 0;
-    int numThreads = 0;
-    int blockThreadNums[] = {32};
-    //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
-    //int threadNums[] = {2880}; // the number of cores on a Tesla k40
-    //int threadNums[] = {1920}; // 384 cores on K620 * 5 = 1920
-    int threadNums[] = {14};
-
-    std::ofstream efficiencyGraph;
-    efficiencyGraph.open("efficiencyGraph.csv");
-
-    //double calcPerS;
-
-    for(int i = 0; i < std::size(blockThreadNums); i++){
-        for(int j = 0; j < std::size(threadNums); j++){    
-            blockThreads = blockThreadNums[i];
-            numThreads = threadNums[j];
-            std::cout << std::endl << "testing optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-            //calcPerS = optimize(numThreads, blockThreads);
-            optimize(numThreads, blockThreads);
-            //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
-        }
-    }
-
-    efficiencyGraph.close();
+    //std::ofstream efficiencyGraph;
+    //efficiencyGraph.open("efficiencyGraph.csv");
+    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+    optimize(numThreads, blockThreads);
+    //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
+    //efficiencyGraph.close();
     
     delete launchCon;
+
     return 0;
 }
