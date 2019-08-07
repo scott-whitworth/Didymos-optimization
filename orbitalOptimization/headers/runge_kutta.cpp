@@ -90,7 +90,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
         n++;
     }//end of while 
     lastStep = n;
-    std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
+    //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
 
 
@@ -130,11 +130,11 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
         curTime += stepSize;
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize)/2;
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/10)
-            stepSize = (timeFinal-timeInitial)/10;
+        if (stepSize>(timeFinal-timeInitial)/100)
+            stepSize = (timeFinal-timeInitial)/100;
         else if (stepSize<((timeFinal-timeInitial)/1000))
             stepSize = (timeFinal-timeInitial)/1000;
         // shorten the last step to end exactly at time final
@@ -142,9 +142,10 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
             stepSize = (timeFinal-curTime);
 
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
-        if (y_new.r<0.5)
+        if (sqrt(pow(y_new.r,2)+pow(y_new.z,2))<0.5)
         {
             y_new.r = 1000;
+            return;
         }
     }//end of while 
 }
@@ -173,8 +174,8 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
         stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize)/2;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize>(timeFinal-timeInitial)/10)
-            stepSize = -(timeFinal-timeInitial)/10;
+        if (-stepSize>(timeFinal-timeInitial)/100)
+            stepSize = -(timeFinal-timeInitial)/100;
         else if (-stepSize<((timeFinal-timeInitial)/1000))
             stepSize = -(timeFinal-timeInitial)/1000;
         // shorten the last step to end exactly at time final
@@ -198,7 +199,7 @@ elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T>
 
     //New value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
-    y_new = y_new + k1*(35./384) + k3*(500./1113) + k4*125./192 - k5*2187./6784 + k6*11./84;  
+    y_new = y_new + k1*35./384 + k3*500./1113 + k4*125./192 - k5*2187./6784 + k6*11./84;  
 
     //Error 
     //See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45

@@ -7,7 +7,7 @@
 void optimizing (double *&start, double *step);
 
 // Runs optimizing() with a series of different starting conditions to find different solutions
-void optimizeStartConditions();
+void optimizeStartConditions(int executions);
 
 // Runs optimizing() iteratively using previous results as new starting point
 void iterativeOptimize();
@@ -15,5 +15,7 @@ void iterativeOptimize();
 void writeTrajectoryToFile(double *start, double & cost, int i);
 
 void setStep(double step[]);
+
+void checkBinaryFile(int size);
 
 #endif
