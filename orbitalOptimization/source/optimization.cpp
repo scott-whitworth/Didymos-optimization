@@ -21,57 +21,16 @@
 
 int main ()
 {
-  
-std::ifstream starts;
-starts.open("optimizedVector.bin", std::ifstream::in|std::ios::binary);
-
-double startDoubles;
-
-// sort the data into 2 dimensions
-// one row is one set of starting parameters
-// each column is a specific variable:
-// 0-6 gamma
-// 7-9 tau
-// 10-12 launch angles
-// 13 trip time
-// 14-19 coast
-
-double arrayCPU[34][19];
-double singleArray[19];
-for(int i = 0; i < 19; i++)
-{  // rows
-  for(int j = 0; j < 34; j++)
-  { // columns
-    starts.read( reinterpret_cast<char*>(&startDoubles ), sizeof startDoubles );
-    arrayCPU[j][i] = startDoubles;
-    //std::cout<< arrayCPU[j][i]<<"\n";
-  }
-}
-
-starts.close();
-
-double cost;
-
-for (int j = 0; j < 34; j++)
-{
-  for(int i = 0; i < 19; i++)
-  {
-    singleArray[i]=arrayCPU[j][i];
-  }
-  cost = trajectory(singleArray);
-  //writeTrajectoryToFile(singleArray, cost,j);
-  std::cout<<cost<<std::endl;
-  
-} 
-
+ //checkBinaryFile(14);
   
  //iterativeOptimize(); // manually set initial conditions
- // optimizeStartConditions(); // random values within a given range for initial conditions
+  optimizeStartConditions(10); // random values within a given range for initial conditions
 
   return 0;
 }
 
-void optimizeStartConditions(){
+void optimizeStartConditions(int executions)
+{
   //Pre-allocating memory for starting parameters and steps
   //start - starting parameters for optimization, order and contents defined in constants.h
   //step - starting step sizes for starting parameters
@@ -83,7 +42,6 @@ void optimizeStartConditions(){
   std::ofstream output;
   output.open ("optimized-start-conditions.txt");
 
-  int executions = 70;
   for(int i = 0; i < executions; i++)
   {
     // Initial guesses for variables based off of previous runs which have small cost values
@@ -290,17 +248,17 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
 
 void setStep(double step[])
 {
-  step[GAMMA_OFFSET] = 2.0E00;
-  step[GAMMA_OFFSET+1] = 2.0E00;
-  step[GAMMA_OFFSET+2] = 2.0E00;
-  step[GAMMA_OFFSET+3] = 2.0E00;
-  step[GAMMA_OFFSET+4] = 2.0E00;
-  step[GAMMA_OFFSET+5] = 2.0E00;
-  step[GAMMA_OFFSET+6] = 2.0E00;
+  step[GAMMA_OFFSET] = 1.0E00;
+  step[GAMMA_OFFSET+1] = 1.0E00;
+  step[GAMMA_OFFSET+2] = 1.0E00;
+  step[GAMMA_OFFSET+3] = 1.0E00;
+  step[GAMMA_OFFSET+4] = 1.0E00;
+  step[GAMMA_OFFSET+5] = 1.0E00;
+  step[GAMMA_OFFSET+6] = 1.0E00;
 
-  step[TAU_OFFSET] = 1.0E00;
-  step[TAU_OFFSET+1] = 1.0E00;
-  step[TAU_OFFSET+2] = 1.0E00;
+  step[TAU_OFFSET] = 5.0E-01;
+  step[TAU_OFFSET+1] = 5.0E-01;
+  step[TAU_OFFSET+2] = 5.0E-01;
 
   step[ALPHA_OFFSET] = 1.0E00;
   step[BETA_OFFSET] = 1.0E00;
@@ -308,9 +266,63 @@ void setStep(double step[])
 
   step[TRIPTIME_OFFSET] = 1.0E07;
 
-  step[COAST_OFFSET] = 1.0E00;
-  step[COAST_OFFSET+1] = 1.0E00;
-  step[COAST_OFFSET+2] = 1.0E00;
-  step[COAST_OFFSET+3] = 1.0E00;
-  step[COAST_OFFSET+4] = 1.0E00;
+  step[COAST_OFFSET] = 5.0E-01;
+  step[COAST_OFFSET+1] = 5.0E-01;
+  step[COAST_OFFSET+2] = 5.0E-01;
+  step[COAST_OFFSET+3] = 5.0E-01;
+  step[COAST_OFFSET+4] = 5.0E-01;
+}
+
+
+void checkBinaryFile(int size)
+{
+   
+std::ifstream starts;
+starts.open("optimizedVector.bin", std::ifstream::in|std::ios::binary);
+
+double startDoubles;
+
+// sort the data into 2 dimensions
+// one row is one set of starting parameters
+// each column is a specific variable:
+// 0-6 gamma
+// 7-9 tau
+// 10-12 launch angles
+// 13 trip time
+// 14-19 coast
+
+double arrayCPU[size][19];
+double singleArray[19];
+for(int i = 0; i < 19; i++)
+{  // rows
+  for(int j = 0; j < size; j++)
+  { // columns
+    starts.read( reinterpret_cast<char*>(&startDoubles ), sizeof startDoubles );
+    arrayCPU[j][i] = startDoubles;
+    //std::cout<< arrayCPU[j][i]<<"\n";
+  }
+}
+
+starts.close();
+
+double cost;
+
+for (int j = 0; j < size; j++)
+{
+  for(int i = 0; i < 19; i++)
+  {
+    singleArray[i]=arrayCPU[j][i];
+  }
+  double  lastStep;
+  double  cost;
+  int n = 0;
+  elements<double> yOut;
+  cost = trajectoryPrint(singleArray,lastStep, cost, n, yOut);
+  //writeTrajectoryToFile(singleArray, cost,j);
+  std::cout<<std::endl<<"Run: "<< j <<std::endl;
+  std::cout<<cost<<std::endl;
+  std::cout<<yOut<<std::endl;
+  
+} 
+
 }

@@ -8,7 +8,7 @@
 #include "constants.h" // Used for wetMass
 #include <iostream> // Used for cout
 
-template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
+template <class T> T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
     
     // If all of the fuel has been expelled, then no more thrust can be applied
     if(wetMass - massExpelled <= DRY_MASS){
@@ -27,13 +27,14 @@ template <class T> T calc_accel(const T & radius, const T & offPlane, thruster<T
     T thrust;
 
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
-    Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); 
+    T sepparation = sqrt(pow(radius,2)+pow(z,2));
+    Pin = thrusterType.P0/sepparation; 
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
     //This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
-    if(radius<=1 && offPlane<=1)
+    if(sepparation<=1)
     {
-        Pin = thrusterType.P0/1;
+        Pin = thrusterType.P0; // It is devided by 1 astronomical unit to normalize it P0/(1 AU)
     }
 
     // The thrust power of the spacecraft is dependent upon the efficiency (calculated in thruster.cpp) and the power (in).
