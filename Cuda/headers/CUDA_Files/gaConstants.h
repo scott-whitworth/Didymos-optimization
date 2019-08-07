@@ -3,9 +3,15 @@
 
 // genetic algorithm constraints
 
-#define generationsNum 17500 // total number of generations
+#define generationsNum 20000 // total number of generations
 
-#define SURVIVOR_COUNT 240 //360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
+//#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
+// 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920
+
+//#define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
+// 360 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 1440 = half of 2880
+
+#define SURVIVOR_COUNT 4
 
 #define MUTATION_RATE 0.15 // fraction of new offspring to mutate
 

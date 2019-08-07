@@ -42,7 +42,8 @@ int main ()
     int blockThreadNums[] = {32};
     //int threadNums[] = {100, 500, 1000, 2000, 3000, 4000, 5000};
     //int threadNums[] = {2880}; // the number of cores on a Tesla k40
-    int threadNums[] = {1920}; // 384 cores on K620 * 5 = 1920
+    //int threadNums[] = {1920}; // 384 cores on K620 * 5 = 1920
+    int threadNums[] = {14};
 
     std::ofstream efficiencyGraph;
     efficiencyGraph.open("efficiencyGraph.csv");

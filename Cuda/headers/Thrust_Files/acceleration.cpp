@@ -32,12 +32,13 @@ template <class T> __host__ __device__ T calc_accel(const T & radius, const T & 
     T accel;
 
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
-    Pin = thrusterType.P0/sqrt(pow(radius,2)+pow(offPlane,2)); 
+    T seperation = sqrt(pow(radius,2)+pow(offPlane,2));
+    Pin = thrusterType.P0/seperation; 
 
     // If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power measured on earth.
-    if(radius<=1 && offPlane<=1)
+    if(seperation <= 1)
     {
-        Pin = thrusterType.P0/1;
+        Pin = thrusterType.P0;
     }
 
     // The thrust power of the spacecraft is dependent upon the efficiency (calculated in thruster.cpp) and the power (in).

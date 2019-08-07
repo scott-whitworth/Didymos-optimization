@@ -74,7 +74,7 @@ template <class T> struct rkParameters {
     /////////////////////
     // Utility Methods //
     /////////////////////
-    // Comparison function
+    // Comparison function (for sort())
     // Param: other - another rkParameter to be compared to
     // Param: comp_Thresh - comparison threshold
     // Returns true all elements of other are the same as *this, within the threshold comp_Thresh
@@ -82,6 +82,8 @@ template <class T> struct rkParameters {
     bool compare(const rkParameters<T> & other, T comp_Thresh);
 
     // Based on *this parameters, calculates the final position of the spacecraft using CPU based Methods
+    // runs the CPU version of the RK calculation to find the final position of the spacecraft, using rkParameters for input
+    // input the values which are not run-specific
     // Param: timeInitial - start time of simulation (s)
     // Param: stepSize - first time interval between data points (s)
     // Param: absTol - error tolerence for Runge-Kutta

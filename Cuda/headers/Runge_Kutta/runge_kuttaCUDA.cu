@@ -54,8 +54,10 @@ double optimize(const int numThreads, const int blockThreads){
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
+    const int numStarts = 14; // the number of different sets of starting parameters in the input file
+
     std::ifstream starts;
-    starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary);
+    starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations
 
     double startDoubles;
 
@@ -67,9 +69,9 @@ double optimize(const int numThreads, const int blockThreads){
     //    10-12 launch angles
     //    13 trip time
     //    14-19 coast
-    double arrayCPU[34][19];
+    double arrayCPU[numStarts][19];
     for(int i = 0; i < 19; i++){ // rows
-        for(int j = 0; j < 34; j++){ // columns
+        for(int j = 0; j < numStarts; j++){ // columns
             starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
             arrayCPU[j][i] = startDoubles;
         }
@@ -78,7 +80,8 @@ double optimize(const int numThreads, const int blockThreads){
 
      // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
     for(int i = 0; i < numThreads; i++){
-        int row = mt_rand() % 34;
+        //int row = mt_rand() % numStarts;
+        int row = i;
 
         double tripTime = arrayCPU[row][13];
 
@@ -145,16 +148,6 @@ double optimize(const int numThreads, const int blockThreads){
     //for(int i = 0; i < generationsNum; i++){
     for(int i = 0; i < 1; i++){
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
-        
-        // testing
-        /*
-        for(int j = 0; j < numThreads; j++){
-            std::cout << "member " << j << std::endl;
-            std::cout << "parameters: " << inputParameters[j].startParams << std::endl;
-            std::cout << "posDiff: " << inputParameters[j].posDiff << std::endl;
-            std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
-        }
-        */
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
 
@@ -194,7 +187,23 @@ double optimize(const int numThreads, const int blockThreads){
 
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
-        std::sort(inputParameters, inputParameters + numThreads, greaterInd);
+        //std::sort(inputParameters, inputParameters + numThreads, greaterInd);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // finding the best variable to change in the best Individual
 
@@ -224,7 +233,8 @@ double optimize(const int numThreads, const int blockThreads){
             std::cout << "member " << j << std::endl;
             //std::cout << "parameters: " << inputParameters[j].startParams << std::endl;
             std::cout << "posDiff: " << inputParameters[j].posDiff << std::endl;
-            std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
+            //std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
+            std::cout << "final pos: " << inputParameters[j].finalPos << std::endl;
         }
         
 
