@@ -27,6 +27,8 @@
 // Output: returns k1,k2,k3,k4 for y[n+1] calculation
 template <class T> elements<T> calc_k(const T & h, const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
+template <class T> elements<T> calc_kEarth(const T & h, const elements<T>  & y, const T & curTime, const T & timeFinal);
+
 // Dot = derivative of element with respect to time
 // Utilities of calc_k(), calculates the element from current condition
 // Parameter y: complete current condition
@@ -61,6 +63,12 @@ template <class T> T calcRate_vtheta(const elements<T> & y, coefficients<T> & co
 // Output: vrDot
 template <class T> T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
+// Velocities rates with no accel
+
 #include "motion_equations.cpp"
+
+template <class T> T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
+template <class T> T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
+template <class T> T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
 
 #endif

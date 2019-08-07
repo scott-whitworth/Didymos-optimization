@@ -5,6 +5,7 @@
 
 #include "runge_kutta.h" // used for rk4sys(), rk4Simple90, and rk4Reverse().
 #include "calcFourier.h" // used for calc_gamma(), calc_tau(), and calc_coast().
+#include "earthInfo.h"
 #include <iostream> // used for cout
 #include <fstream> // used for stream output 
 #include <math.h> // used for M_PI
@@ -24,8 +25,7 @@ double trajectory( double x[])
   elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
   // Setting initial conditions of earth based on the impact date (October 5, 2022) minus the trip time (optimized)
-  elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
-  
+  elements<double> earth = launchCon->getCondition(x[TRIPTIME_OFFSET]);
   // Setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), //earth.r+ESOI*cos(alpha)
 
@@ -113,8 +113,8 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
-  elements<double> earth =  earthInitial(x[TRIPTIME_OFFSET]);
-
+  elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);
+  
   // setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),earth.z,
   earth.vr+cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape,earth.vz+sin(x[ZETA_OFFSET])*vEscape);
@@ -205,19 +205,6 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 // reverse integration in order to determine the initial conditions of the earth (at launch)
 elements<double> earthInitial(double tripTime)
 {
-  // setup of thrust angle calculations based off of optimized coefficients
-  // all set to zero because the earth has no acceleration due to thrusting.
-  coefficients<double> earthCoeff;
-  for (int i=0;i<earthCoeff.gammaSize;i++){
-    earthCoeff.gamma[i]=0;
-  }
-  for (int i=0;i<earthCoeff.tauSize;i++){
-    earthCoeff.tau[i]=0;
-  }
-
-  // set to zero because the earth has no acceleration due to thrusting.
-  double earthAccel = 0;
-
   //setting initial conditions for calculation of earth on launch date with orbital elements of the earth on the asteroid impact date of 2022-10-05.
   elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
 
@@ -233,7 +220,26 @@ elements<double> earthInitial(double tripTime)
   double absTol = RK_TOL;
 
   // calculates the earth's launch date conditions based on timeFinal minus the optimized trip time
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol,earthCoeff,earthAccel);
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,absTol);
 
+  return yp;
+}
+
+
+// Solver the integration backwards but it is used in earth info, it is meant to be called consecutively
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth)
+{
+  // Time step
+  double deltaT; 
+
+  // Initial guess for time step, cannot be greater than the time resolution.
+  deltaT = -(tripTime - timeInitial)/60; 
+
+  // Declaring the solution vector.
+  elements<double> yp;
+
+  // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
+ 
   return yp;
 }

@@ -16,7 +16,7 @@ thruster<T>::thruster(int newType){
         m_Dot = NEXTm_Dot0;
         P0 = NEXTP0;
     }
-type = newType;
+    type = newType;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin){
