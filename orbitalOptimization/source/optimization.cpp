@@ -5,7 +5,6 @@
   //Changed all starts and steps to be defined constants instead of magic numbers.
   //Changed the initial guess of a parameter to be a random number within a resonable range of values.
 
-
 #include "optimization.h" 
 #include "nelder_mead.h" // used for nelmin()
 #include "constants.h" //used for wetMass
@@ -27,17 +26,17 @@ int main ()
 
     // Define variables to be passed into EarthInfo
     double startTime = 15778800; // 0.5 year (s)
-    //double startTime = 0.0; // 0 years
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // position of earth is calculated for every hour
 
     // initializes EarthInfo
     launchCon = new EarthInfo(startTime, endTime, timeRes);
     ////////////////////////////////////////////////////////////////////////////////////
+
   
-  checkBinaryFile(14);
+  //checkBinaryFile(14);
   //iterativeOptimize(); // manually set initial conditions
-  //optimizeStartConditions(2); // random values within a given range for initial conditions
+  optimizeStartConditions(2); // random values within a given range for initial conditions
 
   delete launchCon;
   return 0;
@@ -329,13 +328,13 @@ void checkBinaryFile(int size)
     }
     double  lastStep;
     double  cost;
-    int n = 0;
+    int n = -1;
     elements<double> yOut;
     cost = trajectoryPrint(singleArray,lastStep, cost, n, yOut);
     //writeTrajectoryToFile(singleArray, cost,j);
     std::cout<<std::endl<<"Run: "<< j <<std::endl;
     std::cout<<cost<<std::endl;
-    std::cout<<yOut<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
+    //std::cout<<yOut<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
   } 
 
 }

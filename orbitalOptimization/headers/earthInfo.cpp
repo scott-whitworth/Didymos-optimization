@@ -23,10 +23,9 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     // Assigning the position of the earth at impact to variable earth. Passed into earthInitial_incremental and rk4Reverse.
     elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
 
-
-    // Get the actual initial position for the time frame chosen.
+    // Get the actual initial position for the time frame chosen. // Here is the first divergence
     earth=earthInitial_incremental(0,startTime,earth);
-
+    std::cout<<earth;
     // Setting the first element of earthCon to be equal to the earth conditions at impact
     //earthCon[0]=earthInitial_incremental(startTime,startTime,earth);
     earthCon[0]= earth;
@@ -50,6 +49,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     }
     // Closing progress bar
     std::cout << "]" << std::endl << std::endl;
+    std::cout<<earth;
 }
 
 elements<double> EarthInfo::getCondition(const double & currentTime)

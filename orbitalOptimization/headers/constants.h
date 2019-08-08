@@ -9,7 +9,7 @@
 #define vEscape sqrt(C3Energy)/AU // magnitude of velocity at earth escape  (au/s)
 #define AU 1.49597870691e11// used to convert meters to astronomical units (m) 
 #define constG 1.99349603314131e-44 //gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
-#define massSun 1.988500e30// mass of the sun (kg)
+#define massSun 1.988500e30// mass of the sun (kg) // updated from jpl data base
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define orbitalInclination 0.0594906//orbital inclination of the asteroid (rad)
 #define _USE_MATH_DEFINES // allows us access to M_PI

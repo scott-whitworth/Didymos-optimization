@@ -17,18 +17,19 @@
 
 int main ()
 {
+    /*
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     std::cout << "Device Number: 0 \n";
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
-    
+    */
     // Define variables to be passed into EarthInfo
-    double startTime = 15778800; // 0.5 year (s)
+    double startTime = 15778800*4; // 0.5 year (s)
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // position of earth is calculated for every hour
     launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
-
+/*
     int blockThreads = 32;
     //int numThreads = 2880; // the number of cores on a Tesla k40
     //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
@@ -42,6 +43,6 @@ int main ()
     //efficiencyGraph.close();
     
     delete launchCon;
-
+*/
     return 0;
 }

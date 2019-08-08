@@ -163,28 +163,31 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
-  // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
-   if (cost < Fmin)
-    cost = 0;
-
-  std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
-  // Output of yp to a binary file
-  std::ofstream output;
-  
-  output.open ("orbitalMotion-accel"+std::to_string(j)+".bin", std::ios::binary); 
-
-  for(int i=0; i <= lastStep; i++)
+  // Flag to not print the solution
+  if (j>0)
   {
-    //output << yp[i];
-    output.write((char*)&yp[i], sizeof (elements<double>));
-    output.write((char*)&times[i], sizeof (double));
-    output.write((char*)&gamma[i], sizeof (double));
-    output.write((char*)&tau[i], sizeof (double));
-    output.write((char*)&accel_output[i], sizeof (double));
-    output.write((char*)&fuelSpent[i], sizeof (double));
-  }
-  output.close();
+    // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
+    if (cost < Fmin)
+      cost = 0;
 
+    std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
+    // Output of yp to a binary file
+    std::ofstream output;
+    
+    output.open ("orbitalMotion-accel"+std::to_string(j)+".bin", std::ios::binary); 
+
+    for(int i=0; i <= lastStep; i++)
+    {
+      //output << yp[i];
+      output.write((char*)&yp[i], sizeof (elements<double>));
+      output.write((char*)&times[i], sizeof (double));
+      output.write((char*)&gamma[i], sizeof (double));
+      output.write((char*)&tau[i], sizeof (double));
+      output.write((char*)&accel_output[i], sizeof (double));
+      output.write((char*)&fuelSpent[i], sizeof (double));
+    }
+    output.close();
+  }
   // cleaning up dynamic yp, time, gamma, and tau.
   delete [] yp;
   delete [] times;
@@ -198,6 +201,24 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Solver the integration backwards but it is used in earth info, it is meant to be called consecutively
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth)
+{
+  // Time step
+  double deltaT; 
+
+  // Initial guess for time step, cannot be greater than the time resolution.
+  deltaT = -(tripTime - timeInitial)/static_cast <double> (60); 
+
+  // Declaring the solution vector.
+  elements<double> yp;
+
+  // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
+ 
+  return yp;
+}
+
 // solves orbital motion differential equations according to a vector of parameters (which are optimized) and returns the cost for the parameters
 // reverse integration in order to determine the initial conditions of the earth (at launch)
 elements<double> earthInitial(double tripTime)
@@ -208,7 +229,7 @@ elements<double> earthInitial(double tripTime)
   // setting intiial time parameters
   double timeInitial= 0; 
   double deltaT; // time step
-  deltaT = -(tripTime-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
+  deltaT = -(tripTime-timeInitial)/static_cast <double> (MAX_NUMSTEPS); // initial guess for time step, small is preferable
 
   // declaring the solution vector
   elements<double> yp;
@@ -223,20 +244,3 @@ elements<double> earthInitial(double tripTime)
 }
 
 
-// Solver the integration backwards but it is used in earth info, it is meant to be called consecutively
-elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth)
-{
-  // Time step
-  double deltaT; 
-
-  // Initial guess for time step, cannot be greater than the time resolution.
-  deltaT = -(tripTime - timeInitial)/60; 
-
-  // Declaring the solution vector.
-  elements<double> yp;
-
-  // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
- 
-  return yp;
-}
