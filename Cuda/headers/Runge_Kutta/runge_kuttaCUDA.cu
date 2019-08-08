@@ -96,8 +96,7 @@ double optimize(const int numThreads, const int blockThreads){
 
      // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
     for(int i = 0; i < numThreads; i++){
-        //int row = mt_rand() % numStarts;
-        int row = i;
+        int row = mt_rand() % numStarts;
 
         double tripTime = arrayCPU[row][13];
 
@@ -160,6 +159,7 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     for(int i = 0; i < generationsNum; i++){
+        std::cout << "starting loop" << std::endl;
         
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
 
