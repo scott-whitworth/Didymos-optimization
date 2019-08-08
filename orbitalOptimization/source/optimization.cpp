@@ -290,53 +290,52 @@ void setStep(double step[])
 
 void checkBinaryFile(int size)
 {
-   
-std::ifstream starts;
-starts.open("optimizedVector.bin", std::ifstream::in|std::ios::binary);
+    
+  std::ifstream starts;
+  starts.open("optimizedVector.bin", std::ifstream::in|std::ios::binary);
 
-double startDoubles;
+  double startDoubles;
 
-// sort the data into 2 dimensions
-// one row is one set of starting parameters
-// each column is a specific variable:
-// 0-6 gamma
-// 7-9 tau
-// 10-12 launch angles
-// 13 trip time
-// 14-19 coast
+  // sort the data into 2 dimensions
+  // one row is one set of starting parameters
+  // each column is a specific variable:
+  // 0-6 gamma
+  // 7-9 tau
+  // 10-12 launch angles
+  // 13 trip time
+  // 14-19 coast
 
-double arrayCPU[size][19];
-double singleArray[19];
-for(int i = 0; i < 19; i++)
-{  // rows
-  for(int j = 0; j < size; j++)
-  { // columns
-    starts.read( reinterpret_cast<char*>(&startDoubles ), sizeof startDoubles );
-    arrayCPU[j][i] = startDoubles;
-    //std::cout<< arrayCPU[j][i]<<"\n";
-  }
-}
-
-starts.close();
-
-double cost;
-
-for (int j = 0; j < size; j++)
-{
+  double arrayCPU[size][19];
+  double singleArray[19];
   for(int i = 0; i < 19; i++)
-  {
-    singleArray[i]=arrayCPU[j][i];
+  {  // rows
+    for(int j = 0; j < size; j++)
+    { // columns
+      starts.read( reinterpret_cast<char*>(&startDoubles ), sizeof startDoubles );
+      arrayCPU[j][i] = startDoubles;
+      //std::cout<< arrayCPU[j][i]<<"\n";
+    }
   }
-  double  lastStep;
-  double  cost;
-  int n = 0;
-  elements<double> yOut;
-  cost = trajectoryPrint(singleArray,lastStep, cost, n, yOut);
-  //writeTrajectoryToFile(singleArray, cost,j);
-  std::cout<<std::endl<<"Run: "<< j <<std::endl;
-  std::cout<<cost<<std::endl;
-  std::cout<<yOut<<std::endl;
-  std::cout<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
-} 
+
+  starts.close();
+
+  double cost;
+
+  for (int j = 0; j < size; j++)
+  {
+    for(int i = 0; i < 19; i++)
+    {
+      singleArray[i]=arrayCPU[j][i];
+    }
+    double  lastStep;
+    double  cost;
+    int n = 0;
+    elements<double> yOut;
+    cost = trajectoryPrint(singleArray,lastStep, cost, n, yOut);
+    //writeTrajectoryToFile(singleArray, cost,j);
+    std::cout<<std::endl<<"Run: "<< j <<std::endl;
+    std::cout<<cost<<std::endl;
+    std::cout<<yOut<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
+  } 
 
 }

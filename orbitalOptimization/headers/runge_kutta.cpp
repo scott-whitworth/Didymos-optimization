@@ -17,7 +17,6 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
     T curTime = timeInitial; // setting time equal to the start time
     int n=0; // setting the initial iteration number equal to 0
     int minStep=0;
-    int maxStep=0;
 
     // corresponds NEXT thruster to type 1 in thruster.h
     thruster<T> NEXT = thruster<T>(1);
@@ -37,6 +36,8 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
     accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, NEXT, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass);
     fuelSpent[0]=massFuelSpent;
     elements<T> u, error;
+    // Declare the variable for the status of coasting
+    bool coast;
 
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
@@ -46,7 +47,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
         u = y_new[n];
 
         // defining coast using calc_coast()
-        bool coast = calc_coast(coeff, curTime, timeFinal);
+        coast = calc_coast(coeff, curTime, timeFinal);
         
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new[n].r,y_new[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);
@@ -74,7 +75,6 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
         if (stepSize>(timeFinal-timeInitial)/10)
         {
             stepSize = (timeFinal-timeInitial)/10;
-            maxStep++;
         }
         else if (stepSize<((timeFinal-timeInitial)/1000))
         {
@@ -90,7 +90,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, double & 
         n++;
     }//end of while 
     lastStep = n;
-    //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
+    //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n";
 }
 
 
@@ -110,18 +110,17 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
     //mass of fuel expended (kg)
     //set to 0 initially
     T massFuelSpent =0;
+    // Declare the variable for the status of coasting
     bool coast;
+    // Declare element for the error of the RK step
     elements<T> error;
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
-        // defining deltaT for calc_accel as the stepsize
-        // change this and unsed stepSize instead of delta T, change back if there are problems T deltaT = stepSize;
-
         // defining coast using calc_coast()
         coast = calc_coast(coeff, curTime, timeFinal);
 
         // defining acceleration using calc_accel()
-        accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, stepSize /*change deltaT here*/, coast, wetMass);
+        accel = calc_accel(y_new.r,y_new.z, NEXT, massFuelSpent, stepSize, coast, static_cast<double>(wetMass));
 
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
