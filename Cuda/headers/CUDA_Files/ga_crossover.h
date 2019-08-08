@@ -4,16 +4,17 @@
 // Collection of functions to perform crossover operations on rkParameters
 // A crossover mask is an array of elements equal to the number of elements in the rkParameters list
 // The mask defines what elements come from partent n and parent m
-// [ {elements}     {coefficients}          {other parameters} ]
-// [   0-5          6-14,15-19,20-24, 25,    26, 27                                             ]
 #include <random>
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "individuals.h"
 
+// creates a new Individual from two parents
+// mask determines which parent each gene is inherited from
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);
 
-// gets a number of new Individuals equal to selectionSize by crossover of survivors
+// generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
+// returns the number of new Individuals put into the pool
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing);
 
 #include "ga_crossover.cu"

@@ -3,9 +3,13 @@
 
 #include "individuals.h"
 
-// Assings in an array the winners and in a sepparte4 array the losers using the function from individuals greater to comparte
-// input
-// output
+
+// takes Individuals from the pool to compete in a head-to-head competition
+// input: 
+    // pool: the overall population (should be in randomized order)
+    // selectionSize: the number of survivors to return
+// output: 
+    //survivors: the winners of the competition
 void selectWinners(Individual* pool, int selectionSize, Individual* survivors);
 
 #include "geneticAlgorithm.cpp"
