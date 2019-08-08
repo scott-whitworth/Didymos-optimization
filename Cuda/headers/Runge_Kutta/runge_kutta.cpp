@@ -39,6 +39,8 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
     elements<T> u, error;
 
+    bool coast;
+
     while(curTime<timeFinal) // iterate until time is equal to the stop time
     {
         // defining deltaT for calc_accel as the stepsize
@@ -47,7 +49,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         u = y_new[n];
 
         // defining coast using calc_coast()
-        bool coast = calc_coast(coeff, curTime, timeFinal);
+        coast = calc_coast(coeff, curTime, timeFinal);
         
         // defining acceleration using calc_accel()
         accel = calc_accel(y_new[n].r,y_new[n].z, NEXT, massFuelSpent, deltaT, coast, wetMass);

@@ -14,6 +14,7 @@
 #include <algorithm> // sort(), shuffle()
 #include <random>
 
+// THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
 Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol){
     Individual best = original;
     Individual cur = original;
@@ -29,8 +30,9 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     best.velDiff =  sqrt(pow(VR_FIN_AST - output.vr, 2) + pow(VTHETA_FIN_AST - output.vtheta, 2) + pow(VZ_FIN_AST - output.vz, 2));
 
     // get results for each changed variable
+    // gamma
     parameterChange = 0.1;
-    for(int i = 0; i < 6; i++){
+    for(int i = 0; i < 7; i++){
         cur.startParams.coeff.gamma[i] += parameterChange;
         cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
         if(!greaterInd(best, cur)){
@@ -38,6 +40,17 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
         }
         cur.startParams.coeff.gamma[i] -= parameterChange;
     }
+    //tau
+    parameterChange = 0.1;
+    for(int i = 0; i < 3; i++){
+        cur.startParams.coeff.tau[i] += parameterChange;
+        cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
+        if(!greaterInd(best, cur)){
+            best = cur;
+        }
+        cur.startParams.coeff.tau[i] -= parameterChange;
+    }
+    //coast
 
     return best;
 }
@@ -110,8 +123,6 @@ double optimize(const int numThreads, const int blockThreads){
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
         inputParameters[i].startParams = example;
-
-        //std::cout << "example: " << std::endl << example << std::endl; // check that the values were read in correctly
     }
 
     // set every thread's input parameters to random values within a reasonable range
@@ -148,8 +159,8 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
-    //for(int i = 0; i < generationsNum; i++){
-    for(int i = 0; i < 1; i++){
+    for(int i = 0; i < generationsNum; i++){
+        
         initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
@@ -186,29 +197,14 @@ double optimize(const int numThreads, const int blockThreads){
              }
         }
 
-        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand);
+        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
 
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
 
-        //std::sort(inputParameters, inputParameters + numThreads, greaterInd);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        std::sort(inputParameters, inputParameters + numThreads, greaterInd); // put the individuals in order so we can replace the worst ones
 
         // finding the best variable to change in the best Individual
+        // bestChange() TO BE USED HERE
 
 
 
@@ -218,9 +214,8 @@ double optimize(const int numThreads, const int blockThreads){
 
 
         
-
+        // display a summary of progress showing the worst and best Individual of each generation
         std::cout << "generation: " << i << std::endl;
-        /*
         std::cout << "best:" << std::endl;
         std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
         std::cout << "velDiff: " << inputParameters[0].velDiff << std::endl;
@@ -229,21 +224,9 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << "posDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
         std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
         std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
-        */
         
         
-        for(int j = 0; j < numThreads; j++){
-            std::cout << "member " << j << std::endl;
-            //std::cout << "parameters: " << inputParameters[j].startParams << std::endl;
-            std::cout << "posDiff: " << inputParameters[j].posDiff << std::endl;
-            //std::cout << "velDiff: " << inputParameters[j].velDiff << std::endl;
-            std::cout << "final pos: " << inputParameters[j].finalPos << std::endl;
-        }
-        
-
-
-        // printing individual pos and vel difference data to a csv to view progress over generations
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // print every Individual pos and vel difference every 50 generations to a csv to view progress over generations
         if(i % 50 == 0)
         {   
             for(int j = 0; j < numThreads; j++)
@@ -254,8 +237,8 @@ double optimize(const int numThreads, const int blockThreads){
             }
             individualDifference << "\n";
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN));
     }
 
@@ -269,164 +252,49 @@ double optimize(const int numThreads, const int blockThreads){
 
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
     
-    auto start2 = std::chrono::high_resolution_clock::now();
-    //events for timing functions
-    cudaEvent_t Malloc_e, MemCpyDev_e, Kernel_e, MemCpyHost_e, MemCpyHostStop_e;
-    cudaEventCreate(&Malloc_e);
-    cudaEventCreate(&MemCpyDev_e);
-    cudaEventCreate(&Kernel_e);
-    cudaEventCreate(&MemCpyHost_e);
-    cudaEventCreate(&MemCpyHostStop_e);
+    cudaEvent_t kernelStart, kernelEnd;
+    cudaEventCreate(&kernelStart);
+    cudaEventCreate(&kernelEnd);
 
-    auto indiv = std::chrono::high_resolution_clock::now();
     Individual *devGeneration; 
     double *devTimeInitial;
     double *devStepSize;
     double *devAbsTol;
 
-    auto allocating = std::chrono::high_resolution_clock::now();
     // allocate memory for the parameters passed to the device
-    cudaEventRecord(Malloc_e);
     cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
     cudaMalloc((void**) &devTimeInitial, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
 
-    auto copyParam = std::chrono::high_resolution_clock::now();
     // copy values of parameters passed to device onto device
-    cudaEventRecord(MemCpyDev_e);
     cudaMemcpy(devGeneration, generation, numThreads * sizeof(Individual), cudaMemcpyHostToDevice);
     cudaMemcpy(devTimeInitial, &timeInitial, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devAbsTol, &absTol, sizeof(double), cudaMemcpyHostToDevice);
 
-
-    auto rkSIM = std::chrono::high_resolution_clock::now();
     // GPU version of rk4Simple()
-    cudaEventRecord(Kernel_e);
-    //std::cout << "Starting kernel with: <<<" << (numThreads+blockThreads-1)/blockThreads << "," << blockThreads << ">>>\n";
+    cudaEventRecord(kernelStart);
     rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
+    cudaEventRecord(kernelEnd);
 
-
-    auto copyRes = std::chrono::high_resolution_clock::now();
     // copy the result of the kernel onto the host
-    cudaEventRecord(MemCpyHost_e);
     cudaMemcpy(generation, devGeneration, numThreads * sizeof(Individual), cudaMemcpyDeviceToHost);
-    cudaEventRecord(MemCpyHostStop_e);
     
-
-    auto freeMem = std::chrono::high_resolution_clock::now();
     // free memory from device
     cudaFree(devGeneration);
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
 
-
-
-    auto rkSIM_CPU = std::chrono::high_resolution_clock::now();
-    // CPU version of rk4Simple()
-    // only calculate once since all input parameters are currently the same
-    //elements<double> rk4SimpleOutput;
-    //inputParameters[0].parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput);
-
-    /*
-    elements<double> *rk4SimpleOutput = new elements<double>[numThreads];
+    float kernelT;
     
-    for(int i = 0; i < numThreads; i++){
-        generation[i].startParams.parametersRK4Simple(timeInitial, stepSize, absTol, rk4SimpleOutput[i]);
-          //std::cout << rk4SimpleOutput[i];
-    }
-    */
+    cudaEventSynchronize(kernelEnd);
 
-    /*
-    std::cout << "CPU Calculation of " << numThreads << " RK Calculations took: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() << " ms" << std::endl;
-    std::cout << "CPU Calculations: " << numThreads / (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count()/1000.0) << " RK Calcs / second" <<  std::endl;
-    */
-
-   
-    auto errorFinding = std::chrono::high_resolution_clock::now();
-    // compare every GPU result with the one CPU result
-    /*
-    double maxError = 1e-12; // how much difference is allowable between the CPU and GPU results
-    for(int i = 0; i < numThreads; i++){
-        if(!generation[i].finalPos.compare(rk4SimpleOutput[i],maxError)){
-            std::cout << "!!ERROR FOUND!!" << std::endl;
-            std::cout << "CPU output " << i << std::endl;
-            std::cout << rk4SimpleOutput[i] << std::endl;
-            std::cout << "GPU output " << i << std::endl;
-            std::cout << generation[i].finalPos << std::endl;
-            std::cout << "Diff: " << std::endl;
-            std::cout << generation[i].finalPos-rk4SimpleOutput[i] << std::endl;
-        }
-    }
-    */
+    cudaEventElapsedTime(&kernelT, kernelStart, kernelEnd);
     
-    auto resultCheck = std::chrono::high_resolution_clock::now();
-    float mallocT, memCpyDevT, kernelT, memCpyHostT;
-    
-    cudaEventSynchronize(MemCpyHostStop_e);
-
-    cudaEventElapsedTime(&mallocT, Malloc_e, MemCpyDev_e);
-    cudaEventElapsedTime(&memCpyDevT, MemCpyDev_e, Kernel_e);
-    cudaEventElapsedTime(&kernelT, Kernel_e, MemCpyHost_e);
-    cudaEventElapsedTime(&memCpyHostT, MemCpyHost_e, MemCpyHostStop_e);
-    
-    double rkPerS = numThreads / (kernelT / 1000.0); // how many times the Runge Kutta algorithm ran in the kernel per second
-
-    /*
-    std::cout << "Device memory allocation time: " << mallocT << " ms" << std::endl;
-    std::cout << "Device memory copy time: " << memCpyDevT << " ms" << std::endl;
-    std::cout << "Host memory copy time: " << memCpyHostT << " ms" << std::endl;
-    std::cout << "Kernel time: " << kernelT << " ms" << std::endl;
-    std::cout << "Runge Kutta calculations per second: " << rkPerS << " /s" << std::endl;
-    */
-
-    calcPerS = rkPerS;
-    auto end = std::chrono::high_resolution_clock::now();
-
-    
-    //delete [] rk4SimpleOutput;
-
-
-    // display timing metrics
-    /*
-    std::chrono::duration<double> elapsedTime = indiv - start2;
-    std::cout << "Execution speeds (seconds):" << std::endl;
-    std::cout << "start: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = allocating - indiv;
-    std::cout << "individuals: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = copyParam - allocating;
-    std::cout << "allocating: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = rkSIM - copyParam;
-    std::cout << "Copy parameters: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = copyRes - rkSIM;
-    std::cout << "RK simple: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = freeMem - copyRes;
-    std::cout << "copy results: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = rkSIM_CPU - freeMem;
-    std::cout << "Freeing memory: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = resultCheck - rkSIM_CPU;
-    std::cout << "RK simple CPU: " << elapsedTime.count() << std::endl;
-
-    elapsedTime = end - resultCheck;
-    std::cout << "result check: " << elapsedTime.count() << std::endl << std::endl;
-    */
-
-    //for(int i = 0; i < numThreads; i++){
-    //for(int i = 0; i < 200; i++){
-    //   std::cout << "iterations before NAN: " << testVal[i] << "\terror.vr: " << generation[i].finalPos.r << "\tprevious error.vr: " << generation[i].finalPos.theta << std::endl;
-    //}
-
+    calcPerS = numThreads / (kernelT / 1000.0); // how many times the Runge Kutta algorithm ran in the kernel per second
 }
-
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
@@ -469,11 +337,11 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.tripTime - startTime) / 1000){
-                stepSize = (threadRKParameters.tripTime - startTime) / 1000;
+            if (stepSize > (threadRKParameters.tripTime - startTime) / 100){
+                stepSize = (threadRKParameters.tripTime - startTime) / 100;
             }
-            else if (stepSize < (threadRKParameters.tripTime - startTime) / 10000){
-                stepSize = (threadRKParameters.tripTime - startTime) / 10000;
+            else if (stepSize < (threadRKParameters.tripTime - startTime) / 1000){
+                stepSize = (threadRKParameters.tripTime - startTime) / 1000;
             }
             
             if((curTime + stepSize) > threadRKParameters.tripTime){
@@ -481,15 +349,22 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             }
 
             // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
-            if (curPos.r < 0.5)
+            if (sqrt(pow(curPos.r,2)+pow(curPos.z,2)) < 0.5)
             {
                 curPos.r = 1000;
+
+                // output to this thread's index
+                individuals[threadId].finalPos = curPos;
+                individuals[threadId].posDiff = 1.0e10;
+                individuals[threadId].velDiff =  0.0;
+
+                return;
             }
         }
-        individuals[threadId].finalPos = curPos; // output to this thread's index
 
+         // output to this thread's index
+        individuals[threadId].finalPos = curPos;
         individuals[threadId].posDiff = pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2);
-        //individuals[threadId].posDiff = pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - curPos.theta, 2) + pow(Z_FIN_AST - curPos.z, 2);
         individuals[threadId].velDiff =  pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2);
 
 
@@ -498,9 +373,14 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     return;
 }
 
-
+__host__ void initializePosition(Individual *individuals, int size){
+    for(int i=0; i<size ;i++){
+        individuals[i].initialize();
+    }
+}
 
 //testing functions
+//------------------------------------------------------------------------------------------------------------------------------------------------------------
 void rkCalcComparison(){
     int n = 5000;
 
@@ -628,11 +508,5 @@ __global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, 
     if(threadId < *n){
         elements<double> k1, k2, k3, k4, k5, k6, k7;
         rkCalc(*curTime, *tripTime, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
-    }
-}
-
-__host__ void initializePosition(Individual *individuals, int size){
-    for(int i=0; i<size ;i++){
-        individuals[i].initialize();
     }
 }

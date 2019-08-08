@@ -242,7 +242,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
-
+// generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing){
     mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 
@@ -255,7 +255,7 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
 
     for(int i = 0; i < survivorSize / 2; i++){
         crossOver_wholeRandom(mask, rng);
-        pool[poolSize - 1 - (2 * index)] = Individual();
+        pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
         pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
         if(rng()%100 < MUTATION_RATE * 100){ // a certain chance of mutation
             pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
