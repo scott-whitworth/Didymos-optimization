@@ -6,8 +6,7 @@
 #include "../constants.h"
 #include "../Earth_calculations/earthInfo.h"
 
-#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs
-
+// an Individual is a member of the genetric algorithm's population
 struct Individual {
     rkParameters<double> startParams; // input parameters for the run- the unique identifiers of this individual
 
@@ -20,7 +19,7 @@ struct Individual {
 };
 
     // utility function for greaterInd()
-    // returns the amount of weight placed on the posDiff rather than velDiff in comparison
+    // returns the amount of weight placed on the posDiff rather than velDiff in comparison of two Individuals
     // output: 0.0 - 1.0
     //double getPosRatio(Individual first, Individual second);
     double getPosRatio(Individual first, Individual second);
