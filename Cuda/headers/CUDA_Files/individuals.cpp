@@ -6,7 +6,7 @@
 
 bool greaterInd(Individual first, Individual second){
     double posRatio = getPosRatio(first, second);
-    double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio);
+    double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio); // total cost is a mix of position and velocity
     double secondSum = second.posDiff * posRatio - second.velDiff * (1.0 - posRatio);
     if(firstSum < secondSum){
         return true;
@@ -31,9 +31,9 @@ double getPosRatio(Individual first, Individual second){
 }
 
 void Individual::initialize(){
-    elements<double> earth = launchCon->getCondition(this->startParams.tripTime);
+    elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
 
-    this->startParams.y0 = elements<double>(
+    this->startParams.y0 = elements<double>( // calculate the starting position and velocity of the spacecraft from Earth's position and velocity and spacecraft launch angles
     earth.r+ESOI*cos(this->startParams.alpha),
     earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),
     earth.z,

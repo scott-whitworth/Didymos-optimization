@@ -151,7 +151,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   double accel; // Initialize memory for  acceleration
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,fuelSpent, wetMass);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output,fuelSpent,wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[(int)lastStep];

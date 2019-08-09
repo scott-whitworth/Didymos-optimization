@@ -58,7 +58,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 double optimize(const int numThreads, const int blockThreads){
     double calcPerS = 0;
     time_t timeSeed = time(0);
-    std::cout << "Time seed for this run: " << timeSeed << std::endl;
+    std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
 
@@ -96,8 +96,7 @@ double optimize(const int numThreads, const int blockThreads){
 
      // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
     for(int i = 0; i < numThreads; i++){
-        //int row = mt_rand() % numStarts;
-        int row = i;
+        int row = mt_rand() % numStarts;
 
         double tripTime = arrayCPU[row][13];
 
@@ -160,8 +159,8 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     for(int i = 0; i < generationsNum; i++){
-        
-        initializePosition(inputParameters + (numThreads - newInd), newInd); // initialize positions for new individuals
+        // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
+        initializePosition(inputParameters + (numThreads - newInd), newInd);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
 
@@ -241,6 +240,32 @@ double optimize(const int numThreads, const int blockThreads){
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN));
     }
+
+
+    // output the best Individuals of the final generation using the CPU algorithm
+    // allows plotting of solutions in matlab
+    double *start = new double[OPTIM_VARS];
+    double cost = 0;
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++){
+            start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
+        }
+        for(int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++){
+            start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
+        }
+        for(int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++){
+            start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
+        }
+        start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
+        start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
+        start[BETA_OFFSET] = inputParameters[i].startParams.beta;
+        start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
+
+        cost = inputParameters[i].posDiff; // just look at position difference here for now
+        // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+        writeTrajectoryToFile(start, cost, i + 1);
+    }
+
 
     individualDifference.close();
 

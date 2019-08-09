@@ -29,7 +29,6 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
 
     // Get the actual initial position for the time frame chosen.
     earth=earthInitial_incremental(0,startTime,earth);
-    std::cout<<earth;
 
     // Setting the first element of earthCon to be equal to the earth conditions at impact
     //earthCon[0]=earthInitial_incremental(startTime,startTime,earth);
@@ -54,8 +53,6 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     }
     // Closing progress bar
     std::cout << "]" << std::endl << std::endl;
-
-    std::cout<<earth;
 }
 
 
