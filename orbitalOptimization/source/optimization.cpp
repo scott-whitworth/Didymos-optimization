@@ -21,22 +21,25 @@
 
 int main ()
 {
-    //////////////////////////////////////////////////////////////////////////////////
-    //Global variable needs to be initialized
+  //////////////////////////////////////////////////////////////////////////////////
+  //Global variable needs to be initialized
+  // This is used to get the earth position for each trip time
+  // Define variables to be passed into EarthInfo
+  double startTime = 15778800; // 0.5 year (s)
+  double endTime = 78894000; // 2.5 years (s)
+  double timeRes = 3600; // position of earth is calculated for every hour
 
-    // Define variables to be passed into EarthInfo
-    double startTime = 15778800; // 0.5 year (s)
-    double endTime = 78894000; // 2.5 years (s)
-    double timeRes = 3600; // position of earth is calculated for every hour
-
-    // initializes EarthInfo
-    launchCon = new EarthInfo(startTime, endTime, timeRes);
-    ////////////////////////////////////////////////////////////////////////////////////
+  // initializes EarthInfo
+  launchCon = new EarthInfo(startTime, endTime, timeRes);
+  ////////////////////////////////////////////////////////////////////////////////////
 
   
-  //checkBinaryFile(14);
+  int numTries = 2;
+  //optimizeStartConditions(numTries); // random values within a given range for initial conditions
+
+  checkBinaryFile(14);
+
   //iterativeOptimize(); // manually set initial conditions
-  optimizeStartConditions(2); // random values within a given range for initial conditions
 
   delete launchCon;
   return 0;
@@ -154,8 +157,7 @@ void iterativeOptimize(){
   start[COAST_OFFSET+3] = -4.2160094983718154892926577304e-01;
   start[COAST_OFFSET+4] = 2.5491324082429184239018127300e-01;
 
-  // Initial change in variable size based on the variable start value
-  // Delimits the search space
+
 
   setStep(step);
 
@@ -241,7 +243,7 @@ void optimizing (double *&start, double *step)
   return;
 }
 
-
+// Todo write how it works
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
   double numStep = 0;
@@ -251,14 +253,16 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   std::ofstream output;
 
   output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
-  for(int i=0; i < OPTIM_VARS; i++)
+  for(int j=0; j < OPTIM_VARS; j++)
   {
-    output.write((char*)&start[i], sizeof (double));
+    output.write((char*)&start[j], sizeof (double));
   }
   output.write((char*)&numStep, sizeof (double));
   output.close();
 }
 
+// Initial change in variable size based on the variable start value
+// Delimits the search space
 void setStep(double step[])
 {
   step[GAMMA_OFFSET] = 1.0E00;
@@ -286,7 +290,9 @@ void setStep(double step[])
   step[COAST_OFFSET+4] = 5.0E-01;
 }
 
-
+// If you want to check the results saved in a binary file
+// Size is just the number of solutions of the file
+// The code is also expecting 19 parameters in the parameter vector
 void checkBinaryFile(int size)
 {
     
@@ -303,10 +309,11 @@ void checkBinaryFile(int size)
   // 10-12 launch angles
   // 13 trip time
   // 14-19 coast
+  int parameterSize = 19;
 
-  double arrayCPU[size][19];
-  double singleArray[19];
-  for(int i = 0; i < 19; i++)
+  double arrayCPU[size][parameterSize];
+  double singleArray[parameterSize];
+  for(int i = 0; i < parameterSize; i++)
   {  // rows
     for(int j = 0; j < size; j++)
     { // columns
@@ -322,17 +329,17 @@ void checkBinaryFile(int size)
 
   for (int j = 0; j < size; j++)
   {
-    for(int i = 0; i < 19; i++)
+    for(int i = 0; i < parameterSize; i++)
     {
-      singleArray[i]=arrayCPU[j][i];
+      singleArray[i]=arrayCPU[j][i]; // Dint knwo how to pass the double array as a 1D array to the trajectory Print function
     }
     double  lastStep;
     double  cost;
-    int n = -1;
-    elements<double> yOut;
+    int n = -1; // So it doesnt write files - if you want to rewrite the solution instead of n use i
+    elements<double> yOut; // If you want to check the position and velocity of the last step
     cost = trajectoryPrint(singleArray,lastStep, cost, n, yOut);
     //writeTrajectoryToFile(singleArray, cost,j);
-    std::cout<<std::endl<<"Run: "<< j <<std::endl;
+    std::cout<<std::endl<<"Run: "<< j+1 <<std::endl;
     std::cout<<cost<<std::endl;
     //std::cout<<yOut<<launchCon->getCondition(singleArray[TRIPTIME_OFFSET])<<std::endl;
   } 

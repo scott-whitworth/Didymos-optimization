@@ -29,6 +29,8 @@ template <class T> struct coefficients
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e);
 
     // Loads the coefficients struct
+    // Input the parameter array and the coefficient struc that you want to initialize
+    // Output none
     void initCoefficient(double x[],  coefficients<T> &coeff);
 };
 

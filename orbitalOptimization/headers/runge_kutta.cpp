@@ -188,13 +188,12 @@ template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, ele
 elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
    
 
-
     k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal);      
-    k2 = calc_k(stepSize, y_new+k1*static_cast <double> (1)/static_cast <double> (5),coeff, accel, ccurTime+static_cast <double> (1)/static_cast <double> (5)*stepSize, timeFinal); 
-    k3 = calc_k(stepSize, y_new+k1*static_cast <double> (3)/static_cast <double> (40)+k2*static_cast <double> (9)/static_cast <double> (40), accel, curTime+static_cast <double> (3)/static_cast <double> (10)*stepSize, timeFinal);   
+    k2 = calc_k(stepSize, y_new+k1*static_cast <double> (1)/static_cast <double> (5),coeff, accel, curTime+static_cast <double> (1)/static_cast <double> (5)*stepSize, timeFinal); 
+    k3 = calc_k(stepSize, y_new+k1*static_cast <double> (3)/static_cast <double> (40)+k2*static_cast <double> (9)/static_cast <double> (40),coeff, accel, curTime+static_cast <double> (3)/static_cast <double> (10)*stepSize, timeFinal);   
     k4 = calc_k(stepSize, y_new+k1*static_cast <double> (44)/static_cast <double> (45)+k2*static_cast <double> (-56)/static_cast <double> (15)+k3*static_cast <double> (32)/static_cast <double> (9),coeff, accel,curTime+static_cast <double> (4)/static_cast <double> (5)*stepSize, timeFinal); 
     k5 = calc_k(stepSize, y_new+k1*static_cast <double> (19372)/static_cast <double> (6561)+k2*static_cast <double> (-25360)/static_cast <double> (2187)+k3*static_cast <double> (64448)/static_cast <double> (6561)+k4*static_cast <double> (-212)/static_cast <double> (729),coeff, accel, curTime+static_cast <double> (8)/static_cast <double> (9)*stepSize, timeFinal); 
-    k6 = calc_k(stepSize,  y_new+k1*static_cast <double> (9017)/static_cast <double> (3168)+k2*static_cast <double> (-355)/static_cast <double> (33)+k3*static_cast <double> (46732)/static_cast <double> (5247)+k4*static_cast <double> (49)/static_cast <double> (176)+k5*static_cast <double> (-5103)/static_cast <double> (18656),coeff, accel, curTime+stepSize, timeFinal);  
+    k6 = calc_k(stepSize, y_new+k1*static_cast <double> (9017)/static_cast <double> (3168)+k2*static_cast <double> (-355)/static_cast <double> (33)+k3*static_cast <double> (46732)/static_cast <double> (5247)+k4*static_cast <double> (49)/static_cast <double> (176)+k5*static_cast <double> (-5103)/static_cast <double> (18656),coeff, accel, curTime+stepSize, timeFinal);  
     k7 = calc_k(stepSize, y_new+k1*static_cast <double> (35)/static_cast <double> (384)+k3*static_cast <double> (500)/static_cast <double> (1113)+k4*static_cast <double> (125)/static_cast <double> (192)+k5*static_cast <double> (-2187)/static_cast <double> (6784)+k6*static_cast <double> (11)/static_cast <double> (84),coeff, accel, curTime+stepSize, timeFinal);  
 
     //New value

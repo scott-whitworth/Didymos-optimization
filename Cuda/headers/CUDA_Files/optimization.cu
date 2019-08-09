@@ -46,6 +46,6 @@ int main ()
     //efficiencyGraph.close();
     
     delete launchCon;
-    
+
     return 0;
 }

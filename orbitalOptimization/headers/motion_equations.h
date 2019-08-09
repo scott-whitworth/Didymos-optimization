@@ -26,7 +26,7 @@
 //      totalTime: the complete time frame of the simulation (s), used to normalize curTime
 // Output: returns k1,k2,k3,k4 for y[n+1] calculation
 template <class T> elements<T> calc_k(const T & h, const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
-
+// Version of calc_k for cases with no thrust (earth)
 template <class T> elements<T> calc_kEarth(const T & h, const elements<T>  & y, const T & curTime, const T & timeFinal);
 
 // Dot = derivative of element with respect to time
@@ -56,19 +56,19 @@ template <class T> T calcRate_z(const elements<T> & y);
 template <class T> T calcRate_vr(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
 // Based on: -vr*vtheta / r + accel*cos(tau)*cos(gamma)
-// Output: vrDot
+// Output: vthetaDot
 template <class T> T calcRate_vtheta(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
 // Based on: (-g * M_sun * r)  / (r^2 + z^2) ^ 3/2 + + accel*sin(tau)
-// Output: vrDot
+// Output: vzDot
 template <class T> T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
-// Velocities rates with no accel
-
+// Velocities rates equations with no thrust (Used for earth)
+template <class T> T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal); // Based on: (-g * M_sun * r)  / (r^2 + z^2) ^ 3/2 + v_theta^2 / r
+template <class T> T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal); // Based on: -vr*vtheta / r
+template <class T> T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal); // Based on: (-g * M_sun * r)  / (r^2 + z^2) ^ 3/2
 #include "motion_equations.cpp"
 
-template <class T> T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
-template <class T> T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
-template <class T> T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
+
 
 #endif

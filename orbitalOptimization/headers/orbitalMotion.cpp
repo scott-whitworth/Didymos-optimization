@@ -170,7 +170,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
     if (cost < Fmin)
       cost = 0;
 
-    std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
+    //std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
     // Output of yp to a binary file
     std::ofstream output;
     
