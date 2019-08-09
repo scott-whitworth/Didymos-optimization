@@ -27,7 +27,7 @@ int main ()
     // pre-calculate a table of Earth's position
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
-    double startTime = 15778800*4; // 0.5 year (s)
+    double startTime = 15778800; // 0.5 year (s)
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
@@ -46,6 +46,6 @@ int main ()
     //efficiencyGraph.close();
     
     delete launchCon;
-    
+
     return 0;
 }
