@@ -162,7 +162,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   vel = sqrt(pow(asteroid.vr-yOut.vr,2)+pow(asteroid.vtheta-yOut.vtheta,2)+pow(asteroid.vz-yOut.vz,2));
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
-
+ 
   // Flag to not print the solution
   if (j>0)
   {
@@ -170,7 +170,8 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
     if (cost < Fmin)
       cost = 0;
 
-    //std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
+    std::cout<<"Impact velocity: "<<vel*AU<<" m/s"<<std::endl;
+    
     // Output of yp to a binary file
     std::ofstream output;
     

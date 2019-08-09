@@ -37,7 +37,7 @@ int main ()
   int numTries = 2;
   //optimizeStartConditions(numTries); // random values within a given range for initial conditions
 
-  checkBinaryFile(14);
+  checkBinaryFile(10);
 
   //iterativeOptimize(); // manually set initial conditions
 
