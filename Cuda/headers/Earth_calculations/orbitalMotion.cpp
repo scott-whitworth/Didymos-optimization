@@ -47,7 +47,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 //taken from CPU code to output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double trajectoryPrint( double x[], int & lastStep, double & cost, int j, elements<double> & yOut)
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut)
 {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
@@ -86,19 +86,20 @@ double trajectoryPrint( double x[], int & lastStep, double & cost, int j, elemen
   elements<double>* yp;
   yp = new elements<double>[numSteps];
   
-  double *times, *gamma, *tau, *accel_output;
+  double *times, *gamma, *tau, *accel_output, *fuelSpent;
   times = new double[numSteps]; // Initialize memory for time array
   gamma = new double[numSteps]; // Initialize memory for gamma array
   tau = new double[numSteps]; // Initialize memory for tau array
   accel_output = new double[numSteps]; // Initialize memory for acceleration array
+  fuelSpent = new double[numSteps];  // Initialize memory for fuelSpent array
 
   double accel; // Initialize memory for  acceleration
 
   // used to track the cost function throughout a run via output and outputs to a binary
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStep,accel_output, wetMass);
+  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,(int)lastStep,accel_output,fuelSpent,wetMass);
 
   // gets the final y values of the spacecrafts for the cost function.
-  yOut = yp[lastStep];
+  yOut = yp[(int)lastStep];
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
   double cost_pos, vel;
@@ -127,6 +128,7 @@ double trajectoryPrint( double x[], int & lastStep, double & cost, int j, elemen
       output.write((char*)&gamma[i], sizeof (double));
       output.write((char*)&tau[i], sizeof (double));
       output.write((char*)&accel_output[i], sizeof (double));
+      output.write((char*)&fuelSpent[i], sizeof (double));
     }
     output.close();
   }
@@ -141,7 +143,7 @@ double trajectoryPrint( double x[], int & lastStep, double & cost, int j, elemen
 
 void writeTrajectoryToFile(double *start, double & cost, int i)
 {
-  int numStep = 0;
+  double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
   trajectoryPrint(start, numStep, cost,i,yp);
   //writes final optimization values to a seperate file
@@ -152,6 +154,6 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   {
     output.write((char*)&start[j], sizeof (double));
   }
-  output.write((char*)&numStep, sizeof (int));
+  output.write((char*)&numStep, sizeof (double));
   output.close();
 }

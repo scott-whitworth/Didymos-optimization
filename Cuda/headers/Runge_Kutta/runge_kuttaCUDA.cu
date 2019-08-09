@@ -242,10 +242,11 @@ double optimize(const int numThreads, const int blockThreads){
     }
 
 
-    //output the best Individuals of the final generation using the CPU algorithm
+    // output the best Individuals of the final generation using the CPU algorithm
+    // allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
-    for(int i = 0; i < 20; i++){
+    for(int i = 0; i < 10; i++){
         for(int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++){
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
