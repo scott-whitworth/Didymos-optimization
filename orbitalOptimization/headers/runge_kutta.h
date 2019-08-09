@@ -49,7 +49,9 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, const 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
 template <class T> void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
 elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7);
-
+// calculates k values for cases with no thrust
+template <class T> void rkCalc_Earth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
+elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7);
 
 /**********************************************************************************************************************************/
 

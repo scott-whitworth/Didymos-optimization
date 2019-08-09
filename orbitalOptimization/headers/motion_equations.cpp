@@ -16,6 +16,8 @@ template <class T> elements<T> calc_k(const T & h, const elements<T>  & y, coeff
 	h*calcRate_vr(y,coeff,accel,curTime, timeFinal), h*calcRate_vtheta(y,coeff,accel,curTime, timeFinal),  h*calcRate_vz(y,coeff,accel,curTime, timeFinal));
 }
 
+// Calc k for cases with no thrust
+// Changed order to match the order in GPU code
 template <class T> elements<T> calc_k_earth(const T & h, const elements<T>  & y, const T & curTime, const T & timeFinal)
 {
 	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 
