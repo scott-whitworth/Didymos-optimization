@@ -241,6 +241,31 @@ double optimize(const int numThreads, const int blockThreads){
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN));
     }
 
+
+    //output the best Individuals of the final generation using the CPU algorithm
+    double *start = new double[OPTIM_VARS];
+    double cost = 0;
+    for(int i = 0; i < 20; i++){
+        for(int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++){
+            start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
+        }
+        for(int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++){
+            start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
+        }
+        for(int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++){
+            start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
+        }
+        start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
+        start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
+        start[BETA_OFFSET] = inputParameters[i].startParams.beta;
+        start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
+
+        cost = inputParameters[i].posDiff; // just look at position difference here for now
+        // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+        writeTrajectoryToFile(start, cost, i + 1);
+    }
+
+
     individualDifference.close();
 
     delete [] inputParameters;

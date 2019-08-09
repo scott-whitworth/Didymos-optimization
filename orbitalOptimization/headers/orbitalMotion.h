@@ -11,6 +11,7 @@
 //      x[14]: trip time - total time from launch to impact, sets the initial earth position
 // Only tracks the last set of optimized variables 
 double trajectory( double x[]);
+
 // Writes the array of values from optimization to a binary file
 double trajectoryPrint (double x[], double & lastStep, double & cost, int j, elements<double> & yOut);
 

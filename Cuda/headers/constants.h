@@ -2,6 +2,8 @@
 #define constants_h
 #include <math.h>
 
+#define _USE_MATH_DEFINES // for use of M_PI
+
 // Planetary properties and constants
 #define earthRadius 1.49598261e11/AU // radius of the earth (au)
 #define earthMass 5.9742e24 // mass of the earth (kg)
@@ -16,8 +18,8 @@
 
 // Various constants (pi and tolerance)
 #define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
+#define F_MIN 1e-20 // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
 #define MAX_NUMSTEPS 1e9 // used for time stepping in runge_kuttaCuda.cu
-#define _USE_MATH_DEFINES // for use of M_PI
 
 // Final conditions of the asteroid on impact date
 #define R_FIN_AST 1.02696822710421 // radial position (au)
