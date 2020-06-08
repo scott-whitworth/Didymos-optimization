@@ -67,9 +67,9 @@ template <class T> struct rkParameters {
     T tripTime;
 
     // launch angles at SOI
-    T alpha;
-    T beta;
-    T zeta;
+    T alpha;    // position
+    T beta;     // velocity in-plane
+    T zeta;     // velocity out-of-plane
 
     /////////////////////
     // Utility Methods //
