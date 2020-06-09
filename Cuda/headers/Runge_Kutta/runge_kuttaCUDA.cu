@@ -212,22 +212,25 @@ double optimize(const int numThreads, const int blockThreads){
 
 
 
-        
-        // display a summary of progress showing the worst and best Individual of each generation
-        std::cout << "generation: " << i << std::endl;
-        std::cout << "best:" << std::endl;
-        std::cout << "posDiff: " << inputParameters[0].posDiff << std::endl;
-        std::cout << "velDiff: " << inputParameters[0].velDiff << std::endl;
-        std::cout << "finalPos: " <<inputParameters[0].finalPos << std::endl;
-        std::cout << "worst:" << std::endl;
-        std::cout << "posDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
-        std::cout << "velDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
-        std::cout << "finalPos: " <<inputParameters[numThreads - 1].finalPos << std::endl << std::endl;
-        
-        
-        // print every Individual pos and vel difference every 50 generations to a csv to view progress over generations
+        // Display a '.' to the terminal to show that a generation has been calculated
+        // if it is not the 50th generation this serves to show that calculations are occurring without displaying the best or worst of the current pool
+        // This also serves to visually seperate the generations on the terminal screen
+        std::cout << '.';
+
+        // Display and print Individuals' pos and vel difference every 50 generations
         if(i % 50 == 0)
         {   
+            // Display the best and worst Individuals in this generation
+            std::cout << '\n';
+            std::cout << "generation: " << i << std::endl;
+            std::cout << "best:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[0].velDiff << std::endl;
+            std::cout << "worst:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
+
+            // Append every Individual into a csv file to view progress over generations
             for(int j = 0; j < numThreads; j++)
             {
                 individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
