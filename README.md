@@ -1,16 +1,41 @@
-"# MBS-optimization" 
+ <h1> Asteroid Impact Mission 
 
-**Scott Notes: 7/5/2019**
+<h2> Running CUDA Code: </h2>
 
-optimization.cpp:
-* Line 28 - 74: Still think we should have a config file load in for the intial guesses, also probably other mission based parameters.
-* Lines 118-123: These would be better served to be assigned and defined in the inilization of these variables at line 95 - 98
-* Lines 126 - 130 and Lines 142 - 146: This should be functionalized into a print parameters function. While we are at it, maybe we want to print out more than just a string of numbers? It would be far more useful to have well formatted output telling me what the 5th value means. This is also why these parameters really should be in a class (but that might not be clean with how NM requires an array). I think we could still overload the operator[] and get 'array' like operations without sacrificing the clarity of a class.
+ On WU System:
+1. To Compile:
+   - Enter the following into command prompt within VSCode 
 
+      `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\bin\Hostx64\x64\cl.exe" -o <OutputFileNameHere> optimization.cu`
 
+   
+   - Make sure that <OutputFileNameHere> has a specific name (it will create a .exe file with whatever you named it)
 
+    
+     *If your computer can’t find the file, then there is a problem with the path. Copy and paste the file path into a file explorer, and delete everything after `\MSVC\` then click through until you get to `\cl.exe`. Copy this path and use it to replace the old path.*
 
+    - This code should add an .exe file with the output name that was entered
+		
+    
+    
+  2. To run:
+			
+      Type the .exe file name from above (don't forget to add .exe) and enter
+      
+      
+      
+		
+  For Tesla Machine:
+			  
+   - Do the same as above, but compile using this:
 
+     `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\cl.exe" optimization.cu -o <nameOfOutput>`
+       
+ 
+ <n>
+<h2> Running Matlab Code </h2>
+
+  
 
 
 
