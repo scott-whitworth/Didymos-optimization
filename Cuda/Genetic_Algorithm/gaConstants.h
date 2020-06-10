@@ -22,6 +22,6 @@
 #define ANNEAL_MIN .001 // max amount to mutate by as a fraction of the initial random range of a parameter
 
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
-#define POSITION_THRESH 1.0e-25 // to ignore velDiff entirely
+#define POSITION_THRESH 1.0e-10 // to ignore velDiff entirely
 
 #endif
