@@ -4,9 +4,9 @@
 #include "../Thrust_Files/acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
 #include "../Earth_calculations/orbitalMotion.h"
-#include "../CUDA_Files/geneticAlgorithm.h" // selectWinners()
-#include "../CUDA_Files/ga_crossover.h" // crossover()
-#include "../CUDA_Files/gaConstants.h" // SURVIVOR_COUNT
+#include "../Genetic_Algorithm/geneticAlgorithm.h" // selectWinners()
+#include "../Genetic_Algorithm/ga_crossover.h" // crossover()
+#include "../Genetic_Algorithm/gaConstants.h" // SURVIVOR_COUNT
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file

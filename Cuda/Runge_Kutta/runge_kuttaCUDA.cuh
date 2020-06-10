@@ -2,7 +2,7 @@
 #define runge_kuttaCUDA_cuh
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 #include "rkParameters.h" // rkParameters struct
-#include "../CUDA_Files/individuals.h"
+#include "../Genetic_Algorithm/individuals.h"
 
 double optimize(const int numThreads, const int blockThreads);
 
