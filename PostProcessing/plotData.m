@@ -32,6 +32,7 @@ polarplot(y0A(2),y0A(1),'*b')
 hold on
 polarplot(cR(2,1:sizeC),cR(1,1:sizeC))
 legend({'earth','asteroid','launch','impact','spacecraft'})
+title('r-\theta plane')
 hold off
 
 %radius vs. time
@@ -44,6 +45,7 @@ plot(cR(7,1:sizeC),cR(1,1:sizeC))
 ylabel('r')
 xlabel('t')
 xlim([0 tripTime])
+title('Orbital radius')
 hold off
 
 %angular momentum vs. time
@@ -53,9 +55,10 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC).*cR(5,1:sizeC))
-ylabel('h')
+ylabel('L')
 xlabel('t')
 xlim([0 tripTime])
+title('Angular momentum')
 hold off
 
 %plot z
@@ -67,6 +70,7 @@ hold on
 plot(cR(1,1:sizeC).*cos(cR(2,1:sizeC)), cR(3,1:sizeC),'LineWidth', 2)
 xlabel('x')
 ylabel('z')
+title('x-z plane')
 hold off
 
 %Z vs. time
@@ -79,6 +83,7 @@ plot(cR(7,1:sizeC),cR(3,1:sizeC))
 ylabel('z')
 xlim([0 tripTime])
 xlabel('t')
+title('Orbital elevation')
 hold off
 
 %theta vs. time
@@ -91,6 +96,7 @@ plot(cR(7,1:sizeC),mod(cR(2,1:sizeC), 2*pi))
 ylabel('\theta')
 xlim([0 tripTime])
 xlabel('t')
+title('Orbital angle')
 hold off
 
 %% Subplot 2
@@ -99,8 +105,8 @@ figure(2) % acceleration vs. time
 subplot(2,3,1)
 plot(cR(7,1:sizeC),cR(10,1:sizeC))
 xlim([0 tripTime])
-title('acceleration of spacecraft')
-ylabel('acceleration')
+title('Acceleration due to thrust')
+ylabel('a_{thrust}')
 xlabel('t')
 hold off
 
@@ -109,7 +115,7 @@ plot(cR(7,1:sizeC),sin(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime])
 %legend('matlab','c')
 title('Radial thrust fraction')
-xlabel('Time')
+xlabel('t')
 ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
@@ -117,7 +123,7 @@ plot(cR(7,1:sizeC),cos(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime])
 %legend('matlab','c')
 title('Tangential thrust fraction')
-xlabel('Time')
+xlabel('t')
 ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
@@ -125,7 +131,7 @@ plot(cR(7,1:sizeC),sin(cR(9,1:sizeC)))
 xlim([0 tripTime])
 %legend('matlab','c')
 title('Off-plane thrust fraction')
-xlabel('Time')
+xlabel('t')
 ylabel('sin(\tau)')
 
 %% coasting plots
@@ -145,7 +151,7 @@ subplot(2,3,2:3)
 plot(cR(7,1:sizeC),sin(co).^2)
 xlim([0 tripTime])
 title('Coasting function and threshold')
-xlabel('Time')
+xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 plot(cR(7,1:sizeC),coast_threshold)
@@ -175,6 +181,7 @@ plot3(eX,eY,eZ,'LineWidth', 1,'Color',[.61 .51 .74])
 legend('Earth','Asteroid','Spacecraft')
 hold on
 quiver3(cX(radStep),cY(radStep),cZ(radStep),accelX(radStep),accelY(radStep),accelZ(radStep),'k','Autoscalefactor',.08,'LineWidth',1)
+title('Solar orbitals with vectors')
 hold off
 %print(a,'3D.png','-dpng','-r300'); 
 
@@ -193,6 +200,7 @@ ylabel('z')
 legend('Earth','Asteroid','Spacecraft')
 hold on
 quiver(cX(radStep),cZ(radStep),accelX(radStep),accelZ(radStep),'k','LineWidth',1,'MarkerSize',15,'Autoscalefactor',.08)
+title('Solar orbitals')
 hold off
 %print(b,'2DNoVec.png','-dpng','-r350'); 
 
