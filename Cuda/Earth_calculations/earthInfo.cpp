@@ -9,8 +9,7 @@
 using namespace std;
 
 
-EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc)
-{
+EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc) {
     ////////////////////////////////////
     ///Setting up initial information///
     ////////////////////////////////////
@@ -38,26 +37,24 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     std::cout << "          10 20 30 40 50 60 70 80 90 100" << std::endl;
     std::cout << "progress:[";
 
-    for(int i=1; i<tolData; i++)
-    { 
+    for(int i=1; i < tolData; i++) { 
         // Calculates earth's condition at each point (time) from the previously calculated point.
         earthCon[i]=earthInitial_incremental(calc_time(i)-timeRes,calc_time(i),earth);// Obtaining conditions of the earth
 
         // Filling progress bar
-        if((i % (tolData/30)) == 0){
-        std::cout << ">";
+        if ((i % (tolData/30)) == 0) {
+            std::cout << ">";
         }
 
         // Sets earth equal to the conditions calculated for a given time.
         earth=earthCon[i];
     }
     // Closing progress bar
-    std::cout << "]" << std::endl << std::endl;
+    std::cout << "]\n\n";
 }
 
 
-elements<double> EarthInfo::getCondition(const double & currentTime)
-{
+elements<double> EarthInfo::getCondition(const double & currentTime) {
     // Defining variables //
     elements<double> lower;
     elements<double> upper;
@@ -85,28 +82,24 @@ elements<double> EarthInfo::getCondition(const double & currentTime)
     return result;
 }
 
-int EarthInfo::calcIndex(const double & currentTime)
-{
+int EarthInfo::calcIndex(const double & currentTime) {
    return static_cast<int>((currentTime-startTime)/timeRes);
 
 }
 
-double EarthInfo::calc_time(const int & currentIndex)
-{
+double EarthInfo::calc_time(const int & currentIndex) {
     return startTime + (currentIndex*timeRes);
 }
 
-int EarthInfo::getTolData(){
+int EarthInfo::getTolData() {
     return tolData;
 }
 
-elements<double> EarthInfo::interpolate(const elements<double> & lower,const elements<double> & upper,const double & lowerWeight,const double & upperWeight)
-{
+elements<double> EarthInfo::interpolate(const elements<double> & lower,const elements<double> & upper,const double & lowerWeight,const double & upperWeight) {
     return (lower*lowerWeight)+(upper*upperWeight);
 }
 
-EarthInfo::~EarthInfo()
-{
+EarthInfo::~EarthInfo() {
     delete [] earthCon;
 }
 

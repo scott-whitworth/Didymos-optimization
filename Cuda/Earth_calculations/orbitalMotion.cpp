@@ -9,8 +9,7 @@
 #include <string> // to_string()
 #include "earthInfo.h" // reference to launchCon
 
-elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth)
-{
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth) {
   // Time step
   double deltaT; 
 
@@ -26,8 +25,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime,co
   return yp;
 }
 
-elements<double> earthInitial(double timeInitial, double tripTime,const elements<double> & earth)
-{
+elements<double> earthInitial(double timeInitial, double tripTime,const elements<double> & earth) {
   // Time step
   double deltaT; 
 
@@ -47,8 +45,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 //taken from CPU code to output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut)
-{
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
@@ -60,15 +57,16 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);
   
   // setting initial conditions of the spacecraft
-  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta+asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),earth.z,
-  earth.vr+cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, earth.vtheta+cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape,earth.vz+sin(x[ZETA_OFFSET])*vEscape);
+  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta + asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r), earth.z,
+                                                 earth.vr + cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, earth.vtheta + cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape,
+                                                 earth.vz + sin(x[ZETA_OFFSET])*vEscape);
 
   // setting time parameters
   double timeInitial=0; 
   double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
-  deltaT = (timeFinal-timeInitial)/MAX_NUMSTEPS; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial) / MAX_NUMSTEPS; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   coefficients<double> coeff;
@@ -97,33 +95,34 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
-  rk4sys(timeInitial,x[TRIPTIME_OFFSET],times,spaceCraft,deltaT,yp,absTol,coeff,accel,gamma,tau,lastStepInt,accel_output,fuelSpent,wetMass);
+
+  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass);
+
   lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[(int)lastStep];
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
-  double cost_pos, vel;
+  double cost_pos/*, vel*/;
   cost_pos = pow(asteroid.r-yOut.r,2)+pow(asteroid.theta-fmod(yOut.theta,2*M_PI),2)+pow(asteroid.z-yOut.z,2);         
-  vel = sqrt(pow(asteroid.vr-yOut.vr,2)+pow(asteroid.vtheta-yOut.vtheta,2)+pow(asteroid.vz-yOut.vz,2));
+//  vel = sqrt(pow(asteroid.vr-yOut.vr,2)+pow(asteroid.vtheta-yOut.vtheta,2)+pow(asteroid.vz-yOut.vz,2));
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
 
   // Flag to not print the solution
-  if (j>0)
-  {
+  if (j > 0) {
     // when the cost function is less than 10^-20, it is set to 0 in order to keep that answer of optimized values.
-    if (cost < Fmin)
+    if (cost < Fmin) {
       cost = 0;
+    }
 
     // Output of yp to a binary file
     std::ofstream output;
     
     output.open ("orbitalMotion-accel"+std::to_string(j)+".bin", std::ios::binary); 
 
-    for(int i=0; i <= lastStep; i++)
-    {
+    for(int i = 0; i <= lastStep; i++) {
       //output << yp[i];
       output.write((char*)&yp[i], sizeof (elements<double>));
       output.write((char*)&times[i], sizeof (double));
@@ -143,8 +142,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   return cost;
 }
 
-void writeTrajectoryToFile(double *start, double & cost, int i)
-{
+void writeTrajectoryToFile(double *start, double & cost, int i) {
   double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
   trajectoryPrint(start, numStep, cost,i,yp);
@@ -152,10 +150,11 @@ void writeTrajectoryToFile(double *start, double & cost, int i)
   std::ofstream output;
 
   output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
-  for(int j=0; j < OPTIM_VARS; j++)
-  {
+
+  for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&start[j], sizeof (double));
   }
+
   output.write((char*)&numStep, sizeof (double));
   output.close();
 }

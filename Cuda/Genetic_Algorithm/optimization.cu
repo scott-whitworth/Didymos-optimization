@@ -15,8 +15,7 @@
 #include <chrono>
 
 
-int main ()
-{
+int main () {
     // display GPU properties and ensure we are using the right one
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);

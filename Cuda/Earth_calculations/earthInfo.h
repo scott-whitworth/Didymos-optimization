@@ -3,9 +3,7 @@
 
 #include "../Motion_Eqns/elements.h"
 
-class EarthInfo
-{
-
+class EarthInfo {
     private:
 
     // Holds all of the earth conditions for a given time range
@@ -32,7 +30,7 @@ class EarthInfo
     // Takes in the lower index, upper index, and their weights in order to calculate the Earth's position for a time between two index.
     elements<double> interpolate(const elements<double> & lower,const elements<double> & upper,const double & lowerWeight,const double & upperWeight);
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public:
 

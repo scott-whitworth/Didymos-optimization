@@ -15,7 +15,7 @@
 #include <random>
 
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
-Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol){
+Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol) {
     Individual best = original;
     Individual cur = original;
 
@@ -32,20 +32,20 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     // get results for each changed variable
     // gamma
     parameterChange = 0.1;
-    for(int i = 0; i < 7; i++){
+    for (int i = 0; i < 7; i++) {
         cur.startParams.coeff.gamma[i] += parameterChange;
         cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
-        if(!greaterInd(best, cur)){
+        if (!greaterInd(best, cur)) {
             best = cur;
         }
         cur.startParams.coeff.gamma[i] -= parameterChange;
     }
     //tau
     parameterChange = 0.1;
-    for(int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++) {
         cur.startParams.coeff.tau[i] += parameterChange;
         cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
-        if(!greaterInd(best, cur)){
+        if (!greaterInd(best, cur)) {
             best = cur;
         }
         cur.startParams.coeff.tau[i] -= parameterChange;
@@ -55,7 +55,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     return best;
 }
 
-double optimize(const int numThreads, const int blockThreads){
+double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
     time_t timeSeed = time(0);
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -86,8 +86,8 @@ double optimize(const int numThreads, const int blockThreads){
     //    13 trip time
     //    14-19 coast
     double arrayCPU[numStarts][OPTIM_VARS];
-    for(int i = 0; i < OPTIM_VARS; i++){ // rows
-        for(int j = 0; j < numStarts; j++){ // columns
+    for (int i = 0; i < OPTIM_VARS; i++) { // rows
+        for (int j = 0; j < numStarts; j++) { // columns
             starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
             arrayCPU[j][i] = startDoubles;
         }
@@ -95,7 +95,7 @@ double optimize(const int numThreads, const int blockThreads){
     starts.close();
 
      // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
-    for(int i = 0; i < numThreads; i++){
+    for (int i = 0; i < numThreads; i++) {
         int row = mt_rand() % numStarts;
 
         double tripTime = arrayCPU[row][13];
@@ -107,16 +107,16 @@ double optimize(const int numThreads, const int blockThreads){
         double zeta = arrayCPU[row][12];
 
         coefficients<double> testcoeff;
-        for(int j = 0; j < testcoeff.gammaSize; j++){
-        testcoeff.gamma[j] = arrayCPU[row][j];
+        for (int j = 0; j < testcoeff.gammaSize; j++) {
+            testcoeff.gamma[j] = arrayCPU[row][j];
         }
 
-        for(int j = 0; j < testcoeff.tauSize; j++){
-        testcoeff.tau[j] =  arrayCPU[row][j+7];
+        for (int j = 0; j < testcoeff.tauSize; j++) {
+            testcoeff.tau[j] =  arrayCPU[row][j+7];
         }
 
-        for(int j = 0; j < testcoeff.coastSize; j++){
-        testcoeff.coast[j] = arrayCPU[row][j+14];
+        for (int j = 0; j < testcoeff.coastSize; j++) {
+            testcoeff.coast[j] = arrayCPU[row][j+14];
         }
 
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
@@ -158,16 +158,16 @@ double optimize(const int numThreads, const int blockThreads){
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
-    for(int i = 0; i < generationsNum; i++){
+    for (int i = 0; i < generationsNum; i++){
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
 
-        for(int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
+        for (int k = 0; k < numThreads; k++){ // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
                                             // and set the final position to be way off so it gets replaced by a new Individual
-            if(isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
-             || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
+            if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
+                 || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
@@ -177,13 +177,13 @@ double optimize(const int numThreads, const int blockThreads){
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
         
                 coefficients<double> testcoeff;
-                for(int j = 0; j < testcoeff.gammaSize; j++){
+                for (int j = 0; j < testcoeff.gammaSize; j++) {
                     testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
                 }
-                for(int j = 0; j < testcoeff.tauSize; j++){
+                for (int j = 0; j < testcoeff.tauSize; j++) {
                     testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
                 }
-                for(int j = 0; j < testcoeff.coastSize; j++){
+                for (int j = 0; j < testcoeff.coastSize; j++) {
                     testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
                 }
             
@@ -212,8 +212,7 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << '.';
 
         // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
-        if((i+1) % 50 == 0)
-        {   
+        if (i % 50 == 0) { 
             // Display the best and worst Individuals in this generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
@@ -225,8 +224,7 @@ double optimize(const int numThreads, const int blockThreads){
             std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
 
             // Append every Individual into a csv file to view progress over generations
-            for(int j = 0; j < numThreads; j++)
-            {
+            for (int j = 0; j < numThreads; j++) {
                 individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
                 << inputParameters[j].finalPos.r << "," << inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << ","
                 << inputParameters[j].finalPos.vr << "," << inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
@@ -245,16 +243,17 @@ double optimize(const int numThreads, const int blockThreads){
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++){
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
-        for(int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++){
+        for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
             start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
         }
-        for(int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++){
+        for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
             start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
         }
+
         start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
         start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
         start[BETA_OFFSET] = inputParameters[i].startParams.beta;
@@ -274,7 +273,7 @@ double optimize(const int numThreads, const int blockThreads){
     return calcPerS;
 }
 
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS){
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS) {
     
     cudaEvent_t kernelStart, kernelEnd;
     cudaEventCreate(&kernelStart);
@@ -322,10 +321,9 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n){
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
-    if(threadId < n)
-    {
+    if (threadId < n) {
         rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
 
         elements<double> curPos = threadRKParameters.y0; // start with the initial conditions of the spacecraft
@@ -347,7 +345,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         elements<double> error; // holds output of previous value from rkCalc
 
-        while(curTime < threadRKParameters.tripTime){
+        while (curTime < threadRKParameters.tripTime) {
 
             coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime);
             curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
@@ -361,20 +359,19 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.tripTime - startTime) / 100){
+            if (stepSize > (threadRKParameters.tripTime - startTime) / 100) {
                 stepSize = (threadRKParameters.tripTime - startTime) / 100;
             }
-            else if (stepSize < (threadRKParameters.tripTime - startTime) / 1000){
+            else if (stepSize < (threadRKParameters.tripTime - startTime) / 1000) {
                 stepSize = (threadRKParameters.tripTime - startTime) / 1000;
             }
             
-            if((curTime + stepSize) > threadRKParameters.tripTime){
+            if ( (curTime + stepSize) > threadRKParameters.tripTime) {
                 stepSize = (threadRKParameters.tripTime - curTime); // shorten the last step to end exactly at time final
             }
 
             // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
-            if (sqrt(pow(curPos.r,2)+pow(curPos.z,2)) < 0.5)
-            {
+            if ( sqrt(pow(curPos.r,2)+pow(curPos.z,2)) < 0.5) {
                 curPos.r = 1000;
 
                 // output to this thread's index
@@ -391,28 +388,27 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         individuals[threadId].posDiff = sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
         individuals[threadId].velDiff = sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
 
-
         return;
     }
     return;
 }
 
-__host__ void initializePosition(Individual *individuals, int size){
-    for(int i=0; i<size ;i++){
+__host__ void initializePosition(Individual *individuals, int size) {
+    for (int i = 0; i < size ;i++) {
         individuals[i].initialize();
     }
 }
 
 //testing functions
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-void rkCalcComparison(){
+void rkCalcComparison() {
     int n = 5000;
 
     //parameter setup
 
     elements<double> *curPos = new elements<double>[n];
     elements<double> *hostCurPos = new elements<double>[n];
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < n; i++) {
         curPos[i].r = static_cast<double>(rand()%1001)/1000.0 + 0.5;
         curPos[i].theta = static_cast<double>(rand()%40000)/1000.0 - 20.0;
         curPos[i].z = static_cast<double>(rand()%200001)/10000000.0 - 0.001;
@@ -426,13 +422,13 @@ void rkCalcComparison(){
 
 
     coefficients<double> testCoeff;
-    for(int i = 0; i < testCoeff.gammaSize; i++){
+    for(int i = 0; i < testCoeff.gammaSize; i++) {
         testCoeff.gamma[i] = 10;
     }
-    for(int i = 0; i < testCoeff.tauSize; i++){
+    for(int i = 0; i < testCoeff.tauSize; i++) {
         testCoeff.tau[i] = 10;
     }
-    for(int i = 0; i < testCoeff.coastSize; i++){
+    for(int i = 0; i < testCoeff.coastSize; i++) {
         testCoeff.coast[i] = 0.5;
     }
     testCoeff.coastThreshold = 0.05;
@@ -490,7 +486,7 @@ void rkCalcComparison(){
     std::cout << accel << std::endl;
     //std::cout << testCoeff << std::endl;
 
-    for(int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         std::cout << "i: " << i << std::endl;
         std::cout << hostV[i] << std::endl;
         std::cout << hostCurPos[i] << std::endl;
@@ -499,8 +495,8 @@ void rkCalcComparison(){
     }
 
     double errorTol = 1e-10;
-    for(int i = 0; i < n; i++){
-        if(abs(v[i].r - hostV[i].r) > errorTol){
+    for (int i = 0; i < n; i++) {
+        if ( abs(v[i].r - hostV[i].r) > errorTol) {
             std::cout << "Thread: " << i << std::endl;
             std::cout << "GPU v: " << v[i] << std::endl;
             std::cout << "CPU v: " << hostV[i] << std::endl;
@@ -527,9 +523,9 @@ void rkCalcComparison(){
     delete [] v;
 }
 
-__global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n){
+__global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, coefficients<double> *testCoeff, double *accel, elements<double> *v, elements<double> *curPos, int *n) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
-    if(threadId < *n){
+    if (threadId < *n) {
         elements<double> k1, k2, k3, k4, k5, k6, k7;
         rkCalc(*curTime, *tripTime, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
     }

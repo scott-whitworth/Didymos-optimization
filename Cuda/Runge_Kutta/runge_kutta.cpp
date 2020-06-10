@@ -10,8 +10,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass)
-{
+                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass) {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
@@ -42,8 +41,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
     bool coast;
 
-    while(curTime<timeFinal) // iterate until time is equal to the stop time
-    {
+    while (curTime < timeFinal) { // iterate until time is equal to the stop time
         // defining deltaT for calc_accel as the stepsize
         T deltaT = stepSize;
 
@@ -77,25 +75,23 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
         stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/10)
-        {
+        if (stepSize>(timeFinal-timeInitial)/10) {
             stepSize = (timeFinal-timeInitial)/10;
             maxStep++;
         }
-        else if (stepSize<((timeFinal-timeInitial)/1000))
-        {
+        else if (stepSize<((timeFinal-timeInitial)/1000)) {
             stepSize = (timeFinal-timeInitial)/1000;
             minStep++;
         }
         
-        if((curTime+stepSize)>timeFinal)
+        if ( (curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
-
+        }
 
         //Calculates the y[n] for the next round of calculations
         y_new[n+1] = u;   
         n++;
-    }//end of while 
+    } //end of while 
     lastStep = n;
     //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
@@ -103,8 +99,7 @@ const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & las
 
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass)
-{
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass) {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y_new = y0;
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
@@ -116,12 +111,11 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
 
     //mass of fuel expended (kg)
     //set to 0 initially
-    T massFuelSpent =0;
+    T massFuelSpent = 0;
 
     elements<T> error;
     bool coast;
-    while(curTime<timeFinal) // iterate until time is equal to the stop time
-    {
+    while (curTime < timeFinal) {  // iterate until time is equal to the stop time
         // defining coast using calc_coast()
         coast = calc_coast(coeff, curTime, timeFinal);
 
@@ -140,11 +134,12 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
         stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/100)
+        if (stepSize > (timeFinal-timeInitial)/100 ) {
             stepSize = (timeFinal-timeInitial)/100;
-        else if (stepSize<((timeFinal-timeInitial)/1000))
+        }
+        else if (stepSize < ((timeFinal-timeInitial)/1000) ) {
             stepSize = (timeFinal-timeInitial)/1000;
-        
+        }
         // shorten the last step to end exactly at time final
         if((curTime+stepSize)>timeFinal)
             stepSize = (timeFinal-curTime);
@@ -157,12 +152,11 @@ T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & ac
             return;
         }
         
-    }//end of while 
+    }  //end of while 
 }
 
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-T stepSize, elements<T> & y_new, const T & absTol)
-{
+                                   T stepSize, elements<T> & y_new, const T & absTol) {
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y_new = y0;
     // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
@@ -170,9 +164,7 @@ T stepSize, elements<T> & y_new, const T & absTol)
     elements<T> error;
     T curTime = timeFinal; // setting time equal to the start time
 
-    while(curTime>timeInitial) // iterates in reverse
-    {
-        
+    while( curTime > timeInitial) {  // iterates in reverse
         //calculate k values
         rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
 
@@ -184,24 +176,21 @@ T stepSize, elements<T> & y_new, const T & absTol)
         stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize)/2;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize>(timeFinal-timeInitial)/100)
+        if (-stepSize>(timeFinal-timeInitial)/100) {
             stepSize = -(timeFinal-timeInitial)/100;
-        else if (-stepSize<((timeFinal-timeInitial)/1000))
+        }
+        else if (-stepSize<((timeFinal-timeInitial)/1000)) {
             stepSize = -(timeFinal-timeInitial)/1000;
-
+        }
         // shorten the last step to end exactly at time final
-        if((curTime+stepSize)<timeInitial)
+        if ( (curTime+stepSize) < timeInitial){
             stepSize = -(curTime-timeInitial);
-    } //end of while 
-       //if(isnan(y_new.r) || isnan(y_new.theta) || isnan(y_new.z) || isnan(y_new.vr) || isnan(y_new.vtheta) || isnan(y_new.vz)){
-       //    std::cout << "ERROR " << y_new << std::endl << std::endl<< std::endl<< std::endl<< std::endl;
-       //}
+        }
+    } //end of while
 }
 
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
-elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7){
-   
-   //elements<T> y_prev;
+                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7) {
 
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
@@ -231,7 +220,7 @@ elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T>
 }
 
 template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
-elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7){
+                                    elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7) {
     // Runge-Kutta algorithm      
     //elements<T> y_prev;
 
@@ -261,8 +250,7 @@ elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> 
     error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);    
 }
 
-template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize)
-{
+template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize) {
     // relative total error is the total error of all coponents of y which is used in scale.
     // scale is used to determine the next step size.
     T normTotError, scale;

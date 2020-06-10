@@ -9,18 +9,16 @@
 #include "../constants.h" // used for wetMass
 #include <iostream> // used for cout
 
-template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass){
+template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass) {
     
     // If all of the fuel has been expelled, then no more thrust can be applied
-    if(wetMass - massExpelled <= DRY_MASS)
-    {
+    if (wetMass - massExpelled <= DRY_MASS) {
         return 0;
     }
 
     // Thrusting is evaluated in calcFourier.cpp within calc_coast().
     // When thrusting is equal to zero, calc_accel() will not be evaluated.
-    if(!thrusting)
-    {
+    if (!thrusting) {
         return 0;
     }
 
@@ -35,8 +33,7 @@ template <class T> __host__ __device__ T calc_accel(const T & radius, const T & 
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power experimentally measured on earth.
     //This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
-    if(sepparation<=1)
-    {
+    if (sepparation <= 1) {
         Pin = thrusterType.P0; // It is devided by 1 astronomical unit to normalize it P0/(1 AU)
     }
 
