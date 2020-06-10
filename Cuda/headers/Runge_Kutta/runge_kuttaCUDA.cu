@@ -85,8 +85,8 @@ double optimize(const int numThreads, const int blockThreads){
     //    10-12 launch angles
     //    13 trip time
     //    14-19 coast
-    double arrayCPU[numStarts][19];
-    for(int i = 0; i < 19; i++){ // rows
+    double arrayCPU[numStarts][OPTIM_VARS];
+    for(int i = 0; i < OPTIM_VARS; i++){ // rows
         for(int j = 0; j < numStarts; j++){ // columns
             starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
             arrayCPU[j][i] = startDoubles;
@@ -198,7 +198,7 @@ double optimize(const int numThreads, const int blockThreads){
 
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
 
-        selectWinners(inputParameters, SURVIVOR_COUNT, survivors);
+        selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
 
         std::sort(inputParameters, inputParameters + numThreads, greaterInd); // put the individuals in order so we can replace the worst ones
 
@@ -206,18 +206,12 @@ double optimize(const int numThreads, const int blockThreads){
         // bestChange() TO BE USED HERE
 
 
-
-
-
-
-
-
         // Display a '.' to the terminal to show that a generation has been calculated
-        // if it is not the 50th generation this serves to show that calculations are occurring without displaying the best or worst of the current pool
-        // This also serves to visually seperate the generations on the terminal screen
+        // if it is not the 50th generation this serves to show that a generation was calculated and survivors selected
+        // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
-        // Display and print Individuals' pos and vel difference every 50 generations
+        // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
         if(i % 50 == 0)
         {   
             // Display the best and worst Individuals in this generation
@@ -241,12 +235,14 @@ double optimize(const int numThreads, const int blockThreads){
         }
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN));
+        double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
+
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
     }
 
 
-    // output the best Individuals of the final generation using the CPU algorithm
-    // allows plotting of solutions in matlab
+    // output the best Individuals of the final generation, using writeTrajectoryToFile()
+    // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
     for(int i = 0; i < 10; i++){

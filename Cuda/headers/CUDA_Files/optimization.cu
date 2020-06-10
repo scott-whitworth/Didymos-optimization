@@ -24,7 +24,7 @@ int main ()
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
     
-    // pre-calculate a table of Earth's position
+    // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
     double startTime = 15778800; // 0.5 year (s)
@@ -41,7 +41,7 @@ int main ()
     //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-    optimize(numThreads, blockThreads);
+    optimize(numThreads, blockThreads); // optimize() currently declared in runge_kuttaCUDA.cuh
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     
