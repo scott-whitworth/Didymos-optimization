@@ -212,7 +212,7 @@ double optimize(const int numThreads, const int blockThreads){
         std::cout << '.';
 
         // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
-        if(i % 50 == 0)
+        if((i+1) % 50 == 0)
         {   
             // Display the best and worst Individuals in this generation
             std::cout << '\n';
