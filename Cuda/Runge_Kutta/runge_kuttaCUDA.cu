@@ -162,7 +162,7 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
-    double posCostRange = 0, velCostRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0
+    double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0
 
     // Initialize a generation counter
     int i = 0;
@@ -237,8 +237,8 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
 
         // Calculate the current generation's cost function range
-        posCostRange = posCost(inputParameters, numThreads);
-        velCostRange = velCost(inputParameters, numThreads);
+        posDiffRange = posCost(inputParameters, numThreads);
+        velDiffRange = velCost(inputParameters, numThreads);
 
         // Step into the next generation
         i++;
@@ -247,22 +247,16 @@ double optimize(const int numThreads, const int blockThreads) {
             // Display the cost function range within every 50th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
-            std::cout << "posCostRange: " << posCostRange << std::endl;
-            std::cout << "velCostRange: " << velCostRange << std::endl;
-
-            std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
-
-            std::cout << "best velDiff: " << inputParameters[0].velDiff << std::endl;
+            std::cout << "posDiffRange: " << posDiffRange << std::endl;
+            std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
-            std::cout << "best posDiff change: " << inputParameters[0].posDiff - prevPos <<std::endl;
-            std::cout << "best velDiff change: " << inputParameters[0].velDiff - prevVel <<std::endl;
-            std::cout << "worst posDiff change: " << inputParameters[numThreads-1].posDiff - prevPos <<std::endl;
-            std::cout << "worst velDiff change: " << inputParameters[numThreads-1].velDiff - prevVel <<std::endl;
+            std::cout << "posDiffRange change over 50 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
+            std::cout << "velDiffRange change over 50 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
             prevBestPos = inputParameters[i].posDiff;
             prevBestVel = inputParameters[i].velDiff;
-            prevWprstPos = inputParameters[i].posDiff;
-            prevWorstVel = inputParameters[i].velDiff;
+            prevWorstPos = inputParameters[numThreads-1].posDiff;
+            prevWorstVel = inputParameters[numThreads-1].velDiff;
 
         }
         
