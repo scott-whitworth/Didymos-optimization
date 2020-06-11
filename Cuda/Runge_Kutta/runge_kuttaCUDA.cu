@@ -263,7 +263,8 @@ double optimize(const int numThreads, const int blockThreads) {
                 std::cout << "worst velDiff: " << inputParameters[numThreads-1].velDiff << std::endl;
             }
             
-            std::cout << "position change: " << inputParameters[0].posDiff - previousPos <<std::endl;
+            std::cout << "position change: " << inputParameters[0].posDiff - prevPos <<std::endl;
+            std::cout << "velocity change: " << inputParameters[0].velDiff - prevVel <<std::endl;
             prevPos = inputParameters[0].posDiff;
             prevVel = inputParameters[0].velDiff;
 
