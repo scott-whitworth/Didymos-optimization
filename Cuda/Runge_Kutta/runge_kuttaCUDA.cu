@@ -7,6 +7,7 @@
 #include "../Genetic_Algorithm/geneticAlgorithm.h" // selectWinners()
 #include "../Genetic_Algorithm/ga_crossover.h" // crossover()
 #include "../Genetic_Algorithm/gaConstants.h" // SURVIVOR_COUNT
+#include "../constants.h" // AU
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
@@ -109,14 +110,9 @@ double optimize(const int numThreads, const int blockThreads) {
         coefficients<double> testcoeff;
 
         
-        for (int j = 0; j < testcoeff.gammaSize; j++) {
-            //testcoeff.gamma[j] = arrayCPU[row][j];
-        }
-
         // for (int j = 0; j < testcoeff.gammaSize; j++) {
         //     //testcoeff.gamma[j] = arrayCPU[row][j];
         // }
-
 
         // for (int j = 0; j < testcoeff.tauSize; j++) {
         //     //testcoeff.tau[j] =  arrayCPU[row][j+7];
@@ -164,7 +160,9 @@ double optimize(const int numThreads, const int blockThreads) {
     std::ofstream individualDifference;
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
-    double previousPos = 1.0e10;
+    
+    
+    double prevPos = 0, prevVel = 0;
 
     // Initialize a tolerance for generational convergence
     double convgTol = 1/AU; // the best and worst cost functions of a generation must differ by less than 1
@@ -265,8 +263,10 @@ double optimize(const int numThreads, const int blockThreads) {
                 std::cout << "worst velDiff: " << inputParameters[numThreads-1].velDiff << std::endl;
             }
             
-            std::cout << "position change: " << inputParameters[0].posDiff - previousPos <<std::endl;
-            previousPos = inputParameters[0].posDiff;
+            std::cout << "position change: " << inputParameters[0].posDiff - prevPos <<std::endl;
+            std::cout << "velocity change: " << inputParameters[0].velDiff - prevVel <<std::endl;
+            prevPos = inputParameters[0].posDiff;
+            prevVel = inputParameters[0].velDiff;
 
         }
         
