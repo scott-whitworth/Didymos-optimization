@@ -216,13 +216,26 @@ double optimize(const int numThreads, const int blockThreads) {
 
 
         // Display a '.' to the terminal to show that a generation has been calculated
-        // if it is not the 50th generation this serves to show that a generation was calculated and survivors selected
+        // if it is not the 100th generation this serves to show that a generation was calculated and survivors selected
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
 
-        // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
-        if (i+1 % 50 == 0) { 
+        // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
+        if (i+1 % 100 == 0) { 
+            // Display the cost function range within every 100th generation
+            std::cout << '\n';
+            std::cout << "generation: " << i << std::endl;
+            std::cout << "posDiffRange: " << posDiffRange << std::endl;
+            std::cout << "velDiffRange: " << velDiffRange << std::endl;
+            
+            std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
+            std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
+
+            prevBestPos = inputParameters[i].posDiff;
+            prevBestVel = inputParameters[i].velDiff;
+            prevWorstPos = inputParameters[numThreads-1].posDiff;
+            prevWorstVel = inputParameters[numThreads-1].velDiff;
 
             // Append every Individual into a csv file to view progress over generations
             for (int j = 0; j < numThreads; j++) {
@@ -243,22 +256,6 @@ double optimize(const int numThreads, const int blockThreads) {
         // Step into the next generation
         i++;
         
-        if (i % 50 == 0) {
-            // Display the cost function range within every 50th generation
-            std::cout << '\n';
-            std::cout << "generation: " << i << std::endl;
-            std::cout << "posDiffRange: " << posDiffRange << std::endl;
-            std::cout << "velDiffRange: " << velDiffRange << std::endl;
-            
-            std::cout << "posDiffRange change over 50 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
-            std::cout << "velDiffRange change over 50 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
-
-            prevBestPos = inputParameters[i].posDiff;
-            prevBestVel = inputParameters[i].velDiff;
-            prevWorstPos = inputParameters[numThreads-1].posDiff;
-            prevWorstVel = inputParameters[numThreads-1].velDiff;
-
-        }
         
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
     }
