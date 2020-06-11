@@ -21,5 +21,13 @@ void selectWinners(Individual* pool, int selectionSize, Individual* survivors);
     // costRange: the difference in cost function between the least and greatest Individuals
 double calcCost(Individual* pool, int size);
 
+// Determines whether the pool meets requirements for convergence
+// Input:
+    // pool: the entire generation (must already be sorted)
+    // size: the number of Individuals in the pool
+// Output:
+    // convgFlag: Boolean indicating whether the pool has converged
+bool converge(Individual* pool, int size);
+
 #include "geneticAlgorithm.cpp"
 #endif

@@ -167,13 +167,15 @@ double optimize(const int numThreads, const int blockThreads) {
     // Initialize a tolerance for generational convergence
     double convgTol = 1/AU; // the best and worst cost functions of a generation must differ by less than 1
 
+    bool convgFlag = 0;
+
     // Initialize the current generation's cost function range
     double costRange = convgTol;
 
     // Initialize a generation counter
     int i = 0;
 
-    while (costRange >= convgTol) {
+    while (!convgFlag) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -244,6 +246,10 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // Calculate the current generation's cost function range
         costRange = calcCost(inputParameters, numThreads);
+
+        // Check for convergence
+        convgFlag = converge(inputParameters, numThreads);
+
         // Step into the next generation
         i++;
         

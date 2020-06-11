@@ -24,6 +24,7 @@
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
 #define POSITION_THRESH 1.0e-10 // to ignore velDiff entirely
 
-#define IMPACT_THRESH 8.0e-8 // posDiff convergence tolerance
+#define IMPACT_THRESH 1.0e-7 // posDiff convergence tolerance (8th decimal place precision)
+#define SPEED_THRESH 6.581*AU // velDiff convergence tolerance (DART Baseline Trajectory, JHU APL)
 
 #endif
