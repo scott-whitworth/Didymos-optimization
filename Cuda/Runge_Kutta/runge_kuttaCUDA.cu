@@ -241,7 +241,7 @@ double optimize(const int numThreads, const int blockThreads) {
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
-            // Append every Individual into a csv file to view progress over generations
+            // Append the best and worst Individuals into a csv file to view progress over generations
             for (int j = 0; j < numThreads; j++) {
                 individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
                 << inputParameters[j].finalPos.r << "," << inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << ","
