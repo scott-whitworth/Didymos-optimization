@@ -28,6 +28,7 @@ bool posConverge(Individual* pool, int size) {
         if (posCost(pool, size)/pool[0].posDiff < CONVG_TOL) {
             return true;
         }
+        else return false;
     }
     else return false;
 }
@@ -37,6 +38,7 @@ bool velConverge(Individual* pool, int size) {
         if (velCost(pool, size)/pool[0].velDiff < CONVG_TOL) {
             return true;
         }
+        else return false;
     }
     else return false;
 }
