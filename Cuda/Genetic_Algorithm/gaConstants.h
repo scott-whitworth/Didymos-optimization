@@ -25,7 +25,7 @@
 #define POSITION_THRESH 1.0e-10 // to ignore velDiff entirely
 
 #define IMPACT_THRESH 1.0e-7 // posDiff convergence threshold (8th decimal place precision)
-#define SPEED_THRESH 6.581*AU // velDiff convergence threshold (DART Baseline Trajectory, JHU APL)
+#define SPEED_THRESH 6.581e3*AU // velDiff convergence threshold (DART Baseline Trajectory, JHU APL) (a.u./s)
 #define CONVG_TOL 10.0 // minimum percent difference for convergence
 
 #endif
