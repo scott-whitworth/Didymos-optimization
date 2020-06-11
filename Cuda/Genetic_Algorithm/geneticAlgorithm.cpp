@@ -19,7 +19,7 @@ double velCost(Individual* pool, int size) {
     return abs(pool[0].velDiff - pool[size-1].velDiff);
 }
 
-bool converge(Individual* pool, size) {
+bool converge(Individual* pool, int size) {
     return posConverge(pool, size) && velConverge(pool, size);
 }
 
