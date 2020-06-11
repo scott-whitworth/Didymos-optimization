@@ -17,6 +17,14 @@ struct Individual {
 
     // get the inital position of the spacecraft according to this Individual's launch time
     void initialize();
+
+    // Calculates a cost value to quantitatively evaluate this Individual
+    double getCost();
+
+    // Basic comparison operator overload, compare individuals by their cost values determined in getCost()
+    bool operator>(Individual &other);
+    bool operator<(Individual &other);
+    bool operator==(Individual &other);
 };
 
     // utility function for greaterInd()
@@ -28,7 +36,7 @@ struct Individual {
     // compares two individuals
     // other is the Individual to be compared to
     // returns true if the first Individual has a higher fitness
-    bool greaterInd(Individual first, Individual second);
+    bool betterInd(Individual first, Individual second);
 
 #include "individuals.cpp"
 

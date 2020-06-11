@@ -4,11 +4,43 @@
 #include "individuals.h"
 #include "gaConstants.h" // POSITION_THRESH
 
-bool greaterInd(Individual first, Individual second) {
-    double posRatio = getPosRatio(first, second);
-    double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio); // total cost is a mix of position and velocity
-    double secondSum = second.posDiff * posRatio - second.velDiff * (1.0 - posRatio);
-    if (firstSum < secondSum) {
+// An experimental equation to determine cost (that would want to be minimized in the algorithm)
+double Individual::getCost() {
+    double cost = this->posDiff;
+    //cost -= abs(this->velDiff);
+    return cost;
+}
+
+bool Individual::operator>(Individual &other) {
+    if (this->getCost() > other.getCost()){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool Individual::operator<(Individual &other) {
+    if (this->getCost() < other.getCost()){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool Individual::operator==(Individual &other) {
+    if (this->getCost() == other.getCost()){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+// betterInd uses < operator to compare first and second, returns true if first < second
+bool betterInd(Individual first, Individual second) {
+    if (first < second) {
         return true;
     }
     else {
@@ -30,6 +62,7 @@ double getPosRatio(Individual first, Individual second) {
     }
 }
 
+// initialize sets the Individual's location and velocity
 void Individual::initialize() {
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
 
