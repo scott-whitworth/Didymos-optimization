@@ -162,7 +162,7 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
-    double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0
+    double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
     // Initialize a generation counter
     int i = 0;
