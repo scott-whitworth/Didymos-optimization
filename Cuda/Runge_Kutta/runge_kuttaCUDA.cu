@@ -162,15 +162,12 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
-    double prevPos = 0, prevVel = 0;
-
-    // Initialize the current generation's cost function range
-    double costRange = 0;
+    double posCost = 0, velCost = 0, prevPos = 0, prevVel = 0;
 
     // Initialize a generation counter
     int i = 0;
 
-    while (!converge(inputParameters)) {
+    while (!converge(inputParameters, numThreads)) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -240,8 +237,8 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
 
         // Calculate the current generation's cost function range
-        costRangePos = posCost(inputParameters);
-        costRangeVel = velCost(inputParameters);
+        posCost = posCost(inputParameters, numThreads);
+        velCost = velCost(inputParameters, numThreads);
 
         // Step into the next generation
         i++;
@@ -250,8 +247,8 @@ double optimize(const int numThreads, const int blockThreads) {
             // Display the cost function range within every 50th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
-            std::cout << "costRangePos: " << costRangePos << std::endl;
-            std::cout << "costRangeVel: " << costRangeVel << std::endl;
+            std::cout << "posCost: " << posCost << std::endl;
+            std::cout << "velCost: " << velCost << std::endl;
 
             if (costRange == 1 / AU) {
                 std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
@@ -265,8 +262,8 @@ double optimize(const int numThreads, const int blockThreads) {
             
             std::cout << "position change: " << inputParameters[0].posDiff - prevPos <<std::endl;
             std::cout << "velocity change: " << inputParameters[0].velDiff - prevVel <<std::endl;
-            prevPos = inputParameters[0].posDiff;
-            prevVel = inputParameters[0].velDiff;
+            prevPos = inputParameters[i].posDiff;
+            prevVel = inputParameters[i].velDiff;
 
         }
         

@@ -11,30 +11,30 @@ void selectWinners(Individual* pool, int selectionSize, Individual* survivors) {
     }   
 }
 
-double posCost(Individual* pool) {
-    return abs(pool[0].posDiff - pool[pool.size()].posDiff);
+double posCost(Individual* pool, int size) {
+    return abs(pool[0].posDiff - pool[size-1].posDiff);
 }
 
-double velCost(Individual* pool) {
-    return abs(pool[0].velDiff - pool[pool.size()].velDiff);
+double velCost(Individual* pool, int size) {
+    return abs(pool[0].velDiff - pool[size-1].velDiff);
 }
 
-bool converge(Individual* pool) {
-    return posConverge(pool) && velConverge(pool);
+bool converge(Individual* pool, size) {
+    return posConverge(pool, size) && velConverge(pool, size);
 }
 
-bool posConverge(Individual* pool) {
-    if (pool[pool.size()-1].posDiff > IMPACT_THRESH) {
-        if (abs(pool[0].posDiff - pool[pool.size()-1].posDiff)/pool[0].posDiff < CONVG_TOL) {
+bool posConverge(Individual* pool, int size) {
+    if (pool[size-1].posDiff > IMPACT_THRESH) {
+        if (posCost(pool, size)/pool[0].posDiff < CONVG_TOL) {
             return true;
         }
     }
     else return false;
 }
 
-bool velConverge(Individual* pool) {
-    if (pool[pool.size()-1].velDiff > SPEED_THRESH) {
-        if (abs(pool[0].velDiff - pool[pool.size()-1].velDiff)/pool[0].velDiff < CONVG_TOL) {
+bool velConverge(Individual* pool, int size) {
+    if (pool[size-1].velDiff > SPEED_THRESH) {
+        if (velCost(pool, size)/pool[0].velDiff < CONVG_TOL) {
             return true;
         }
     }
