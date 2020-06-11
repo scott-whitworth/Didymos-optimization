@@ -196,14 +196,14 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
         //check coeff
         if ( (mutatedValue >= 0) && (mutatedValue <= 9) ) {
             if (mutatedValue <= 6) {//Gamma (0-6)
-                newInd.coeff.gamma[mutatedValue] += getRand(10.0 * annealing, rng);
+                //newInd.coeff.gamma[mutatedValue] += getRand(10.0 * annealing, rng);
             }
             else if (mutatedValue <= 9) {//Tau (7-9)
-                newInd.coeff.tau[mutatedValue-7] += getRand(10.0 * annealing, rng);
+                //newInd.coeff.tau[mutatedValue-7] += getRand(10.0 * annealing, rng);
             }
         }
         if (mutatedValue >= 14 && mutatedValue <= 18) {//coast (14-18)
-            newInd.coeff.coast[mutatedValue-14] += getRand(10.0 * annealing, rng);
+            //newInd.coeff.coast[mutatedValue-14] += getRand(10.0 * annealing, rng);
         }
         if (mutatedValue == 13) { //Time final
             newInd.tripTime += 365*24*3600*getRand(0.5 * annealing, rng);
@@ -230,17 +230,18 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 // output: average of the two
 rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2) {
     rkParameters<double> newInd;
-
+    
     for (int i = 0; i < p1.coeff.gammaSize; i++) {
-        newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
+        //newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
     }
     for (int i = 0; i < p1.coeff.tauSize; i++) {
-        newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
+        //newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
     }
     for (int i = 0; i < p1.coeff.coastSize; i++) {
-        newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
+        //newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
     }
     
+
     newInd.alpha = (p1.alpha/2.0) + (p2.alpha/2.0);
     newInd.beta = (p1.beta/2.0) + (p2.beta/2.0);
     newInd.zeta = (p1.zeta/2.0) + (p2.zeta/2.0);

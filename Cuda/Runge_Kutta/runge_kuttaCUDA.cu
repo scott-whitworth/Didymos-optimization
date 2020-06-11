@@ -249,12 +249,12 @@ double optimize(const int numThreads, const int blockThreads) {
 
             if (costRange == 1 / AU) {
                 std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
-                std::cout << "worst posDiff: " << inputParameters[size-1].posDiff << std::endl;
+                std::cout << "worst posDiff: " << inputParameters[numThreads-1].posDiff << std::endl;
             }
 
             else {
                 std::cout << "best velDiff: " << inputParameters[0].velDiff << std::endl;
-                std::cout << "worst velDiff: " << inputParameters[size-1].velDiff << std::endl;
+                std::cout << "worst velDiff: " << inputParameters[numThreads-1].velDiff << std::endl;
             }
         }
 
