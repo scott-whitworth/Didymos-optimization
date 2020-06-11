@@ -107,17 +107,32 @@ double optimize(const int numThreads, const int blockThreads) {
         double zeta = arrayCPU[row][12];
 
         coefficients<double> testcoeff;
+<<<<<<< HEAD
         // for (int j = 0; j < testcoeff.gammaSize; j++) {
         //     //testcoeff.gamma[j] = arrayCPU[row][j];
         // }
+=======
+        
+        /*
+        for (int j = 0; j < testcoeff.gammaSize; j++) {
+            //testcoeff.gamma[j] = arrayCPU[row][j];
+        }
+>>>>>>> 0fd84928929da1214e79a1062908ac0041feb0b6
 
         // for (int j = 0; j < testcoeff.tauSize; j++) {
         //     //testcoeff.tau[j] =  arrayCPU[row][j+7];
         // }
 
+<<<<<<< HEAD
         // for (int j = 0; j < testcoeff.coastSize; j++) {
         //     //testcoeff.coast[j] = arrayCPU[row][j+14];
         // }
+=======
+        for (int j = 0; j < testcoeff.coastSize; j++) {
+            //testcoeff.coast[j] = arrayCPU[row][j+14];
+        }
+        */
+>>>>>>> 0fd84928929da1214e79a1062908ac0041feb0b6
 
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
@@ -186,6 +201,7 @@ double optimize(const int numThreads, const int blockThreads) {
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
         
                 coefficients<double> testcoeff;
+<<<<<<< HEAD
                 // for (int j = 0; j < testcoeff.gammaSize; j++) {
                 //     //testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
                 // }
@@ -196,6 +212,20 @@ double optimize(const int numThreads, const int blockThreads) {
                 //     //testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
                 // }
             
+=======
+                /*
+                for (int j = 0; j < testcoeff.gammaSize; j++) {
+                    //testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+                for (int j = 0; j < testcoeff.tauSize; j++) {
+                    //testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+                for (int j = 0; j < testcoeff.coastSize; j++) {
+                    //testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                }
+                */
+
+>>>>>>> 0fd84928929da1214e79a1062908ac0041feb0b6
                 rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
         
                 inputParameters[k].startParams = example;
@@ -267,6 +297,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double *start = new double[OPTIM_VARS];
     double cost = 0;
     for (int i = 0; i < 10; i++) {
+        /*
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             //start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
@@ -276,7 +307,7 @@ double optimize(const int numThreads, const int blockThreads) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
             //start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
         }
-
+        */
         start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
         start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
         start[BETA_OFFSET] = inputParameters[i].startParams.beta;
