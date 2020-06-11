@@ -10,3 +10,10 @@ void selectWinners(Individual* pool, int selectionSize, Individual* survivors) {
         }
     }   
 }
+
+double calcCost(Individual* pool, int size) {
+    if (pool[size-1].posDiff >= IMPACT_THRESH) {
+        return 1/AU;
+    }
+    else return abs(pool[0].velDiff - pool[size - 1].velDiff);
+}

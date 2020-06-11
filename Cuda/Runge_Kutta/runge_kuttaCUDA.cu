@@ -158,7 +158,16 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
-    for (int i = 0; i < generationsNum; i++) {
+    // Initialize a tolerance for generational convergence
+    double convgTol = 1/AU; // the best and worst cost functions of a generation must differ by less than 1
+
+    // Initialize the current generation's cost function range
+    double costRange = convgTol;
+
+    // Initialize a generation counter
+    int i = 0;
+
+    while (costRange >= convgTol) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -211,17 +220,9 @@ double optimize(const int numThreads, const int blockThreads) {
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
+
         // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
-        if (i % 50 == 0) { 
-            // Display the best and worst Individuals in this generation
-            std::cout << '\n';
-            std::cout << "generation: " << i << std::endl;
-            std::cout << "best:" << std::endl;
-            std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
-            std::cout << "\tvelDiff: " << inputParameters[0].velDiff << std::endl;
-            std::cout << "worst:" << std::endl;
-            std::cout << "\tposDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
-            std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
+        if (i+1 % 50 == 0) { 
 
             // Append every Individual into a csv file to view progress over generations
             for (int j = 0; j < numThreads; j++) {
@@ -234,6 +235,28 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
+
+        // Calculate the current generation's cost function range
+        costRange = calcCost(inputParameters, numThreads);
+        // Step into the next generation
+        i++;
+
+        if (i % 50 == 0) {
+            // Display the cost function range within every 50th generation
+            std::cout << '\n';
+            std::cout << "generation: " << i << std::endl;
+            std::cout << "costRange: " << costRange << std::endl;
+
+            if (costRange == 1 / AU) {
+                std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
+                std::cout << "worst posDiff: " << inputParameters[size-1].posDiff << std::endl;
+            }
+
+            else {
+                std::cout << "best velDiff: " << inputParameters[0].velDiff << std::endl;
+                std::cout << "worst velDiff: " << inputParameters[size-1].velDiff << std::endl;
+            }
+        }
 
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
     }
