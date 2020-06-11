@@ -1,7 +1,4 @@
-//Didymos-Optimization_Project:
-//Last Editor: Ben
-//Tasks Completed: 
-    //Put for loop in main to call new optimize() function
+// Didymos Optimization Project using CUDA and a genetic algorithm
 
 #include "../constants.h" //used for wetMass
 #include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
@@ -22,7 +19,7 @@ double optimize(const int numThreads, const int blockThreads) {
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
 
-     // input parameters for rk4Simple which are the same for each thread
+    // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
@@ -115,14 +112,14 @@ double optimize(const int numThreads, const int blockThreads) {
 
     // setup output of results
     std::ofstream individualDifference;
-    individualDifference.open("individualDifference.csv");
-    individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
+    individualDifference.open("generations.csv");
+    individualDifference << "BestPosDiff" << "," << "BestVelDiff" << "," << "WorstPosDiff" << "," << "WorstVelDiff" << "\n";
     
     unsigned int generation = 0;    // A counter for number of generations calculated
     
     // A while loop that continues until it is determined that the pool of inputParameters has converged
-    bool converged = false;
-    while (!converged) {
+    //bool converged = false;
+    while (generation < generationsNum) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -189,15 +186,15 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
             std::cout << "\tcost: "    << inputParameters[numThreads - 1].getCost() << std::endl;
             
-            // Append every Individual into a csv file to view progress over generations
-            for (int j = 0; j < numThreads; j++) {
-                individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
-                                     << inputParameters[j].finalPos.r << "," << inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << ","
-                                     << inputParameters[j].finalPos.vr << "," << inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
-            }
-            individualDifference << "\n";
+            
         }
 
+        // Write the best and worst Individuals in every 100 generations into a csv file to view progress over generations
+        if (generation % 100 == 0){
+            individualDifference << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
+            << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
+
+        }
         // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         // Kind of an issue if generation > 22221, new_anneal becomes negative value
         double new_anneal =  ANNEAL_MAX - static_cast<double>(generation) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
@@ -206,16 +203,16 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // http://www.cplusplus.com/reference/climits/
         // If the generation counter has reached the maximum value it can hold (for unsigned int that is 65535), end the loop
-        if (generation == UINT_MAX) {
-            converged = true;
-        }
-        // If the range of the pool has narrowed, convergence must have occurred 
-        else if (inputParameters[0].getCost() - inputParameters[numThreads-1].getCost() <= 1e-9) {
-            converged = true;
-        }
-        else {
-            ++generation;
-        }
+        //if (generation == UINT_MAX) {
+        //    converged = true;
+        //}
+        //// If the range of the pool has narrowed, convergence must have occurred 
+        //else if (inputParameters[0].getCost() - inputParameters[numThreads-1].getCost() <= 1e-9) {
+        //    converged = true;
+        //}
+        //else {
+        //}
+        ++generation;
     }
 
 
@@ -278,7 +275,9 @@ int main () {
     //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-    optimize(numThreads, blockThreads); // optimize() currently declared in runge_kuttaCUDA.cuh
+    
+    optimize(numThreads, blockThreads);
+
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     

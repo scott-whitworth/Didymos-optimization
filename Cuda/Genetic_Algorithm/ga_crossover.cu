@@ -51,6 +51,8 @@ void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
 // 2's correspond to Gamma coefficients
 void crossOver_gammaPos(int mask[]) {
+    mask = [2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+/*
     for (int i = 0; i < OPTIM_VARS; i++) {
         if ( (i >= 0) && (i <= 6 ) ) {
             mask[i] = 2;
@@ -58,7 +60,7 @@ void crossOver_gammaPos(int mask[]) {
         else {
             mask[i] = 1;
         }
-    }
+    }*/
     return;
 }
 
@@ -66,14 +68,15 @@ void crossOver_gammaPos(int mask[]) {
 // input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
 // 2's correspond to tau coefficients
 void crossOver_tauPos(int mask[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
+    mask = [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+/*    for (int i = 0; i < OPTIM_VARS; i++) {
         if ( (i >= 7) && (i <= 9 ) ) {
             mask[i] = 2;
         }
         else {
             mask[i] = 1;
         }
-    }
+    }*/
     return;
 }
 
@@ -165,7 +168,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 
     int genesToMutate = 1; // number of genes to mutate
 
-    int mutateChance = rng()%100;
+    int mutateChance = rng() % 100;
 
     if (mutateChance< TRIPLE_MUTATION_RATE * 100) {
         genesToMutate = 3;
