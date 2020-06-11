@@ -162,7 +162,7 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
-    double posCostRange = 0, velCostRange = 0, prevPos = 0, prevVel = 0;
+    double posCostRange = 0, velCostRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0
 
     // Initialize a generation counter
     int i = 0;
@@ -251,15 +251,18 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "velCostRange: " << velCostRange << std::endl;
 
             std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
-            std::cout << "worst posDiff: " << inputParameters[numThreads-1].posDiff << std::endl;
 
             std::cout << "best velDiff: " << inputParameters[0].velDiff << std::endl;
-            std::cout << "worst velDiff: " << inputParameters[numThreads-1].velDiff << std::endl;
             
-            std::cout << "position change: " << inputParameters[0].posDiff - prevPos <<std::endl;
-            std::cout << "velocity change: " << inputParameters[0].velDiff - prevVel <<std::endl;
-            prevPos = inputParameters[i].posDiff;
-            prevVel = inputParameters[i].velDiff;
+            std::cout << "best posDiff change: " << inputParameters[0].posDiff - prevPos <<std::endl;
+            std::cout << "best velDiff change: " << inputParameters[0].velDiff - prevVel <<std::endl;
+            std::cout << "worst posDiff change: " << inputParameters[numThreads-1].posDiff - prevPos <<std::endl;
+            std::cout << "worst velDiff change: " << inputParameters[numThreads-1].velDiff - prevVel <<std::endl;
+
+            prevBestPos = inputParameters[i].posDiff;
+            prevBestVel = inputParameters[i].velDiff;
+            prevWprstPos = inputParameters[i].posDiff;
+            prevWorstVel = inputParameters[i].velDiff;
 
         }
         
