@@ -162,7 +162,7 @@ double optimize(const int numThreads, const int blockThreads) {
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
     
     
-    double posCost = 0, velCost = 0, prevPos = 0, prevVel = 0;
+    double posCostRange = 0, velCostRange = 0, prevPos = 0, prevVel = 0;
 
     // Initialize a generation counter
     int i = 0;
@@ -237,8 +237,8 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
 
         // Calculate the current generation's cost function range
-        posCost = posCost(inputParameters, numThreads);
-        velCost = velCost(inputParameters, numThreads);
+        posCostRange = posCost(inputParameters, numThreads);
+        velCostRange = velCost(inputParameters, numThreads);
 
         // Step into the next generation
         i++;
@@ -247,8 +247,8 @@ double optimize(const int numThreads, const int blockThreads) {
             // Display the cost function range within every 50th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
-            std::cout << "posCost: " << posCost << std::endl;
-            std::cout << "velCost: " << velCost << std::endl;
+            std::cout << "posCostRange: " << posCostRange << std::endl;
+            std::cout << "velCostRange: " << velCostRange << std::endl;
 
             std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
             std::cout << "worst posDiff: " << inputParameters[numThreads-1].posDiff << std::endl;
