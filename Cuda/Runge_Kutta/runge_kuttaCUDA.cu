@@ -58,7 +58,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 
 double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
-    time_t timeSeed = time(0);
+    time_t timeSeed = 1234567890; // time(0);
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
@@ -180,10 +180,10 @@ double optimize(const int numThreads, const int blockThreads) {
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
-                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
-                double alpha = (mt_rand() % 629) / 100.0 - 3.14;
-                double beta = (mt_rand() % 629) / 100.0 - 3.14;
-                double zeta = (mt_rand() % 315) / 100.0 - 1.57;
+                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0); // (seconds In A Year) * (random decimal)
+                double alpha = (mt_rand() % 629) / 100.0 - M_PI;
+                double beta = (mt_rand() % 629) / 100.0 - M_PI;
+                double zeta = (mt_rand() % 315) / 100.0 - M_PI / 2;
         
                 coefficients<double> testcoeff;
                 // for (int j = 0; j < testcoeff.gammaSize; j++) {
@@ -252,7 +252,7 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
-        
+         
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
         // Step into the next generation
@@ -277,6 +277,7 @@ double optimize(const int numThreads, const int blockThreads) {
             //start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
         }
         */
+
         start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
         start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
         start[BETA_OFFSET] = inputParameters[i].startParams.beta;
