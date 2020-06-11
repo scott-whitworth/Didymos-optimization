@@ -164,18 +164,13 @@ double optimize(const int numThreads, const int blockThreads) {
     
     double prevPos = 0, prevVel = 0;
 
-    // Initialize a tolerance for generational convergence
-    double convgTol = 1/AU; // the best and worst cost functions of a generation must differ by less than 1
-
-    bool convgFlag = 0;
-
     // Initialize the current generation's cost function range
-    double costRange = convgTol;
+    double costRange = 0;
 
     // Initialize a generation counter
     int i = 0;
 
-    while (!convgFlag) {
+    while (!converge(inputParameters)) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -245,10 +240,8 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
 
         // Calculate the current generation's cost function range
-        costRange = calcCost(inputParameters, numThreads);
-
-        // Check for convergence
-        convgFlag = converge(inputParameters, numThreads);
+        costRangePos = posCost(inputParameters);
+        costRangeVel = velCost(inputParameters);
 
         // Step into the next generation
         i++;
@@ -257,7 +250,8 @@ double optimize(const int numThreads, const int blockThreads) {
             // Display the cost function range within every 50th generation
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
-            std::cout << "costRange: " << costRange << std::endl;
+            std::cout << "costRangePos: " << costRangePos << std::endl;
+            std::cout << "costRangeVel: " << costRangeVel << std::endl;
 
             if (costRange == 1 / AU) {
                 std::cout << "best posDiff: " << inputParameters[0].posDiff << std::endl;
