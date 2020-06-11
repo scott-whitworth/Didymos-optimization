@@ -165,7 +165,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
     // Initialize a generation counter
-    int i = 0;
+    int i = 1;
 
     while (!converge(inputParameters, numThreads)) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -226,10 +226,10 @@ double optimize(const int numThreads, const int blockThreads) {
 
 
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        if (i+1 % 100 == 0) { 
+        if (i % 100 == 0) { 
             // Display the cost function range within every 100th generation
             std::cout << '\n';
-            std::cout << "generation: " << i+1 << std::endl;
+            std::cout << "generation: " << i << std::endl;
             std::cout << "posDiffRange: " << posDiffRange << std::endl;
             std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
