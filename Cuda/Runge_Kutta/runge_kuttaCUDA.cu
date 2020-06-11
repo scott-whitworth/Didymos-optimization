@@ -225,15 +225,15 @@ double optimize(const int numThreads, const int blockThreads) {
         if (i+1 % 100 == 0) { 
             // Display the cost function range within every 100th generation
             std::cout << '\n';
-            std::cout << "generation: " << i << std::endl;
+            std::cout << "generation: " << i+1 << std::endl;
             std::cout << "posDiffRange: " << posDiffRange << std::endl;
             std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
             std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
             std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
-            prevBestPos = inputParameters[i].posDiff;
-            prevBestVel = inputParameters[i].velDiff;
+            prevBestPos = inputParameters[0].posDiff;
+            prevBestVel = inputParameters[0].velDiff;
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
