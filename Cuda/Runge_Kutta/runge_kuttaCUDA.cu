@@ -107,20 +107,25 @@ double optimize(const int numThreads, const int blockThreads) {
         double zeta = arrayCPU[row][12];
 
         coefficients<double> testcoeff;
+<<<<<<< HEAD
 
         /*
         for (int j = 0; j < testcoeff.gammaSize; j++) {
             //testcoeff.gamma[j] = arrayCPU[row][j];
         }
+=======
+        // for (int j = 0; j < testcoeff.gammaSize; j++) {
+        //     //testcoeff.gamma[j] = arrayCPU[row][j];
+        // }
+>>>>>>> 83d365c1167c12741708e27509e05a9b565a5417
 
-        for (int j = 0; j < testcoeff.tauSize; j++) {
-            //testcoeff.tau[j] =  arrayCPU[row][j+7];
-        }
+        // for (int j = 0; j < testcoeff.tauSize; j++) {
+        //     //testcoeff.tau[j] =  arrayCPU[row][j+7];
+        // }
 
-        for (int j = 0; j < testcoeff.coastSize; j++) {
-            //testcoeff.coast[j] = arrayCPU[row][j+14];
-        }
-        */
+        // for (int j = 0; j < testcoeff.coastSize; j++) {
+        //     //testcoeff.coast[j] = arrayCPU[row][j+14];
+        // }
 
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
@@ -190,18 +195,16 @@ double optimize(const int numThreads, const int blockThreads) {
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
         
                 coefficients<double> testcoeff;
-                /*
-                for (int j = 0; j < testcoeff.gammaSize; j++) {
-                    //testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-                }
-                for (int j = 0; j < testcoeff.tauSize; j++) {
-                    //testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-                }
-                for (int j = 0; j < testcoeff.coastSize; j++) {
-                    //testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
-                }
-                */
-
+                // for (int j = 0; j < testcoeff.gammaSize; j++) {
+                //     //testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                // }
+                // for (int j = 0; j < testcoeff.tauSize; j++) {
+                //     //testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                // }
+                // for (int j = 0; j < testcoeff.coastSize; j++) {
+                //     //testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                // }
+            
                 rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
         
                 inputParameters[k].startParams = example;
