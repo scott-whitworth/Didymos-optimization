@@ -14,7 +14,7 @@
 
 double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
-    time_t timeSeed = 0; // Current set to 0 instead of time(0) to ideally help in testing the algorithm
+    time_t timeSeed = time(0); // Current set to 0 instead of time(0) to ideally help in testing the algorithm
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
