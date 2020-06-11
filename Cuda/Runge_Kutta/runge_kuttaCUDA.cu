@@ -107,17 +107,16 @@ double optimize(const int numThreads, const int blockThreads) {
         double zeta = arrayCPU[row][12];
 
         coefficients<double> testcoeff;
-<<<<<<< HEAD
 
-        /*
+        
         for (int j = 0; j < testcoeff.gammaSize; j++) {
             //testcoeff.gamma[j] = arrayCPU[row][j];
         }
-=======
+
         // for (int j = 0; j < testcoeff.gammaSize; j++) {
         //     //testcoeff.gamma[j] = arrayCPU[row][j];
         // }
->>>>>>> 83d365c1167c12741708e27509e05a9b565a5417
+
 
         // for (int j = 0; j < testcoeff.tauSize; j++) {
         //     //testcoeff.tau[j] =  arrayCPU[row][j+7];
