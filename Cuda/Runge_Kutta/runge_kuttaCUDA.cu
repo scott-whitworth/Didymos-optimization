@@ -211,6 +211,10 @@ double optimize(const int numThreads, const int blockThreads) {
 
         std::sort(inputParameters, inputParameters + numThreads, greaterInd); // put the individuals in order so we can replace the worst ones
 
+        // Calculate the current generation's cost function range
+        posDiffRange = posCost(inputParameters, numThreads);
+        velDiffRange = velCost(inputParameters, numThreads);
+
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
 
@@ -248,16 +252,12 @@ double optimize(const int numThreads, const int blockThreads) {
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
-
-        // Calculate the current generation's cost function range
-        posDiffRange = posCost(inputParameters, numThreads);
-        velDiffRange = velCost(inputParameters, numThreads);
+        
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
         // Step into the next generation
         i++;
         
-        
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
     }
 
 
