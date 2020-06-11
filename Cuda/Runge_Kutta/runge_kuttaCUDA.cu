@@ -107,7 +107,7 @@ double optimize(const int numThreads, const int blockThreads) {
         double zeta = arrayCPU[row][12];
 
         coefficients<double> testcoeff;
-        
+
         /*
         for (int j = 0; j < testcoeff.gammaSize; j++) {
             //testcoeff.gamma[j] = arrayCPU[row][j];
@@ -160,7 +160,8 @@ double optimize(const int numThreads, const int blockThreads) {
     std::ofstream individualDifference;
     individualDifference.open("individualDifference.csv");
     individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z" << "," << "vr" << "," << "vtheta" << "," << "vz" << "\n";
-    
+    double previousPos = 1.0e10;
+
     // Initialize a tolerance for generational convergence
     double convgTol = 1/AU; // the best and worst cost functions of a generation must differ by less than 1
 
@@ -245,7 +246,7 @@ double optimize(const int numThreads, const int blockThreads) {
         costRange = calcCost(inputParameters, numThreads);
         // Step into the next generation
         i++;
-
+        
         if (i % 50 == 0) {
             // Display the cost function range within every 50th generation
             std::cout << '\n';
@@ -261,8 +262,12 @@ double optimize(const int numThreads, const int blockThreads) {
                 std::cout << "best velDiff: " << inputParameters[0].velDiff << std::endl;
                 std::cout << "worst velDiff: " << inputParameters[numThreads-1].velDiff << std::endl;
             }
-        }
+            
+            std::cout << "position change: " << inputParameters[0].posDiff - previousPos <<std::endl;
+            previousPos = inputParameters[0].posDiff;
 
+        }
+        
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
     }
 
