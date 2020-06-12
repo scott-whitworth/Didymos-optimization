@@ -165,7 +165,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
     // Initialize a generation counter
-    int i = 0;
+    int i = 1;
 
     while (!converge(inputParameters, numThreads)) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -226,10 +226,10 @@ double optimize(const int numThreads, const int blockThreads) {
 
 
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        if (i+1 % 100 == 0) { 
+        if (i % 100 == 0) { 
             // Display the cost function range within every 100th generation
             std::cout << '\n';
-            std::cout << "generation: " << i+1 << std::endl;
+            std::cout << "generation: " << i << std::endl;
             std::cout << "posDiffRange: " << posDiffRange << std::endl;
             std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
@@ -241,13 +241,11 @@ double optimize(const int numThreads, const int blockThreads) {
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
-            // Append the best and worst Individuals into a csv file to view progress over generations
-            for (int j = 0; j < numThreads; j++) {
-                individualDifference << inputParameters[j].posDiff << ","  << inputParameters[j].velDiff << ","
-                << inputParameters[j].finalPos.r << "," << inputParameters[j].finalPos.theta << "," << inputParameters[j].finalPos.z << ","
-                << inputParameters[j].finalPos.vr << "," << inputParameters[j].finalPos.vtheta << "," << inputParameters[j].finalPos.vz << "," << "\n";
-            }
-            individualDifference << "\n";
+            // Append the best Individuals into a csv file to view progress over generations
+            
+            individualDifference << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
+            << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
+            << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," << "\n";
         }
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
