@@ -164,6 +164,11 @@ double optimize(const int numThreads, const int blockThreads) {
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
+    //local variables for anneal
+    double annealMax = ANNEAL_MAX;
+    double annealMin = ANNEAL_MIN;
+    double distinguishRate = 1.0e-7;
+
     // Initialize a generation counter
     int i = 1;
 
@@ -236,6 +241,24 @@ double optimize(const int numThreads, const int blockThreads) {
             std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
             std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
+            std::cout << "best:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[0].velDiff << std::endl;
+            std::cout << "worst:" << std::endl;
+            std::cout << "\tposDiff: " << inputParameters[numThreads - 1].posDiff << std::endl;
+            std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
+
+            
+            if(distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
+                //half anneal  max and min
+                annealMax = annealMax / 2;
+                annealMin = annealMin / 2;
+                if(trunc(inputParameters[0].posDiff/distinguishRate)==0) {
+                    distinguishRate = distinguishRate/10;
+                }
+                std::cout << "New anneal max: " << annealMax << "  New anneal min: " << annealMin << " New distinguishRate: " << distinguishRate << std::endl;
+            } 
+
             prevBestPos = inputParameters[0].posDiff;
             prevBestVel = inputParameters[0].velDiff;
             prevWorstPos = inputParameters[numThreads-1].posDiff;
@@ -246,16 +269,13 @@ double optimize(const int numThreads, const int blockThreads) {
             individualDifference << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
             << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
             << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," << "\n";
+
         }
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
-        double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
-         
-        if(distinguishableDifference(1.0e10, 1.1e10, 1.0e10)) {
-            std::cout << "distinguishableDifference return true!" << std::endl;
-        } else {
-            std::cout << "distinguishableDifference return true!" << std::endl;
-        }
+        //double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
+        double new_anneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
+       
 
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
@@ -565,9 +585,9 @@ bool distinguishableDifference(double p1, double p2, double distinguishRate) {
 
     double p1Num = trunc(p1/distinguishRate);
     double p2Num = trunc(p2/distinguishRate);
-        
-    std::cout << "p1 Num: " << p1Num << std::endl;
-    std::cout << "p2 Num: " << p2Num << std::endl;
+    
+    std:: cout << "p1Num: " << p1Num << std::endl;
+    std:: cout << "p2Num: " << p2Num << std::endl;
 
     if(p1Num == p2Num) {
         return true;

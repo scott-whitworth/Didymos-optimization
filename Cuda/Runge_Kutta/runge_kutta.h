@@ -72,7 +72,7 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
 //Parameters:
 //      p1, p2: positions that will be compared to each other
 //      distinguishRate: the rate that this will divide from p1 and p2
-//output: boolean representation of 
+//output: boolean true if there is is no distinguishable difference
 bool distinguishableDifference(double p1, double p2, double distinguishRate);
 
 #include "runge_kutta.cpp"
