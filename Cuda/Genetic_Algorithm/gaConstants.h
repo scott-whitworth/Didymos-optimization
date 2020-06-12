@@ -3,7 +3,7 @@
 
 // genetic algorithm constraints
 
-#define generationsNum 20000 // total number of generations
+#define generationsNum 200000 // total number of generations
 
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU

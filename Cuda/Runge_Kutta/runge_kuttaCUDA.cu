@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES // for use of M_PI
 #include "runge_kuttaCUDA.cuh"
-#include "runge_kutta.h" // used for rkCalc()
+#include "runge_kutta.h" // used for rkCalc() and distinguishableDifference()
 #include "../Thrust_Files/acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
 #include "../Earth_calculations/orbitalMotion.h"
@@ -251,6 +251,12 @@ double optimize(const int numThreads, const int blockThreads) {
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
          
+        if(distinguishableDifference(1.0e10, 1.1e10, 1.0e10)) {
+            std::cout << "distinguishableDifference return true!" << std::endl;
+        } else {
+            std::cout << "distinguishableDifference return true!" << std::endl;
+        }
+
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
 
         // Step into the next generation
@@ -264,6 +270,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double *start = new double[OPTIM_VARS];
     double cost = 0;
     for (int i = 0; i < 10; i++) {
+        
         /*
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             //start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
@@ -551,4 +558,21 @@ __global__ void rkCalcTest(double *curTime, double *tripTime, double *stepSize, 
         elements<double> k1, k2, k3, k4, k5, k6, k7;
         rkCalc(*curTime, *tripTime, *stepSize, curPos[threadId], *testCoeff, *accel, v[threadId], k1, k2, k3, k4, k5, k6, k7);
     }
+}
+
+    
+bool distinguishableDifference(double p1, double p2, double distinguishRate) {
+
+    double p1Num = trunc(p1/distinguishRate);
+    double p2Num = trunc(p2/distinguishRate);
+        
+    std::cout << "p1 Num: " << p1Num << std::endl;
+    std::cout << "p2 Num: " << p2Num << std::endl;
+
+    if(p1Num == p2Num) {
+        return true;
+    } else {
+        return false;
+    }
+
 }
