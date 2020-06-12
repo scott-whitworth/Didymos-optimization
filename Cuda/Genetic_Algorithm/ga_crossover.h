@@ -17,6 +17,6 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 // returns the number of new Individuals put into the pool
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing);
 
-#include "ga_crossover.cu"
+#include "ga_crossover.cpp"
 #endif
 

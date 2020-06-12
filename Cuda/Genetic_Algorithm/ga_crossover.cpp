@@ -52,7 +52,7 @@ void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
 // 2's correspond to Gamma coefficients
 void crossOver_gammaPos(int mask[]) {
     for (int i = 0; i < OPTIM_VARS; i++) {
-        if ( (i >= 0) && (i <= 6 ) ) {
+        if ( (i >= GAMMA_OFFSET) && (i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE) ) ) {
             mask[i] = 2;
         } 
         else {
@@ -67,7 +67,7 @@ void crossOver_gammaPos(int mask[]) {
 // 2's correspond to tau coefficients
 void crossOver_tauPos(int mask[]) {
     for (int i = 0; i < OPTIM_VARS; i++) {
-        if ( (i >= 7) && (i <= 9 ) ) {
+        if ( (i >= TAU_OFFSET) && (i < (TAU_OFFSET + TAU_ARRAY_SIZE) ) ) {
             mask[i] = 2;
         }
         else {
@@ -147,6 +147,8 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
         }
     }
 
+    
+
     return newInd;    
 }
 
@@ -167,7 +169,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 
     int mutateChance = rng() % 100;
 
-    if (mutateChance< TRIPLE_MUTATION_RATE * 100) {
+    if (mutateChance < TRIPLE_MUTATION_RATE * 100) {
         genesToMutate = 3;
     }
     else if (mutateChance < DOUBLE_MUTATION_RATE * 100) {
@@ -176,7 +178,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 
     int mutatedGenes[3]; // index of genes to mutate
 
-    mutatedGenes[0] = rng()%OPTIM_VARS;
+    mutatedGenes[0] = rng() % OPTIM_VARS;
 
     if (genesToMutate > 1) {
         do {
@@ -249,6 +251,30 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
+// WIP
+// Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
+// Output is new individual in pool
+// Can only be used within crossover function in its current state because of int i input
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng) {
+
+    pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
+    pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    
+    if (rng()%100 < MUTATION_RATE * 100) { // a certain chance of mutation
+        pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
+    }
+
+    flipMask(mask); // get the opposite offspring
+    pool[poolSize - 1 - (2 * index) - 1] = Individual();
+    pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    
+    if (rng()%100 < MUTATION_RATE * 100) {
+        pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
+    }
+
+}
+
+
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing) {
     mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
@@ -256,84 +282,28 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
 
     int index = 0;
 
-
     // Generate two offspring through each crossover method, total of 8 offspring per parent pair
-
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_wholeRandom(mask, rng);
-        pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
-        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if (rng()%100 < MUTATION_RATE * 100) { // a certain chance of mutation
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
-        }
-
-        flipMask(mask); // get the opposite offspring
-        pool[poolSize - 1 - (2 * index) - 1] = Individual();
-        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if (rng()%100 < MUTATION_RATE * 100) {
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
-        }
-
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_randHalf(mask, rng);
-        pool[poolSize - 1 - (2 * index)] = Individual();
-        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
-        }
-
-        flipMask(mask);
-        pool[poolSize - 1 - (2 * index) - 1] = Individual();
-        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
-        }
-
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_gammaPos(mask);
-        pool[poolSize - 1 - (2 * index)] = Individual();
-        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if (rng()%100 < MUTATION_RATE * 100) {
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
-        }
-
-        flipMask(mask);
-        pool[poolSize - 1 - (2 * index) - 1] = Individual();
-        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        
-        if (rng()%100 < MUTATION_RATE * 100) {
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
-        }
-
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng);
         index++;
     }
 
     for(int i = 0; i < survivorSize / 2; i++){
         crossOver_tauPos(mask);
-        pool[poolSize - 1 - (2 * index)] = Individual();
-        pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing);
-        }
-
-        flipMask(mask);
-        pool[poolSize - 1 - (2 * index) - 1] = Individual();
-        pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
-        if(rng()%100 < MUTATION_RATE * 100){
-            pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing);
-        }
-
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng);
         index++;
     }
 

@@ -110,23 +110,28 @@ double optimize(const int numThreads, const int blockThreads) {
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-    // setup output of results
-    std::ofstream individualDifference;
-    individualDifference.open("generations.csv");
-    individualDifference << "BestPosDiff" << "," << "BestVelDiff" << "," << "WorstPosDiff" << "," << "WorstVelDiff" << "\n";
+    // setup output of results onto a .csv file
+    std::ofstream generationPerformance;
+    generationPerformance.open("generations.csv");
+    generationPerformance << "Gen #" << "," << "BestPosDiff" << "," << "BestVelDiff" << "," << "WorstPosDiff" << "," << "WorstVelDiff" << "\n";
     
     unsigned int generation = 0;    // A counter for number of generations calculated
     
+
     // A while loop that continues until it is determined that the pool of inputParameters has converged
-    //bool converged = false;
-    while (generation < generationsNum) {
+    
+    double currentDistance;
+
+    double tolerance = POSITION_THRESH; // Tolerance for what is an acceptable solution (currently just POSITION_THRESH which is furthest distance from the target allowed)
+
+    do {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
 
-        for (int k = 0; k < numThreads; k++) { // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
-                                            // and set the final position to be way off so it gets replaced by a new Individual
+        // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
+        for (int k = 0; k < numThreads; k++) { 
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
                  || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
                 
@@ -158,22 +163,16 @@ double optimize(const int numThreads, const int blockThreads) {
         }
 
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
-
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
-
         std::sort(inputParameters, inputParameters + numThreads, betterInd); // put the individuals in order so we can replace the worst ones
-
-        // finding the best variable to change in the best Individual
-        // bestChange() TO BE USED HERE
-
 
         // Display a '.' to the terminal to show that a generation has been calculated
         // if it is not the 50th generation this serves to show that a generation was calculated and survivors selected
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
-        // Display and print Individuals' pos and vel difference every 50 generations to terminal and .csv file
-        if (generation % 50 == 0) { 
+        // Display and print Individuals' pos and vel difference every 200 generations to terminal
+        if (generation % 200 == 0) { 
             // Display the best and worst Individuals in this generation
             std::cout << '\n';
             std::cout << "generation: " << generation << std::endl;
@@ -190,36 +189,32 @@ double optimize(const int numThreads, const int blockThreads) {
         }
 
         // Write the best and worst Individuals in every 100 generations into a csv file to view progress over generations
-        if (generation % 100 == 0){
-            individualDifference << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
-            << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
-
+        if (generation % 100 == 0) {
+            generationPerformance << generation << "," <<inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << "," << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
         }
-        // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
-        // Kind of an issue if generation > 22221, new_anneal becomes negative value
-        double new_anneal =  ANNEAL_MAX - static_cast<double>(generation) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
 
+        // Calculate how far the pool is from the ideal cost value (0)
+        currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual
+
+
+        // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN, dependent on the ratio between the tolerance and current distance from the tolerance
+        double new_anneal =  ANNEAL_MAX - tolerance / currentDistance * (ANNEAL_MAX - ANNEAL_MIN);
+
+        // Create a new generation
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
-
-        // http://www.cplusplus.com/reference/climits/
-        // If the generation counter has reached the maximum value it can hold (for unsigned int that is 65535), end the loop
-        //if (generation == UINT_MAX) {
-        //    converged = true;
-        //}
-        //// If the range of the pool has narrowed, convergence must have occurred 
-        //else if (inputParameters[0].getCost() - inputParameters[numThreads-1].getCost() <= 1e-9) {
-        //    converged = true;
-        //}
-        //else {
-        //}
         ++generation;
-    }
+        // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
+    } while (currentDistance > tolerance);
 
 
+    
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
+    // Output to excel
+    generationPerformance << generation << "," <<inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << "," << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
+
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
@@ -242,7 +237,7 @@ double optimize(const int numThreads, const int blockThreads) {
     }
 
 
-    individualDifference.close();
+    generationPerformance.close();
 
     delete [] inputParameters;
     delete [] survivors;
