@@ -67,5 +67,13 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 // Output: Unitless scaling coefficient which changes the time step each iteration
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
 
+
+//this is used to find distinguishable difference between two positions
+//Parameters:
+//      p1, p2: positions that will be compared to each other
+//      distinguishRate: the rate that this will divide from p1 and p2
+//output: boolean true if there is is no distinguishable difference
+bool distinguishableDifference(double p1, double p2, double distinguishRate);
+
 #include "runge_kutta.cpp"
 #endif
