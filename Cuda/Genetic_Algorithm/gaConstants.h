@@ -22,10 +22,10 @@
 #define ANNEAL_MIN .001 // max amount to mutate by as a fraction of the initial random range of a parameter
 
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
-#define POSITION_THRESH 1.0e-10 // to ignore velDiff entirely
+#define POSITION_THRESH 2.8e-9 // experimental position convergence
 
-#define IMPACT_THRESH 1.0e-7 // posDiff convergence threshold (8th decimal place precision)
-#define SPEED_THRESH 6.581e3*AU // velDiff convergence threshold (DART Baseline Trajectory, JHU APL) (a.u./s)
+#define SPEED_THRESH 4.4e-8 // velDiff convergence threshold (DART Baseline Trajectory, JHU APL) (a.u./s)
+
 #define CONVG_TOL 10.0 // minimum percent difference for convergence
 
 #endif
