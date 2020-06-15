@@ -24,6 +24,7 @@ bool converge(Individual* pool, int size) {
 }
 
 bool posConverge(Individual* pool, int size) {
+    double IMPACT_THRESH = 1e-10;
     if (pool[size-1].posDiff > IMPACT_THRESH) {
         if (posCost(pool, size)/pool[0].posDiff < CONVG_TOL) {
             return true;
