@@ -12,6 +12,68 @@
 #include <chrono>
 #include <climits> // for INT_MAX
 
+bool changeInBest(double previousBest, double currentBest) { // used to see if the best individual is changing
+    if (previousBest == currentBest) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
+// Output: The two streams are appended the individual's information and anneal
+void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput, unsigned int &currentGeneration, Individual &individual, double& annealing ) {
+    // Output the information to excel spreadsheet
+    ExcelOutput << currentGeneration << ','
+                << individual.posDiff << ','
+                << individual.velDiff << ','
+                << individual.finalPos.r << ','
+                << individual.finalPos.theta << ','
+                << individual.finalPos.z << ','
+                << individual.finalPos.vr << ','
+                << individual.finalPos.vtheta << ','
+                << individual.finalPos.vz << ','
+                << individual.startParams.y0.r << ','
+                << individual.startParams.y0.theta << ','
+                << individual.startParams.y0.z << ','
+                << individual.startParams.y0.vr << ','
+                << individual.startParams.y0.vtheta << ','
+                << individual.startParams.y0.vz << ','
+                << individual.startParams.alpha << ','
+                << individual.startParams.beta << ','
+                << individual.startParams.zeta << ','
+                << annealing << ","
+                << individual.startParams.tripTime
+                << std::endl;
+    
+    // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
+    BinOutput.write( (char*)& currentGeneration, sizeof(unsigned int));
+ 
+    BinOutput.write( (char*)& individual.posDiff, sizeof(double));
+    BinOutput.write( (char*)& individual.velDiff, sizeof(double));
+  
+    BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
+    BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
+    BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
+    BinOutput.write( (char*)& individual.finalPos.vr,           sizeof(double));
+    BinOutput.write( (char*)& individual.finalPos.vtheta,       sizeof(double));
+    BinOutput.write( (char*)& individual.finalPos.vz,           sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.r,      sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.theta,  sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.z,      sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
+    BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
+
+    BinOutput.write((char*)& annealing, sizeof(double));
+
+    BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
+}
+
 double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
     time_t timeSeed = time(0); // Current set to 0 instead of time(0) to ideally help in testing the algorithm
@@ -24,6 +86,9 @@ double optimize(const int numThreads, const int blockThreads) {
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
 
+    double annealMax = ANNEAL_MAX;
+    double annealMin = ANNEAL_MIN;
+
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
@@ -33,6 +98,8 @@ double optimize(const int numThreads, const int blockThreads) {
     starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations
 
     double startDoubles;
+    
+    double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
 
     // sort the data into 2 dimensions
     // one row is one set of starting parameters
@@ -110,21 +177,26 @@ double optimize(const int numThreads, const int blockThreads) {
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-    // setup output of results onto a .csv file
-    std::ofstream generationPerformance;
-    generationPerformance.open("generations.csv");
-    generationPerformance << "Gen #" << "," << "BestPosDiff" << "," << "BestVelDiff" << "," << "WorstPosDiff" << "," << "WorstVelDiff" << "\n";
-    
+    // setup output of generation results over time onto a .csv file
+    std::ofstream generationPerformanceExcel;
+    generationPerformanceExcel.open("BestInGenerations.csv");
+    // Set first row in the file be a header for the columns
+    generationPerformanceExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+                               << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+                               << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+                               << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+
+    // setup output of generation results over time onto a .bin file
+    std::ofstream generationPerformanceBin("BestInGenerations.bin", std::ios::binary);
+
     unsigned int generation = 0;    // A counter for number of generations calculated
     
-
-    // A while loop that continues until it is determined that the pool of inputParameters has converged
+    // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level
     
-    double currentDistance;
-
+    double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = POSITION_THRESH; // Tolerance for what is an acceptable solution (currently just POSITION_THRESH which is furthest distance from the target allowed)
 
-    do {
+    do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -166,13 +238,20 @@ double optimize(const int numThreads, const int blockThreads) {
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads, betterInd); // put the individuals in order so we can replace the worst ones
 
-        // Display a '.' to the terminal to show that a generation has been calculated
-        // if it is not the 50th generation this serves to show that a generation was calculated and survivors selected
+        // Display a '.' to the terminal to show that a generation has been calculated and sorted
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
+        
+        // Calculate how far the pool is from the ideal cost value (0)
+        currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual
+
+        // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN, dependent on the ratio between the tolerance and current distance from the tolerance
+        // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual
+        double new_anneal =  annealMax - tolerance / currentDistance * (annealMax - annealMin);
+
         // Display and print Individuals' pos and vel difference every 200 generations to terminal
-        if (generation % 200 == 0) { 
+        if (generation % DISP_FREQ == 0) { 
             // Display the best and worst Individuals in this generation
             std::cout << '\n';
             std::cout << "generation: " << generation << std::endl;
@@ -187,18 +266,22 @@ double optimize(const int numThreads, const int blockThreads) {
             
             
         }
-
-        // Write the best and worst Individuals in every 100 generations into a csv file to view progress over generations
-        if (generation % 100 == 0) {
-            generationPerformance << generation << "," <<inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << "," << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
+        
+        double currentBest;
+        if (generation % CHANGE_CHECK == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+            currentBest = inputParameters[0].posDiff;
+            if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
+                annealMax = annealMax*ANNEAL_FACTOR;
+                annealMin = annealMin*ANNEAL_FACTOR;
+            }
+            previousBest = inputParameters[0].posDiff;
         }
 
-        // Calculate how far the pool is from the ideal cost value (0)
-        currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual
 
-
-        // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN, dependent on the ratio between the tolerance and current distance from the tolerance
-        double new_anneal =  ANNEAL_MAX - tolerance / currentDistance * (ANNEAL_MAX - ANNEAL_MIN);
+        // Write the best and worst Individuals in every 1,000 generations into the files to view progress over generations
+        if (generation % WRITE_FREQ == 0) {
+            writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], new_anneal);
+        }
 
         // Create a new generation
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
@@ -212,10 +295,12 @@ double optimize(const int numThreads, const int blockThreads) {
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
-    // Output to excel
-    generationPerformance << generation << "," <<inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << "," << inputParameters[numThreads - 1].posDiff << "," << inputParameters[numThreads - 1].velDiff << "\n";
 
-    for (int i = 0; i < 10; i++) {
+    // Output to excel
+    double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning
+    writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], annealPlacement);
+
+    for (int i = 0; i < BEST_COUNT; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
@@ -237,7 +322,8 @@ double optimize(const int numThreads, const int blockThreads) {
     }
 
 
-    generationPerformance.close();
+    generationPerformanceExcel.close();
+    generationPerformanceBin.close();
 
     delete [] inputParameters;
     delete [] survivors;

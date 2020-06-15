@@ -22,6 +22,16 @@
 #define ANNEAL_MIN .001 // max amount to mutate by as a fraction of the initial random range of a parameter
 
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
-#define POSITION_THRESH 1.0e-6 // Made small for testing
+#define POSITION_THRESH 1.0e-10 //
+
+#define ANNEAL_FACTOR 0.5 // factor by which annealing is changed when there is no change in the best individual over 100 generations
+
+#define WRITE_FREQ 1000 // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file
+
+#define DISP_FREQ 200 // Determine how many generations between outputing contents onto the terminal screen
+
+#define BEST_COUNT 10 // Number of individuals that will be recorded when the algorithm is finished
+
+#define CHANGE_CHECK 100 // How often it checks for if the best individual has changed, used in the basis of Jeremy's method of anneal value dependent on if there was no change
 
 #endif
