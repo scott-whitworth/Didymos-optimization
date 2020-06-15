@@ -50,7 +50,7 @@ xlabel('generations'), ylabel('v_r (a.u./s)')
 subplot(2,2,3)
 plot(gen, vthi, gen, vthf)
 title('Angular velocity')
-xlabel('generations'), ylabel('v_\theta (rad./s)')
+xlabel('generations'), ylabel('rv_\theta (a.u./s)')
 % VZ (initial and final) over generations
 subplot(2,2,4)
 plot(gen, vzi, gen, vzf)

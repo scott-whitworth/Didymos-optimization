@@ -35,7 +35,7 @@ double velCost(Individual* pool, int size);
     // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether the pool has converged
-bool converge(Individual* pool, int size);
+bool converge(Individual* pool);
 
 // Determines whether the pools' posDiffs have converged
 // Input:

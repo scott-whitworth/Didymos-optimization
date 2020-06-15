@@ -157,12 +157,12 @@ double optimize(const int numThreads, const int blockThreads) {
 
     // setup output of results
     std::ofstream individualDifference;
-    individualDifference.open("individualDifference.csv");
+    individualDifference.open("individualDifference.bin", std::ios::binary);
     //CSV individual output order: generation, posDiff, velDiff, r-final, theta-final, z-final, vr-final, vtheta-final, 
     //vz-final, r-initial, theta-initial, z-initial, vr-initial, vtheta-initial, vz-initial, alpha, beta, zeta, annealing, triptime
-    individualDifference << "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z-final" << "," << "vr-final" << "," 
-    << "vtheta-final" << "," << "vz-final" << "r-initial" << "theta-intial" << "z-inital" << "vr-initial" << "vtheta-initial" << "vz-initial" 
-    << "alpha" << "beta" << "zeta" << "annealing" << "triptime" << "\n";
+    // individualDifference << "generation" << "," "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z-final" << "," << "vr-final" << ","
+    // << "vtheta-final" << "," << "vz-final" << "," << "r-initial" << "," << "theta-intial" << "," << "z-inital" << "," << "vr-initial" << "," << "vtheta-initial" << "," << "vz-initial" << ","
+    // << "alpha" << "," << "beta" << "," << "zeta" << "," << "annealing" << "," << "triptime" << "\n";
     
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
@@ -172,10 +172,11 @@ double optimize(const int numThreads, const int blockThreads) {
     double annealMin = ANNEAL_MIN;
     double distinguishRate = 1.0e-7;
 
-    // Initialize a generation counter
+    // Initialize a generation counter and convergence flag
     int i = 1;
+    bool convgFlag = 0;
 
-    while (!converge(inputParameters, numThreads)) {
+    while (!convgFlag) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
@@ -223,6 +224,9 @@ double optimize(const int numThreads, const int blockThreads) {
         posDiffRange = posCost(inputParameters, numThreads);
         velDiffRange = velCost(inputParameters, numThreads);
 
+        // Check for convergence
+        convgFlag = converge(inputParameters);
+
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
 
@@ -269,15 +273,36 @@ double optimize(const int numThreads, const int blockThreads) {
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
             // Append the best Individuals into a csv file to view progress over generations
-            
+
+            individualDifference.write((char*)&i, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].posDiff, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].velDiff, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.r, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.theta, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.z, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.vr, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.vtheta, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].finalPos.vz, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.r, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.theta, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.z, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vr, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vtheta, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vz, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.alpha, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.beta, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.zeta, sizeof(double));
+            individualDifference.write((char*)&previousAnneal, sizeof(double));
+            individualDifference.write((char*)&inputParameters[0].startParams.tripTime, sizeof(double));
+                
             //CSV individual output order: generation,  r-initial, theta-initial, z-initial, vr-initial, vtheta-initial, vz-initial, 
             //alpha, beta, zeta, annealing, triptime
-            individualDifference << i << "," << inputParameters[0].posDiff << ","  << inputParameters[0].velDiff << ","
-            << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
-            << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," 
-            << inputParameters[0].startParams.y0.r << "," << inputParameters[0].startParams.y0.theta << "," << inputParameters[0].startParams.y0.z << "," << inputParameters[0].startParams.y0.vr << "," 
-            << inputParameters[0].startParams.y0.vtheta << "," << inputParameters[0].startParams.y0.vr << "," << inputParameters[0].startParams.alpha << "," 
-            << inputParameters[0].startParams.beta << "," << inputParameters[0].startParams.zeta << "," << previousAnneal << "," << inputParameters[0].startParams.tripTime << "," << "\n";
+            // individualDifference << i << "," << inputParameters[0].posDiff << "," << inputParameters[0].velDiff << ","
+            // << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
+            // << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," 
+            // << inputParameters[0].startParams.y0.r << "," << inputParameters[0].startParams.y0.theta << "," << inputParameters[0].startParams.y0.z << "," << inputParameters[0].startParams.y0.vr << "," 
+            // << inputParameters[0].startParams.y0.vtheta << "," << inputParameters[0].startParams.y0.vr << "," << inputParameters[0].startParams.alpha << "," 
+            // << inputParameters[0].startParams.beta << "," << inputParameters[0].startParams.zeta << "," << previousAnneal << "," << inputParameters[0].startParams.tripTime << "," << "\n";
 
         //}
 

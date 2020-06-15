@@ -3,7 +3,7 @@
 
 // genetic algorithm constraints
 
-#define generationsNum 10000// total number of generations
+#define generationsNum 3000// total number of generations
 
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
@@ -22,7 +22,7 @@
 #define ANNEAL_MIN .001 // min amount to mutate by as a fraction of the initial random range of a parameter
 
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
-#define POSITION_THRESH 2.8e-9 // experimental position convergence
+#define POSITION_THRESH 1.0e-10 // collision with asteroid
 
 #define SPEED_THRESH 4.4e-8 // velDiff convergence threshold (DART Baseline Trajectory, JHU APL) (a.u./s)
 
