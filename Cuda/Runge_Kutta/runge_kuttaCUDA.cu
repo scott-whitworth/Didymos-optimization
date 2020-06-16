@@ -231,18 +231,18 @@ double optimize(const int numThreads, const int blockThreads) {
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
-
+        double previousAnneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        //if (i % 100 == 0) { 
+        if (i % 20 == 0) { 
             // Display the cost function range within every 100th generation
-            double previousAnneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
+            
             std::cout << '\n';
             std::cout << "generation: " << i << std::endl;
             std::cout << "posDiffRange: " << posDiffRange << std::endl;
             std::cout << "velDiffRange: " << velDiffRange << std::endl;
             
-            std::cout << "posDiffRange change over 100 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
-            std::cout << "velDiffRange change over 100 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
+            std::cout << "posDiffRange change over 20 gens: " << posDiffRange - abs(prevBestPos - prevWorstPos) <<std::endl;
+            std::cout << "velDiffRange change over 20 gens: " << velDiffRange - abs(prevBestVel - prevWorstVel) <<std::endl;
 
             std::cout << "best:" << std::endl;
             std::cout << "\tposDiff: " << inputParameters[0].posDiff << std::endl;
@@ -266,7 +266,7 @@ double optimize(const int numThreads, const int blockThreads) {
             prevBestVel = inputParameters[0].velDiff;
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
-
+        }
             // Append the best Individuals into a bin file to view progress over generations
 
             individualDifference.write((char*)&i, sizeof(int));                                             // 1
