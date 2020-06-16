@@ -73,9 +73,9 @@ void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
-void terminalDisplay(int numWithinTolerance, Individual& individual) {
-    std::cout << "\nNumber of individuals in tolerance: " << numWithinTolerance << std::endl;
-    std::cout << "best not within tolerance:" << std::endl;
+void terminalDisplay(Individual& individual, int currentGeneration) {
+    std::cout << "\nGeneration: " << currentGeneration << std::endl;
+    std::cout << "Best individual:" << std::endl;
     std::cout << "\tposDiff: " << individual.posDiff << std::endl;
     std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
     std::cout << "\tcost: "    << individual.getCost() << std::endl;
@@ -87,10 +87,6 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < BEST_COUNT; i++) {
         if (pool[i].getCost() >= tolerance ) {
-            // Only call terminalDisplay every DISP_FREQ, not every generation
-            if ( currentGeneration % DISP_FREQ == 0) {
-                terminalDisplay(i, pool[i]);
-            }
             return false;
         }
     }
@@ -101,7 +97,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 
 double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
-    time_t timeSeed = 0; // Current set to 0 instead of time(0) to ideally help in testing the algorithm
+    time_t timeSeed = time(0); // Current set to 0 instead of time(0) to ideally help in testing the algorithm
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
@@ -292,6 +288,10 @@ double optimize(const int numThreads, const int blockThreads) {
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
+        // Only call terminalDisplay every DISP_FREQ, not every generation
+        if ( currentGeneration % DISP_FREQ == 0) {
+            terminalDisplay(pool[0], currentGeneration);
+        }
         // Create a new generation
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
         ++generation;

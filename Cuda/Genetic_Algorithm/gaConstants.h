@@ -23,8 +23,8 @@
 
 #define ANNEAL_INITIAL 0.001 // initial value for annealing, meant to replace the previously used calculation involving ANNEAL_MIN and ANNEAL_MAX with something more simple
 
-//#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
-#define POSITION_THRESH 1.0e-10 //
+// threshold for how close the spacecraft must be to the asteriod at end of its trajectory
+#define POSITION_THRESH 1.0e-6 //
 
 #define ANNEAL_FACTOR 0.25 // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
