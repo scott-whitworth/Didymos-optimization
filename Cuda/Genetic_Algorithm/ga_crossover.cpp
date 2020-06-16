@@ -256,7 +256,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     return newInd;    
 }
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, thruster<class T> thrust) {
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, thruster<double> thrust) {
     mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
