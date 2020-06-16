@@ -20,25 +20,13 @@ double velCost(Individual* pool, int size) {
 }
 
 bool converge(Individual* pool) {
+    return posConverge(pool) && velConverge(pool);
+}
+
+bool posConverge(Individual* pool) {
     return pool[0].posDiff < POSITION_THRESH;
 }
 
-bool posConverge(Individual* pool, int size) {
-    if (pool[size-1].posDiff > POSITION_THRESH) {
-        if (posCost(pool, size)/pool[0].posDiff < CONVG_TOL) {
-            return true;
-        }
-        else return false;
-    }
-    else return false;
-}
-
 bool velConverge(Individual* pool, int size) {
-    if (pool[size-1].velDiff > SPEED_THRESH) {
-        if (velCost(pool, size)/pool[0].velDiff < CONVG_TOL) {
-            return true;
-        }
-        else return false;
-    }
-    else return false;
+    return pool[0].velDiff > SPEED_THRESH;
 }
