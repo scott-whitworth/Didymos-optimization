@@ -2,7 +2,6 @@
 #define individuals_h
 
 #include "individuals.h"
-#include "gaConstants.h" // POSITION_THRESH
 
 // An experimental equation to determine cost (that would want to be minimized in the algorithm)
 double Individual::getCost() {
@@ -48,6 +47,7 @@ bool betterInd(Individual first, Individual second) {
     }
 }
 
+/*
 double getPosRatio(Individual first, Individual second) {
     double greaterDiff = first.posDiff; // get the greater position difference
     if (second.posDiff > greaterDiff) {
@@ -60,7 +60,7 @@ double getPosRatio(Individual first, Individual second) {
     else {
         return greaterDiff / POSITION_THRESH; // focus more on position the greater the difference is based on linear scale
     }
-}
+}*/
 
 // initialize sets the Individual's location and velocity
 void Individual::initialize() {

@@ -8,6 +8,7 @@
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "individuals.h"
+#include "../Config_Constants/config.h"
 
 // creates a new Individual from two parents
 // mask determines which parent each gene is inherited from
@@ -15,7 +16,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 
 // generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
 // returns the number of new Individuals put into the pool
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing);
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant);
 
 #include "ga_crossover.cpp"
 #endif

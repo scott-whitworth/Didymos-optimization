@@ -3,14 +3,9 @@
 
 // genetic algorithm constraints
 
-//#define generationsNum 150000 // total number of generations
-
-//#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
-// 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
-
-#define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
+//#define generationsNum 150000 // total number of generationsIR OFF FOR CROSSOVER
 // 360 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 1440 = half of 2880 --for k40 GPU
-
+/*
 #define MUTATION_RATE 0.15 // fraction of new offspring to mutate
 
 #define DOUBLE_MUTATION_RATE 0.2 // fraction of mutations to mutate two genes instead of just one
@@ -35,5 +30,5 @@
 #define BEST_COUNT 10 // Number of individuals that will be recorded when the algorithm is finished
 
 #define CHANGE_CHECK 100 // How often it checks for if the best individual has changed, used in the basis of Jeremy's method of anneal value dependent on if there was no change
-
+*/
 #endif

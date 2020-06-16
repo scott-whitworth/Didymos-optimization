@@ -5,11 +5,18 @@
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 
+#include "../Config_Constants/config.h"
+
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
 #include <time.h> //for seeding the random number generator
 #include <random>
 #include <chrono>
+
+//#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
+// 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
+#define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
+
 
 bool changeInBest(double previousBest, double currentBest) { // used to see if the best individual is changing
     if (previousBest == currentBest) {
@@ -83,9 +90,9 @@ void terminalDisplay(Individual& individual, int currentGeneration) {
 
 // Assumes pool is sorted array of Individuals
 // Output: Returns true if top ten individuals are within the tolearnace
-bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration) {
+bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, geneticConstants& gConstant) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
-    for (int i = 0; i < BEST_COUNT; i++) {
+    for (int i = 0; i < gConstant.best_count; i++) {
         if (pool[i].getCost() >= tolerance ) {
             return false;
         }
@@ -98,7 +105,10 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 double optimize(const int numThreads, const int blockThreads) {
     double calcPerS = 0;
     time_t timeSeed = time(0); // Current set to 0 instead of time(0) to ideally help in testing the algorithm
+    geneticConstants gConstant;
+
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
+    std::cout << "pos_threshold: " << gConstant.pos_threshold << std::endl;
     std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
 
@@ -107,8 +117,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
 
-    double currentAnneal = ANNEAL_INITIAL;
-
+    double currentAnneal = gConstant.anneal_initial;
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
@@ -214,7 +223,7 @@ double optimize(const int numThreads, const int blockThreads) {
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
-    double tolerance = POSITION_THRESH; // Tolerance for what is an acceptable solution (currently just POSITION_THRESH which is furthest distance from the target allowed). This could
+    double tolerance = gConstant.pos_threshold; // Tolerance for what is an acceptable solution (currently just POSITION_THRESH which is furthest distance from the target allowed). This could
                                         // eventually take into account velocity too and become a more complex calculation
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
@@ -270,17 +279,17 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
-        if (generation % CHANGE_CHECK == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        if (generation % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
             if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * ANNEAL_FACTOR;
+                currentAnneal = currentAnneal * gConstant.anneal_factor;
             }
             previousBest = inputParameters[0].posDiff;
         }
 
 
         // Write the best and worst Individuals in every 1,000 generations into the files to view progress over generations
-        if (generation % WRITE_FREQ == 0) {
+        if (generation % gConstant.write_freq == 0) {
             writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], new_anneal);
         }
 
@@ -289,15 +298,15 @@ double optimize(const int numThreads, const int blockThreads) {
         std::cout << '.';
 
         // Only call terminalDisplay every DISP_FREQ, not every generation
-        if ( currentGeneration % DISP_FREQ == 0) {
-            terminalDisplay(pool[0], currentGeneration);
+        if ( generation % gConstant.disp_freq == 0) {
+            terminalDisplay(inputParameters[0], generation);
         }
         // Create a new generation
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant);
         ++generation;
 
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
-    } while ( !allWithinTolerance(tolerance, inputParameters, generation) );
+    } while ( !allWithinTolerance(tolerance, inputParameters, generation, gConstant) );
 
 
     
@@ -310,7 +319,7 @@ double optimize(const int numThreads, const int blockThreads) {
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to influence
     writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], annealPlacement);
 
-    for (int i = 0; i < BEST_COUNT; i++) {
+    for (int i = 0; i < gConstant.best_count; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
