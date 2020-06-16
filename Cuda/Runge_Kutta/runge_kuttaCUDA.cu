@@ -56,7 +56,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     return best;
 }
 
-double optimize(const int numThreads, const int blockThreads) {
+double optimize(const int numThreads, const int blockThreads, thruster<class T> thrust) {
     double calcPerS = 0;
     time_t timeSeed = time(0); // 1234567890;
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -109,18 +109,19 @@ double optimize(const int numThreads, const int blockThreads) {
 
         coefficients<double> testcoeff;
 
-        
-        // for (int j = 0; j < testcoeff.gammaSize; j++) {
-        //     //testcoeff.gamma[j] = arrayCPU[row][j];
-        // }
+        if (thrust.type) {
+            for (int j = 0; j < testcoeff.gammaSize; j++) {
+                testcoeff.gamma[j] = arrayCPU[row][j];
+            }
 
-        // for (int j = 0; j < testcoeff.tauSize; j++) {
-        //     //testcoeff.tau[j] =  arrayCPU[row][j+7];
-        // }
+            for (int j = 0; j < testcoeff.tauSize; j++) {
+                testcoeff.tau[j] =  arrayCPU[row][j+7];
+            }
 
-        // for (int j = 0; j < testcoeff.coastSize; j++) {
-        //     //testcoeff.coast[j] = arrayCPU[row][j+14];
-        // }
+            for (int j = 0; j < testcoeff.coastSize; j++) {
+                testcoeff.coast[j] = arrayCPU[row][j+14];
+            }
+        }
 
         rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
@@ -175,7 +176,7 @@ double optimize(const int numThreads, const int blockThreads) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
-        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
+        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
 
         for (int k = 0; k < numThreads; k++) { // if we got bad results reset the Individual to random starting values (it may still be used for crossover) 
                                             // and set the final position to be way off so it gets replaced by a new Individual
@@ -190,16 +191,18 @@ double optimize(const int numThreads, const int blockThreads) {
                 double zeta = (mt_rand() % 315) / 100.0 - M_PI / 2;
         
                 coefficients<double> testcoeff;
-                // for (int j = 0; j < testcoeff.gammaSize; j++) {
-                //     //testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-                // }
-                // for (int j = 0; j < testcoeff.tauSize; j++) {
-                //     //testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-                // }
-                // for (int j = 0; j < testcoeff.coastSize; j++) {
-                //     //testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
-                // }
-            
+                if (thrust.type) {
+                    for (int j = 0; j < testcoeff.gammaSize; j++) {
+                        testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
+                    for (int j = 0; j < testcoeff.tauSize; j++) {
+                        testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
+                    for (int j = 0; j < testcoeff.coastSize; j++) {
+                        testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
+                }
+
                 rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
         
                 inputParameters[k].startParams = example;
@@ -296,7 +299,7 @@ double optimize(const int numThreads, const int blockThreads) {
         double new_anneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
        
 
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal);
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, thrust);
 
         // Step into the next generation
         i++;
@@ -341,7 +344,7 @@ double optimize(const int numThreads, const int blockThreads) {
     return calcPerS;
 }
 
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS) {
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<class T> thrust) {
     
     cudaEvent_t kernelStart, kernelEnd;
     cudaEventCreate(&kernelStart);
@@ -366,7 +369,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
     // GPU version of rk4Simple()
     cudaEventRecord(kernelStart);
-    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, thrust);
     cudaEventRecord(kernelEnd);
 
     // copy the result of the kernel onto the host
@@ -389,7 +392,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n) {
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<class T> thrust) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if (threadId < n) {
         rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
@@ -405,8 +408,6 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
 
-        thruster<double> NEXT = thruster<double>(1); // corresponds NEXT thruster to type 1 in thruster.h
-
         double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
 
         bool coast; // to hold the result from calc_coast()
@@ -415,8 +416,8 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         while (curTime < threadRKParameters.tripTime) {
 
-            coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime);
-            curAccel = calc_accel(curPos.r, curPos.z, NEXT, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
+            coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime, thrust);
+            curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
             //curAccel = 0.;
 
             // calculate k values and get new value of y

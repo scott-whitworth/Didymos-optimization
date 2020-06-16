@@ -1,6 +1,7 @@
 #ifndef runge_kutta_h
 #define runge_kutta_h
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
+#include "../Thrust_Files/thruster.h" // used to pass in a thruster type
 
 
 // Three variations of fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
@@ -30,12 +31,12 @@
     //      accel_output: an array which contains all accel values for a given run
     // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass);
+                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass, thruster<class T> thrust);
 
 // 2.
     // Output: writes in y the final position  of the spacecraft
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass);
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster<class T> thrust);
 
 //3.
     // Comment on stepsize: Expected to be negative due to reverse integration
@@ -48,7 +49,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
-                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7);
+                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7, thruster<class T> thrust);
 
 
 
@@ -66,14 +67,6 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 //      stepSize: time interval between data points (s)
 // Output: Unitless scaling coefficient which changes the time step each iteration
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
-
-
-//this is used to find distinguishable difference between two positions
-//Parameters:
-//      p1, p2: positions that will be compared to each other
-//      distinguishRate: the rate that this will divide from p1 and p2
-//output: boolean true if there is is no distinguishable difference
-bool distinguishableDifference(double p1, double p2, double distinguishRate);
 
 #include "runge_kutta.cpp"
 #endif

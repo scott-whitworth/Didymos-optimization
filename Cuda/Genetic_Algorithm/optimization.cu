@@ -37,10 +37,20 @@ int main () {
     int numThreads = 2880; // the number of cores on a Tesla k40
     //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
 
+    // Initialize the type of thruster to be used
+    thruster<double> thrust(0);
+
     //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
     //efficiencyGraph.open("efficiencyGraph.csv");
-    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-    optimize(numThreads, blockThreads); // optimize() currently declared in runge_kuttaCUDA.cuh
+    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads";
+    if (thrust.type) {
+        std::cout << " using a NEXT-C thruster" << std::endl;
+    }
+    else {
+        std::cout << " using no thruster" << std::endl;
+    }
+
+    optimize(numThreads, blockThreads, thrust); // optimize() currently declared in runge_kuttaCUDA.cuh
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     
