@@ -11,6 +11,8 @@
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 360 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 1440 = half of 2880 --for k40 GPU
 
+#define ANNEAL_FACTOR 2 //The anneal factor change rate
+
 #define MUTATION_RATE 0.15 // fraction of new offspring to mutate
 
 #define DOUBLE_MUTATION_RATE 0.2 // fraction of mutations to mutate two genes instead of just one

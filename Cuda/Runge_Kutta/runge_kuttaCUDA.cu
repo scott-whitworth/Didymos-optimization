@@ -158,11 +158,6 @@ double optimize(const int numThreads, const int blockThreads) {
     // setup output of results
     std::ofstream individualDifference;
     individualDifference.open("individualDifference.bin", std::ios::binary);
-    //CSV individual output order: generation, posDiff, velDiff, r-final, theta-final, z-final, vr-final, vtheta-final, 
-    //vz-final, r-initial, theta-initial, z-initial, vr-initial, vtheta-initial, vz-initial, alpha, beta, zeta, annealing, triptime
-    // individualDifference << "generation" << "," "posDiff" << "," << "velDiff" << "," << "r" << "," << "theta" << "," << "z-final" << "," << "vr-final" << ","
-    // << "vtheta-final" << "," << "vz-final" << "," << "r-initial" << "," << "theta-intial" << "," << "z-inital" << "," << "vr-initial" << "," << "vtheta-initial" << "," << "vz-initial" << ","
-    // << "alpha" << "," << "beta" << "," << "zeta" << "," << "annealing" << "," << "triptime" << "\n";
     
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
@@ -259,8 +254,8 @@ double optimize(const int numThreads, const int blockThreads) {
             
             if(i% 50 == 0 && distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
                 //half anneal  max and min
-                annealMax = annealMax / 2;
-                annealMin = annealMin / 2;
+                annealMax = annealMax / ANNEAL_FACTOR;
+                annealMin = annealMin / ANNEAL_FACTOR;
                 if(trunc(inputParameters[0].posDiff/distinguishRate)==0) {
                     distinguishRate = distinguishRate/10;
                 }
@@ -295,19 +290,9 @@ double optimize(const int numThreads, const int blockThreads) {
             individualDifference.write((char*)&previousAnneal, sizeof(double));                             // 19
             individualDifference.write((char*)&inputParameters[0].startParams.tripTime, sizeof(double));    // 20
                 
-            //CSV individual output order: generation,  r-initial, theta-initial, z-initial, vr-initial, vtheta-initial, vz-initial, 
-            //alpha, beta, zeta, annealing, triptime
-            // individualDifference << i << "," << inputParameters[0].posDiff << "," << inputParameters[0].velDiff << ","
-            // << inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << ","
-            // << inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," 
-            // << inputParameters[0].startParams.y0.r << "," << inputParameters[0].startParams.y0.theta << "," << inputParameters[0].startParams.y0.z << "," << inputParameters[0].startParams.y0.vr << "," 
-            // << inputParameters[0].startParams.y0.vtheta << "," << inputParameters[0].startParams.y0.vr << "," << inputParameters[0].startParams.alpha << "," 
-            // << inputParameters[0].startParams.beta << "," << inputParameters[0].startParams.zeta << "," << previousAnneal << "," << inputParameters[0].startParams.tripTime << "," << "\n";
-
         //}
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
-        //double new_anneal =  ANNEAL_MAX - static_cast<double>(i) / (generationsNum - 1) * (ANNEAL_MAX - ANNEAL_MIN);
         double new_anneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
        
 
