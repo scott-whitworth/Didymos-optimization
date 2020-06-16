@@ -3,7 +3,7 @@
 
 // genetic algorithm constraints
 
-#define generationsNum 150000 // total number of generations
+//#define generationsNum 150000 // total number of generations
 
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
@@ -17,16 +17,18 @@
 
 #define TRIPLE_MUTATION_RATE 0.05 // fraction of mutations to mutate three genes instead of just one or two
 
-#define ANNEAL_MAX .01 // max amount to mutate by as a fraction of the initial random range of a parameter
+//#define ANNEAL_MAX .001 // max amount to mutate by as a fraction of the initial random range of a parameter
 
-#define ANNEAL_MIN .001 // max amount to mutate by as a fraction of the initial random range of a parameter
+//#define ANNEAL_MIN .0001 // max amount to mutate by as a fraction of the initial random range of a parameter
+
+#define ANNEAL_INITIAL 0.001 // initial value for annealing, meant to replace the previously used calculation involving ANNEAL_MIN and ANNEAL_MAX with something more simple
 
 //#define POSITION_THRESH 1.0E-8 // threshold for determining weights of position and velocity in comparisons of runs in Individual::greaterInd() NOTE THIS VALUE HAS NOT BEEN DECIDED
 #define POSITION_THRESH 1.0e-10 //
 
-#define ANNEAL_FACTOR 0.5 // factor by which annealing is changed when there is no change in the best individual over 100 generations
+#define ANNEAL_FACTOR 0.25 // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
-#define WRITE_FREQ 1000 // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file
+#define WRITE_FREQ 100 // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file
 
 #define DISP_FREQ 200 // Determine how many generations between outputing contents onto the terminal screen
 
