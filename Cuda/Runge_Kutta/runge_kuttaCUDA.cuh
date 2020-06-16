@@ -5,15 +5,15 @@
 #include "../Genetic_Algorithm/individuals.h"
 #include "../Thrust_Files/thruster.h" // thrust.type
 
-double optimize(const int numThreads, const int blockThreads, thruster<class T> thrust);
+double optimize(const int numThreads, const int blockThreads, thruster<double> thrust);
 
 Individual* getNewStarts(Individual *prevGen);
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<class T> thrust);
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<class T> thrust);
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust);
 
 // gets the y0 for size number of Individuals
 __host__ void initializePosition(Individual *individuals, int size);

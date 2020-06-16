@@ -7,7 +7,7 @@
 #include <math.h> // used for sine and cosine functions
 #include <iostream> // used for cout
 
-template <class T> __host__ __device__ T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal, thruster<class T> thrust) {
+template <class T> __host__ __device__ T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal, thruster<T> thrust) {
     if (thrust.type) {
         T coeff = series[0];
         T curTimeRatio = curTime / timeFinal;
@@ -21,15 +21,15 @@ template <class T> __host__ __device__ T calc_Series(const T series[], const int
     else return 0;
 }
 
-template <class T> __host__ __device__ T calc_gamma(coefficients<T> & coeff,const T & curTime, const T & timeFinal, thruster<class T> thrust) {
+template <class T> __host__ __device__ T calc_gamma(coefficients<T> & coeff,const T & curTime, const T & timeFinal, thruster<T> thrust) {
     return calc_Series(coeff.gamma, coeff.gammaSize, curTime, timeFinal, thrust);
 }
 
-template <class T> __host__ __device__ T calc_tau(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<class T> thrust) {
+template <class T> __host__ __device__ T calc_tau(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<T> thrust) {
     return calc_Series(coeff.tau, coeff.tauSize, curTime, timeFinal, thrust);
 }
 
-template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<class T> thrust) {
+template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<T> thrust) {
     if (thrust.type) {
         // Use the fourier series for the coasting coefficients, then take the cos^2(coasting)
         T coastValue = pow( sin(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal)), 2);

@@ -112,7 +112,7 @@ void printMask(int mask[]) {
     std::cout << "]";
 }
 
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<class T> thrust) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double> thrust) {
     rkParameters<double> newInd = p1;
 
     // itterate over set of make values
@@ -162,7 +162,7 @@ double getRand(double max, std::mt19937_64 & rng) {
 
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, thruster<class T> thrust) {
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, thruster<double> thrust) {
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -232,7 +232,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
 // output: average of the two
-rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<class T> thrust) {
+rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double> thrust) {
     rkParameters<double> newInd;
     
     // alter thrust coefficients only when using a thruster

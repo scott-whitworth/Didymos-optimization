@@ -12,11 +12,11 @@
 
 // creates a new Individual from two parents
 // mask determines which parent each gene is inherited from
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<class T> thrust);
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double> thrust);
 
 // generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
 // returns the number of new Individuals put into the pool
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, thruster<class T> thrust);
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, thruster<double> thrust);
 
 #include "ga_crossover.cpp"
 #endif

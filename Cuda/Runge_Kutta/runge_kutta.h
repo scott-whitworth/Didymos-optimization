@@ -31,12 +31,12 @@
     //      accel_output: an array which contains all accel values for a given run
     // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass, thruster<class T> thrust);
+                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass, thruster<T> thrust);
 
 // 2.
     // Output: writes in y the final position  of the spacecraft
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster<class T> thrust);
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster<T> thrust);
 
 //3.
     // Comment on stepsize: Expected to be negative due to reverse integration
@@ -49,7 +49,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
 // calculates k values 1 - 7 from equation and uses k values to find current and previous values of y
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
-                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7, thruster<class T> thrust);
+                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7, thruster<T> thrust);
 
 
 

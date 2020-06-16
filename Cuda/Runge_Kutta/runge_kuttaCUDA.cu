@@ -56,7 +56,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     return best;
 }
 
-double optimize(const int numThreads, const int blockThreads, thruster<class T> thrust) {
+double optimize(const int numThreads, const int blockThreads, thruster<double> thrust) {
     double calcPerS = 0;
     time_t timeSeed = time(0); // 1234567890;
     std::cout << "Time seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -344,7 +344,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<class T> 
     return calcPerS;
 }
 
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<class T> thrust) {
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust) {
     
     cudaEvent_t kernelStart, kernelEnd;
     cudaEventCreate(&kernelStart);
@@ -392,7 +392,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<class T> thrust) {
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if (threadId < n) {
         rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
