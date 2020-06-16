@@ -272,28 +272,28 @@ double optimize(const int numThreads, const int blockThreads) {
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
 
-            // Append the best Individuals into a csv file to view progress over generations
+            // Append the best Individuals into a bin file to view progress over generations
 
-            individualDifference.write((char*)&i, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].posDiff, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].velDiff, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.r, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.theta, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.z, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.vr, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.vtheta, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].finalPos.vz, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.r, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.theta, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.z, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.vr, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.vtheta, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.y0.vz, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.alpha, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.beta, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.zeta, sizeof(double));
-            individualDifference.write((char*)&previousAnneal, sizeof(double));
-            individualDifference.write((char*)&inputParameters[0].startParams.tripTime, sizeof(double));
+            individualDifference.write((char*)&i, sizeof(int));                                             // 1
+            individualDifference.write((char*)&inputParameters[0].posDiff, sizeof(double));                 // 2
+            individualDifference.write((char*)&inputParameters[0].velDiff, sizeof(double));                 // 3
+            individualDifference.write((char*)&inputParameters[0].finalPos.r, sizeof(double));              // 4
+            individualDifference.write((char*)&inputParameters[0].finalPos.theta, sizeof(double));          // 5        
+            individualDifference.write((char*)&inputParameters[0].finalPos.z, sizeof(double));              // 6
+            individualDifference.write((char*)&inputParameters[0].finalPos.vr, sizeof(double));             // 7
+            individualDifference.write((char*)&inputParameters[0].finalPos.vtheta, sizeof(double));         // 8
+            individualDifference.write((char*)&inputParameters[0].finalPos.vz, sizeof(double));             // 9
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.r, sizeof(double));        // 10
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.theta, sizeof(double));    // 11
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.z, sizeof(double));        // 12
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vr, sizeof(double));       // 13
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vtheta, sizeof(double));   // 14
+            individualDifference.write((char*)&inputParameters[0].startParams.y0.vz, sizeof(double));       // 15
+            individualDifference.write((char*)&inputParameters[0].startParams.alpha, sizeof(double));       // 16
+            individualDifference.write((char*)&inputParameters[0].startParams.beta, sizeof(double));        // 17
+            individualDifference.write((char*)&inputParameters[0].startParams.zeta, sizeof(double));        // 18
+            individualDifference.write((char*)&previousAnneal, sizeof(double));                             // 19
+            individualDifference.write((char*)&inputParameters[0].startParams.tripTime, sizeof(double));    // 20
                 
             //CSV individual output order: generation,  r-initial, theta-initial, z-initial, vr-initial, vtheta-initial, vz-initial, 
             //alpha, beta, zeta, annealing, triptime
