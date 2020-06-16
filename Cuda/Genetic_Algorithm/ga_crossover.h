@@ -8,7 +8,7 @@
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "individuals.h"
-#include "thruster.h"
+#include "../Thrust_Files/thruster.h"
 
 // creates a new Individual from two parents
 // mask determines which parent each gene is inherited from
