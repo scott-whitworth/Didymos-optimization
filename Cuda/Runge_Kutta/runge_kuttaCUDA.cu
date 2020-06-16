@@ -236,7 +236,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
 
         double previousAnneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
         // Display and print Individuals' pos and vel difference every 100 generations to terminal and .csv file
-        if (i % 20 == 0) { 
+        if (static_cast<int>(i) % 20 == 0) { 
             // Display the cost function range within every 100th generation
             
             std::cout << '\n';
@@ -255,7 +255,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
             std::cout << "\tvelDiff: " << inputParameters[numThreads - 1].velDiff << std::endl;
 
             
-            if(i% 50 == 0 && distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
+            if(static_cast<int>(i) % 50 == 0 && distinguishableDifference(prevBestPos, inputParameters[0].posDiff, distinguishRate)) {
                 //half anneal  max and min
                 annealMax = annealMax / ANNEAL_FACTOR;
                 annealMin = annealMin / ANNEAL_FACTOR;
