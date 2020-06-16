@@ -169,7 +169,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
     double distinguishRate = 1.0e-7;
 
     // Initialize a generation counter and convergence flag
-    int i = 1;
+    double i = 1;
     bool convgFlag = 0;
 
     while (!convgFlag) {
@@ -272,7 +272,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
         }
             // Append the best Individuals into a bin file to view progress over generations
 
-            individualDifference.write((char*)&i, sizeof(int));                                             // 1
+            individualDifference.write((char*)&i, sizeof(double));                                             // 1
             individualDifference.write((char*)&inputParameters[0].posDiff, sizeof(double));                 // 2
             individualDifference.write((char*)&inputParameters[0].velDiff, sizeof(double));                 // 3
             individualDifference.write((char*)&inputParameters[0].finalPos.r, sizeof(double));              // 4
