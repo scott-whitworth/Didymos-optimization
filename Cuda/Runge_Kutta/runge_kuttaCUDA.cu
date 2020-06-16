@@ -225,7 +225,7 @@ double optimize(const int numThreads, const int blockThreads) {
         velDiffRange = velCost(inputParameters, numThreads);
 
         // Check for convergence
-        convgFlag = converge(inputParameters);
+        convgFlag = posConverge(inputParameters);
 
         // finding the best variable to change in the best Individual
         // bestChange() TO BE USED HERE
