@@ -40,18 +40,16 @@ bool converge(Individual* pool);
 // Determines whether the pools' posDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
-    // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether posDiffs have converged
-bool posConverge(Individual* pool, int size);
+bool posConverge(Individual* pool);
 
 // Determines whether the pool's velDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
-    // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether velDiffs have converged
-bool velConverge(Individual* pool, int size);
+bool velConverge(Individual* pool);
 
 #include "geneticAlgorithm.cpp"
 #endif

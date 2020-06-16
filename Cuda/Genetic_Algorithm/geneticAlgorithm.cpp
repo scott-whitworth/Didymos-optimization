@@ -27,6 +27,6 @@ bool posConverge(Individual* pool) {
     return pool[0].posDiff < POSITION_THRESH;
 }
 
-bool velConverge(Individual* pool, int size) {
+bool velConverge(Individual* pool) {
     return pool[0].velDiff > SPEED_THRESH;
 }
