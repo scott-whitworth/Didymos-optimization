@@ -3,7 +3,8 @@
 
 #include "individuals.h"
 
-// An experimental equation to determine cost (that would want to be minimized in the algorithm)
+// An experimental equation to determine cost (currently is being minimized in the genetic algorithm)
+// Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
 double Individual::getCost() {
     double cost = this->posDiff;
     //cost -= abs(this->velDiff);
@@ -11,7 +12,7 @@ double Individual::getCost() {
 }
 
 bool Individual::operator>(Individual &other) {
-    if (this->getCost() > other.getCost()){
+    if (this->getCost() > other.getCost()) {
         return true;
     }
     else {
@@ -20,7 +21,7 @@ bool Individual::operator>(Individual &other) {
 }
 
 bool Individual::operator<(Individual &other) {
-    if (this->getCost() < other.getCost()){
+    if (this->getCost() < other.getCost()) {
         return true;
     }
     else {
@@ -29,7 +30,7 @@ bool Individual::operator<(Individual &other) {
 }
 
 bool Individual::operator==(Individual &other) {
-    if (this->getCost() == other.getCost()){
+    if (this->getCost() == other.getCost()) {
         return true;
     }
     else {
@@ -62,7 +63,7 @@ double getPosRatio(Individual first, Individual second) {
     }
 }*/
 
-// initialize sets the Individual's location and velocity
+// Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
 void Individual::initialize() {
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
 

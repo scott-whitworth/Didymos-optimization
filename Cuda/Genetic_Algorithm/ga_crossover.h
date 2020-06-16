@@ -14,9 +14,33 @@
 // mask determines which parent each gene is inherited from
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]);
 
+// Has random chance of changing the parameters by a random quantity
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, geneticConstants& gConstant);
+
+// Currently not in use, creates a new individual by averaging the parameter values between two parents
+rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2);
+
+// Uses mutate and generateNewIndividual to produce a new individual with chance of mutation and assigns them within the pool
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, geneticConstants& gConstant);
+
 // generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
+// Uses mutateNewIndividual and the crossOver mask methods
 // returns the number of new Individuals put into the pool
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant);
+
+void crossOver_randHalf(int mask[], mt19937_64 & rng);
+
+void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng);
+
+void crossOver_gammaPos(int mask[]);
+
+void crossOver_tauPos(int mask[]);
+
+void flipMask(int mask[]);
+
+void copyMask(int maskIn[], int maskOut[]);
+
+void printMask(int mask[]);
 
 #include "ga_crossover.cpp"
 #endif

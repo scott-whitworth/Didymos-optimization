@@ -4,6 +4,7 @@
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct geneticConstants {
+    double time_seed; // Seed used for randomization within optimize function, if it's set to -1 the seed is set to time(0) for genuine randomness
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
@@ -20,14 +21,17 @@ struct geneticConstants {
     double gamma_mutate_scale; // Used in mutate(), affects the size of change for the gamma parameter values
     double tau_mutate_scale; // Used in mutate(), affects the size of change for the tau parameter values
     double coast_mutate_scale; // Used in mutate(), affects the size of change for the coast parameter values
-    double triptime_mutate_scal; // Used in mutate(), affects the size of change for the triptime parameter value
+    double triptime_mutate_scale; // Used in mutate(), affects the size of change for the triptime parameter value
     double zeta_mutate_scale; // Used in mutate(), affects the size of change for the zeta parameter value
     double beta_mutate_scale; // Used in mutate(), affects the size of change for the beta parameter value
     double alpha_mutate_scale; // Used in mutate(), affects the size of change for the alpha parameter value
 
-    // Constructor, sets variables to default values before calling fileRead() to set them to what is in setup.config
+    // Constructor, sets variables to default values before calling fileRead() to set them to what is in genetic.config
     geneticConstants();
-    // Opens genetic.config (must be in same folder as the executable) and sets properties to what is within the file
+
+    // Sets properties to what is within the config file
+    // Input: Contents of genetic.config file that is in same folder as the executable file
+    // Output: Properties explicitly set in the config file are set to values following 
     void geneticFileRead();
 };
 

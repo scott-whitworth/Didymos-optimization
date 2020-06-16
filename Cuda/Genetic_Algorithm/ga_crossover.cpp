@@ -10,6 +10,7 @@
 #include <iostream>
 #include <chrono>
 
+#define SECONDS_IN_YEAR 365*24*3600
 
 // Creates a random bifurcation mask
 // Randomly picks one index to be the start of the '2's from mask
@@ -17,7 +18,7 @@
 // in/out: mask - all data will be overwritten
 //              - Based on random index, first selection will be 1's, last selection will be 2's
 //              - ex: [1, 1, 1, 1, 2, 2]
-void crossOver_randHalf(int mask[], mt19937_64 & rng) {
+void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
     int crossIndex = rng() % (OPTIM_VARS-1);
     //cout << "Random Index: " << crossIndex << endl;
     for (int i = 0; i < OPTIM_VARS; i++) {
@@ -205,7 +206,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
             newInd.coeff.coast[mutatedValue-14] += getRand(gConstant.coast_mutate_scale * annealing, rng);
         }
         if (mutatedValue == TRIPTIME_OFFSET) { //Time final
-            newInd.tripTime += 365*24*3600*getRand(gConstant.triptime_mutate_scal * annealing, rng);
+            newInd.tripTime += SECONDS_IN_YEAR*getRand(gConstant.triptime_mutate_scale * annealing, rng);
         }
         if (mutatedValue == ZETA_OFFSET) { //zeta
             newInd.zeta += getRand(gConstant.zeta_mutate_scale * annealing, rng);
