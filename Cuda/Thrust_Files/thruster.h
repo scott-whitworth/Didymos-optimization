@@ -36,7 +36,7 @@ template <class T> struct thruster {
     enum THRUST_TYPE {
         NO_THRUST = 0,
         NEXT_C = 1
-    }
+    };
 };
 
 #include "thruster.cpp"
