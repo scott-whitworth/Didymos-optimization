@@ -30,7 +30,7 @@ bool changeInBest(double previousBest, double currentBest) {
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's information and anneal value
-void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput, unsigned int &currentGeneration, Individual &individual, double& annealing ) {
+void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, unsigned int &currentGeneration, Individual &individual, double& annealing ) {
     // Output the information to excel spreadsheet
     ExcelOutput << currentGeneration << ','
                 << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
@@ -193,16 +193,27 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     int newInd = numThreads; // the whole population is new the first time through the loop
 
     // setup output of generation results over time onto a .csv file
-    std::ofstream generationPerformanceExcel;
-    generationPerformanceExcel.open("BestInGenerations.csv");
+    std::ofstream generationPerformanceBestExcel;
+    generationPerformanceBestExcel.open("BestInGenerations.csv");
     // Set first row in the file be a header for the columns
-    generationPerformanceExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+    generationPerformanceBestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+                               << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+                               << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+                               << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+
+
+   std::ofstream generationPerformanceWorstExcel;
+   generationPerformanceWorstExcel.open("WorstInGenerations.csv");
+   // Set first row in the file be a header for the columns
+    generationPerformanceWorstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
                                << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
                                << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
 
     // setup output of generation results over time onto a .bin file
-    std::ofstream generationPerformanceBin("BestInGenerations.bin", std::ios::binary);
+    std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
+    std::ofstream generationsWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
+
 
     unsigned int generation = 0;    // A counter for number of generations calculated
     
@@ -278,9 +289,11 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
-        // Write the best and worst Individuals in every 1,000 generations into the files to view progress over generations
+        // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
         if (generation % gConstant.write_freq == 0) {
-            writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], new_anneal);
+            writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
+            writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
+
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -304,7 +317,9 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
-    writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], annealPlacement);
+    // Write the best and worst performing individuals to their respective files
+    writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
+    writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < gConstant.best_count; i++) {
@@ -329,8 +344,10 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     }
 
     // Close the performance files now that the algorithm is finished
-    generationPerformanceExcel.close();
-    generationPerformanceBin.close();
+    generationPerformanceBestExcel.close();
+    generationBestPerformanceBin.close();
+    generationPerformanceWorstExcel.close();
+    generationWorstPerformanceBin.close();
 
     delete [] inputParameters;
     delete [] survivors;
