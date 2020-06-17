@@ -6,7 +6,7 @@ function [] = individualProgress(n)
         % N/A: see figures
 
 fin = fopen(join(['individualDifference',num2str(n),'.bin']));
-A = fread(fin, [Inf, 20], 'double');
+A = fread(fin, [20, Inf], 'double');
 
 au = 1.49587870691e11;
 km = au/1e3;
