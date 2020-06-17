@@ -1,11 +1,11 @@
-function [] = individualProgress(n)
+function [] = individualProgress(str)
 % individualProgress: plots generational data from a binary file
     % Input:
-        % n: the number of "individualProgress" binary file to be read in 
+        % str: the specific generation to be plotted ('Best' or 'Worst')
     % Output:
         % N/A: see figures
 
-fin = fopen(join(['individualDifference',num2str(n),'.bin']));
+fin = fopen(join([str,'InGenerations.bin']));
 A = fread(fin, [20, Inf], 'double');
 
 au = 1.49587870691e11;
