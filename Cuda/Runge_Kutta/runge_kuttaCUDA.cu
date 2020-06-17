@@ -6,8 +6,6 @@
 #include "../Earth_calculations/orbitalMotion.h"
 #include "../Genetic_Algorithm/geneticAlgorithm.h" // selectWinners()
 #include "../Genetic_Algorithm/ga_crossover.h" // crossover()
-#include "../Genetic_Algorithm/gaConstants.h" // SURVIVOR_COUNT
-#include "../constants.h" // AU
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file

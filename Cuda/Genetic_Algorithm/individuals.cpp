@@ -2,13 +2,17 @@
 #define individuals_h
 
 #include "individuals.h"
-#include "gaConstants.h" // POSITION_THRESH
 
-bool greaterInd(Individual first, Individual second) {
-    double posRatio = getPosRatio(first, second);
-    double firstSum = first.posDiff * posRatio - first.velDiff * (1.0 - posRatio); // total cost is a mix of position and velocity
-    double secondSum = second.posDiff * posRatio - second.velDiff * (1.0 - posRatio);
-    if (firstSum < secondSum) {
+// An experimental equation to determine cost (currently is being minimized in the genetic algorithm)
+// Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
+double Individual::getCost() {
+    double cost = this->posDiff;
+    //cost -= abs(this->velDiff);
+    return cost;
+}
+
+bool Individual::operator>(Individual &other) {
+    if (this->getCost() > other.getCost()) {
         return true;
     }
     else {
@@ -16,6 +20,36 @@ bool greaterInd(Individual first, Individual second) {
     }
 }
 
+bool Individual::operator<(Individual &other) {
+    if (this->getCost() < other.getCost()) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool Individual::operator==(Individual &other) {
+    if (this->getCost() == other.getCost()) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/*
+// betterInd uses < operator to compare first and second, returns true if first < second
+bool betterInd(Individual first, Individual second) {
+    if (first < second) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+*/
+/*
 double getPosRatio(Individual first, Individual second) {
     double greaterDiff = first.posDiff; // get the greater position difference
     if (second.posDiff > greaterDiff) {
@@ -28,8 +62,9 @@ double getPosRatio(Individual first, Individual second) {
     else {
         return greaterDiff / POSITION_THRESH; // focus more on position the greater the difference is based on linear scale
     }
-}
+}*/
 
+// Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
 void Individual::initialize() {
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
 
