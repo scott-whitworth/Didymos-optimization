@@ -307,34 +307,31 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
     }
 
 
-    // output the best Individuals of the final generation, using writeTrajectoryToFile()
+    // output the best Individual of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
     double cost = 0;
-    for (int i = 0; i < 10; i++) {
         
-        if (thrust.type) {
-            for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
-                //start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
-            }
-            for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
-                //start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
-            }
-            for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
-                //start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
-            }
+    if (thrust.type) {
+        for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
+            start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
-
-        start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
-        start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
-        start[BETA_OFFSET] = inputParameters[i].startParams.beta;
-        start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
-
-        cost = inputParameters[i].posDiff; // just look at position difference here for now
-        // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust);
+        for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
+            start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
+        }
+        for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
+            start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
+        }
     }
 
+    start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
+    start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
+    start[BETA_OFFSET] = inputParameters[i].startParams.beta;
+    start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
+
+    cost = inputParameters[i].posDiff; // just look at position difference here for now
+    // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+    writeTrajectoryToFile(start, cost, i + 1, thrust);
 
     individualDifference.close();
 
