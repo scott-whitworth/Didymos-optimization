@@ -90,11 +90,11 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads) {
+double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant) {
     double calcPerS = 0;
 
-    geneticConstants gConstant; // Declare the genetic constant 
     time_t timeSeed = gConstant.time_seed;
+    
 
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
@@ -362,7 +362,9 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    optimize(numThreads, blockThreads);
+    geneticConstants gConstant("genetic.config"); // Declare the genetic constants used
+
+    optimize(numThreads, blockThreads, gConstant);
 
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();

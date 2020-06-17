@@ -4,6 +4,34 @@
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct geneticConstants {
+/*    enum SEED_STATUS {
+        NO_SEED, // Config is not defining a seed, should be randomly set
+        SET_SEED // Config has a valid time_seed
+    };
+
+/*  //1000 - 8 - Full Random
+    //0100 - 4 - Half Random
+    //0010 - 2 - Gamma Swap
+    //0001 - 1 - Tau Swap
+    enum CROSSOVER_SCHEME{
+        FULL_RANDOM = 8,
+        HALF_RAND = 4,
+        GAMMA_CROSS = 2,
+        TAU_CROSS = 1
+    };
+
+    int curCrossover;
+
+    curCrossover = FULL_RANDOM | HALF_RAND;
+
+    if (curCrossover & FULL_RANDOM) {
+        //do the full random crossover
+    } else (curCrossover & HALF_RAND) {
+        //do the half random crossover
+    }
+
+
+    SEED_STATUS seed_status; // Keep track of if seed has been set or not*/
     double time_seed; // Seed used for randomization within optimize function, if it's set to -1 the seed is set to time(0) for genuine randomness
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
@@ -18,21 +46,26 @@ struct geneticConstants {
     double mutation_rate; // fraction of new offspring to mutate
     double double_mutation_rate; // fraction of mutations to mutate two genes instead of just one
     double triple_mutation_rate; // fraction of mutations to mutate three genes instead of just one or two
-    double gamma_mutate_scale; // Used in mutate(), affects the size of change for the gamma parameter values
-    double tau_mutate_scale; // Used in mutate(), affects the size of change for the tau parameter values
-    double coast_mutate_scale; // Used in mutate(), affects the size of change for the coast parameter values
-    double triptime_mutate_scale; // Used in mutate(), affects the size of change for the triptime parameter value
-    double zeta_mutate_scale; // Used in mutate(), affects the size of change for the zeta parameter value
-    double beta_mutate_scale; // Used in mutate(), affects the size of change for the beta parameter value
-    double alpha_mutate_scale; // Used in mutate(), affects the size of change for the alpha parameter value
+    
+    // Used in mutate(), affects the size of change for the respective paramater values (old code had hard-coded values)
+    double gamma_mutate_scale; 
+    double tau_mutate_scale; 
+    double coast_mutate_scale;
+    double triptime_mutate_scale;
+    double zeta_mutate_scale;
+    double beta_mutate_scale;
+    double alpha_mutate_scale;
 
-    // Constructor, sets variables to default values before calling fileRead() to set them to what is in genetic.config
+    // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
     geneticConstants();
+
+    // Constructor, accepts a string argument for the config file path
+    geneticConstants(std::string configFile);
 
     // Sets properties to what is within the config file
     // Input: Contents of genetic.config file that is in same folder as the executable file
     // Output: Properties explicitly set in the config file are set to values following 
-    void geneticFileRead();
+    void geneticFileRead(std::string fileName);
 };
 
 
