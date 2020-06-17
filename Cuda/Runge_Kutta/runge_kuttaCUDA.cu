@@ -329,9 +329,9 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
     start[BETA_OFFSET] = inputParameters[i].startParams.beta;
     start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
 
-    cost = inputParameters[i].posDiff; // just look at position difference here for now
+    cost = inputParameters[0].posDiff; // just look at position difference here for now
     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    writeTrajectoryToFile(start, cost, i + 1, thrust);
+    writeTrajectoryToFile(start, cost, 1, thrust);
 
     individualDifference.close();
 
