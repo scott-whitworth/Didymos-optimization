@@ -33,7 +33,7 @@ template <class T> struct thruster {
     T NEXTm_Dot0 = 5.73E-06; // inital fuel flow rate (kg/s)
 
     // thruster type enumeration
-    enum struct THRUST_TYPE {
+    enum THRUST_TYPE {
         NO_THRUST = 0,
         NEXT_C = 1
     }
