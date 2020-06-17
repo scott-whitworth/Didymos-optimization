@@ -4,18 +4,17 @@
 #include <time.h>
 #include "config.h"
 
-// Constructorsuses geneticFileRead() to set the struct's properties from a file
+// Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 geneticConstants::geneticConstants() {
     geneticFileRead("genetic.config");
 }
-
+// Operates same as default, however uses configFile as address for where the config file to be used is located
 geneticConstants::geneticConstants(std::string configFile) {
     geneticFileRead(configFile);
 }
 
 
 //http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
-// genetic.config must be in same folder as the compiled executable
 void geneticConstants::geneticFileRead(std::string fileName) {
 
     std::string line;
@@ -89,7 +88,6 @@ void geneticConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "time_seed" && variableValue == "NONE") {
                     this->time_seed = time(0);
                     std::cout << "time_seed set to time(0)\n";
-                
                 }
                 else {
                     std::cout << "Uknown variable '" << variableName <<"' in genetic.config!\n";

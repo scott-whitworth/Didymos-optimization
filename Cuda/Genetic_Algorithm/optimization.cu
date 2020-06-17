@@ -16,13 +16,14 @@
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
 
-
-bool changeInBest(double previousBest, double currentBest) { // used to see if the best individual is changing
-    if (previousBest == currentBest) {
-        return false;
+// Used to see if the best individual is changing
+// Returns true if the currentBest is not equal to previousBest
+bool changeInBest(double previousBest, double currentBest) {
+    if (previousBest != currentBest) {
+        return true;
     }
     else {
-        return true;
+        return false;
     }
 }
 
@@ -248,7 +249,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
                 inputParameters[k].velDiff = 0.0;
              }
         }
-
+        // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads); // put the individuals in order so we can replace the worst ones
@@ -362,7 +363,7 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    geneticConstants gConstant("genetic.config"); // Declare the genetic constants used
+    geneticConstants gConstant("genetic.config"); // Declare the genetic constants used, with file path being used
 
     optimize(numThreads, blockThreads, gConstant);
 
