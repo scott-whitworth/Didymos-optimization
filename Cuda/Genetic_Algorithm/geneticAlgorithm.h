@@ -2,7 +2,6 @@
 #define GENETICALGORITHM_H
 
 #include "individuals.h"
-#include "gaConstants.h"
 
 
 // takes Individuals from the pool to compete in a head-to-head competition
