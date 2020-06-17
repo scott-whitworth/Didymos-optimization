@@ -12,12 +12,12 @@
 template <class T>
 thruster<T>::thruster(int newType) {
     // no thruster
-    if (newType == 0) {
+    if (newType == noThrust) {
         m_Dot = P0 = 0;
     }
 
     // setting values (defined in header) for when type 1 is called (NEXT)
-    else if (newType == 1) {
+    else if (newType == NEXT) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
@@ -26,14 +26,14 @@ thruster<T>::thruster(int newType) {
 
 template <class T> T thruster<T>::calc_eff(const T & Pin) {
     // Data interpolation for thruster type NEXT
-    if (type == 1) {
+    if (type == NEXT) {
         return  -1.328086e-23*pow(Pin,6) + 6.207694e-19*pow(Pin,5) - 9.991813e-15*pow(Pin,4) +  7.701266e-11*pow(Pin,3) - 3.136031e-07*pow(Pin,2) +  6.805225e-04*Pin;       // Polynomial fit
     }
     return 0;
 }
 
 template <class T> void thruster<T>::calc_m_Dot(const T & Pin) {
-    if (type == 1) {
+    if (type == NEXT) {
         if (Pin < 2550) {
             this->m_Dot = 1.99E-06;
         }

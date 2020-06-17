@@ -31,6 +31,9 @@ template <class T> struct thruster {
     private:
     T NEXTP0 =7330; // initial power (W)
     T NEXTm_Dot0 = 5.73E-06; // inital fuel flow rate (kg/s)
+
+    // thruster type handles
+    int noThrust = 0, NEXT = 1;
 };
 
 #include "thruster.cpp"
