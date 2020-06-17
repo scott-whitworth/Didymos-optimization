@@ -34,5 +34,8 @@ __global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize,
 //output: boolean true if there is is no distinguishable difference
 bool distinguishableDifference(double p1, double p2, double distinguishRate);
 
+// writes data for a specified generation and thread to a binary file
+void writeProgressToFile(std::ofstream fout, Individual* & pool, double gen, int thread, double prevAnneal);
+
 #include "runge_kuttaCUDA.cu"
 #endif
