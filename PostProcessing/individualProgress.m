@@ -6,7 +6,7 @@ function [] = individualProgress(n)
         % N/A: see figures
 
 fin = fopen(join(['individualDifference',num2str(n),'.bin']));
-A = fread(fin, [20, Inf], 'double');
+A = fread(fin, [Inf, 20], 'double');
 
 au = 1.49587870691e11;
 km = au/1e3;
@@ -52,7 +52,7 @@ xlabel('generations'), ylabel('v_r_i (km/s)')
 subplot(2,3,2)
 plot(A(:,1), km*A(:,14))
 title('Angular velocity')
-xlabel('generations'), ylabel('rv_\theta_i (km/s)')
+xlabel('generations'), ylabel('v_\theta_i (km/s)')
 % VZ initial over generations
 subplot(2,3,3)
 plot(A(:,1), km*A(:,15))
