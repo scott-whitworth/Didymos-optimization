@@ -2,7 +2,7 @@
 #define GENETICALGORITHM_H
 
 #include "individuals.h"
-
+#include "../Config_Constants/config.h"
 
 // takes Individuals from the pool to compete in a head-to-head competition
 // input: 
@@ -34,21 +34,21 @@ double velCost(Individual* pool, int size);
     // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether the pool has converged
-bool converge(Individual* pool);
+bool converge(Individual* pool, geneticConstants& gConstants);
 
 // Determines whether the pools' posDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
 // Output:
     // convgFlag: Boolean indicating whether posDiffs have converged
-bool posConverge(Individual* pool);
+bool posConverge(Individual* pool, geneticConstants& gConstants);
 
 // Determines whether the pool's velDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
 // Output:
     // convgFlag: Boolean indicating whether velDiffs have converged
-bool velConverge(Individual* pool);
+bool velConverge(Individual* pool, geneticConstants& gConstants);
 
 #include "geneticAlgorithm.cpp"
 #endif

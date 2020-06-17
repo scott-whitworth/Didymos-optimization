@@ -19,14 +19,14 @@ double velCost(Individual* pool, int size) {
     return abs(pool[0].velDiff - pool[size-1].velDiff);
 }
 
-bool converge(Individual* pool) {
-    return posConverge(pool) && velConverge(pool);
+bool converge(Individual* pool, geneticConstants& gConstants) {
+    return (posConverge(pool, gConstants) && velConverge(pool, gConstants));
 }
 
-bool posConverge(Individual* pool) {
-    return pool[0].posDiff < POSITION_THRESH;
+bool posConverge(Individual* pool, geneticConstants& gConstants) {
+    return pool[0].posDiff < gConstants.pos_threshold;
 }
 
-bool velConverge(Individual* pool) {
-    return pool[0].velDiff > SPEED_THRESH;
+bool velConverge(Individual* pool, geneticConstants& gConstants) {
+    return pool[0].velDiff > gConstants.speed_threshold;
 }

@@ -212,7 +212,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // setup output of generation results over time onto a .bin file
     std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
-    std::ofstream generationsWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
+    std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
 
     unsigned int generation = 0;    // A counter for number of generations calculated
@@ -291,9 +291,8 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
         if (generation % gConstant.write_freq == 0) {
-            writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
-            writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
-
+            writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
+            writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -302,7 +301,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         }
 
         // Create a new generation and increment the generation counter
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant);
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant, thrust);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -340,7 +339,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1);
+        writeTrajectoryToFile(start, cost, i + 1, thrust);
     }
 
     // Close the performance files now that the algorithm is finished
@@ -354,4 +353,44 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     delete start;
 
     return calcPerS;
+}
+
+int main () {
+    // display GPU properties and ensure we are using the right one
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    std::cout << "Device Number: 0 \n";
+    std::cout << "- Device name: " << prop.name << std::endl;
+    cudaSetDevice(0);
+    
+    // pre-calculate a table of Earth's position within possible mission time range
+    //----------------------------------------------------------------
+    // Define variables to be passed into EarthInfo
+    double startTime = 15778800; // 0.5 year (s)
+    double endTime = 78894000; // 2.5 years (s)
+    double timeRes = 3600; // (s) position of earth is calculated for every hour
+
+    launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
+    //----------------------------------------------------------------
+    // Define the number of threads/individuals that will be used in optimize
+    int blockThreads = 32;
+    int numThreads = 2880; // the number of cores on a Tesla k40
+    //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
+
+    //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
+    //efficiencyGraph.open("efficiencyGraph.csv");
+    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+    
+    geneticConstants gConstant("genetic.config"); // Declare the genetic constants used, with file path being used
+    thruster<double> thrust(gConstant.thruster_type);
+
+
+    optimize(numThreads, blockThreads, gConstant, thrust);
+
+    //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
+    //efficiencyGraph.close();
+    
+    delete launchCon;
+
+    return 0;
 }

@@ -114,7 +114,7 @@ void printMask(int mask[]) {
     std::cout << "]";
 }
 
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double> thrust) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     // itterate over set of make values
@@ -163,7 +163,7 @@ double getRand(double max, std::mt19937_64 & rng) {
 
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, geneticConstants& gConstant, thruster<double> thrust) {
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, geneticConstants& gConstant, thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -233,7 +233,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
 // output: average of the two
-rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double> thrust) {
+rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double>& thrust) {
     rkParameters<double> newInd;
     
     // alter thrust coefficients only when using a thruster
@@ -261,25 +261,25 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 // Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
 // Output is new individual in pool
 // Can only be used within crossover function in its current state because of int i input
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, geneticConstants& gConstant) {
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, geneticConstants& gConstant, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
-    pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
     if (rng() % 100 < gConstant.mutation_rate * 100) { // a certain chance of mutation
-        pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing, gConstant);
+        pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing, gConstant, thrust);
     }
 
     flipMask(mask); // get the opposite offspring
     pool[poolSize - 1 - (2 * index) - 1] = Individual();
-    pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
     if (rng() % 100 < gConstant.mutation_rate * 100) {
-        pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing, gConstant);
+        pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing, gConstant, thrust);
     }
 }
 
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant, thruster<double> thrust) {
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant, thruster<double>& thrust) {
     mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
@@ -289,25 +289,25 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
     // Generate two offspring through each crossover method, total of 8 offspring per parent pair
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_wholeRandom(mask, rng);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_randHalf(mask, rng);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_gammaPos(mask);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for(int i = 0; i < survivorSize / 2; i++){
         crossOver_tauPos(mask);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
