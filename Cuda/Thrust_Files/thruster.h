@@ -1,5 +1,6 @@
 #ifndef thruster_h
 #define thruster_h
+#include "coefficients.h"
 
 // file path for all data used in this file: \\fs1\phys\sankaranResearch\2019-Lauren-Mateo\Thruster
 
@@ -13,7 +14,7 @@ template <class T> struct thruster {
     __host__ __device__ thruster<T>(int type);
 
     //overload the stream output for elements used for writing to a file
-    template <class U> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
+    template <class T> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
 
 // Evaluates the spacecraft's effciency for a certian iteration based off of a best fit line from file above of eff vs. power in (W).
 // Parameters:
@@ -30,6 +31,12 @@ template <class T> struct thruster {
     private:
     T NEXTP0 =7330; // initial power (W)
     T NEXTm_Dot0 = 5.73E-06; // inital fuel flow rate (kg/s)
+
+    // thruster type enumeration
+    enum THRUST_TYPE {
+        NO_THRUST = 0,
+        NEXT_C = 1
+    };
 };
 
 #include "thruster.cpp"

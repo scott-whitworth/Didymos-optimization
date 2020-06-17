@@ -45,7 +45,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 //taken from CPU code to output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut) {
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
@@ -96,7 +96,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
-  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass);
+  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust);
 
   lastStep = lastStepInt;
 
@@ -142,10 +142,10 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   return cost;
 }
 
-void writeTrajectoryToFile(double *start, double & cost, int i) {
+void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust) {
   double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
-  trajectoryPrint(start, numStep, cost,i,yp);
+  trajectoryPrint(start, numStep, cost, i, yp, thrust);
   //writes final optimization values to a seperate file
   std::ofstream output;
 
