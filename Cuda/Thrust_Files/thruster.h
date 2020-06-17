@@ -10,7 +10,6 @@ template <class T> struct thruster {
     int type; // type of thruster
     T P0; // inital power in
     T m_Dot0; // initial m_Dot
-    coefficients<T> coeffs; // thrust coefficients struct
 
     __host__ __device__ thruster<T>(int type);
 
