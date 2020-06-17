@@ -5,8 +5,6 @@
 #include "../Genetic_Algorithm/individuals.h"
 #include "../Thrust_Files/thruster.h" // thrust.type
 
-double optimize(const int numThreads, const int blockThreads, thruster<double> thrust);
-
 Individual* getNewStarts(Individual *prevGen);
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
@@ -33,9 +31,6 @@ __global__ void rkCalcTest(double *curTime, double *timeFinal, double *stepSize,
 //      distinguishRate: the rate that this will divide from p1 and p2
 //output: boolean true if there is is no distinguishable difference
 bool distinguishableDifference(double p1, double p2, double distinguishRate);
-
-// writes data for a specified generation and thread to a binary file
-void writeProgressToFile(std::ofstream fout, Individual* & pool, double gen, int thread, double prevAnneal);
 
 #include "runge_kuttaCUDA.cu"
 #endif

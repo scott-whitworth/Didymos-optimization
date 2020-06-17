@@ -193,28 +193,6 @@ bool distinguishableDifference(double p1, double p2, double distinguishRate) {
     }
 
 }
-void writeProgressToFile(std::ofstream fout, Individual* & pool, double gen, int thread, double prevAnneal) {
-    fout.write((char*)&gen, sizeof(double));                                          // 1
-    fout.write((char*)&pool[thread].posDiff, sizeof(double));                 // 2
-    fout.write((char*)&pool[thread].velDiff, sizeof(double));                 // 3
-    fout.write((char*)&pool[thread].finalPos.r, sizeof(double));              // 4
-    fout.write((char*)&pool[thread].finalPos.theta, sizeof(double));          // 5        
-    fout.write((char*)&pool[thread].finalPos.z, sizeof(double));              // 6
-    fout.write((char*)&pool[thread].finalPos.vr, sizeof(double));             // 7
-    fout.write((char*)&pool[thread].finalPos.vtheta, sizeof(double));         // 8
-    fout.write((char*)&pool[thread].finalPos.vz, sizeof(double));             // 9
-    fout.write((char*)&pool[thread].startParams.y0.r, sizeof(double));        // 10
-    fout.write((char*)&pool[thread].startParams.y0.theta, sizeof(double));    // 11
-    fout.write((char*)&pool[thread].startParams.y0.z, sizeof(double));        // 12
-    fout.write((char*)&pool[thread].startParams.y0.vr, sizeof(double));       // 13
-    fout.write((char*)&pool[thread].startParams.y0.vtheta, sizeof(double));   // 14
-    fout.write((char*)&pool[thread].startParams.y0.vz, sizeof(double));       // 15
-    fout.write((char*)&pool[thread].startParams.alpha, sizeof(double));       // 16
-    fout.write((char*)&pool[thread].startParams.beta, sizeof(double));        // 17
-    fout.write((char*)&pool[thread].startParams.zeta, sizeof(double));        // 18
-    fout.write((char*)&prevAnneal, sizeof(double));                           // 19
-    fout.write((char*)&pool[thread].startParams.tripTime, sizeof(double));    // 20
-}
 
 //testing functions
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
