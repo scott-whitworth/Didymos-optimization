@@ -4,7 +4,6 @@
 #include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
-
 #include "../Config_Constants/config.h"
 
 #include <iostream> // cout
@@ -43,10 +42,10 @@ void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput
  
     // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
     BinOutput.write( (char*)& currentGeneration, sizeof(unsigned int));
- 
+    // posDiff and velDiff
     BinOutput.write( (char*)& individual.posDiff, sizeof(double));
     BinOutput.write( (char*)& individual.velDiff, sizeof(double));
-
+    // Position and velocity information
     BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
     BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
     BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
@@ -59,12 +58,11 @@ void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
     BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
     BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
+    // Alpha, Beta, Zeta, Annealing, Triptime
     BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
     BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
     BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
-
     BinOutput.write((char*)& annealing, sizeof(double));
-
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
@@ -333,6 +331,7 @@ double optimize(const int numThreads, const int blockThreads) {
 
     delete [] inputParameters;
     delete [] survivors;
+    delete start;
 
     return calcPerS;
 }

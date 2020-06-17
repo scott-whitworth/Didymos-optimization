@@ -6,7 +6,6 @@
 #include "../Earth_calculations/orbitalMotion.h"
 #include "../Genetic_Algorithm/geneticAlgorithm.h" // selectWinners()
 #include "../Genetic_Algorithm/ga_crossover.h" // crossover()
-#include "../Genetic_Algorithm/gaConstants.h" // SURVIVOR_COUNT
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file
@@ -15,6 +14,7 @@
 #include <random>
 
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
+/*
 Individual bestChange(Individual original, double timeInitial, double stepSize, double absTol) {
     Individual best = original;
     Individual cur = original;
@@ -35,7 +35,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     for (int i = 0; i < 7; i++) {
         cur.startParams.coeff.gamma[i] += parameterChange;
         cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
-        if (!betterInd(best, cur)) {
+        if (!(best > cur) ) {
             best = cur;
         }
         cur.startParams.coeff.gamma[i] -= parameterChange;
@@ -45,7 +45,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
     for (int i = 0; i < 3; i++) {
         cur.startParams.coeff.tau[i] += parameterChange;
         cur.startParams.parametersRK4Simple(timeInitial, stepSize, absTol, output);
-        if (!betterInd(best, cur)) {
+        if (!(best > cur) ) {
             best = cur;
         }
         cur.startParams.coeff.tau[i] -= parameterChange;
@@ -54,7 +54,7 @@ Individual bestChange(Individual original, double timeInitial, double stepSize, 
 
     return best;
 }
-
+*/
 
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS) {
     

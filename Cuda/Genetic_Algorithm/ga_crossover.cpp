@@ -10,7 +10,7 @@
 #include <iostream>
 #include <chrono>
 
-#define SECONDS_IN_YEAR 365*24*3600
+#define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
 
 // Creates a random bifurcation mask
 // Randomly picks one index to be the start of the '2's from mask
@@ -100,6 +100,7 @@ void copyMask(int maskIn[], int maskOut[]) {
     }
 }
 
+// Display mask contents onto the terminal
 void printMask(int mask[]) {
     std::cout << "[";
 
@@ -373,8 +374,6 @@ int main(){
     cout << "****** output_1 ******\n" << output_1 << endl << endl;
     cout << "****** output_2 ******\n" << output_2 << endl << endl;
     cout << "****** output_3 ******\n" << output_3 << endl << endl;
-
-
 
 }
 */
