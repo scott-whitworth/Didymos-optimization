@@ -50,6 +50,6 @@ template <class T> void thruster<T>::calc_m_Dot(const T & Pin) {
 template <class T> std::ostream & operator<<(std::ostream & Str, const thruster<T> & e) {
     Str << std::fixed;
     Str << std::setprecision(16); // number of decimals output into text file
-    Str << e.coeffs.gamma << "\t" << e.coeffs.tau << "\n";
+    Str << e.m_Dot << "\t" << e.P0 << "\n";
     return Str;
 }
