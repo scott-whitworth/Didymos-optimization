@@ -65,7 +65,7 @@ xlabel('generations'), ylabel('v_r_f (km/s)')
 % VTh final over generations
 subplot(2,3,5)
 plot(A(1,:), km*A(8,:))
-xlabel('generations'), ylabel('rv_\theta_f (km/s)')
+xlabel('generations'), ylabel('v_\theta_f (km/s)')
 % VZ final over generations
 subplot(2,3,6)
 plot(A(1,:), km*A(9,:))
