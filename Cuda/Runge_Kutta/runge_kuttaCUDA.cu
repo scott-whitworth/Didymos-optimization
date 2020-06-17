@@ -155,13 +155,6 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
 
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
-
-    // setup output of results
-    std::ofstream individualDifferenceB, individualDifferenceC;
-    individualDifferenceB.open("individualDifference.bin", std::ios::binary);
-    individualDifferenceC.open("individualDifference.csv");
-    individualDifferenceC << "gen,posDiff,velDiff,r_f,th_f,z_f,vr_f,vth_f,vz_f,r_i,th_i,z_i,vr_i,vth_i,vz_i,alpha,beta,zeta,annealing,tripTime\n";
-    
     
     double posDiffRange = 0, velDiffRange = 0, prevBestPos = 0, prevBestVel = 0, prevWorstPos = 0, prevWorstVel = 0;
 
@@ -173,6 +166,9 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
     // Initialize a generation counter and convergence flag
     double i = 1;
     bool convgFlag = 0;
+
+    std::ofstream individualDifference;
+    individualDifference.open("individualDifference.bin", std::ios::binary);
 
     while (!convgFlag) {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -272,38 +268,17 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
             prevWorstPos = inputParameters[numThreads-1].posDiff;
             prevWorstVel = inputParameters[numThreads-1].velDiff;
         }
-            // Append the best Individuals into a bin file to view progress over generations
+            // Append the best and worst Individuals into a bin file to view progress over generations
+            writeProgressToFile(individualDifference, inputParameters, i, 0, previousAnneal);
+            writeProgressToFile(individualDifference, inputParameters, i, numThreads-1, previousAnneal);
 
-            individualDifferenceB.write((char*)&i, sizeof(double));                                             // 1
-            individualDifferenceB.write((char*)&inputParameters[0].posDiff, sizeof(double));                 // 2
-            individualDifferenceB.write((char*)&inputParameters[0].velDiff, sizeof(double));                 // 3
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.r, sizeof(double));              // 4
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.theta, sizeof(double));          // 5        
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.z, sizeof(double));              // 6
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.vr, sizeof(double));             // 7
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.vtheta, sizeof(double));         // 8
-            individualDifferenceB.write((char*)&inputParameters[0].finalPos.vz, sizeof(double));             // 9
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.r, sizeof(double));        // 10
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.theta, sizeof(double));    // 11
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.z, sizeof(double));        // 12
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.vr, sizeof(double));       // 13
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.vtheta, sizeof(double));   // 14
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.y0.vz, sizeof(double));       // 15
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.alpha, sizeof(double));       // 16
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.beta, sizeof(double));        // 17
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.zeta, sizeof(double));        // 18
-            individualDifferenceB.write((char*)&previousAnneal, sizeof(double));                             // 19
-            individualDifferenceB.write((char*)&inputParameters[0].startParams.tripTime, sizeof(double));    // 20
-
-            individualDifferenceC << i << "," << inputParameters[0].posDiff << "," << inputParameters[0].velDiff << "," << 
-                inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << "," << 
-                inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," << 
-                inputParameters[0].startParams.y0.r << "," << inputParameters[0].startParams.y0.theta << "," << inputParameters[0].startParams.y0.z << "," << 
-                inputParameters[0].startParams.y0.vr << "," << inputParameters[0].startParams.y0.vtheta << "," << inputParameters[0].startParams.y0.vz << "," << 
-                inputParameters[0].startParams.alpha << "," << inputParameters[0].startParams.beta << "," << inputParameters[0].startParams.zeta << "," << 
-                previousAnneal << "," << inputParameters[0].startParams.tripTime << "\n";
-                
-        //}
+            // individualDifferenceCSV << i << "," << inputParameters[0].posDiff << "," << inputParameters[0].velDiff << "," << 
+            //     inputParameters[0].finalPos.r << "," << inputParameters[0].finalPos.theta << "," << inputParameters[0].finalPos.z << "," << 
+            //     inputParameters[0].finalPos.vr << "," << inputParameters[0].finalPos.vtheta << "," << inputParameters[0].finalPos.vz << "," << 
+            //     inputParameters[0].startParams.y0.r << "," << inputParameters[0].startParams.y0.theta << "," << inputParameters[0].startParams.y0.z << "," << 
+            //     inputParameters[0].startParams.y0.vr << "," << inputParameters[0].startParams.y0.vtheta << "," << inputParameters[0].startParams.y0.vz << "," << 
+            //     inputParameters[0].startParams.alpha << "," << inputParameters[0].startParams.beta << "," << inputParameters[0].startParams.zeta << "," << 
+            //     previousAnneal << "," << inputParameters[0].startParams.tripTime << "\n";
 
         // the annnealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN depending on which generation this is
         double new_anneal =  annealMax - static_cast<double>(i) / (generationsNum - 1) * (annealMax - annealMin);
@@ -345,8 +320,7 @@ double optimize(const int numThreads, const int blockThreads, thruster<double> t
         writeTrajectoryToFile(start, cost, i + 1, thrust);
     }
 
-    individualDifferenceB.close();
-    individualDifferenceC.close();
+    individualDifference.close();
 
     delete [] inputParameters;
     delete [] survivors;
@@ -492,6 +466,28 @@ bool distinguishableDifference(double p1, double p2, double distinguishRate) {
         return false;
     }
 
+}
+void writeProgressToFile(std::ofstream fout, Individual* & pool, double gen, int thread, double prevAnneal) {
+    fout.write((char*)&gen, sizeof(double));                                          // 1
+    fout.write((char*)&pool[thread].posDiff, sizeof(double));                 // 2
+    fout.write((char*)&pool[thread].velDiff, sizeof(double));                 // 3
+    fout.write((char*)&pool[thread].finalPos.r, sizeof(double));              // 4
+    fout.write((char*)&pool[thread].finalPos.theta, sizeof(double));          // 5        
+    fout.write((char*)&pool[thread].finalPos.z, sizeof(double));              // 6
+    fout.write((char*)&pool[thread].finalPos.vr, sizeof(double));             // 7
+    fout.write((char*)&pool[thread].finalPos.vtheta, sizeof(double));         // 8
+    fout.write((char*)&pool[thread].finalPos.vz, sizeof(double));             // 9
+    fout.write((char*)&pool[thread].startParams.y0.r, sizeof(double));        // 10
+    fout.write((char*)&pool[thread].startParams.y0.theta, sizeof(double));    // 11
+    fout.write((char*)&pool[thread].startParams.y0.z, sizeof(double));        // 12
+    fout.write((char*)&pool[thread].startParams.y0.vr, sizeof(double));       // 13
+    fout.write((char*)&pool[thread].startParams.y0.vtheta, sizeof(double));   // 14
+    fout.write((char*)&pool[thread].startParams.y0.vz, sizeof(double));       // 15
+    fout.write((char*)&pool[thread].startParams.alpha, sizeof(double));       // 16
+    fout.write((char*)&pool[thread].startParams.beta, sizeof(double));        // 17
+    fout.write((char*)&pool[thread].startParams.zeta, sizeof(double));        // 18
+    fout.write((char*)&prevAnneal, sizeof(double));                           // 19
+    fout.write((char*)&pool[thread].startParams.tripTime, sizeof(double));    // 20
 }
 
 //testing functions
