@@ -18,6 +18,7 @@ Consider expanding on either current structure/config to contain elements beyond
 
 - best_count: How many individuals are required to reach the criteria of a solution before ending the program and recording the solutions into binary files
 - pos_threshold: Sets the maximum positional difference of a solution
+- speed_threshold: Sets the minimum speed difference of a solution
 - change_check: How often the algorithm checks to see if the best individual has changed, if no change then the anneal value is changed
 - anneal_factor: Multiplier for changing the anneal value if no change in best individual
 - anneal_initial: The initial anneal value for the algorithm
@@ -33,3 +34,5 @@ Consider expanding on either current structure/config to contain elements beyond
 - zeta_mutate_scale: Affect the max range for mutating the zeta value
 - beta_mutate_scale: Affect the max range for mutating the beta value
 - alpha_mutate_scale: Affect the max range for mutating the alpha values
+
+- thruster_type: Chooses what thruster is used

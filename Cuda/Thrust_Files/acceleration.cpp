@@ -10,7 +10,7 @@
 #include <iostream> // used for cout
 
 template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass) {
-    
+
     // If all of the fuel has been expelled, then no more thrust can be applied
     if (wetMass - massExpelled <= DRY_MASS) {
         return 0;

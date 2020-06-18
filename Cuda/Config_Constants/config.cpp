@@ -34,6 +34,12 @@ void geneticConstants::geneticFileRead(std::string fileName) {
                 if (variableName == "pos_threshold") {
                     this->pos_threshold = std::stod(variableValue);
                 }
+                else if (variableName == "speed_threshold") {
+                    this->speed_threshold = std::stod(variableValue);
+                }
+                else if (variableName == "thruster_type") {
+                    this->thruster_type = std::stoi(variableValue);
+                }
                 else if (variableName == "anneal_factor") {
                     this->anneal_factor = std::stod(variableValue);
                 }
@@ -90,7 +96,7 @@ void geneticConstants::geneticFileRead(std::string fileName) {
                     std::cout << "time_seed set to time(0)\n";
                 }
                 else {
-                    std::cout << "Uknown variable '" << variableName <<"' in genetic.config!\n";
+                    std::cout << "Unknown variable '" << variableName <<"' in genetic.config!\n";
                 }
             }
         }

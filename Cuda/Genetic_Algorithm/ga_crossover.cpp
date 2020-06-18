@@ -114,25 +114,27 @@ void printMask(int mask[]) {
     std::cout << "]";
 }
 
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[]) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     // itterate over set of make values
     for(int i = 0; i < OPTIM_VARS; i++) {
         if (mask[i] == 2) {
-            //check coeff
-            if ( (i >= 0) && (i <= 9) ) {
-                if (i <= 6) {//Gamma (0-6)
-                    newInd.coeff.gamma[i] = p2.coeff.gamma[i];
-                } 
-                else if (i <= 9) {//Tau (7-9)
-                    newInd.coeff.tau[i-7] = p2.coeff.tau[i-7];
+            // alter thrust coefficients only when using a thruster
+            if (thrust.type) {
+                //check coeff
+                if ( (i >= 0) && (i <= 9) ) {
+                    if (i <= 6) {//Gamma (0-6)
+                        newInd.coeff.gamma[i] = p2.coeff.gamma[i];
+                    } 
+                    else if (i <= 9) {//Tau (7-9)
+                        newInd.coeff.tau[i-7] = p2.coeff.tau[i-7];
+                    }
+                }
+                if ( (i>= 14) && (i<= 18) ) {//coast (14-18)
+                    newInd.coeff.coast[i-14] = p2.coeff.coast[i-14];
                 }
             }
-            if ( (i>= 14) && (i<= 18) ) {//coast (14-18)
-                newInd.coeff.coast[i-14] = p2.coeff.coast[i-14];
-            }
-
             //check other variables
             if (i == TRIPTIME_OFFSET) { //tripTime
                 newInd.tripTime = p2.tripTime;
@@ -161,7 +163,7 @@ double getRand(double max, std::mt19937_64 & rng) {
 
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, geneticConstants& gConstant) {
+rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, geneticConstants& gConstant, thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -193,21 +195,23 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
- 
-        //check coeff
-        if ( (mutatedValue >= 0) && (mutatedValue <= 9) ) {
-            if (mutatedValue <= 6) {//Gamma (0-6)
-                newInd.coeff.gamma[mutatedValue] += getRand(gConstant.gamma_mutate_scale * annealing, rng);
+        // alter thrust coefficients only when using a thruster
+        if (thrust.type) {
+            //check coeff
+            if ( (mutatedValue >= 0) && (mutatedValue <= 9) ) {
+                if (mutatedValue <= 6) {//Gamma (0-6)
+                    //newInd.coeff.gamma[mutatedValue] += getRand(10.0 * annealing, rng);
+                }
+                else if (mutatedValue <= 9) {//Tau (7-9)
+                    //newInd.coeff.tau[mutatedValue-7] += getRand(10.0 * annealing, rng);
+                }
             }
-            else if (mutatedValue <= 9) {//Tau (7-9)
-                newInd.coeff.tau[mutatedValue-7] += getRand(gConstant.tau_mutate_scale * annealing, rng);
+            if (mutatedValue >= 14 && mutatedValue <= 18) {//coast (14-18)
+                //newInd.coeff.coast[mutatedValue-14] += getRand(10.0 * annealing, rng);
             }
         }
-        if (mutatedValue >= 14 && mutatedValue <= 18) {//coast (14-18)
-            newInd.coeff.coast[mutatedValue-14] += getRand(gConstant.coast_mutate_scale * annealing, rng);
-        }
-        if (mutatedValue == TRIPTIME_OFFSET) { //Time final
-            newInd.tripTime += SECONDS_IN_YEAR*getRand(gConstant.triptime_mutate_scale * annealing, rng);
+        if (mutatedValue == 13) { //Time final
+            newInd.tripTime += 365*24*3600*getRand(0.5 * annealing, rng);
         }
         if (mutatedValue == ZETA_OFFSET) { //zeta
             newInd.zeta += getRand(gConstant.zeta_mutate_scale * annealing, rng);
@@ -229,19 +233,22 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
 // output: average of the two
-rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2) {
+rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double>& thrust) {
     rkParameters<double> newInd;
-
-    for (int i = 0; i < p1.coeff.gammaSize; i++) {
-        newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
-    }
-    for (int i = 0; i < p1.coeff.tauSize; i++) {
-        newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
-    }
-    for (int i = 0; i < p1.coeff.coastSize; i++) {
-        newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
-    }
     
+    // alter thrust coefficients only when using a thruster
+    if (thrust.type) {
+        for (int i = 0; i < p1.coeff.gammaSize; i++) {
+            //newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
+        }
+        for (int i = 0; i < p1.coeff.tauSize; i++) {
+            //newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
+        }
+        for (int i = 0; i < p1.coeff.coastSize; i++) {
+            //newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
+        }
+    }
+
     newInd.alpha = (p1.alpha/2.0) + (p2.alpha/2.0);
     newInd.beta = (p1.beta/2.0) + (p2.beta/2.0);
     newInd.zeta = (p1.zeta/2.0) + (p2.zeta/2.0);
@@ -254,25 +261,25 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 // Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
 // Output is new individual in pool
 // Can only be used within crossover function in its current state because of int i input
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, geneticConstants& gConstant) {
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, geneticConstants& gConstant, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
-    pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
     if (rng() % 100 < gConstant.mutation_rate * 100) { // a certain chance of mutation
-        pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing, gConstant);
+        pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing, gConstant, thrust);
     }
 
     flipMask(mask); // get the opposite offspring
     pool[poolSize - 1 - (2 * index) - 1] = Individual();
-    pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask);
+    pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
     if (rng() % 100 < gConstant.mutation_rate * 100) {
-        pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing, gConstant);
+        pool[poolSize - 1 - (2 * index) - 1].startParams = mutate(pool[poolSize - 1 - (4 * index) - 1].startParams, rng, annealing, gConstant, thrust);
     }
 }
 
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant) {
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, geneticConstants& gConstant, thruster<double>& thrust) {
     mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
     int mask[OPTIM_VARS];
@@ -282,25 +289,25 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
     // Generate two offspring through each crossover method, total of 8 offspring per parent pair
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_wholeRandom(mask, rng);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_randHalf(mask, rng);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_gammaPos(mask);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for(int i = 0; i < survivorSize / 2; i++){
         crossOver_tauPos(mask);
-        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant);
+        mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 

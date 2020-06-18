@@ -30,7 +30,7 @@ bool changeInBest(double previousBest, double currentBest) {
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's information and anneal value
-void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput, unsigned int &currentGeneration, Individual &individual, double& annealing ) {
+void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
     // Output the information to excel spreadsheet
     ExcelOutput << currentGeneration << ','
                 << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
@@ -42,7 +42,7 @@ void writeCurrentBestToFile(std::ofstream& ExcelOutput, std::ofstream& BinOutput
                 << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
  
     // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(unsigned int));
+    BinOutput.write( (char*)& currentGeneration, sizeof(double));
     // posDiff and velDiff
     BinOutput.write( (char*)& individual.posDiff, sizeof(double));
     BinOutput.write( (char*)& individual.velDiff, sizeof(double));
@@ -91,7 +91,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant) {
+double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust) {
     double calcPerS = 0;
 
     time_t timeSeed = gConstant.time_seed;
@@ -193,18 +193,29 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     int newInd = numThreads; // the whole population is new the first time through the loop
 
     // setup output of generation results over time onto a .csv file
-    std::ofstream generationPerformanceExcel;
-    generationPerformanceExcel.open("BestInGenerations.csv");
+    std::ofstream generationPerformanceBestExcel;
+    generationPerformanceBestExcel.open("BestInGenerations.csv");
     // Set first row in the file be a header for the columns
-    generationPerformanceExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+    generationPerformanceBestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+                               << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+                               << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+                               << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+
+
+   std::ofstream generationPerformanceWorstExcel;
+   generationPerformanceWorstExcel.open("WorstInGenerations.csv");
+   // Set first row in the file be a header for the columns
+    generationPerformanceWorstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
                                << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
                                << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
 
     // setup output of generation results over time onto a .bin file
-    std::ofstream generationPerformanceBin("BestInGenerations.bin", std::ios::binary);
+    std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
+    std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
-    unsigned int generation = 0;    // A counter for number of generations calculated
+
+    double generation = 0;    // A counter for number of generations calculated
     
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     
@@ -216,7 +227,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
 
-        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS); // calculate trajectories for new individuals
+        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < numThreads; k++) { 
@@ -231,14 +242,16 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
         
                 coefficients<double> testcoeff;
-                for (int j = 0; j < testcoeff.gammaSize; j++) {
-                    testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-                }
-                for (int j = 0; j < testcoeff.tauSize; j++) {
-                    testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-                }
-                for (int j = 0; j < testcoeff.coastSize; j++) {
-                    testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                if (thrust.type) {
+                    for (int j = 0; j < testcoeff.gammaSize; j++) {
+                        testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
+                    for (int j = 0; j < testcoeff.tauSize; j++) {
+                        testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
+                    for (int j = 0; j < testcoeff.coastSize; j++) {
+                        testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                    }
                 }
             
                 rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
@@ -264,7 +277,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
-        if (generation % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
             if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * gConstant.anneal_factor;
@@ -276,18 +289,19 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
-        // Write the best and worst Individuals in every 1,000 generations into the files to view progress over generations
-        if (generation % gConstant.write_freq == 0) {
-            writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], new_anneal);
+        // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
+        if (static_cast<int>(generation) % gConstant.write_freq == 0) {
+            writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
+            writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( generation % gConstant.disp_freq == 0) {
+        if ( static_cast<int>(generation) % gConstant.disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
 
         // Create a new generation and increment the generation counter
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant);
+        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant, thrust);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -302,7 +316,9 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
-    writeCurrentBestToFile(generationPerformanceExcel, generationPerformanceBin, generation, inputParameters[0], annealPlacement);
+    // Write the best and worst performing individuals to their respective files
+    writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
+    writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < gConstant.best_count; i++) {
@@ -323,12 +339,14 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1);
+        writeTrajectoryToFile(start, cost, i + 1, thrust);
     }
 
     // Close the performance files now that the algorithm is finished
-    generationPerformanceExcel.close();
-    generationPerformanceBin.close();
+    generationPerformanceBestExcel.close();
+    generationBestPerformanceBin.close();
+    generationPerformanceWorstExcel.close();
+    generationWorstPerformanceBin.close();
 
     delete [] inputParameters;
     delete [] survivors;
@@ -363,9 +381,11 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    geneticConstants gConstant("genetic.config"); // Declare the genetic constants used, with file path being used
+    geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+    thruster<double> thrust(gConstant.thruster_type);
 
-    optimize(numThreads, blockThreads, gConstant);
+
+    optimize(numThreads, blockThreads, gConstant, thrust);
 
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
