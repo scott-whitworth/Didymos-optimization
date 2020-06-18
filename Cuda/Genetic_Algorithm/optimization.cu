@@ -67,6 +67,30 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
+void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual) {
+    ExcelOutput << currentGeneration << ',';
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
+    }
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
+    }
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
+    }
+
+    BinOutput.write((char*)&currentGeneration, sizeof(double));
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
+    }
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
+    }
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
+    }
+}
+
 // Utility function to display the currently best individual onto the terminal while the algorithm is still running
 // Input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
 void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
@@ -214,6 +238,17 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
+    if (thrust.type) {
+        std::ofstream generationThrustBestExcel, generationThrustWorstExcel;
+        generationThrustBestExcel.open("BestThrustGens.csv");
+        generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+        generationThrustWorstExcel.open("WorstThrustGens.csv");
+        generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+
+        std::ofstream generationThrustBestBin, generationThrustWorstBin;
+        generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
+        generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
+    }
 
     double generation = 0;    // A counter for number of generations calculated
     
@@ -293,6 +328,11 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         if (static_cast<int>(generation) % gConstant.write_freq == 0) {
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
+
+            if (thrust.type) {
+                writeThrustToFiles(generationThrustBestExecl, generationThrustBestBin, generation, inputParameters[0]);
+                writeThrustToFiles(generationThrustWorstExecl, generationThrustWorstBin, generation, inputParameters[numThreads-1]);
+            }
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -316,9 +356,6 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
-    // Write the best and worst performing individuals to their respective files
-    writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
-    writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < gConstant.best_count; i++) {
@@ -347,6 +384,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     generationBestPerformanceBin.close();
     generationPerformanceWorstExcel.close();
     generationWorstPerformanceBin.close();
+
+    if (thrust.type) {
+        generationThrustBestExcel.close();
+        generationThrustWorstExcel.close();
+        generationThrustBestBin.close();
+        generationThrustWorstBin.close();
+    }
 
     delete [] inputParameters;
     delete [] survivors;
