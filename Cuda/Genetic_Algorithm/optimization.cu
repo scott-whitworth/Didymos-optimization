@@ -30,7 +30,7 @@ bool changeInBest(double previousBest, double currentBest) {
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, unsigned int &currentGeneration, Individual &individual, double& annealing ) {
+void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
     // Output the information to excel spreadsheet
     ExcelOutput << currentGeneration << ','
                 << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
@@ -42,7 +42,7 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
                 << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
  
     // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(unsigned int));
+    BinOutput.write( (char*)& currentGeneration, sizeof(double));
     // posDiff and velDiff
     BinOutput.write( (char*)& individual.posDiff, sizeof(double));
     BinOutput.write( (char*)& individual.velDiff, sizeof(double));
@@ -215,7 +215,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
 
-    unsigned int generation = 0;    // A counter for number of generations calculated
+    double generation = 0;    // A counter for number of generations calculated
     
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     
@@ -277,7 +277,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
-        if (generation % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
             if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * gConstant.anneal_factor;
@@ -290,13 +290,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         std::cout << '.';
 
         // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
-        if (generation % gConstant.write_freq == 0) {
+        if (static_cast<int>(generation) % gConstant.write_freq == 0) {
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( generation % gConstant.disp_freq == 0) {
+        if ( static_cast<int>(generation) % gConstant.disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
 
