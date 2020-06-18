@@ -78,6 +78,7 @@ void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, do
     for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.coast[i] << ',';
     }
+    ExcelOutput << std::endl;
 
     BinOutput.write((char*)&currentGeneration, sizeof(double));
     for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
