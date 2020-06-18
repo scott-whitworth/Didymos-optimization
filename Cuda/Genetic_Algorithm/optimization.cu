@@ -239,14 +239,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
+    std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
     if (thrust.type) {
-        std::ofstream generationThrustBestExcel, generationThrustWorstExcel;
         generationThrustBestExcel.open("BestThrustGens.csv");
         generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
         generationThrustWorstExcel.open("WorstThrustGens.csv");
         generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
 
-        std::ofstream generationThrustBestBin, generationThrustWorstBin;
         generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
         generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
     }
@@ -331,8 +330,8 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
 
             if (thrust.type) {
-                writeThrustToFiles(generationThrustBestExecl, generationThrustBestBin, generation, inputParameters[0]);
-                writeThrustToFiles(generationThrustWorstExecl, generationThrustWorstBin, generation, inputParameters[numThreads-1]);
+                writeThrustToFiles(generationThrustBestExcel, generationThrustBestBin, generation, inputParameters[0]);
+                writeThrustToFiles(generationThrustWorstExcel, generationThrustWorstBin, generation, inputParameters[numThreads-1]);
             }
         }
 
