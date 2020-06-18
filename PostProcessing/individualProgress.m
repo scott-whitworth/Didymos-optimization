@@ -135,5 +135,91 @@ xlabel('generations'), ylabel('rate')
 
 linkaxes([sp1,sp2,sp3,sp4,sp5,sp6,psp1,psp2,psp3,psp4,fsp1,fsp2,fsp3,fsp4],'x')
 
+%Changes Per Generation
+figure(5)
+% For each of the initial parameters
+% plot value, delta and anealing
+%Alpha initial
+cpgsp1 = subplot(3,4,1);
+plot(A(1,:), A(16,:))
+title('Initial position angle')
+xlabel('generations'), ylabel('\alpha_0 (rad.)')
+
+%Alpha change
+cpgsp2 = subplot(3,4,5);
+plot(A(1,2:end), abs(A(16,2:end) - A(16,1:end-1) ))
+title('Change in position angle')
+xlabel('gen.'), ylabel('abs(delta \alpha_0 (rad.))')
+set(gca,'YScale','log')
+
+%Anealing
+cpgsp3 = subplot(3,4,9);
+plot(A(1,:), A(19,:))
+title('Annealing rate')
+xlabel('generations'), ylabel('rate')
+
+
+% Beta over generations
+cpgsp4 = subplot(3,4,2);
+plot(A(1,:), A(17,:))
+title('Initial in-plane velocity angle')
+xlabel('generations'), ylabel('\beta_0 (rad.)')
+
+%Beta change
+cpgsp5 = subplot(3,4,6);
+plot(A(1,2:end), abs(A(17,2:end) - A(17,1:end-1) ))
+title('Change in in-plane velocity angle')
+xlabel('gen.'), ylabel('abs(delta \beta_0 (rad.))')
+set(gca,'YScale','log')
+
+%Anealing
+cpgsp6 = subplot(3,4,10);
+plot(A(1,:), A(19,:))
+title('Annealing rate')
+xlabel('generations'), ylabel('rate')
+
+% Zeta over generations
+cpgsp7 = subplot(3,4,3);
+plot(A(1,:), A(18,:))
+title('Initial out-of-plane velocity angle')
+xlabel('generations'), ylabel('\zeta_0 (rad.)')
+
+%Zeta change
+cpgsp8 = subplot(3,4,7);
+plot(A(1,2:end), abs(A(18,2:end) - A(18,1:end-1) ))
+title('Change in out-of-plane velocity angle')
+xlabel('gen.'), ylabel('abs(delta \zeta_0 (rad.))')
+set(gca,'YScale','log')
+
+%Anealing
+cpgsp9 = subplot(3,4,11);
+plot(A(1,:), A(19,:))
+title('Annealing rate')
+xlabel('gen.'), ylabel('rate')
+
+
+% Trip Time
+cpgsp10 = subplot(3,4,4);
+plot(A(1,:), A(20,:))
+title('Trip time')
+xlabel('gen.'), ylabel('t (s)')
+
+%Trip Time change
+cpgsp11 = subplot(3,4,8);
+plot(A(1,2:end), abs(A(20,2:end) - A(20,1:end-1) ))
+title('Change in Trip Time')
+xlabel('gen.'), ylabel('abs(delta t (s))')
+set(gca,'YScale','log')
+
+%Anealing
+cpgsp12 = subplot(3,4,12);
+plot(A(1,:), A(19,:))
+title('Annealing rate')
+xlabel('generations'), ylabel('rate')
+
+
+suptitle('Parameter Deltas')
+linkaxes([cpgsp1,cpgsp2,cpgsp3,cpgsp4,cpgsp5,cpgsp6,cpgsp7,cpgsp8,cpgsp9,cpgsp10,cpgsp11,cpgsp12],'x')
+
 
 fclose(fin);
