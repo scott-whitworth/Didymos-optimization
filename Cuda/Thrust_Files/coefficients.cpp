@@ -8,7 +8,7 @@
 #include "coefficients.h"
 #include <iomanip> // setprecision(int)
 
-template <class T> void initCoefficient(double x[], coefficients<T> & coeff) {
+template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cudaConstants& cConstants) {
     // in-plane angle
     for (int i = 0; i < coeff.gammaSize; i++)
     {
@@ -25,6 +25,8 @@ template <class T> void initCoefficient(double x[], coefficients<T> & coeff) {
     {
         coeff.coast[i] = x[i+COAST_OFFSET];
     }
+    
+    coeff.coastThreshold = cConstants.coast_threshold;
 }
 
 template <class T> std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e) {

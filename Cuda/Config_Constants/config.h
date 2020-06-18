@@ -3,7 +3,7 @@
 
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
-struct geneticConstants {
+struct cudaConstants {
     double time_seed; // Seed used for randomization within optimize function, if it's set to -1 the seed is set to time(0) for genuine randomness
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double speed_threshold; // threshold for desired speed the spacecraft must make
@@ -32,11 +32,31 @@ struct geneticConstants {
     // Used in thruster construction and corresponding calculations
     int thruster_type;
 
+    double coast_threshold;
+    double c3energy; // This value determines vEscape
+    double v_escape; // This variable is not directly accessible in the config file as it is dependent on c3energy
+
+    // Final conditions of the earth on impact date
+    double r_fin_earth;
+    double theta_fin_earth;
+    double z_fin_earth;
+    double vr_fin_earth;
+    double vtheta_fin_earth;
+    double vz_fin_earth;
+    // Final conditions of the asteriod on impact date
+    double r_fin_ast;
+    double theta_fin_ast;
+    double z_fin_ast;
+    double vr_fin_ast;
+    double vtheta_fin_ast;
+    double vz_fin_ast;
+
+
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
-    geneticConstants();
+    cudaConstants();
 
     // Constructor, accepts a string argument for the config file path
-    geneticConstants(std::string configFile);
+    cudaConstants(std::string configFile);
 
     // Sets properties to what is within the config file
     // Input: Contents of genetic.config file that is in same folder as the executable file

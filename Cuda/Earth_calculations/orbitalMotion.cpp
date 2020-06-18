@@ -45,21 +45,21 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 //taken from CPU code to output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust) {
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, cudaConstants& cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
+  elements<double> asteroid = elements<double>(cConstants.r_fin_ast, cConstants.theta_fin_ast, cConstants.z_fin_ast, cConstants.vr_fin_ast, cConstants.vtheta_fin_ast, cConstants.vz_fin_ast);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
   elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);
   
   // setting initial conditions of the spacecraft
   elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta + asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r), earth.z,
-                                                 earth.vr + cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*vEscape, earth.vtheta + cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*vEscape,
-                                                 earth.vz + sin(x[ZETA_OFFSET])*vEscape);
+                                                 earth.vr + cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*cConstants.v_escape, earth.vtheta + cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*cConstants.v_escape,
+                                                 earth.vz + sin(x[ZETA_OFFSET])*cConstants.v_escape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -70,7 +70,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 
   // setup of thrust angle calculations based off of optimized coefficients
   coefficients<double> coeff;
-  initCoefficient(x,coeff);
+  initCoefficient(x,coeff, cConstants);
   // Assigning coast threshold (now done in coefficients because is a constant)
 
   // Assigning wetMass
@@ -142,10 +142,10 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   return cost;
 }
 
-void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust) {
+void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, cudaConstants& cConstants) {
   double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
-  trajectoryPrint(start, numStep, cost, i, yp, thrust);
+  trajectoryPrint(start, numStep, cost, i, yp, thrust, cConstants);
   //writes final optimization values to a seperate file
   std::ofstream output;
 

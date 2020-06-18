@@ -3,10 +3,10 @@
 <h2>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h2>
 <h2>For changing what config file is used, the file address can be changed where gConstant is declared within the main function</h2>
 <h2>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h2>
-<h2>As of writing (June 17th, 2020), the program is set to require the file genetic.config to be in the same folder as the executable and additional note that the optimizeVector.bin file must be one folder outside of the executable's (address is "../optimizedVector.bin") </h2>
+<h2>As of writing (June 18th, 2020), the program is set to require the file genetic.config to be in the folder Config_Constants that is a neighboring folder to where the the executable is located (address is "../Config_Constants/genetic.config") and additional note that the optimizeVector.bin file must be one folder outside of the executable's (address is "../optimizedVector.bin") </h2>
 
 <h2>Future Considerations</h2>
-Consider expanding on either current structure/config to contain elements beyond the genetic algorithm (mission parameters for example) or have multiple config files for the various components.  Also expansion to have the program allow easy changes to other config files to allow multiple versions without needing to recompile with address changes (user prompt?  A config file for choosing config files?).  Consider having the address for optimizedVector.bin either be within same folder as executable, or have these dependencies (or where file outputs are stored) also be malleable variables within the config files.
+Consider expanding on the config holding more variables that impact the algorithm or its conditions.  Also expansion to have the program allow easy changes to other config files to allow multiple versions without needing to recompile with address changes (user prompt?  A config file for choosing config files?).  Consider having the address for optimizedVector.bin either be within same folder as executable, or have these dependencies (or where file outputs are stored) also be malleable variables within the config files.
 
 
 <h2>Variables & Description</h2>
@@ -36,3 +36,7 @@ Consider expanding on either current structure/config to contain elements beyond
 - alpha_mutate_scale: Affect the max range for mutating the alpha values
 
 - thruster_type: Chooses what thruster is used
+- c3energy: The specific energy of the spacecraft when exiting the earth's sphere of influence, determines the maganitude of the initial velocity
+
+- earth conditions (such as r_fin_earth, vtheta_fin_earth): The final position and velocity of earth on impact date, used in determining earth's positions across the possible launch window time-frame
+- asteriod conditions (such as r_fin_ast, vz_fin_ast): The final position and velocity of the asteriod on impact date, used in determing the target location and velocity to compare with results of the spacecraft's trajectory

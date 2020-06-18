@@ -3,19 +3,21 @@
 #include <string>
 #include <time.h>
 #include "config.h"
+#include <math.h>
+#include "../constants.h"
 
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
-geneticConstants::geneticConstants() {
+cudaConstants::cudaConstants() {
     geneticFileRead("genetic.config");
 }
 // Operates same as default, however uses configFile as address for where the config file to be used is located
-geneticConstants::geneticConstants(std::string configFile) {
+cudaConstants::cudaConstants(std::string configFile) {
     geneticFileRead(configFile);
 }
 
 
 //http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
-void geneticConstants::geneticFileRead(std::string fileName) {
+void cudaConstants::geneticFileRead(std::string fileName) {
 
     std::string line;
     std::ifstream configFile;
@@ -87,6 +89,49 @@ void geneticConstants::geneticFileRead(std::string fileName) {
                 }
                 else if (variableName == "alpha_mutate_scale") {
                     this->alpha_mutate_scale = std::stod(variableValue);
+                }
+                else if (variableName == "coast_threshold") {
+                    this->coast_threshold = std::stod(variableValue);
+                }
+                else if (variableName == "c3energy") { // Determine's not just c3energy, but also v_escape
+                    this->c3energy = std::stod(variableValue);
+                    this->v_escape = sqrt(this->c3energy)/AU;
+                }
+                else if (variableName == "r_fin_earth") {
+                    this->r_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "theta_fin_earth") {
+                    this->theta_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "z_fin_earth") {
+                    this->z_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vr_fin_earth") {
+                    this->vr_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vtheta_fin_earth") {
+                    this->vtheta_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vz_fin_earth") {
+                    this->vz_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "r_fin_ast") {
+                    this->r_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "theta_fin_ast") {
+                    this->theta_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "z_fin_ast") {
+                    this->z_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vr_fin_ast") {
+                    this->vr_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vtheta_fin_ast") {
+                    this->vtheta_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vz_fin_ast") {
+                    this->vz_fin_ast = std::stod(variableValue);
                 }
                 else if (variableName == "time_seed" && variableValue != "NONE") { // If the conifguration sets time_seed to NONE then time_seed is set to (time(0)) 
                     this->time_seed = std::stod(variableValue);

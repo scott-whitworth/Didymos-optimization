@@ -2,6 +2,7 @@
 #define earthInfo_h
 
 #include "../Motion_Eqns/elements.h"
+#include "../Config_Constants/config.h"
 
 class EarthInfo {
     private:
@@ -35,7 +36,7 @@ class EarthInfo {
     public:
 
     // Used to initialize the earth calculation data. Fills up earthCon.
-    EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc);
+    EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, cudaConstants& cConstants);
 
     // Returns the interpolated conditions of earth for a given time input.
     elements<double> getCondition(const double & currentTime);
