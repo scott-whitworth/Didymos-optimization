@@ -80,7 +80,11 @@ title('Initial position angle')
 xlabel('generations'), ylabel('\alpha_0 (rad.)')
 % Beta over generations
 subplot(3,1,2)
+plot(A(1,:), A(17,:))
+title('Initial in-plane velocity angle')
+xlabel('generations'), ylabel('\beta_0 (rad.)')
 % Zeta over generations
+subplot(3,1,3)
 plot(A(1,:), A(18,:))
 title('Initial out-of-plane velocity angle')
 xlabel('generations'), ylabel('\zeta_0 (rad.)')
