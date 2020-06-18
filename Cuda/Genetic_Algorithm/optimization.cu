@@ -224,7 +224,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd);
+        initializePosition(inputParameters + (numThreads - newInd), newInd, gConstant);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
 

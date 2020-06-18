@@ -1,6 +1,6 @@
 #ifndef GENETICCONFIG_h
 #define GENETICCONFIG_h
-
+#include <iostream>
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
@@ -36,20 +36,6 @@ struct cudaConstants {
     double c3energy; // This value determines vEscape
     double v_escape; // This variable is not directly accessible in the config file as it is dependent on c3energy
 
-    // Final conditions of the earth on impact date
-    double r_fin_earth;
-    double theta_fin_earth;
-    double z_fin_earth;
-    double vr_fin_earth;
-    double vtheta_fin_earth;
-    double vz_fin_earth;
-    // Final conditions of the asteriod on impact date
-    double r_fin_ast;
-    double theta_fin_ast;
-    double z_fin_ast;
-    double vr_fin_ast;
-    double vtheta_fin_ast;
-    double vz_fin_ast;
 
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
@@ -64,6 +50,7 @@ struct cudaConstants {
     void geneticFileRead(std::string fileName);
 };
 
+std::ostream& operator<<(std::ostream& os, cudaConstants& constants);
 
 #include "config.cpp"
 

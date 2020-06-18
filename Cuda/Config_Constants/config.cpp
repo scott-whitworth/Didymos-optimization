@@ -97,42 +97,6 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                     this->c3energy = std::stod(variableValue);
                     this->v_escape = sqrt(this->c3energy)/AU;
                 }
-                else if (variableName == "r_fin_earth") {
-                    this->r_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "theta_fin_earth") {
-                    this->theta_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "z_fin_earth") {
-                    this->z_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "vr_fin_earth") {
-                    this->vr_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "vtheta_fin_earth") {
-                    this->vtheta_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "vz_fin_earth") {
-                    this->vz_fin_earth = std::stod(variableValue);
-                }
-                else if (variableName == "r_fin_ast") {
-                    this->r_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "theta_fin_ast") {
-                    this->theta_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "z_fin_ast") {
-                    this->z_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vr_fin_ast") {
-                    this->vr_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vtheta_fin_ast") {
-                    this->vtheta_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vz_fin_ast") {
-                    this->vz_fin_ast = std::stod(variableValue);
-                }
                 else if (variableName == "time_seed" && variableValue != "NONE") { // If the conifguration sets time_seed to NONE then time_seed is set to (time(0)) 
                     this->time_seed = std::stod(variableValue);
                 }
@@ -151,3 +115,30 @@ void cudaConstants::geneticFileRead(std::string fileName) {
     }
 }
 
+
+
+std::ostream& operator<<(std::ostream& os, cudaConstants& constants ) {
+    os << "time_seed:" << constants.time_seed;
+    os << "\npos_threshold:" << constants.pos_threshold;
+    os << "\nspeed_threshold: " << constants.speed_threshold;
+    os << "\nanneal_factor: " << constants.anneal_factor;
+    os << "\nwrite_freq: " << constants.write_freq;
+    os << "\ndisp_freq: " << constants.disp_freq;
+    os << "\nbest_count: " << constants.best_count;
+    os << "\nchange_check: " << constants.change_check;
+    os << "\nanneal_initial: " << constants.anneal_initial;
+    os << "\nmutation_rate: " << constants.mutation_rate; 
+    os << "\ndouble_mutation_rate: " << constants.double_mutation_rate;
+    os << "\ntriple_mutation_rate: " << constants.triple_mutation_rate;
+    os << "\ngamma_mutate_scale: " << constants.gamma_mutate_scale; 
+    os << "\ntau_mutate_scale: " << constants.tau_mutate_scale;
+    os << "\ncoast_mutate_scale: " << constants.coast_mutate_scale;
+    os << "\ntriptime_mutate_scale: " << constants.triptime_mutate_scale;
+    os << "\nzeta_mutate_scale: " << constants.zeta_mutate_scale;
+    os << "\nbeta_mutate_scale: "<< constants.beta_mutate_scale;
+    os << "\nalpha_mutate_scale: " << constants.alpha_mutate_scale;
+    os << "\nthruster_type: " << constants.thruster_type;
+    os << "\ncoast_threshold: " << constants.coast_threshold;
+    os << "\nc3energy: " << constants.c3energy;
+    return os;
+}
