@@ -2,13 +2,12 @@
 #define coefficients_h
 
 #include "../constants.h"
-#include "../Config_Constants/config.h"
 #include <iostream>
 
 //Utility to calculate the coefficients vector
 //Coefficients struct holds gamma and tau values
 template <class T> struct coefficients {
-    template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cudaConstants& cConstants);
+    template <class T> void initCoefficient(double x[], coefficients<T> & coeff);
     
     // fourth order fourier series
     // setting the size of gamma array (in-plane coefficients angle)
@@ -26,7 +25,8 @@ template <class T> struct coefficients {
     T coast[coastSize];
 
     // threshold: after sine squared of the fourier series is evaluated, if above the threshold, acceleration occurs. When below, coasting occurs.
-    T coastThreshold;
+    // now fixed to a constant
+    T coastThreshold = COAST_THRESHOLD;
 
     //overload the stream output for elements used for writing to a file
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const coefficients<T> & e);

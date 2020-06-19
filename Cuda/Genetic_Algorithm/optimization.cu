@@ -1,5 +1,6 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 
+#include "../constants.h" //used for wetMass
 #include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
@@ -224,7 +225,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd, gConstant);
+        initializePosition(inputParameters + (numThreads - newInd), newInd);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
 
@@ -338,7 +339,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust, gConstant);
+        writeTrajectoryToFile(start, cost, i + 1, thrust);
     }
 
     // Close the performance files now that the algorithm is finished
@@ -361,9 +362,7 @@ int main () {
     std::cout << "Device Number: 0 \n";
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
-
-    cudaConstants cConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
-
+    
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
@@ -371,7 +370,7 @@ int main () {
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
-    launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
+    launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = 32;
@@ -382,10 +381,11 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    thruster<double> thrust(cConstants.thruster_type);
+    cudaConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+    thruster<double> thrust(gConstant.thruster_type);
 
 
-    optimize(numThreads, blockThreads, cConstants, thrust);
+    optimize(numThreads, blockThreads, gConstant, thrust);
 
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();

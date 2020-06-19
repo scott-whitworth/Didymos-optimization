@@ -9,7 +9,7 @@
 using namespace std;
 
 
-EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, cudaConstants& cConstants) {
+EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc) {
     ////////////////////////////////////
     ///Setting up initial information///
     ////////////////////////////////////

@@ -8,6 +8,7 @@
 #include "../Thrust_Files/coefficients.h"
 #include "../Thrust_Files/calcFourier.h"
 #include "../Thrust_Files/thruster.h" // used to pass in a thruster type
+#include "../constants.h"
 
 //Calculates the corresponding k for the Runge-Kutta computation
 // Units for k

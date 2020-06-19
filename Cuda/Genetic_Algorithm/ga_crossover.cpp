@@ -6,10 +6,12 @@
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Config_Constants/config.h"
-#include "../Thrust_Files/thruster.h"
 #include "ga_crossover.h"
 #include <iostream>
 #include <chrono>
+
+#define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
+
 
 enum maskValue {
     PARTNER1 = 1,
@@ -17,28 +19,26 @@ enum maskValue {
     AVG,
 };
 
-#define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
 
-// NO LONGER IN USE, USING crossOver_average INSTEAD
 // Creates a random bifurcation mask
 // Randomly picks one index to be the start of the '2's from mask
 // input: rng - a constructed mt19937_64 random number generator
 // in/out: mask - all data will be overwritten
 //              - Based on random index, first selection will be 1's, last selection will be 2's
 //              - ex: [1, 1, 1, 1, 2, 2]
-/*void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
+void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
     int crossIndex = rng() % (OPTIM_VARS-1);
     //cout << "Random Index: " << crossIndex << endl;
     for (int i = 0; i < OPTIM_VARS; i++) {
         if (i > crossIndex) {
-            mask[i] = PARTNER2;
+            mask[i] = 2;
         }
         else {
-            mask[i] = PARTNER1;
+            mask[i] = 1;
         }        
     }
     return;
-}*/
+}
 
 // Creates a random mask
 // Each element in a mask is randomly set to either 1 or 2
@@ -47,46 +47,14 @@ enum maskValue {
 void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
     for (int i = 0; i < OPTIM_VARS; i++ ) {
         if (rng() % 2) { //Coin flip, either 1/0
-            mask[i] = PARTNER2;
+            mask[i] = 2;
         }
         else {
-            mask[i] = PARTNER1;
+            mask[i] = 1;
         }
     }
     return;
 }
-
-//NO LONGER IN USE. THIS AND crossOver_tauPos WERE REPLACED BY crossOver_bundleVars
-//Create a mask the flips just the gamma coefficients
-// input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
-// 2's correspond to Gamma coefficients
-/*void crossOver_gammaPos(int mask[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
-        if ( (i >= GAMMA_OFFSET) && (i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE) ) ) {
-            mask[i] = PARTNER2;
-        } 
-        else {
-            mask[i] = PARTNER1;
-        }
-    }
-    return;
-}*/
-
-//NO LONGER IN USE. THIS AND crossOver_gammaPos WERE REPLACED BY crossOver_bundleVars
-//Create a mask the flips just the tau coefficients
-// input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
-// 2's correspond to tau coefficients
-/*void crossOver_tauPos(int mask[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
-        if ( (i >= TAU_OFFSET) && (i < (TAU_OFFSET + TAU_ARRAY_SIZE) ) ) {
-            mask[i] = PARTNER2;
-        }
-        else {
-            mask[i] = PARTNER1;
-        }
-    }
-    return;
-}*/
 
 // This crossover method randomly chooses between partners for each variable. Similar to crossOver_wholeRandom, but this keeps all parameters for each variable together
 void crossOver_bundleVars(int mask[], std::mt19937_64 & rng) {
@@ -124,21 +92,53 @@ void crossOver_bundleVars(int mask[], std::mt19937_64 & rng) {
 
 void crossOver_average(int mask[]) {
     for (int i = 0; i < OPTIM_VARS; i++) {
-        mask[i] = AVG;
+        mask[i] = 3;
     }
     return;
 }
 
-//Utility to flip the polarity of a mask
-// input:  mask is an array of size OPTIM_VARS, input with either 1 or 2 as a mask
-// output: each 1 in mask will be reassigned to be a 2, each 2 will be reassigned 1, 3's remain as 3's
-void flipMask(int mask[]) {
+// CURRENTLY NOT IN USE. THIS FUNCTION AND crossOver_tauPos WERE REPLACED BY crossOver_bundleVars
+//Create a mask the flips just the gamma coefficients
+// input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
+// 2's correspond to Gamma coefficients
+/*void crossOver_gammaPos(int mask[]) {
     for (int i = 0; i < OPTIM_VARS; i++) {
-        if (mask[i] == PARTNER1) {
-            mask[i] = PARTNER2;
+        if ( (i >= GAMMA_OFFSET) && (i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE) ) ) {
+            mask[i] = 2;
+        } 
+        else {
+            mask[i] = 1;
+        }
+    }
+    return;
+}*/
+
+// CURRENTLY NOT IN USE. THIS FUNCTION AND crossOver_tauPos WERE REPLACED BY crossOver_bundleVars
+//Create a mask the flips just the tau coefficients
+// input mask: over writes all data with [1 ... 1, 2, 2, ... 2, 2, 1 ... 1]
+// 2's correspond to tau coefficients
+/*void crossOver_tauPos(int mask[]) {
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        if ( (i >= TAU_OFFSET) && (i < (TAU_OFFSET + TAU_ARRAY_SIZE) ) ) {
+            mask[i] = 2;
         }
         else {
-            mask[i] = PARTNER1;
+            mask[i] = 1;
+        }
+    }
+    return;
+}*/
+
+//Utility to flip the polarity of a mask
+// input:  mask is an array of size OPTIM_VARS, input with either 1 or 2 as a mask
+// output: each 1 in mask will be reassigned to be a 2, each 2 will be reassigned 1
+void flipMask(int mask[]) {
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        if (mask[i] == 1) {
+            mask[i] = 2;
+        }
+        else {
+            mask[i] = 1;
         }
     }
     return;
@@ -154,6 +154,7 @@ void copyMask(int maskIn[], int maskOut[]) {
 // Display mask contents onto the terminal
 void printMask(int mask[]) {
     std::cout << "[";
+
     for(int i = 0; i < OPTIM_VARS; i++) {
         std::cout << mask[i];
         // If not the last item, need a comma to seperate between the items in the display
@@ -165,9 +166,10 @@ void printMask(int mask[]) {
 }
 
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust) {
-    rkParameters<double> newInd = p1; // Default to using the value from parent 1
+    rkParameters<double> newInd = p1;
+
         
-// Only calculate values pertaining to thrust if a thruster is being used
+    // Only calculate values pertaining to thrust if a thruster is being used
     if (thrust.type != thruster<double>::NO_THRUST) {
         // Iterate through the gamma values
         for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
@@ -268,12 +270,12 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
-        // Alter thrust coefficients only when using a thruster
+        // alter thrust coefficients only when using a thruster
         if (thrust.type != thruster<double>::NO_THRUST) {
             //check coeff
             if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) {
                 newInd.coeff.gamma[mutatedValue] += getRand(gConstant.gamma_mutate_scale * annealing, rng);
-            }        
+            }
             else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET+TAU_ARRAY_SIZE-1))) {//Tau (7-9)
                 newInd.coeff.tau[mutatedValue-7] += getRand(gConstant.tau_mutate_scale * annealing, rng);
             }
@@ -284,16 +286,17 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
         if (mutatedValue == TRIPTIME_OFFSET) { //Time final
             newInd.tripTime += SECONDS_IN_YEAR*getRand(gConstant.triptime_mutate_scale * annealing, rng);
         }
-        else if (mutatedValue == ZETA_OFFSET) { //zeta
+        if (mutatedValue == ZETA_OFFSET) { //zeta
             newInd.zeta += getRand(gConstant.zeta_mutate_scale * annealing, rng);
         }
-        else if (mutatedValue == BETA_OFFSET) { //beta
+        if (mutatedValue == BETA_OFFSET) { //beta
             newInd.beta += getRand(gConstant.beta_mutate_scale * annealing, rng);
         }
-        else if (mutatedValue == ALPHA_OFFSET) { //alpha
+        if (mutatedValue == ALPHA_OFFSET) { //alpha
             newInd.alpha += getRand(gConstant.alpha_mutate_scale * annealing, rng);
         }
     }
+    
 
     return newInd;    
 }
@@ -308,15 +311,15 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     rkParameters<double> newInd;
     
     // alter thrust coefficients only when using a thruster
-    if (thrust.type != thruster<double>::NO_THRUST) {
+    if (thrust.type) {
         for (int i = 0; i < p1.coeff.gammaSize; i++) {
-           // newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
+            //newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
         }
         for (int i = 0; i < p1.coeff.tauSize; i++) {
-          //  newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
+            //newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
         }
         for (int i = 0; i < p1.coeff.coastSize; i++) {
-           // newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
+            //newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
         }
     }
 
@@ -332,7 +335,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 // Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
 // Output is new individual in pool
 // Can only be used within crossover function in its current state because of int i input
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int& index, int i, double annealing, int poolSize, mt19937_64 & rng, cudaConstants& gConstant, thruster<double>& thrust) {
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, cudaConstants& gConstant, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
     pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
@@ -355,11 +358,8 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
 
     int mask[OPTIM_VARS];
 
-//            function "mutateNewIndividual(Individual *, Individual *, int *, int  , int, double, int, std::mt19937_64 &, cudaConstants &, thruster<double> &)"
-//            function "mutateNewIndividual(Individual *, Individual *, int *, int &, int, double, int, std::mt19937_64 &, cudaConstants &, thruster<double> &)"
-//            argument types are:          (Individual *, Individual *, int *, int  , int, double, int, std::mt19937_64  , cudaConstants  , thruster<double>)
-
     int index = 0;
+
     // Generate two offspring through each crossover method, total of 8 offspring per parent pair
     for (int i = 0; i < survivorSize / 2; i++) {
         crossOver_wholeRandom(mask, rng);

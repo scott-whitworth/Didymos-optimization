@@ -4,7 +4,7 @@
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
-    double time_seed; // Seed used for randomization within optimize function, if it's set to -1 the seed is set to time(0) for genuine randomness
+    double time_seed; // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0) for genuine randomness
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double speed_threshold; // threshold for desired speed the spacecraft must make
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
@@ -36,6 +36,23 @@ struct cudaConstants {
     double c3energy; // This value determines vEscape
     double v_escape; // This variable is not directly accessible in the config file as it is dependent on c3energy
 
+    // Currently (June 19th) the following properties are not implemented
+    int dry_mass;
+    int wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config
+
+    // Currently running into what appears to be critical rounding errors
+    double r_fin_ast;
+    double theta_fin_ast;
+    double z_fin_ast;
+    double vr_fin_ast;
+    double vtheta_fin_ast;
+    double vz_fin_ast;
+    double r_fin_earth;
+    double theta_fin_earth;
+    double z_fin_earth;
+    double vr_fin_earth;
+    double vtheta_fin_earth;
+    double vz_fin_earth;
 
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()

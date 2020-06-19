@@ -5,7 +5,6 @@
 #include "../Motion_Eqns/elements.h"
 #include "../constants.h"
 #include "../Earth_calculations/earthInfo.h"
-#include "../Config_Constants/config.h"
 
 // an Individual is a member of the genetric algorithm's population and has set of parameters and resulting position and velocity
 struct Individual {
@@ -17,7 +16,7 @@ struct Individual {
     double velDiff; // difference in velocity between spacecraft and asteroid at end of run
 
     // get the inital position of the spacecraft according to this Individual's launch time
-    void initialize(cudaConstants& cConstants);
+    void initialize();
 
     // Calculates a cost value to quantitatively evaluate this Individual
     double getCost();
