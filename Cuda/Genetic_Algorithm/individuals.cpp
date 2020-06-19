@@ -11,7 +11,7 @@ double Individual::getCost(double & ratio) {
 }
 
 bool Individual::operator>(Individual &other) {
-    if (this->getCost() > other.getCost()) {
+    if (this->cost > other.cost {
         return true;
     }
     else {
@@ -20,7 +20,7 @@ bool Individual::operator>(Individual &other) {
 }
 
 bool Individual::operator<(Individual &other) {
-    if (this->getCost() < other.getCost()) {
+    if (this->cost < other.cost {
         return true;
     }
     else {
@@ -29,7 +29,7 @@ bool Individual::operator<(Individual &other) {
 }
 
 bool Individual::operator==(Individual &other) {
-    if (this->getCost() == other.getCost()) {
+    if (this->cost == other.cost) {
         return true;
     }
     else {
