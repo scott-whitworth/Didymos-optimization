@@ -36,13 +36,13 @@ suptitle('\gamma coefficients')
 
 % Tau
 figure(2)
-subplot(2,2,1)
+t0 = subplot(2,2,1);
 plot(A(1,:),A(9,:))
 xlabel('generations'), ylabel('a_0')
-subplot(2,2,2)
+t1 = subplot(2,2,2);
 plot(A(1,:),A(10,:))
 xlabel('generations'), ylabel('a_1')
-subplot(2,2,3)
+t2 = subplot(2,2,3);
 plot(A(1,:),A(11,:))
 xlabel('generations'), ylabel('b_1')
 linkaxes([t0 t1 t2], 'x')
@@ -51,19 +51,19 @@ suptitle('\tau coefficients')
 % Coast
 figure(3)
 title('Coast over generations')
-subplot(2,3,1)
+c0 = subplot(2,3,1);
 plot(A(1,:),A(12,:))
 xlabel('generations'), ylabel('a_0')
-subplot(2,3,2)
+c1 = subplot(2,3,2);
 plot(A(1,:),A(13,:))
 xlabel('generations'), ylabel('a_1')
-subplot(2,3,3)
+c2 = subplot(2,3,3);
 plot(A(1,:),A(14,:))
 xlabel('generations'), ylabel('b_1')
-subplot(2,3,4)
+c3 = subplot(2,3,4);
 plot(A(1,:),A(15,:))
 xlabel('generations'), ylabel('a_2')
-subplot(2,3,5)
+c4 = subplot(2,3,5);
 plot(A(1,:),A(16,:))
 xlabel('generations'), ylabel('b_2')
 linkaxes([c0 c1 c2 c3 c4], 'x')
