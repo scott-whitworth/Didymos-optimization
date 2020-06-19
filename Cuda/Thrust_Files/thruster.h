@@ -12,7 +12,7 @@ template <class T> struct thruster {
     T P0; // inital power in
     T m_Dot0; // initial m_Dot
 
-    double coastThreshold; // threshold to activate thruster
+    T coastThreshold; // threshold to activate thruster
 
     __host__ __device__ thruster<T>(geneticConstants & gConfig);
 

@@ -17,7 +17,7 @@ thruster<T>::thruster(geneticConstants & gConfig) {
     }
 
     // setting values (defined in header) for when type 1 is called (NEXT)
-    else if (gConfig.thruster.type == THRUST_TYPE::NEXT_C) {
+    else if (gConfig.thruster_type == THRUST_TYPE::NEXT_C) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
