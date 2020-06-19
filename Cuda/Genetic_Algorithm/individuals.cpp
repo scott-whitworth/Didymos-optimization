@@ -11,6 +11,17 @@ double Individual::getCost() {
     return cost;
 }
 
+double Individual::getPosRatio() {
+    double ratio;
+    if (posDiff > POS_THRESH) {
+        ratio = 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
+    }
+    else {
+        ratio = posDiff / POS_THRESH; // focus more on position the greater the difference is based on linear scale
+    }
+    return ratio;
+}
+
 bool Individual::operator>(Individual &other) {
     if (this->getCost() > other.getCost()) {
         return true;
@@ -43,17 +54,6 @@ bool betterInd(Individual first, Individual second) {
     }
 }
 */
-
-double Individual::getPosRatio() {
-    double ratio;
-    if (posDiff > POS_THRESH) {
-        ratio = 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
-    }
-    else {
-        ratio = posDiff / POS_THRESH; // focus more on position the greater the difference is based on linear scale
-    }
-    return ratio;
-}
 
 // Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
 void Individual::initialize() {
