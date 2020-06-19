@@ -45,12 +45,14 @@ bool betterInd(Individual first, Individual second) {
 */
 
 double Individual::getPosRatio() {
+    double ratio;
     if (this->posDiff > POS_THRESH) {
-        return 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
+        ratio = 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
     }
     else {
-        return this->posDiff / POS_THRESH; // focus more on position the greater the difference is based on linear scale
+        ratio = this->posDiff / POS_THRESH; // focus more on position the greater the difference is based on linear scale
     }
+    return ratio;
 }
 
 // Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
