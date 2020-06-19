@@ -12,21 +12,21 @@ double Individual::getCost() {
 }
 
 bool Individual::operator>(Individual &other) {
-    if (this->cost > other.cost) {
+    if (this->getCost() > other.cost) {
         return true;
     }
     else return false;
 }
 
 bool Individual::operator<(Individual &other) {
-    if (this->cost < other.cost) {
+    if (this->getCost() < other.cost) {
         return true;
     }
     else return false;
 }
 
 bool Individual::operator==(Individual &other) {
-    if (this->cost == other.cost) {
+    if (this->getCost() == other.cost) {
         return true;
     }
     else return false;
