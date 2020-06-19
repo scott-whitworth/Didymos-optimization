@@ -1,7 +1,7 @@
 #ifndef thruster_h
 #define thruster_h
 #include "coefficients.h"
-#include "config.h"
+#include "../Config_Constants/config.h"
 
 // file path for all data used in this file: \\fs1\phys\sankaranResearch\2019-Lauren-Mateo\Thruster
 
