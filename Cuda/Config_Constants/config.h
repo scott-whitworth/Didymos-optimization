@@ -7,6 +7,7 @@ struct geneticConstants {
     double time_seed; // Seed used for randomization within optimize function, if it's set to -1 the seed is set to time(0) for genuine randomness
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double speed_threshold; // threshold for desired speed the spacecraft must make
+    double coast_threshold; // threshold to turn on the thruster
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
     int write_freq; // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file

@@ -52,7 +52,6 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const coefficie
         }
     }
     Str << std::endl;
-    Str << "Coasting Threshold: " << e.coastThreshold << std::endl;
     return Str;
 }
 

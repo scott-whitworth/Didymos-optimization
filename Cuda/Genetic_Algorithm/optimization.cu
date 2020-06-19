@@ -426,7 +426,7 @@ int main () {
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
-    thruster<double> thrust(gConstant.thruster_type);
+    thruster<double> thrust(gConstant);
 
 
     optimize(numThreads, blockThreads, gConstant, thrust);
