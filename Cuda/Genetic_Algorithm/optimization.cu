@@ -299,7 +299,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         }
 
         for (int k = 0; k < numThreads; k++) {
-            inputParameters[k].getCost(inputParameters[k].getRatio(gConstant));
+            inputParameters[k].getCost(inputParameters[k].getPosRatio(gConstant));
         }
 
         // Note to future development, should shuffle and sort be within selectWinners method?
