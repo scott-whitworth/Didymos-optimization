@@ -23,7 +23,7 @@ struct Individual {
 
     // returns the amount of weight placed on the posDiff rather than velDiff
     // output: 0.0 - 1.0
-    double getPosRatio(Individual ind);
+    double getPosRatio();
 
     // Some comparison operators overloaded to compare individuals by their cost values (determined in getCost())
     bool operator>(Individual &other);
