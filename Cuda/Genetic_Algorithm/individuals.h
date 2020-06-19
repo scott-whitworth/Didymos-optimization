@@ -21,15 +21,15 @@ struct Individual {
     // Calculates a cost value to quantitatively evaluate this Individual
     double getCost();
 
+    // returns the amount of weight placed on the posDiff rather than velDiff
+    // output: 0.0 - 1.0
+    double getPosRatio(Individual ind);
+
     // Some comparison operators overloaded to compare individuals by their cost values (determined in getCost())
     bool operator>(Individual &other);
     bool operator<(Individual &other);
     bool operator==(Individual &other);
 };
-
-    // returns the amount of weight placed on the posDiff rather than velDiff in comparison of two Individuals
-    // output: 0.0 - 1.0
-//    double getPosRatio(Individual first, Individual second);
 
     // compares two individuals, using < operator
     // other is the Individual to be compared to
