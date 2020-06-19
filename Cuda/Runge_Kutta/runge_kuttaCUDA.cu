@@ -165,7 +165,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
          // output to this thread's index
         individuals[threadId].finalPos = curPos;
         individuals[threadId].posDiff = sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
-        individuals[threadId].velDiff = sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
+        individuals[threadId].velDiff = abs(V_IMPACT - sqrt(pow(curPos.vr, 2) + pow(curPos.vtheta, 2) + pow(curPos.vz, 2)));
 
         return;
     }
