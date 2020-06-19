@@ -7,8 +7,7 @@
 // Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
 double Individual::getCost() {
     double ratio = this->getPosRatio();
-    cost = ratio * this->posDiff - (1.0 - ratio) * this->velDiff;
-    return cost;
+    return ratio * this->posDiff - (1.0 - ratio) * this->velDiff;
 }
 
 bool Individual::operator>(Individual &other) {
