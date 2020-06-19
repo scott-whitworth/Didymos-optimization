@@ -21,11 +21,11 @@ struct Individual {
     void initialize();
 
     // Calculates a cost value to quantitatively evaluate this Individual
-    double getCost(double & ratio);
+    double getCost();
 
     // returns the amount of weight placed on the posDiff rather than velDiff
     // output: 0.0 - 1.0
-    double getPosRatio(geneticConstants & gConfig);
+    double getPosRatio();
 
     // Some comparison operators overloaded to compare individuals by their cost values (determined in getCost())
     bool operator>(Individual &other);

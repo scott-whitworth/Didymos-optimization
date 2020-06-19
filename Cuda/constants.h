@@ -38,6 +38,7 @@
 #define VZ_FIN_EARTH -9.71518257891386e-12 // axial velocity (au/s)
 
 // Official DART mission data
+#define POS_THRESH = 1.0e-10 // impact posdiff
 #define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
 
 // Starting location in the optimization array

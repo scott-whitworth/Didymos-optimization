@@ -99,7 +99,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
     std::cout << "Best individual:" << std::endl;
     std::cout << "\tposDiff: " << individual.posDiff << std::endl;
     std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
-    std::cout << "\tcost: "    << individual.cost << std::endl;
+    std::cout << "\tcost: "    << individual.getCost() << std::endl;
 }
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
@@ -107,7 +107,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, geneticConstants& gConstant) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < gConstant.best_count; i++) {
-        if (pool[i].cost >= tolerance ) {
+        if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
@@ -296,12 +296,6 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
                 inputParameters[k].posDiff = 1.0e10;
                 inputParameters[k].velDiff = 0.0;
              }
-        }
-
-        double ratio;
-        for (int k = 0; k < numThreads; k++) {
-            ratio = inputParameters[k].getPosRatio(gConstant);
-            inputParameters[k].getCost(ratio);
         }
 
         // Note to future development, should shuffle and sort be within selectWinners method?
