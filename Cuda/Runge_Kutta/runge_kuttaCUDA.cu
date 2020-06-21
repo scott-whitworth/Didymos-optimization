@@ -127,7 +127,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         while (curTime < threadRKParameters.tripTime) {
 
             coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime, thrust);
-            curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS));
+            curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS), cConstant);
             //curAccel = 0.;
 
             // calculate k values and get new value of y
@@ -164,6 +164,11 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
          // output to this thread's index
         individuals[threadId].finalPos = curPos;
+
+        // For some reason this results in 0's
+        // individuals[threadId].posDiff = sqrt(pow( cConstant.r_fin_ast - curPos.r, 2) + pow(cConstant.theta_fin_ast - fmod(curPos.theta, 2 * M_PI), 2) + pow(cConstant.z_fin_ast - curPos.z, 2));
+        // individuals[threadId].velDiff = sqrt(pow(cConstant.vr_fin_ast - curPos.vr, 2) + pow(cConstant.vtheta_fin_ast - curPos.vtheta, 2) + pow(cConstant.vz_fin_ast - curPos.vz, 2));
+        
         individuals[threadId].posDiff = sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
         individuals[threadId].velDiff = sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
 

@@ -31,7 +31,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal, thrust); 
     // array of acceleration for binary output
-    accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass);
+    accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
     fuelSpent[0]=massFuelSpent;
 
     elements<T> u, error;
@@ -48,7 +48,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         coast = calc_coast(coeff, curTime, timeFinal, thrust);
         
         // defining acceleration using calc_accel()
-        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass);
+        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass, cConstant);
         
         // Record the updated massFuelSpent to the output array
         fuelSpent[n]=massFuelSpent;

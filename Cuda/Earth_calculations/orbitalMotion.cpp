@@ -51,7 +51,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
 
   // setting landing conditions of the asteroid (October 5, 2022)
-  elements<double> asteroid = elements<double>(R_FIN_AST, THETA_FIN_AST, Z_FIN_AST, VR_FIN_AST, VTHETA_FIN_AST, VZ_FIN_AST);
+  elements<double> asteroid = elements<double>(cConstants.r_fin_ast, cConstants.theta_fin_ast, cConstants.z_fin_ast, cConstants.vr_fin_ast, cConstants.vtheta_fin_ast, cConstants.vz_fin_ast);
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
   elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);

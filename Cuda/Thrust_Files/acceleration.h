@@ -2,7 +2,7 @@
 #define acceleration_h
 
 #include "thruster.h" // used for P0, calc_eff(), and calc_m_Dot()
-
+#include "../Config_Constants/config.h"
 // Calculates acceleration of the spacecraft due to thrusting.
 // Parameters:
 //         radius: current radial position of the spacecraft relative to the sun (au).
@@ -16,7 +16,7 @@
 //         wetMass: mass of the spacecraft including the fuel (optimized).
 // output: acceleration of the spacecraft due to thrusting.
 
-template <class T> __host__ __device__ T calc_accel(const T & radius, const T & offPlane, const thruster<T> & thrusterType, const T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass);
+template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass, cudaConstants& cConstants);
 
 #include "acceleration.cpp"
 #endif

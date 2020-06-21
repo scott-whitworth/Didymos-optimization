@@ -226,7 +226,6 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd, gConstant);
-
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, gConstant); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
@@ -363,6 +362,7 @@ int main () {
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
     
+    cudaConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
@@ -370,7 +370,7 @@ int main () {
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
-    launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
+    launchCon = new EarthInfo(startTime, endTime, timeRes, gConstant); // a global variable to hold Earth's position over time
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = 32;
@@ -381,9 +381,7 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    cudaConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant.thruster_type);
-
 
     optimize(numThreads, blockThreads, gConstant, thrust);
 

@@ -99,42 +99,42 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                     this->c3energy = std::stod(variableValue);
                     this->v_escape = sqrt(this->c3energy)/AU;
                 }
-//                else if (variableName == "r_fin_ast") {
-//                    this->r_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "theta_fin_ast") {
-//                    this->theta_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "z_fin_ast") {
-//                    this->z_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "vr_fin_ast") {
-//                    this->vr_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "vtheta_fin_ast") {
-//                    this->vtheta_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "vz_fin_ast") {
-//                    this->vz_fin_ast = std::stod(variableValue);
-//                }
-//                else if (variableName == "r_fin_earth") {
-//                    this->r_fin_earth = std::stod(variableValue);
-//                }
-//                else if (variableName == "theta_fin_earth") {
-//                    this->theta_fin_earth = std::stod(variableValue);
-//                }
-//                else if (variableName == "z_fin_earth") {
-//                    this->z_fin_earth = std::stod(variableValue);
-//                }
-//                else if (variableName == "vr_fin_earth") {
-//                    this->vr_fin_earth = std::stod(variableValue);
-//                }
-//                else if (variableName == "vtheta_fin_earth") {
-//                    this->vtheta_fin_earth = std::stod(variableValue);
-//                }
-//                else if (variableName == "vz_fin_earth") {
-//                    this->vz_fin_earth = std::stod(variableValue);
-//                }
+                else if (variableName == "r_fin_ast") {
+                    this->r_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "theta_fin_ast") {
+                    this->theta_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "z_fin_ast") {
+                    this->z_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vr_fin_ast") {
+                    this->vr_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vtheta_fin_ast") {
+                    this->vtheta_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "vz_fin_ast") {
+                    this->vz_fin_ast = std::stod(variableValue);
+                }
+                else if (variableName == "r_fin_earth") {
+                    this->r_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "theta_fin_earth") {
+                    this->theta_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "z_fin_earth") {
+                    this->z_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vr_fin_earth") {
+                    this->vr_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vtheta_fin_earth") {
+                    this->vtheta_fin_earth = std::stod(variableValue);
+                }
+                else if (variableName == "vz_fin_earth") {
+                    this->vz_fin_earth = std::stod(variableValue);
+                }
                 else if (variableName == "dry_mass") {
                     this->dry_mass = std::stoi(variableValue);
                 }
@@ -184,7 +184,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& constants ) {
     os << "\nalpha_mutate_scale: " << constants.alpha_mutate_scale;
     os << "\nthruster_type: " << constants.thruster_type;
     os << "\ncoast_threshold: " << constants.coast_threshold;
-    os << "\nc3energy: " << constants.c3energy;/*
+    os << "\nc3energy: " << constants.c3energy;
     os << "\nr_fin_ast: " << constants.r_fin_ast;
     os << "\ntheta_fin_ast: " << constants.theta_fin_ast;
     os << "\nz_fin_ast: " << constants.z_fin_ast;
@@ -196,7 +196,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& constants ) {
     os << "\nz_fin_earth: " << constants.z_fin_earth;
     os << "\nvr_fin_earth: " << constants.vr_fin_earth;
     os << "\nvtheta_fin_earth: " << constants.vtheta_fin_earth;
-    os << "\nvz_fin_earth: " << constants.vz_fin_earth;*/
+    os << "\nvz_fin_earth: " << constants.vz_fin_earth;
     os << "\ndry_mass: " << constants.dry_mass;
     os << "\nwet_mass: " << constants.wet_mass;
     return os;

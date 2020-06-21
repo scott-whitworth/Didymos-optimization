@@ -40,19 +40,20 @@ struct cudaConstants {
     int dry_mass;
     int wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config
 
-    // Currently running into what appears to be critical rounding errors
-//    double r_fin_ast;
-//    double theta_fin_ast;
-//    double z_fin_ast;
-//    double vr_fin_ast;
-//    double vtheta_fin_ast;
-//    double vz_fin_ast;
-//    double r_fin_earth;
-//    double theta_fin_earth;
-//    double z_fin_earth;
-//    double vr_fin_earth;
-//    double vtheta_fin_earth;
-//    double vz_fin_earth;
+    // Currently running into critical issues with this, thinking gpu usage related
+    double r_fin_ast;
+    double theta_fin_ast;
+    double z_fin_ast;
+    double vr_fin_ast;
+    double vtheta_fin_ast;
+    double vz_fin_ast;
+    // This works fine
+    double r_fin_earth;
+    double theta_fin_earth;
+    double z_fin_earth;
+    double vr_fin_earth;
+    double vtheta_fin_earth;
+    double vz_fin_earth;
 
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
