@@ -8,8 +8,8 @@
 #define earthRadius 1.49598261e11/AU // radius of the earth (au)
 #define earthMass 5.9742e24 // mass of the earth (kg)
 #define ESOI earthRadius*pow((earthMass/massSun),0.4) // escape sphere of influence (au)
-#define C3Energy 4.676e6 // specific energy of spacecraft at earth escape (m^2/s^2)
-#define vEscape sqrt(C3Energy)/AU // magnitude of velocity at earth escape  (au/s)
+//#define C3Energy 4.676e6 // specific energy of spacecraft at earth escape (m^2/s^2)
+//#define vEscape sqrt(C3Energy)/AU // magnitude of velocity at earth escape  (au/s)
 #define AU 1.49597870691e11// used to convert meters to astronomical units (m) 
 #define constG 1.99349603314131e-44 //gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
 #define massSun 1.988500e30// mass of the sun (kg)
@@ -55,7 +55,7 @@
 #define COAST_OFFSET 14 // x[14-16] second order fourier for coasting determination
 
 // Value at which if the coast output is below it returns acceleration as 0.
-#define COAST_THRESHOLD 0.5
+// #define COAST_THRESHOLD 0.5
 
 // Spacecraft constants
 #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)

@@ -4,17 +4,18 @@
 #include "rkParameters.h" // rkParameters struct
 #include "../Genetic_Algorithm/individuals.h"
 #include "../Thrust_Files/thruster.h" // thrust.type
+#include "../Config_Constants/config.h"
 
 Individual* getNewStarts(Individual *prevGen);
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust);
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust, cudaConstants& cConstant);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust);
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, cudaConstants& cConstant);
 
 // gets the y0 for size number of Individuals
-__host__ void initializePosition(Individual *individuals, int size);
+__host__ void initializePosition(Individual *individuals, int size, cudaConstants& cConstants);
 
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
 // takes in the best individual of a generation

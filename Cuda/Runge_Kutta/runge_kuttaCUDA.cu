@@ -54,7 +54,7 @@
 //     return best;
 // }
 
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust) {
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust, cudaConstants& cConstant) {
     
     cudaEvent_t kernelStart, kernelEnd;
     cudaEventCreate(&kernelStart);
@@ -79,7 +79,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
     // GPU version of rk4Simple()
     cudaEventRecord(kernelStart);
-    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, thrust);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, thrust, cConstant);
     cudaEventRecord(kernelEnd);
 
     // copy the result of the kernel onto the host
@@ -102,7 +102,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust) {
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, cudaConstants& cConstant) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if (threadId < n) {
         rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
@@ -172,9 +172,9 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     return;
 }
 
-__host__ void initializePosition(Individual *individuals, int size) {
+__host__ void initializePosition(Individual *individuals, int size, cudaConstants& cConstant) {
     for (int i = 0; i < size ;i++) {
-        individuals[i].initialize();
+        individuals[i].initialize(cConstant);
     }
 }
     

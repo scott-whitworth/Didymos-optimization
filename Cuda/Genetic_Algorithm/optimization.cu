@@ -225,9 +225,9 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd);
+        initializePosition(inputParameters + (numThreads - newInd), newInd, gConstant);
 
-        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
+        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, gConstant); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < numThreads; k++) { 
@@ -339,7 +339,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust);
+        writeTrajectoryToFile(start, cost, i + 1, thrust, gConstant);
     }
 
     // Close the performance files now that the algorithm is finished

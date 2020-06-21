@@ -10,7 +10,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, thruster <T> thrust) {
+                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, thruster <T> thrust, cudaConstants& cConstant) {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 

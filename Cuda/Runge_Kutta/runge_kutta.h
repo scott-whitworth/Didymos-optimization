@@ -2,7 +2,7 @@
 #define runge_kutta_h
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 #include "../Thrust_Files/thruster.h" // used to pass in a thruster type
-
+#include "../Config_Constants/config.h"
 
 // Three variations of fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // 1. rk4sys
@@ -31,7 +31,7 @@
     //      accel_output: an array which contains all accel values for a given run
     // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass, thruster<T> thrust);
+                                const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, const T & wetMass, thruster<T> thrust, cudaConstants& cConstant);
 
 // 2.
     // Output: writes in y the final position  of the spacecraft
