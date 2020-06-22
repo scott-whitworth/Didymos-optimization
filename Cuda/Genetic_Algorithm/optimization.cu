@@ -80,9 +80,9 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
 // Output: Returns true if top ten individuals within the pool are within the tolerance
-bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants& gConstant) {
+bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants* gConstant) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
-    for (int i = 0; i < gConstant.best_count; i++) {
+    for (int i = 0; i < gConstant->best_count; i++) {
         if (pool[i].getCost() >= tolerance ) {
             return false;
         }
@@ -92,10 +92,10 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads, cudaConstants& gConstant, thruster<double> thrust) {
+double optimize(const int numThreads, const int blockThreads, cudaConstants* gConstant, thruster<double> thrust) {
     double calcPerS = 0;
 
-    time_t timeSeed = gConstant.time_seed;
+    time_t timeSeed = gConstant->time_seed;
 
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
@@ -106,13 +106,13 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
 
-    double currentAnneal = gConstant.anneal_initial;
+    double currentAnneal = gConstant->anneal_initial;
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
     double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
 
-    if (gConstant.random_start) {
+    if (gConstant->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         // Curently that range is hard-coded values, should add as something in config file
         for (int i = 0; i < numThreads; i++) { 
@@ -143,7 +143,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         const int numStarts = 14; // the number of different sets of starting parameters in the input file
 
         std::ifstream starts;
-        starts.open(gConstant.initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
+        starts.open(gConstant->initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
 
         // sort the data into 2 dimensions
         // one row is one set of starting parameters
@@ -223,7 +223,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
-    double tolerance = gConstant.pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
+    double tolerance = gConstant->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
@@ -279,10 +279,10 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
-        if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        if (static_cast<int>(generation) % gConstant->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
             if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * gConstant.anneal_factor;
+                currentAnneal = currentAnneal * gConstant->anneal_factor;
             }
             previousBest = inputParameters[0].posDiff;
         }
@@ -292,13 +292,13 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         std::cout << '.';
 
         // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
-        if (static_cast<int>(generation) % gConstant.write_freq == 0) {
+        if (static_cast<int>(generation) % gConstant->write_freq == 0) {
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( static_cast<int>(generation) % gConstant.disp_freq == 0) {
+        if ( static_cast<int>(generation) % gConstant->disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
 
@@ -323,7 +323,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
     writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
     // Write the best individuals with best_count in total outputted in seperate binary files
-    for (int i = 0; i < gConstant.best_count; i++) {
+    for (int i = 0; i < gConstant->best_count; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
@@ -365,7 +365,7 @@ int main () {
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
     
-    cudaConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+    cudaConstants * gConstant = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
@@ -384,7 +384,7 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    thruster<double> thrust(gConstant.thruster_type);
+    thruster<double> thrust(gConstant->thruster_type);
 
     optimize(numThreads, blockThreads, gConstant, thrust);
 
@@ -392,6 +392,7 @@ int main () {
     //efficiencyGraph.close();
     
     delete launchCon;
+    delete gConstant;
 
     return 0;
 }

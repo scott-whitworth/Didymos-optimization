@@ -22,12 +22,12 @@ rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, d
 rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2);
 
 // Uses mutate and generateNewIndividual to produce a new individual with chance of mutation and assigns them within the pool
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, cudaConstants& gConstant, thruster<double>& thrust);
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, cudaConstants* gConstant, thruster<double>& thrust);
 
 // generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
 // Uses mutateNewIndividual and the crossOver mask methods
 // returns the number of new Individuals put into the pool
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, cudaConstants& gConstant, thruster<double>& thrust);
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, cudaConstants* gConstant, thruster<double>& thrust);
 
 void crossOver_randHalf(int mask[], mt19937_64 & rng);
 

@@ -23,12 +23,12 @@
 #define MAX_NUMSTEPS 1e9 // used for time stepping in runge_kuttaCuda.cu
 
 // Final conditions of the asteroid on impact date - used in runge_kuttaCUDA line 172 and 173
-#define R_FIN_AST 1.02696822710421 // radial position (au)
-#define THETA_FIN_AST 0.238839574416454 // angular postion (rad)
-#define Z_FIN_AST -0.0526614832914496 // axial position (au)
-#define VR_FIN_AST -2.05295246185041e-08 // radial velocity (au/s)
-#define VTHETA_FIN_AST 2.29132593453064e-07 // angular velocity (au/s)
-#define VZ_FIN_AST 8.00663905822009e-09 // axial velocity (au/s)
+// #define R_FIN_AST 1.02696822710421 // radial position (au)
+// #define THETA_FIN_AST 0.238839574416454 // angular postion (rad)
+// #define Z_FIN_AST -0.0526614832914496 // axial position (au)
+// #define VR_FIN_AST -2.05295246185041e-08 // radial velocity (au/s)
+// #define VTHETA_FIN_AST 2.29132593453064e-07 // angular velocity (au/s)
+// #define VZ_FIN_AST 8.00663905822009e-09 // axial velocity (au/s)
 
 // Final conditions of the earth on impact date
 // #define R_FIN_EARTH 1.00021392223428 // radial position (au)
@@ -59,7 +59,7 @@
 // #define COAST_THRESHOLD 0.5
 
 // Spacecraft constants
-#define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
-#define WET_MASS 3000 // mass of the spacecraft including fuel (kg)
+// #define DRY_MASS 2700 // mass of spacecraft excluding fuel (kg)
+// #define WET_MASS 3000 // mass of the spacecraft including fuel (kg)
 
 #endif

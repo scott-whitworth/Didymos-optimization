@@ -10,9 +10,9 @@
 //      earth: earth's position and velocity on the impact date October 5, 2022 (passed in from earthInfo.cpp)
 elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth);
 
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, cudaConstants& cConstants);
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, cudaConstants* cConstants);
 
-void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, cudaConstants& cConstants);
+void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, cudaConstants* cConstants);
 
 #include "orbitalMotion.cpp"
 #endif

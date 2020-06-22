@@ -1,4 +1,5 @@
 <h1> Config File Specifications/Information </h1>
+(Current note from June 22nd) Needs to be updated with new variables used in program
 
 <h2>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h2>
 <h2>For changing what config file is used, the file address can be changed where gConstant is declared within the main function</h2>

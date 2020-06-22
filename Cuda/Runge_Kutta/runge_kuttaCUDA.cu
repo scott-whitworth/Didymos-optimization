@@ -54,7 +54,7 @@
 //     return best;
 // }
 
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust, cudaConstants& cConstant) {
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust, cudaConstants* cConstant) {
     
     cudaEvent_t kernelStart, kernelEnd;
     cudaEventCreate(&kernelStart);
@@ -64,22 +64,26 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     double *devTimeInitial;
     double *devStepSize;
     double *devAbsTol;
+    cudaConstants *devCConstant;
 
     // allocate memory for the parameters passed to the device
     cudaMalloc((void**) &devGeneration, numThreads * sizeof(Individual));
     cudaMalloc((void**) &devTimeInitial, sizeof(double));
     cudaMalloc((void**) &devStepSize, sizeof(double));
     cudaMalloc((void**) &devAbsTol, sizeof(double));
+    cudaMalloc((void**) &devCConstant, sizeof(cudaConstants));
 
     // copy values of parameters passed to device onto device
     cudaMemcpy(devGeneration, generation, numThreads * sizeof(Individual), cudaMemcpyHostToDevice);
     cudaMemcpy(devTimeInitial, &timeInitial, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devAbsTol, &absTol, sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(devCConstant, cConstant, sizeof(cudaConstants), cudaMemcpyHostToDevice);
+    
 
     // GPU version of rk4Simple()
     cudaEventRecord(kernelStart);
-    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, thrust, cConstant);
+    rk4SimpleCUDA<<<(numThreads+blockThreads-1)/blockThreads,blockThreads>>>(devGeneration, devTimeInitial, devStepSize, devAbsTol, numThreads, thrust, devCConstant);
     cudaEventRecord(kernelEnd);
 
     // copy the result of the kernel onto the host
@@ -90,6 +94,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaFree(devTimeInitial);
     cudaFree(devStepSize);
     cudaFree(devAbsTol);
+    cudaFree(devCConstant);
 
     float kernelT;
     
@@ -102,7 +107,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 
 
 // seperate conditions are passed for each thread, but timeInitial, stepSize, and absTol are the same for every thread
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, cudaConstants& cConstant) {
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, cudaConstants* cConstant) {
     int threadId = threadIdx.x + blockIdx.x * blockDim.x;
     if (threadId < n) {
         rkParameters<double> threadRKParameters = individuals[threadId].startParams; // get the parameters for this thread
@@ -127,7 +132,8 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         while (curTime < threadRKParameters.tripTime) {
 
             coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime, thrust);
-            curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(WET_MASS), cConstant);
+
+            curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(cConstant->wet_mass), cConstant);
             //curAccel = 0.;
 
             // calculate k values and get new value of y
@@ -166,18 +172,18 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         individuals[threadId].finalPos = curPos;
 
         // For some reason this results in 0's
-        // individuals[threadId].posDiff = sqrt(pow( cConstant.r_fin_ast - curPos.r, 2) + pow(cConstant.theta_fin_ast - fmod(curPos.theta, 2 * M_PI), 2) + pow(cConstant.z_fin_ast - curPos.z, 2));
-        // individuals[threadId].velDiff = sqrt(pow(cConstant.vr_fin_ast - curPos.vr, 2) + pow(cConstant.vtheta_fin_ast - curPos.vtheta, 2) + pow(cConstant.vz_fin_ast - curPos.vz, 2));
+        individuals[threadId].posDiff = sqrt(pow( cConstant->r_fin_ast - curPos.r, 2) + pow(cConstant->theta_fin_ast - fmod(curPos.theta, 2 * M_PI), 2) + pow(cConstant->z_fin_ast - curPos.z, 2));
+        individuals[threadId].velDiff = sqrt(pow(cConstant->vr_fin_ast - curPos.vr, 2) + pow(cConstant->vtheta_fin_ast - curPos.vtheta, 2) + pow(cConstant->vz_fin_ast - curPos.vz, 2));
         
-        individuals[threadId].posDiff = sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
-        individuals[threadId].velDiff = sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
+        // individuals[threadId].posDiff = sqrt(pow(R_FIN_AST - curPos.r, 2) + pow(THETA_FIN_AST - fmod(curPos.theta, 2 * M_PI), 2) + pow(Z_FIN_AST - curPos.z, 2));
+        // individuals[threadId].velDiff = sqrt(pow(VR_FIN_AST - curPos.vr, 2) + pow(VTHETA_FIN_AST - curPos.vtheta, 2) + pow(VZ_FIN_AST - curPos.vz, 2));
 
         return;
     }
     return;
 }
 
-__host__ void initializePosition(Individual *individuals, int size, cudaConstants& cConstant) {
+__host__ void initializePosition(Individual *individuals, int size, cudaConstants* cConstant) {
     for (int i = 0; i < size ;i++) {
         individuals[i].initialize(cConstant);
     }
