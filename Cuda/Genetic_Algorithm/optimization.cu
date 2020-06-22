@@ -138,7 +138,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         }
     }
     // If not a random start, read from file
-    else (!gConstant.random_start) {
+    else {
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
         const int numStarts = 14; // the number of different sets of starting parameters in the input file
 

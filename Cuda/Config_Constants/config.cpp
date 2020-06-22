@@ -28,11 +28,10 @@ void cudaConstants::geneticFileRead(std::string fileName) {
         // Go through line by line
         while ( std::getline(configFile, line ) ) {
             // If line is not empty and the line is not a comment, then the line should be a variable constant being assigned 
-            if (line != "" && ( line.find_first_of("//") == std::string::npos ) && (line.find_first_of(" ") == std::string::npos) ) {
+            if (line != "" && ( line.find("//") == std::string::npos ) && (line.find_first_of(" ") == std::string::npos) ) {
                 // Go through if statements to find what constant variable this line refers to (look at substring prior to "=") and attempt to assign the value (after "=") to the variable
                 std::string variableName = line.substr(0, line.find("=")   );
                 std::string variableValue = line.substr( line.find("=") + 1); // Currently reads variableValue to end of the line string, may want to implement an end position to allow comments appends in the file format
-
                 // Assign variableValue to the appropriate variable based on variableName, with proper conversion to the right data type
                 // Still need to add a check to ensure that variableValue is converted properly (if not valid, don't assign property to variableValue and note that in the terminal)
                 if (variableName == "pos_threshold") {
