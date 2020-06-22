@@ -12,7 +12,7 @@ double Individual::getCost() {
 }
 
 double Individual::getPosRatio() {
-    double threshold = POS_THRESH;
+    double threshold = static_cast<double>(POS_THRESH);
     if (this->posDiff > threshold) {
         return 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
     }
