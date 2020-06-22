@@ -107,7 +107,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, geneticConstants& gConstant) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < gConstant.best_count; i++) {
-        if (pool[i].getCost() >= tolerance ) {
+        if (pool[i].posDiff >= tolerance ) {
             return false;
         }
     }
