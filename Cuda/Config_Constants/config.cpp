@@ -1,13 +1,11 @@
-#include <iostream>
-#include <fstream>
+#include <iostream> // For cout
+#include <fstream> // For file reading
 #include <string>
-#include <time.h>
+#include <time.h> // for time(0)
 #include "config.h"
 #include <math.h>
-#include "../constants.h"
+#include "../constants.h" // for AU
 
-using namespace std;
-using std::stod;
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 cudaConstants::cudaConstants() {
     geneticFileRead("genetic.config");
@@ -20,18 +18,21 @@ cudaConstants::cudaConstants(std::string configFile) {
 
 //http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
 void cudaConstants::geneticFileRead(std::string fileName) {
-
+    // Use string line to hold a line read from the config file in variable configFile
     std::string line;
     std::ifstream configFile;
     configFile.open(fileName);
+
     if (configFile.is_open()) {
         // Go through line by line
         while ( std::getline(configFile, line ) ) {
             // If line is not empty and the line is not a comment, then the line should be a variable constant being assigned 
             if (line != "" && ( line.find("//") == std::string::npos ) && (line.find_first_of(" ") == std::string::npos) ) {
                 // Go through if statements to find what constant variable this line refers to (look at substring prior to "=") and attempt to assign the value (after "=") to the variable
+
                 std::string variableName = line.substr(0, line.find("=")   );
                 std::string variableValue = line.substr( line.find("=") + 1); // Currently reads variableValue to end of the line string, may want to implement an end position to allow comments appends in the file format
+
                 // Assign variableValue to the appropriate variable based on variableName, with proper conversion to the right data type
                 // Still need to add a check to ensure that variableValue is converted properly (if not valid, don't assign property to variableValue and note that in the terminal)
                 if (variableName == "pos_threshold") {
@@ -166,6 +167,7 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                     }
                 }
                 else {
+                    // If none of the if cases were matches, then this is some unknown variable in the config file and output this to the terminal
                     std::cout << "Unknown variable '" << variableName <<"' in " << fileName <<"!\n";
                 }
             }
