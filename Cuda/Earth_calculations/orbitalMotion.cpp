@@ -1,11 +1,8 @@
 //Didymos-Optimization_Project:
-//Last Editor: Mateo, Lauren, and Ben
-//Tasks Completed: 
-    //No recent changes
 
 #include "../Runge_Kutta/runge_kutta.h" // used for rk4Reverse().
-#include <iostream> // used for cout
-#include <fstream> // stream output
+#include <iostream> // for cout
+#include <fstream> // file stream output
 #include <string> // to_string()
 #include "earthInfo.h" // reference to launchCon
 
@@ -42,9 +39,8 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 }
 
 
-//taken from CPU code to output final results of genetic algorithm
+// Output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),

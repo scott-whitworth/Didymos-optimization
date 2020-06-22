@@ -148,11 +148,6 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
         // sort the data into 2 dimensions
         // one row is one set of starting parameters
         // each column is a specific variable:
-        //    0-6 gamma
-        //    7-9 tau
-        //    10-12 launch angles
-        //    13 trip time
-        //    14-19 coast
         double startDoubles;
         double arrayCPU[numStarts][OPTIM_VARS];
         for (int i = 0; i < OPTIM_VARS; i++) { // rows
@@ -260,7 +255,8 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
         
                 inputParameters[k].startParams = example;
 
-                inputParameters[k].posDiff = 1.0e10;
+                // Set to be a bad individual
+                inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
              }
         }
@@ -318,7 +314,8 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
-    // Write the best and worst performing individuals to their respective files
+    
+    // Write the final best and worst performing individuals to their respective files
     writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
     writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 

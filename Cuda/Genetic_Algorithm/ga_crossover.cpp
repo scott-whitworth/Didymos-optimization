@@ -1,8 +1,6 @@
 // Collection of functions to perform crossover operations on rkParameters
 // A crossover mask is an array of elements equal to the number of elements in the rkParameters list
-// The mask defines what elements come from partent n and parent m
-// [ {gamma}    {tau}       {alpha}     {beta}      {zeta}      {tripTime}      {coast} ]
-// [   0-6       7-9           10         11          12            13           14-18  ]                                         ]
+// The mask defines what elements come from parent 1 and parent 2 or if it is an average of the two values
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Config_Constants/config.h"
@@ -12,13 +10,12 @@
 
 #define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
 
-
+// Global enumeration for the different mask values
 enum maskValue {
     PARTNER1 = 1,
     PARTNER2,
     AVG,
 };
-
 
 // Creates a random bifurcation mask
 // Randomly picks one index to be the start of the '2's from mask

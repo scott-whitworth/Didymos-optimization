@@ -32,11 +32,6 @@ struct Individual {
     // output: 0.0 - 1.0
 //    double getPosRatio(Individual first, Individual second);
 
-    // compares two individuals, using < operator
-    // other is the Individual to be compared to
-    // returns true if the first Individual has a higher fitness
-//    bool betterInd(Individual first, Individual second);
-
 #include "individuals.cpp"
 
 #endif

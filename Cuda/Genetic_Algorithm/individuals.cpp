@@ -38,17 +38,7 @@ bool Individual::operator==(Individual &other) {
     }
 }
 
-/*
-// betterInd uses < operator to compare first and second, returns true if first < second
-bool betterInd(Individual first, Individual second) {
-    if (first < second) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-*/
+
 /*
 double getPosRatio(Individual first, Individual second) {
     double greaterDiff = first.posDiff; // get the greater position difference
