@@ -39,7 +39,7 @@
 
 // Official DART mission data
 #define POS_THRESH = 1.0e-10 // impact posdiff
-#define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
+#define V_IMPACT 1.0e-07 //impact velocity in AU/s
 
 // Starting location in the optimization array
 #define OPTIM_VARS 19 // Number of variables in the optimization
