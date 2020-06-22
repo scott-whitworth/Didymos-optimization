@@ -15,6 +15,7 @@
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
+#define SECONDS_IN_YEAR 365*24*3600
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
@@ -95,7 +96,6 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
     double calcPerS = 0;
 
     time_t timeSeed = gConstant.time_seed;
-    
 
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
@@ -110,83 +110,86 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    const int numStarts = 14; // the number of different sets of starting parameters in the input file
-
-    std::ifstream starts;
-    starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations
-
-    
     double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
 
-    // sort the data into 2 dimensions
-    // one row is one set of starting parameters
-    // each column is a specific variable:
-    //    0-6 gamma
-    //    7-9 tau
-    //    10-12 launch angles
-    //    13 trip time
-    //    14-19 coast
-    double startDoubles;
-    double arrayCPU[numStarts][OPTIM_VARS];
-    for (int i = 0; i < OPTIM_VARS; i++) { // rows
-        for (int j = 0; j < numStarts; j++) { // columns
-            starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
-            arrayCPU[j][i] = startDoubles;
-        }
-    }
-    starts.close();
-
-     // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
-    for (int i = 0; i < numThreads; i++) {
-        int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
-
-        double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
-        double alpha = arrayCPU[row][ALPHA_OFFSET];
-        double beta = arrayCPU[row][BETA_OFFSET];
-        double zeta = arrayCPU[row][ZETA_OFFSET];
-
-        coefficients<double> testcoeff;
-        for (int j = 0; j < testcoeff.gammaSize; j++) {
-            testcoeff.gamma[j] = arrayCPU[row][j];
-        }
-
-        for (int j = 0; j < testcoeff.tauSize; j++) {
-            testcoeff.tau[j] =  arrayCPU[row][j+7];
-        }
-
-        for (int j = 0; j < testcoeff.coastSize; j++) {
-            testcoeff.coast[j] = arrayCPU[row][j+14];
-        }
-
-        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-
-        inputParameters[i].startParams = example;
-    }
-
-    // set every thread's input parameters to random values within a reasonable range
-    /*
-    for(int i = 0; i < numThreads; i++){ 
-        double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
-        double alpha = (mt_rand() % 629) / 100.0 - 3.14;
-        double beta = (mt_rand() % 629) / 100.0 - 3.14;
-        double zeta = (mt_rand() % 315) / 100.0 - 1.57;
-
-        coefficients<double> testcoeff;
-        for(int j = 0; j < testcoeff.gammaSize; j++){
-            testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-        }
-        for(int j = 0; j < testcoeff.tauSize; j++){
-            testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-        }
-        for(int j = 0; j < testcoeff.coastSize; j++){
-            testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
-        }
+    if (gConstant.random_start) {
+        // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
+        // Curently that range is hard-coded values, should add as something in config file
+        for (int i = 0; i < numThreads; i++) { 
+            double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
+            double alpha = (mt_rand() % 629) / 100.0 - 3.14;
+            double beta = (mt_rand() % 629) / 100.0 - 3.14;
+            double zeta = (mt_rand() % 315) / 100.0 - 1.57;
     
-        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-
-        inputParameters[i].startParams = example;
+            coefficients<double> testcoeff;
+            for(int j = 0; j < testcoeff.gammaSize; j++){
+                testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+            }
+            for(int j = 0; j < testcoeff.tauSize; j++){
+                testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+            }
+            for(int j = 0; j < testcoeff.coastSize; j++){
+                testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+            }
+        
+            rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+    
+            inputParameters[i].startParams = example;
+        }
     }
-    */
+    // If not a random start, read from file
+    else (!gConstant.random_start) {
+        // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
+        const int numStarts = 14; // the number of different sets of starting parameters in the input file
+
+        std::ifstream starts;
+        starts.open(gConstant.initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
+
+        // sort the data into 2 dimensions
+        // one row is one set of starting parameters
+        // each column is a specific variable:
+        //    0-6 gamma
+        //    7-9 tau
+        //    10-12 launch angles
+        //    13 trip time
+        //    14-19 coast
+        double startDoubles;
+        double arrayCPU[numStarts][OPTIM_VARS];
+        for (int i = 0; i < OPTIM_VARS; i++) { // rows
+            for (int j = 0; j < numStarts; j++) { // columns
+                starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
+                arrayCPU[j][i] = startDoubles;
+            }
+        }
+        starts.close();
+
+         // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
+        for (int i = 0; i < numThreads; i++) {
+            int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
+
+            double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
+            double alpha = arrayCPU[row][ALPHA_OFFSET];
+            double beta = arrayCPU[row][BETA_OFFSET];
+            double zeta = arrayCPU[row][ZETA_OFFSET];
+
+            coefficients<double> testcoeff;
+            for (int j = 0; j < testcoeff.gammaSize; j++) {
+                testcoeff.gamma[j] = arrayCPU[row][j];
+            }
+
+            for (int j = 0; j < testcoeff.tauSize; j++) {
+                testcoeff.tau[j] =  arrayCPU[row][j+7];
+            }
+
+            for (int j = 0; j < testcoeff.coastSize; j++) {
+                testcoeff.coast[j] = arrayCPU[row][j+14];
+            }
+
+            rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+
+            inputParameters[i].startParams = example;
+        }
+    }
 
 
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
@@ -229,13 +232,13 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, gConstant); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
-        for (int k = 0; k < numThreads; k++) { 
+        for (int k = 0; k < numThreads; k++) {
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
                  || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
-                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
+                double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
                 double alpha = (mt_rand() % 629) / 100.0 - 3.14;
                 double beta = (mt_rand() % 629) / 100.0 - 3.14;
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
@@ -270,9 +273,9 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants& gCo
         currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
 
         // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN, dependent on the ratio between the tolerance and current distance from the tolerance
-        // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual
-        
+        // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual        
         // double new_anneal =  annealMax - tolerance / currentDistance * (annealMax - annealMin); old way of calculating new_anneal that was made simpler
+
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;

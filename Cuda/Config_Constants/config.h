@@ -5,6 +5,10 @@
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
     double time_seed; // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0) for genuine randomness
+    
+    bool random_start; // If set to false, the initial generation has individuals initialized from a file instead of randomly generated
+    std::string initial_start_file_address; // If random_start is false, use file_address to find what file is being used for the initial start
+    
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory
     double speed_threshold; // threshold for desired speed the spacecraft must make
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
@@ -30,23 +34,24 @@ struct cudaConstants {
     double alpha_mutate_scale;
 
     // Used in thruster construction and corresponding calculations
-    int thruster_type;
+    int thruster_type; // 0 is for no thruster, 1 is for NEXT ion thruster
 
-    double coast_threshold;
-    double c3energy; // This value determines vEscape
-    double v_escape; // This variable is not directly accessible in the config file as it is dependent on c3energy
+    double coast_threshold; // 0 results in the thruster never coasting, 1 results in always coasting
+    double c3energy; // specific energy of spacecraft at earth escape (m^2/s^2), this determines vEscape
+    double v_escape; // magnitude of velocity at earth escape  (au/s), this variable is not directly accessible in the config file as it is derived from c3energy
 
     // Currently (June 19th) the following properties are not implemented
-    int dry_mass;
-    int wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config
+//    int dry_mass;
+//    int wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config
 
     // Currently running into critical issues with this, thinking gpu usage related
-    double r_fin_ast;
-    double theta_fin_ast;
-    double z_fin_ast;
-    double vr_fin_ast;
-    double vtheta_fin_ast;
-    double vz_fin_ast;
+//    double r_fin_ast;
+//    double theta_fin_ast;
+//    double z_fin_ast;
+//    double vr_fin_ast;
+//    double vtheta_fin_ast;
+//    double vz_fin_ast;
+
     // This works fine
     double r_fin_earth;
     double theta_fin_earth;

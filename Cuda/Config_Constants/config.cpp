@@ -44,6 +44,21 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "thruster_type") {
                     this->thruster_type = std::stoi(variableValue);
                 }
+                else if (variableName == "random_start") {
+                    if (variableValue == "false") {
+                        std::cout << "Initial generation based on file\n";
+                        this->random_start = false;
+                    }
+                    else {
+                        // If not set to false, then it is assumed the value is for true
+                        std::cout << "Initial generation based on random values within set range\n";
+                        this->random_start = true;
+                    }
+                }
+                else if (variableName == "initial_start_file_address") {
+                    // Assumption that the address does not need to be converted/checked
+                    this->initial_start_file_address = variableValue;
+                }
                 else if (variableName == "anneal_factor") {
                     this->anneal_factor = std::stod(variableValue);
                 }
@@ -99,24 +114,24 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                     this->c3energy = std::stod(variableValue);
                     this->v_escape = sqrt(this->c3energy)/AU;
                 }
-                else if (variableName == "r_fin_ast") {
-                    this->r_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "theta_fin_ast") {
-                    this->theta_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "z_fin_ast") {
-                    this->z_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vr_fin_ast") {
-                    this->vr_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vtheta_fin_ast") {
-                    this->vtheta_fin_ast = std::stod(variableValue);
-                }
-                else if (variableName == "vz_fin_ast") {
-                    this->vz_fin_ast = std::stod(variableValue);
-                }
+//                else if (variableName == "r_fin_ast") {
+//                    this->r_fin_ast = std::stod(variableValue);
+//                }
+//                else if (variableName == "theta_fin_ast") {
+//                    this->theta_fin_ast = std::stod(variableValue);
+//                }
+//                else if (variableName == "z_fin_ast") {
+//                    this->z_fin_ast = std::stod(variableValue);
+//                }
+//                else if (variableName == "vr_fin_ast") {
+//                    this->vr_fin_ast = std::stod(variableValue);
+//                }
+//                else if (variableName == "vtheta_fin_ast") {
+//                    this->vtheta_fin_ast = std::stod(variableValue);
+//                }
+//                else if (variableName == "vz_fin_ast") {
+//                    this->vz_fin_ast = std::stod(variableValue);
+//                }
                 else if (variableName == "r_fin_earth") {
                     this->r_fin_earth = std::stod(variableValue);
                 }
@@ -135,18 +150,21 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "vz_fin_earth") {
                     this->vz_fin_earth = std::stod(variableValue);
                 }
-                else if (variableName == "dry_mass") {
-                    this->dry_mass = std::stoi(variableValue);
-                }
-                else if (variableName == "wet_mass") {
-                    this->wet_mass = std::stoi(variableValue);
-                }
-                else if (variableName == "time_seed" && variableValue != "NONE") { // If the conifguration sets time_seed to NONE then time_seed is set to (time(0)) 
-                    this->time_seed = std::stod(variableValue);
-                }
-                else if (variableName == "time_seed" && variableValue == "NONE") {
-                    this->time_seed = time(0);
-                    std::cout << "time_seed set to time(0)\n";
+//                else if (variableName == "dry_mass") {
+//                    this->dry_mass = std::stoi(variableValue);
+//                }
+//                else if (variableName == "wet_mass") {
+//                    this->wet_mass = std::stoi(variableValue);
+//                }
+                else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to (time(0)) 
+                    if (variableValue != "NONE") {
+                        // If variableValue is not NONE, assumption is that it is a valid double value that can be converted and used
+                        this->time_seed = std::stod(variableValue);
+                    }
+                    else {
+                        this->time_seed = time(0);
+                        std::cout << "time_seed value set to time(0)\n";
+                    }
                 }
                 else {
                     std::cout << "Unknown variable '" << variableName <<"' in " << fileName <<"!\n";
@@ -185,19 +203,19 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& constants ) {
     os << "\nthruster_type: " << constants.thruster_type;
     os << "\ncoast_threshold: " << constants.coast_threshold;
     os << "\nc3energy: " << constants.c3energy;
-    os << "\nr_fin_ast: " << constants.r_fin_ast;
-    os << "\ntheta_fin_ast: " << constants.theta_fin_ast;
-    os << "\nz_fin_ast: " << constants.z_fin_ast;
-    os << "\nvr_fin_ast: " << constants.vr_fin_ast;
-    os << "\nvtheta_fin_ast: " << constants.vtheta_fin_ast;
-    os << "\nvz_fin_ast: " << constants.vz_fin_ast;
+//    os << "\nr_fin_ast: " << constants.r_fin_ast;
+//    os << "\ntheta_fin_ast: " << constants.theta_fin_ast;
+//    os << "\nz_fin_ast: " << constants.z_fin_ast;
+//    os << "\nvr_fin_ast: " << constants.vr_fin_ast;
+//    os << "\nvtheta_fin_ast: " << constants.vtheta_fin_ast;
+//    os << "\nvz_fin_ast: " << constants.vz_fin_ast;
     os << "\nr_fin_earth: " << constants.r_fin_earth;
     os << "\ntheta_fin_earth: " << constants.theta_fin_earth;
     os << "\nz_fin_earth: " << constants.z_fin_earth;
     os << "\nvr_fin_earth: " << constants.vr_fin_earth;
     os << "\nvtheta_fin_earth: " << constants.vtheta_fin_earth;
     os << "\nvz_fin_earth: " << constants.vz_fin_earth;
-    os << "\ndry_mass: " << constants.dry_mass;
-    os << "\nwet_mass: " << constants.wet_mass;
+//     os << "\ndry_mass: " << constants.dry_mass;
+//     os << "\nwet_mass: " << constants.wet_mass;
     return os;
 }
