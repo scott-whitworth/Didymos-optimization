@@ -13,8 +13,6 @@
 
 #define PI 3.141592653
 
-
-
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
@@ -240,7 +238,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
     std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
-    if (thrust.type) {
+    if (thrust.type != thruster<double>::NO_THRUST) {
         generationThrustBestExcel.open("BestThrustGens.csv");
         generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
         generationThrustWorstExcel.open("WorstThrustGens.csv");
@@ -329,7 +327,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
 
-            if (thrust.type) {
+            if (thrust.type != thruster<double>::NO_THRUST) {
                 writeThrustToFiles(generationThrustBestExcel, generationThrustBestBin, generation, inputParameters[0]);
                 writeThrustToFiles(generationThrustWorstExcel, generationThrustWorstBin, generation, inputParameters[numThreads-1]);
             }
@@ -389,7 +387,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     generationPerformanceWorstExcel.close();
     generationWorstPerformanceBin.close();
 
-    if (thrust.type) {
+    if (thrust.type != thruster<double>THRUSTER) {
         generationThrustBestExcel.close();
         generationThrustWorstExcel.close();
         generationThrustBestBin.close();

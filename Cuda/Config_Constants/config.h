@@ -1,6 +1,5 @@
 #ifndef GENETICCONFIG_h
 #define GENETICCONFIG_h
-#include <iostream>
 
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
