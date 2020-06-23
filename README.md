@@ -1,8 +1,12 @@
- <h1> Asteroid Impact Mission 
+<h1> Asteroid Impact Mission </h1>
+
+
+
+
 
 <h2> Running CUDA Code: </h2>
 
- On WU System:
+On WU System:
 1. To Compile:
    - Enter the following into command prompt within VSCode 
 

@@ -235,7 +235,7 @@ double getRand(double max, std::mt19937_64 & rng) {
 
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, mt19937_64 & rng, double annealing, cudaConstants* gConstant, thruster<double>& thrust) {
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, cudaConstants* gConstant, thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -332,7 +332,7 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
 // Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
 // Output is new individual in pool
 // Can only be used within crossover function in its current state because of int i input
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, mt19937_64 & rng, cudaConstants* gConstant, thruster<double>& thrust) {
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, std::mt19937_64 & rng, cudaConstants* gConstant, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
     pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
@@ -351,7 +351,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 
 
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, cudaConstants* gConstant, thruster<double>& thrust) {
-    mt19937_64 rng(gConstant->time_seed);
+    std::mt19937_64 rng(gConstant->time_seed);
 
     int mask[OPTIM_VARS];
 
@@ -384,74 +384,3 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
 
     return index * 2;
 }
-
-//Unit Test for ga_crossover
-/*
-int main(){
-    mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-    
-    // input parameters for rk4Simple which are the same for each thread
-    coefficients<double> testcoeff;
-    for(int i = 0; i < testcoeff.gammaSize; i++){
-        testcoeff.gamma[i] = 1;
-    }
-    for(int i = 0; i < testcoeff.tauSize; i++){
-        testcoeff.tau[i] = 1;
-    }
-    for(int i = 0; i < testcoeff.coastSize; i++){
-        testcoeff.coast[i] = 1;
-    }
-    testcoeff.coastThreshold = 1;
-    elements<double> spaceTest(1, 1, 1, 1, 1, 1);
-    rkParameters<double> test1(1, 1, spaceTest, testcoeff); 
-
-    // input parameters for rk4Simple which are the same for each thread
-    coefficients<double> testcoeff2;
-    for(int i = 0; i < testcoeff2.gammaSize; i++){
-        testcoeff2.gamma[i] = 2;
-    }
-    for(int i = 0; i < testcoeff2.tauSize; i++){
-        testcoeff2.tau[i] = 2;
-    }
-    for(int i = 0; i < testcoeff2.coastSize; i++){
-        testcoeff2.coast[i] = 2;
-    }
-    testcoeff2.coastThreshold = 2;
-    elements<double> spaceTest2(2, 2, 2, 2, 2, 2);
-    rkParameters<double> test2(2, 2, spaceTest2, testcoeff2); 
-
-    cout << "****** Test1 ******\n" << test1 << endl << endl;
-    cout << "****** Test2 ******" << test2 << endl;
-
-    //Set Up Mask
-    int test_mask[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    int test_maskOther[OPTIM_VARS];
-    cout << "               |  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5  6  7" << endl;
-    cout << "Starting Mask  : ";
-    printMask(test_mask);
-    cout << endl;
-
-    //crossOver_randHalf(test_mask,rng);
-    crossOver_wholeRandom(test_mask,rng);
-    copyMask(test_mask,test_maskOther);
-    flipMask(test_maskOther);
-
-    cout << "First randHalf : ";
-    printMask(test_mask);
-    cout << endl;
-
-    cout << "Second randHalf: ";
-    printMask(test_maskOther);
-    cout << endl;
-
-    //Generating Offspring:
-    rkParameters<double> output_1 = generateNewIndividual(test1,test2,test_mask);
-    rkParameters<double> output_2 = generateNewIndividual(test1,test2,test_maskOther);
-    rkParameters<double> output_3 = generateNewIndividual_avg(test1,test2);
-
-    cout << "****** output_1 ******\n" << output_1 << endl << endl;
-    cout << "****** output_2 ******\n" << output_2 << endl << endl;
-    cout << "****** output_3 ******\n" << output_3 << endl << endl;
-
-}
-*/
