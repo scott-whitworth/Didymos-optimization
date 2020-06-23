@@ -1,12 +1,5 @@
-//Didymos-Optimization_Project:
-//Last Editor: Lauren and Ben
-//Tasks Completed: 
-    //Defined all the neccesary equations for calculating acceleration.
-    //Created if statements to ensure accleration does not occur is the fuel mass is 0 and if the spacecraft is coasting.
-    //Added a z component to the calculation of power in to the spacecraft.
 
 #include "acceleration.h" 
-#include "../constants.h" // used for wetMass
 #include <iostream> // used for cout
 
 template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass, cudaConstants* cConstants) {
