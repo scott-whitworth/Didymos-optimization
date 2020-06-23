@@ -114,21 +114,20 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
 
     if (gConstant->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
-        // Curently that range is hard-coded values, should add as something in config file?
         for (int i = 0; i < numThreads; i++) { 
-            double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
-            double alpha = (mt_rand() % 629) / 100.0 - 3.14; // -3.14 <-> 3.14
-            double beta = (mt_rand() % 629) / 100.0 - 3.14; // -3.14 <-> 3.14
-            double zeta = (mt_rand() % 315) / 100.0 - 1.57; // -1.57 <-> 1.57
+            double tripTime = SECONDS_IN_YEAR*(mt_rand() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+            double alpha = (mt_rand() % 315) / 100.0; // 0 <-> 3.14
+            double beta  = (mt_rand() % 629) / 100.0 - 3.14; // -3.14 <-> 3.14
+            double zeta  = (mt_rand() % 315) / 100.0 - 1.57; // -1.57 <-> 1.57
     
             coefficients<double> testcoeff;
-            for(int j = 0; j < testcoeff.gammaSize; j++){
+            for (int j = 0; j < testcoeff.gammaSize; j++) {
                 testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
-            for(int j = 0; j < testcoeff.tauSize; j++){
+            for (int j = 0; j < testcoeff.tauSize; j++) {
                 testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
-            for(int j = 0; j < testcoeff.coastSize; j++){
+            for (int j = 0; j < testcoeff.coastSize; j++) {
                 testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
         
