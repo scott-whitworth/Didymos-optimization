@@ -257,6 +257,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = gConstant.pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
+    //double ptol = gConstant.pos_threshold;
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -310,7 +311,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual
         
         // double new_anneal =  annealMax - tolerance / currentDistance * (annealMax - annealMin); old way of calculating new_anneal that was made simpler
-        double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
+        double new_anneal = currentAnneal * (1 - ptol / currentDistance);
         
         double currentBest;
         if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
