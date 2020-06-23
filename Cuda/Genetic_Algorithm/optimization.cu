@@ -273,6 +273,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
                 double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
+
                 double alpha = (mt_rand() % 629) / 100.0 - 3.14;
                 double beta = (mt_rand() % 629) / 100.0 - 3.14;
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
@@ -311,7 +312,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual
         
         // double new_anneal =  annealMax - tolerance / currentDistance * (annealMax - annealMin); old way of calculating new_anneal that was made simpler
-        double new_anneal = currentAnneal * (1 - ptol / currentDistance);
+        double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
         if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
@@ -357,7 +358,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     double cost = 0;
 
     // Output to excel
-    double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
+    //double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
 
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < gConstant.best_count; i++) {
