@@ -10,7 +10,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, thruster <T> thrust) {
+                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, thruster <T> thrust, cudaConstants* cConstant) {
     // k variables for Runge-Kutta calculation of y[n+1]
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
@@ -31,7 +31,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal, thrust); 
     // array of acceleration for binary output
-    accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass);
+    accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
     fuelSpent[0]=massFuelSpent;
 
     elements<T> u, error;
@@ -48,7 +48,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         coast = calc_coast(coeff, curTime, timeFinal, thrust);
         
         // defining acceleration using calc_accel()
-        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass);
+        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass, cConstant);
         
         // Record the updated massFuelSpent to the output array
         fuelSpent[n]=massFuelSpent;

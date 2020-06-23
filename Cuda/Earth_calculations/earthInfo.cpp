@@ -6,10 +6,9 @@
     
 #include <iostream>  // cout
 #include <iomanip> // setprecision(int)  
-using namespace std;
 
 
-EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc) {
+EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, cudaConstants* cConstants) {
     ////////////////////////////////////
     ///Setting up initial information///
     ////////////////////////////////////
@@ -24,7 +23,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     earthCon = new elements<double> [tolData];
 
     // Assigning the position of the earth at impact to variable earth. Passed into earthInitial_incremental and rk4Reverse.
-    elements<double> earth = elements<double>(R_FIN_EARTH, THETA_FIN_EARTH, Z_FIN_EARTH, VR_FIN_EARTH, VTHETA_FIN_EARTH, VZ_FIN_EARTH);
+    elements<double> earth = elements<double>(cConstants->r_fin_earth, cConstants->theta_fin_earth, cConstants->z_fin_earth, cConstants->vr_fin_earth, cConstants->vtheta_fin_earth, cConstants->vz_fin_earth);
 
     // Get the actual initial position for the time frame chosen.
     earth=earthInitial_incremental(0,startTime,earth);

@@ -15,6 +15,7 @@
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
+#define SECONDS_IN_YEAR 365*24*3600
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
@@ -104,9 +105,9 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
 // Output: Returns true if top ten individuals within the pool are within the tolerance
-bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, geneticConstants& gConstant) {
+bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants* gConstant) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
-    for (int i = 0; i < gConstant.best_count; i++) {
+    for (int i = 0; i < gConstant->best_count; i++) {
         if (pool[i].getCost() >= tolerance ) {
             return false;
         }
@@ -116,11 +117,10 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust) {
+double optimize(const int numThreads, const int blockThreads, cudaConstants* gConstant, thruster<double> thrust) {
     double calcPerS = 0;
 
-    time_t timeSeed = gConstant.time_seed;
-    
+    time_t timeSeed = gConstant->time_seed;
 
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
     std::cout << "------------------------------------------------------------------------" << std::endl;
@@ -131,87 +131,84 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     double absTol = RK_TOL; // the tolerance is a constant number that is shared amongst all runs
     double stepSize = (orbitalPeriod - timeInitial) / MAX_NUMSTEPS; // the starting step size- same for each run- note that the current step size varies throughout each run
 
-    double currentAnneal = gConstant.anneal_initial;
+    double currentAnneal = gConstant->anneal_initial;
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    const int numStarts = 14; // the number of different sets of starting parameters in the input file
-
-    std::ifstream starts;
-    starts.open("../optimizedVector.bin", std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations
-
-    
     double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
 
-    // sort the data into 2 dimensions
-    // one row is one set of starting parameters
-    // each column is a specific variable:
-    //    0-6 gamma
-    //    7-9 tau
-    //    10-12 launch angles
-    //    13 trip time
-    //    14-19 coast
-    double startDoubles;
-    double arrayCPU[numStarts][OPTIM_VARS];
-    for (int i = 0; i < OPTIM_VARS; i++) { // rows
-        for (int j = 0; j < numStarts; j++) { // columns
-            starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
-            arrayCPU[j][i] = startDoubles;
-        }
-    }
-    starts.close();
-
-     // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
-    for (int i = 0; i < numThreads; i++) {
-        int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
-
-        double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
-        double alpha = arrayCPU[row][ALPHA_OFFSET];
-        double beta = arrayCPU[row][BETA_OFFSET];
-        double zeta = arrayCPU[row][ZETA_OFFSET];
-
-        coefficients<double> testcoeff;
-        for (int j = 0; j < testcoeff.gammaSize; j++) {
-            testcoeff.gamma[j] = arrayCPU[row][j];
-        }
-
-        for (int j = 0; j < testcoeff.tauSize; j++) {
-            testcoeff.tau[j] =  arrayCPU[row][j+7];
-        }
-
-        for (int j = 0; j < testcoeff.coastSize; j++) {
-            testcoeff.coast[j] = arrayCPU[row][j+14];
-        }
-
-        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-
-        inputParameters[i].startParams = example;
-    }
-
-    // set every thread's input parameters to random values within a reasonable range
-    /*
-    for(int i = 0; i < numThreads; i++){ 
-        double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
-        double alpha = (mt_rand() % 629) / 100.0 - 3.14;
-        double beta = (mt_rand() % 629) / 100.0 - 3.14;
-        double zeta = (mt_rand() % 315) / 100.0 - 1.57;
-
-        coefficients<double> testcoeff;
-        for(int j = 0; j < testcoeff.gammaSize; j++){
-            testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
-        }
-        for(int j = 0; j < testcoeff.tauSize; j++){
-            testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
-        }
-        for(int j = 0; j < testcoeff.coastSize; j++){
-            testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
-        }
+    if (gConstant->random_start) {
+        // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
+        for (int i = 0; i < numThreads; i++) { 
+            double tripTime = SECONDS_IN_YEAR*(mt_rand() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+            double alpha = (mt_rand() % 315) / 100.0; // 0 <-> 3.14
+            double beta  = (mt_rand() % 629) / 100.0 - 3.14; // -3.14 <-> 3.14
+            double zeta  = (mt_rand() % 315) / 100.0 - 1.57; // -1.57 <-> 1.57
     
-        rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-
-        inputParameters[i].startParams = example;
+            coefficients<double> testcoeff;
+            for (int j = 0; j < testcoeff.gammaSize; j++) {
+                testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+            }
+            for (int j = 0; j < testcoeff.tauSize; j++) {
+                testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+            }
+            for (int j = 0; j < testcoeff.coastSize; j++) {
+                testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+            }
+        
+            rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+    
+            inputParameters[i].startParams = example;
+        }
     }
-    */
+    // If not a random start, read from file
+    else {
+        // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
+        const int numStarts = 14; // the number of different sets of starting parameters in the input file
+
+        std::ifstream starts;
+        starts.open(gConstant->initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
+
+        // sort the data into 2 dimensions
+        // one row is one set of starting parameters
+        // each column is a specific variable:
+        double startDoubles;
+        double arrayCPU[numStarts][OPTIM_VARS];
+        for (int i = 0; i < OPTIM_VARS; i++) { // rows
+            for (int j = 0; j < numStarts; j++) { // columns
+                starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
+                arrayCPU[j][i] = startDoubles;
+            }
+        }
+        starts.close();
+
+         // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
+        for (int i = 0; i < numThreads; i++) {
+            int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
+
+            double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
+            double alpha = arrayCPU[row][ALPHA_OFFSET];
+            double beta = arrayCPU[row][BETA_OFFSET];
+            double zeta = arrayCPU[row][ZETA_OFFSET];
+
+            coefficients<double> testcoeff;
+            for (int j = 0; j < testcoeff.gammaSize; j++) {
+                testcoeff.gamma[j] = arrayCPU[row][j];
+            }
+
+            for (int j = 0; j < testcoeff.tauSize; j++) {
+                testcoeff.tau[j] =  arrayCPU[row][j+7];
+            }
+
+            for (int j = 0; j < testcoeff.coastSize; j++) {
+                testcoeff.coast[j] = arrayCPU[row][j+14];
+            }
+
+            rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
+
+            inputParameters[i].startParams = example;
+        }
+    }
 
 
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
@@ -255,23 +252,22 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
-    double tolerance = gConstant.pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
+    double tolerance = gConstant->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd);
-
-        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
+        initializePosition(inputParameters + (numThreads - newInd), newInd, gConstant);
+        callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, gConstant); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
-        for (int k = 0; k < numThreads; k++) { 
+        for (int k = 0; k < numThreads; k++) {
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
                  || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
-                double tripTime = 365*24*3600*(std::rand() % 10001 / 10000.0 + 1.0);
+                double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
                 double alpha = (mt_rand() % 629) / 100.0 - 3.14;
                 double beta = (mt_rand() % 629) / 100.0 - 3.14;
                 double zeta = (mt_rand() % 315) / 100.0 - 1.57;
@@ -293,7 +289,8 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         
                 inputParameters[k].startParams = example;
 
-                inputParameters[k].posDiff = 1.0e10;
+                // Set to be a bad individual
+                inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
              }
         }
@@ -306,16 +303,16 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
 
         // the annealing rate passed in is scaled between ANNEAL_MAX and ANNEAL_MIN, dependent on the ratio between the tolerance and current distance from the tolerance
-        // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual
-        
+        // annealMax and annealMin change from the initial ANNEAL_MAX and ANNEAL_MIN whenever CHANGE_CHECK many generations pass without changing the best individual        
         // double new_anneal =  annealMax - tolerance / currentDistance * (annealMax - annealMin); old way of calculating new_anneal that was made simpler
+
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
         double currentBest;
-        if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        if (static_cast<int>(generation) % gConstant->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
             if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * gConstant.anneal_factor;
+                currentAnneal = currentAnneal * gConstant->anneal_factor;
             }
             previousBest = inputParameters[0].posDiff;
         }
@@ -325,7 +322,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         std::cout << '.';
 
         // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
-        if (static_cast<int>(generation) % gConstant.write_freq == 0) {
+        if (static_cast<int>(generation) % gConstant->write_freq == 0) {
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
 
@@ -336,7 +333,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( static_cast<int>(generation) % gConstant.disp_freq == 0) {
+        if ( static_cast<int>(generation) % gConstant->disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
 
@@ -356,9 +353,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
+    
+    // Write the final best and worst performing individuals to their respective files
+    writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
+    writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
     // Write the best individuals with best_count in total outputted in seperate binary files
-    for (int i = 0; i < gConstant.best_count; i++) {
+    for (int i = 0; i < gConstant->best_count; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
             start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
@@ -376,7 +377,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust);
+        writeTrajectoryToFile(start, cost, i + 1, thrust, gConstant);
     }
 
     // Close the performance files now that the algorithm is finished
@@ -407,6 +408,7 @@ int main () {
     std::cout << "- Device name: " << prop.name << std::endl;
     cudaSetDevice(0);
     
+    cudaConstants * gConstant = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
@@ -414,7 +416,7 @@ int main () {
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
-    launchCon = new EarthInfo(startTime, endTime, timeRes); // a global variable to hold Earth's position over time
+    launchCon = new EarthInfo(startTime, endTime, timeRes, gConstant); // a global variable to hold Earth's position over time
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = 32;
@@ -428,13 +430,13 @@ int main () {
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant);
 
-
     optimize(numThreads, blockThreads, gConstant, thrust);
 
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     
     delete launchCon;
+    delete gConstant;
 
     return 0;
 }

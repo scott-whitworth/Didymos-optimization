@@ -34,21 +34,21 @@ double velCost(Individual* pool, int size);
     // size: the number of Individuals in the pool
 // Output:
     // convgFlag: Boolean indicating whether the pool has converged
-bool converge(Individual* pool, geneticConstants& gConstants);
+bool converge(Individual* pool, cudaConstants* gConstants);
 
 // Determines whether the pools' posDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
 // Output:
     // convgFlag: Boolean indicating whether posDiffs have converged
-bool posConverge(Individual* pool, geneticConstants& gConstants);
+bool posConverge(Individual* pool, cudaConstants* gConstants);
 
 // Determines whether the pool's velDiffs have converged
 // Input:
     // pool: the entire generation (must already be sorted)
 // Output:
     // convgFlag: Boolean indicating whether velDiffs have converged
-bool velConverge(Individual* pool, geneticConstants& gConstants);
+bool velConverge(Individual* pool, cudaConstants* gConstants);
 
 #include "geneticAlgorithm.cpp"
 #endif

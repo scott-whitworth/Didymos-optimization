@@ -1,38 +1,50 @@
 <h1> Config File Specifications/Information </h1>
+Last Updated: June 22nd, 2020
 
-<h2>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h2>
-<h2>For changing what config file is used, the file address can be changed where gConstant is declared within the main function</h2>
-<h2>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h2>
-<h2>As of writing (June 17th, 2020), the program is set to require the file genetic.config to be in the same folder as the executable and additional note that the optimizeVector.bin file must be one folder outside of the executable's (address is "../optimizedVector.bin") </h2>
+<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h3>
+<h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function</h3>
+<h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
+<h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
+<h3>In the code, the structure that uses the config file is called <b>cudaConstants</b></h3>
 
-<h2>Future Considerations</h2>
-Consider expanding on either current structure/config to contain elements beyond the genetic algorithm (mission parameters for example) or have multiple config files for the various components.  Also expansion to have the program allow easy changes to other config files to allow multiple versions without needing to recompile with address changes (user prompt?  A config file for choosing config files?).  Consider having the address for optimizedVector.bin either be within same folder as executable, or have these dependencies (or where file outputs are stored) also be malleable variables within the config files.
+<h2>Variables in Config/cudaConstants</h2>
 
-
-<h2>Variables & Description</h2>
-
-- time_seed: Sets the randomization seed used in optimize(), if desiring truly random replace numeric value with NONE (will output onto terminal if seed is set to time(0))
-
-- write_freq: Sets for how gap between number of generations before the best individual's properties are appended to BestInGenerations.csv and BestInGenerations.bin (the last generation is always appended at the end of the file)
-- disp_freq: Sets for how gap between number of gnerations before outputting information to the terminal, does not impact the algorithm's process of finding a solution or recording the progress 
-
-- best_count: How many individuals are required to reach the criteria of a solution before ending the program and recording the solutions into binary files
-- pos_threshold: Sets the maximum positional difference of a solution
-- speed_threshold: Sets the minimum speed difference of a solution
-- change_check: How often the algorithm checks to see if the best individual has changed, if no change then the anneal value is changed
-- anneal_factor: Multiplier for changing the anneal value if no change in best individual
-- anneal_initial: The initial anneal value for the algorithm
-
-
-- mutation_rate: The probability percentage of mutations occurring
-- double_mutate_rate: The probability percentage of a mutation affecting 2 genes in total
-- triple_mutate_rate: The probability percentage of a mutation affecting 3 genes in total
-- gamma_mutate_scale: Affect the max range for mutating the gamma values
-- tau_mutate_scale:: Affect the max range for mutating the tau values
-- coast_mutate_scale: Affect the max range for mutating the coast values
-- triptime_mutate_scale: Affect the max range for mutating the triptime value
-- zeta_mutate_scale: Affect the max range for mutating the zeta value
-- beta_mutate_scale: Affect the max range for mutating the beta value
-- alpha_mutate_scale: Affect the max range for mutating the alpha values
-
-- thruster_type: Chooses what thruster is used
+| Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
+|----------------------------	|------------	|-------	|------------------------------------------------------------------------------------------------------------------------------------------------------------	                    |---	|
+| time_seed                  	| int/string 	| None  	| Sets the seed used in random generation, either specify a seed to use or place "NONE" for the seed to be time(0)                                           	                    |   	|
+| random_start               	| boolean    	| None  	| If true, sets initial generation's individuals to hold parameters with random values, if false it initializes the individuals from a file                  	                    |   	|
+| initial_start_file_address 	| string     	| None  	| If random_start is false, the program uses this address to get parameter values for the initial individuals with the assumption that the file hold 14 sets 	                    |   	|
+| pos_threshold              	| double     	| AU      	| Sets the maximum positional difference of the spacecraft to the asteriod at end of its trajectory path                                                    	                    |   	|
+| speed_threshold            	| double     	| AU/s  	| (Currently not used?) Sets the minimum velocity difference with the asteriod that the spacecraft must obtain at the end of its trajectory path            	                    |   	|
+| write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
+| disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
+| best_count                 	| int        	| None  	| How many individuals must converge to a solution before ending the algorithm 	                                                                                                    |   	|
+| change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced                                 	                    |   	|
+| anneal_initial             	| double     	| None  	| The initial anneal value, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                    |   	|
+| mutation_rate              	| double     	| None  	| The probability of a mutation occurring when generating a new individual, gurantees at least one gene is changed                                           	                    |   	|
+| double_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects two genes 	                                                                                                        |   	|
+| triple_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects 3 genes 	                                                                                                            |   	|
+| gamma_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for gamma values 	                                                                                                                            |   	|
+| tau_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for tau values 	                                                                                                                            |   	|
+| coast_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for coast values 	                                                                                                                            |   	|
+| triptime_mutate_scale 	    | double     	| None  	| Affects the maximum mutation range for triptime values 	                                                                                                                        |   	|
+| zeta_mutate_scale          	| double     	| None  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
+| alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
+| thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
+| dry_mass                     	| int        	| kg      	| Set the mass of the spacecraft without fuel 	                                                                                                                                    |   	|
+| wet_mass                     	| int        	| kg      	| Set the mass of the spacecraft with fuel                                                                                                                  	                    |   	|
+| coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
+| c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving earth's sphere of influence, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
+| v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving earth's sphere of influence, not in config file but rather derived from c3energy 	                        |   	|
+| r_fin_ast           	        | double     	| AU      	| The radius position of the asteriod at impact date, relative to the Sun 	                                                                                                        |   	|
+| theta_fin_ast        	        | double     	| Radians  	| The theta angle position of the asteriod at impact date, relative to the Sun 	                                                                                                    |   	|
+| z_fin_ast           	        | double     	| AU      	| The z (off-plane offset) position of the asteriod at impact date, relative to the Sun 	                                                                                        |   	|
+| vr_fin_ast           	        | double     	| AU/s  	| The velocity of the radius component of the asteriod at impact date, relative to the Sun 	                                                                                        |   	|
+| vtheta_fin_ast      	        | double     	| Rad/s  	| The velocity of the theta angle component of the asteriod at impact date, relative to the Sun 	                                                                                |   	|
+| vz_fin_ast           	        | double     	| AU/s  	| The velocity of the z component of the asteriod at impact date, relative to the Sun 	                                                                                            |   	|
+| r_fin_earth           	    | double     	| AU     	| The radius position of the earth at impact date, relative to the Sun 	                                                                                                            |   	|
+| theta_fin_earth          	    | double     	| Radians  	| The theta angle position of the earth at impact date, relative to the Sun 	                                                                                                    |   	|
+| z_fin_earth           	    | double     	| AU      	| The z (off-plane offset) position of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	        |   	|
+| vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	    |   	|
+| vtheta_fin_earth         	    | double     	| Rad/s  	| The velocity of the theta angle component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	|   	|
+| vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|

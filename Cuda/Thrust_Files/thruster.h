@@ -31,15 +31,16 @@ template <class T> struct thruster {
 // output: spacecraft's mDot for a certian iteration
     __host__ __device__ void calc_m_Dot(const T & Pin);
 
-    private:
-    T NEXTP0 =7330; // initial power (W)
-    T NEXTm_Dot0 = 5.73E-06; // inital fuel flow rate (kg/s)
-
     // thruster type enumeration
     enum THRUST_TYPE {
         NO_THRUST = 0,
         NEXT_C = 1
     };
+    
+    private:
+    T NEXTP0 =7330; // initial power (W)
+    T NEXTm_Dot0 = 5.73E-06; // inital fuel flow rate (kg/s)
+
 };
 
 #include "thruster.cpp"

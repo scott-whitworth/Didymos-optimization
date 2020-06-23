@@ -1,8 +1,12 @@
- <h1> Asteroid Impact Mission 
+<h1> Asteroid Impact Mission </h1>
+
+
+
+
 
 <h2> Running CUDA Code: </h2>
 
- On WU System:
+On WU System:
 1. To Compile:
    - Enter the following into command prompt within VSCode 
 
@@ -16,13 +20,13 @@
 
     - This code should add an .exe file with the output name that was entered
 		
-    
-    
   2. To run:
 			
       Type the .exe file name from above (don't forget to add .exe) and enter
       
-      
+  3. Changing properties:
+    
+      In Config_Constants, genetic.config holds a set of variables that can be changed before running the .exe file.  Refer to config_readme.md for specifics on how each variable impacts the program's behavior.
       
 		
   For Tesla Machine:
