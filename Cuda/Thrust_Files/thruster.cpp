@@ -10,18 +10,19 @@
 #include <iomanip> // used for setPrecision()
 
 template <class T>
-thruster<T>::thruster(int newType) {
+thruster<T>::thruster(geneticConstants & gConfig) {
     // no thruster
-    if (newType == THRUST_TYPE::NO_THRUST) {
+    if (gConfig.thruster_type == THRUST_TYPE::NO_THRUST) {
         m_Dot = P0 = 0;
     }
 
     // setting values (defined in header) for when type 1 is called (NEXT)
-    else if (newType == THRUST_TYPE::NEXT_C) {
+    else if (gConfig.thruster.type == THRUST_TYPE::NEXT_C) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
-    type = newType;
+    type = gConfig.thruster_type;
+    coastThreshold = gConfig.coast_threshold;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin) {
@@ -35,13 +36,13 @@ template <class T> T thruster<T>::calc_eff(const T & Pin) {
 template <class T> void thruster<T>::calc_m_Dot(const T & Pin) {
     if (type == THRUST_TYPE::NEXT_C) {
         if (Pin < 2550) {
-            this->m_Dot = 1.99E-06;
+            m_Dot = 1.99E-06;
         }
         else if (Pin < 4500) {
-            this->m_Dot = 4.44E-06;
+            m_Dot = 4.44E-06;
         }
         else {
-            this->m_Dot = 5.73E-06;
+            m_Dot = NEXTm_Dot0;
         }
     }
 }

@@ -41,6 +41,9 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "speed_threshold") {
                     this->speed_threshold = std::stod(variableValue);
                 }
+                else if (variableName == "coast_threshold") {
+                    this->coast_threshold = std::stod(variableValue);
+                }
                 else if (variableName == "thruster_type") {
                     this->thruster_type = std::stoi(variableValue);
                 }

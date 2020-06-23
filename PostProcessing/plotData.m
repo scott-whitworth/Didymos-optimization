@@ -178,30 +178,30 @@ hold on
 plot3(aX,aY,aZ,'LineWidth', 1, 'Color',	[0.6350, 0.0780, 0.1840])
 hold on
 plot3(eX,eY,eZ,'LineWidth', 1,'Color',[.61 .51 .74])
-legend('Earth','Asteroid','Spacecraft')
 hold on
 quiver3(cX(radStep),cY(radStep),cZ(radStep),accelX(radStep),accelY(radStep),accelZ(radStep),'k','Autoscalefactor',.08,'LineWidth',1)
-title('Solar orbitals with vectors')
+title('Solar orbitals')
+legend('Spacecraft','Asteroid','Earth','Acceleration')
 hold off
 %print(a,'3D.png','-dpng','-r300'); 
 
 
 %b=figure(4);
-figure(4)
-plot(yE(:,1).*cos(yE(:,2)),yE(:,3),'LineWidth', 1,'Color',[.61 .51 .74]);
-xlim([-2.5 2])
-ylim([-.3 .3])
-hold on
-plot(yA(:,1).*cos(yA(:,2)),yA(:,3),'LineWidth', 1,'Color',	[0.6350, 0.0780, 0.1840])
-hold on
-plot(cR(1,1:sizeC).*cos(cR(2,1:sizeC)), cR(3,1:sizeC),'LineWidth', 1,'Color',[0.4660, 0.6740, 0.1880])
-xlabel('x')
-ylabel('z')
-legend('Earth','Asteroid','Spacecraft')
-hold on
-quiver(cX(radStep),cZ(radStep),accelX(radStep),accelZ(radStep),'k','LineWidth',1,'MarkerSize',15,'Autoscalefactor',.08)
-title('Solar orbitals')
-hold off
+%figure(4)
+%plot(yE(:,1).*cos(yE(:,2)),yE(:,3),'LineWidth', 1,'Color',[.61 .51 .74]);
+%xlim([-2.5 2])
+%ylim([-.3 .3])
+%hold on
+%plot(yA(:,1).*cos(yA(:,2)),yA(:,3),'LineWidth', 1,'Color',	[0.6350, 0.0780, 0.1840])
+%hold on
+%plot(cR(1,1:sizeC).*cos(cR(2,1:sizeC)), cR(3,1:sizeC),'LineWidth', 1,'Color',[0.4660, 0.6740, 0.1880])
+%xlabel('x')
+%ylabel('z')
+%legend('Earth','Asteroid','Spacecraft')
+%hold on
+%quiver(cX(radStep),cZ(radStep),accelX(radStep),accelZ(radStep),'k','LineWidth',1,'MarkerSize',15,'Autoscalefactor',.08)
+%title('Solar orbitals')
+%hold off
 %print(b,'2DNoVec.png','-dpng','-r350'); 
 
 end

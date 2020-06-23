@@ -68,6 +68,31 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
+void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual) {
+    ExcelOutput << currentGeneration << ',';
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
+    }
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
+    }
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
+    }
+    ExcelOutput << std::endl;
+
+    BinOutput.write((char*)&currentGeneration, sizeof(double));
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
+    }
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
+    }
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
+    }
+}
+
 // Utility function to display the currently best individual onto the terminal while the algorithm is still running
 // Input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
 void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
@@ -211,6 +236,16 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
+    std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
+    if (thrust.type) {
+        generationThrustBestExcel.open("BestThrustGens.csv");
+        generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+        generationThrustWorstExcel.open("WorstThrustGens.csv");
+        generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+
+        generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
+        generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
+    }
 
     double generation = 0;    // A counter for number of generations calculated
     
@@ -290,6 +325,11 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
         if (static_cast<int>(generation) % gConstant->write_freq == 0) {
             writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
             writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
+
+            if (thrust.type) {
+                writeThrustToFiles(generationThrustBestExcel, generationThrustBestBin, generation, inputParameters[0]);
+                writeThrustToFiles(generationThrustWorstExcel, generationThrustWorstBin, generation, inputParameters[numThreads-1]);
+            }
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -346,6 +386,13 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     generationPerformanceWorstExcel.close();
     generationWorstPerformanceBin.close();
 
+    if (thrust.type) {
+        generationThrustBestExcel.close();
+        generationThrustWorstExcel.close();
+        generationThrustBestBin.close();
+        generationThrustWorstBin.close();
+    }
+
     delete [] inputParameters;
     delete [] survivors;
     delete start;
@@ -380,7 +427,8 @@ int main () {
     //efficiencyGraph.open("efficiencyGraph.csv");
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     
-    thruster<double> thrust(gConstant->thruster_type);
+    geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+    thruster<double> thrust(gConstant);
 
     optimize(numThreads, blockThreads, gConstant, thrust);
 

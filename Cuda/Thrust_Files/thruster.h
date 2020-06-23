@@ -1,6 +1,7 @@
 #ifndef thruster_h
 #define thruster_h
 #include "coefficients.h"
+#include "config.h"
 
 // file path for all data used in this file: \\fs1\phys\sankaranResearch\2019-Lauren-Mateo\Thruster
 
@@ -11,7 +12,9 @@ template <class T> struct thruster {
     T P0; // inital power in
     T m_Dot0; // initial m_Dot
 
-    __host__ __device__ thruster<T>(int type);
+    double coastThreshold; // threshold to activate thruster
+
+    __host__ __device__ thruster<T>(geneticConstants & gConfig);
 
     //overload the stream output for elements used for writing to a file
     template <class T> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
