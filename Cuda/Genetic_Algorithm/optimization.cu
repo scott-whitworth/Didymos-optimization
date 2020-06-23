@@ -1,6 +1,5 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 
-#include "../constants.h" //used for wetMass
 #include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
@@ -11,6 +10,10 @@
 #include <time.h> //for seeding the random number generator
 #include <random>
 #include <chrono>
+
+#define PI 3.141592653
+
+
 
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
@@ -141,10 +144,10 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         for (int i = 0; i < numThreads; i++) { 
             double tripTime = SECONDS_IN_YEAR*(mt_rand() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
-            double alpha = (mt_rand() % 315) / 100.0; // 0 <-> 3.14
-            double beta  = (mt_rand() % 629) / 100.0 - 3.14; // -3.14 <-> 3.14
-            double zeta  = (mt_rand() % 315) / 100.0 - 1.57; // -1.57 <-> 1.57
-    
+            double alpha = PI * 2*((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI <-> PI
+            double beta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max())); // 0 <-> PI
+            double zeta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI/2 <-> PI/2
+
             coefficients<double> testcoeff;
             for (int j = 0; j < testcoeff.gammaSize; j++) {
                 testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
@@ -157,7 +160,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
             }
         
             rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-    
+        
             inputParameters[i].startParams = example;
         }
     }
@@ -268,10 +271,10 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
                 double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
-                double alpha = (mt_rand() % 629) / 100.0 - 3.14;
-                double beta = (mt_rand() % 629) / 100.0 - 3.14;
-                double zeta = (mt_rand() % 315) / 100.0 - 1.57;
-        
+                double alpha = PI * 2*((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI <-> PI
+                double beta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max())); // 0 <-> PI
+                double zeta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI/2 <-> PI/2
+
                 coefficients<double> testcoeff;
                 if (thrust.type) {
                     for (int j = 0; j < testcoeff.gammaSize; j++) {

@@ -36,6 +36,7 @@ struct cudaConstants {
     // Used in thruster construction and corresponding calculations
     int thruster_type; // 0 is for no thruster, 1 is for NEXT ion thruster
     int dry_mass; // Mass of the spacecraft with no fuel (kg)
+    int fuel_mass; // The mass quantity of fuel the spacecraft starts with, used to derive wet_mass
     int wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config (kg)
 
     double coast_threshold; // 0 results in the thruster never coasting, 1 results in always coasting

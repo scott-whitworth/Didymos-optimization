@@ -10,7 +10,7 @@
 
 #define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
 
-// Global enumeration for the different mask values
+// Global enumeration for the different mask values instead of 1,2,3 for better readibility
 enum maskValue {
     PARTNER1 = 1,
     PARTNER2,
@@ -28,10 +28,10 @@ void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
     //cout << "Random Index: " << crossIndex << endl;
     for (int i = 0; i < OPTIM_VARS; i++) {
         if (i > crossIndex) {
-            mask[i] = 2;
+            mask[i] = PARTNER2;
         }
         else {
-            mask[i] = 1;
+            mask[i] = PARTNER1;
         }        
     }
     return;
@@ -44,10 +44,10 @@ void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
 void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
     for (int i = 0; i < OPTIM_VARS; i++ ) {
         if (rng() % 2) { //Coin flip, either 1/0
-            mask[i] = 2;
+            mask[i] = PARTNER2;
         }
         else {
-            mask[i] = 1;
+            mask[i] = PARTNER1;
         }
     }
     return;
@@ -87,9 +87,10 @@ void crossOver_bundleVars(int mask[], std::mt19937_64 & rng) {
     return;
 }
 
+// Sets the entire mask to be AVG
 void crossOver_average(int mask[]) {
     for (int i = 0; i < OPTIM_VARS; i++) {
-        mask[i] = 3;
+        mask[i] = AVG;
     }
     return;
 }
@@ -163,9 +164,9 @@ void printMask(int mask[]) {
 }
 
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust) {
+    // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
     rkParameters<double> newInd = p1;
 
-        
     // Only calculate values pertaining to thrust if a thruster is being used
     if (thrust.type != thruster<double>::NO_THRUST) {
         // Iterate through the gamma values
@@ -227,7 +228,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 
 // utility function for mutate() to get a random double with as high a resolution as possible
 // INPUT:
-// max: the absolute value of the min and max(min = -max) of the range
+//      max: the absolute value of the min and max(min = -max) of the range
 double getRand(double max, std::mt19937_64 & rng) {
     return static_cast<double>(rng()) / rng.max() * max * 2.0 - max;
 }
@@ -300,23 +301,23 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
 
 // if using this, consider that theta is the same as theta + 2 pi
-
+// CURRENTLY NOT USED
 //Creates a new rkParameter based on the average between p1 and p2
 // input: p1 and p2 are valid rkParameters
 // output: average of the two
-rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double>& thrust) {
+/*rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, const rkParameters<double> & p2, thruster<double>& thrust) {
     rkParameters<double> newInd;
     
     // alter thrust coefficients only when using a thruster
-    if (thrust.type) {
+    if (thrust.type != thruster<double>::NO_THRUST) {
         for (int i = 0; i < p1.coeff.gammaSize; i++) {
-            //newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
+            newInd.coeff.gamma[i] = (p1.coeff.gamma[i]/2.0) + (p2.coeff.gamma[i]/2.0);
         }
         for (int i = 0; i < p1.coeff.tauSize; i++) {
-            //newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
+            newInd.coeff.tau[i] = (p1.coeff.tau[i]/2.0) + (p2.coeff.tau[i]/2.0);
         }
         for (int i = 0; i < p1.coeff.coastSize; i++) {
-            //newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
+            newInd.coeff.coast[i] = (p1.coeff.coast[i]/2.0) + (p2.coeff.coast[i]/2.0);
         }
     }
 
@@ -326,11 +327,11 @@ rkParameters<double> generateNewIndividual_avg(const rkParameters<double> & p1, 
     newInd.tripTime = (p1.tripTime/2.0) + (p2.tripTime/2.0);
 
     return newInd;    
-}
+}*/
 
 // WIP
-// Uses generateNewIndividual to create new Individual by crossing over properties with mask, followed by random chance for mutations
-// Output is new individual in pool
+// Uses generateNewIndividual to create new Individuals by crossing over properties with mask, followed by random chance for mutations
+// Output is 2 new individual in pool
 // Can only be used within crossover function in its current state because of int i input
 void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, std::mt19937_64 & rng, cudaConstants* gConstant, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
