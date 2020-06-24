@@ -8,7 +8,7 @@
 #include <iostream> // used for cout
 
 template <class T> __host__ __device__ T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal, thruster<T> thrust) {
-    if (thrust.type != THRUST_TYPE::NO_THRUST) {
+    if (thrust.type != thruster<double>::NO_THRUST) {
         T coeff = series[0];
         T curTimeRatio = curTime / timeFinal;
 
@@ -30,7 +30,7 @@ template <class T> __host__ __device__ T calc_tau(coefficients<T> & coeff, const
 }
 
 template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<T> thrust) {
-    if (thrust.type != THRUST_TYPE::NO_THRUST) {
+    if (thrust.type != thruster<double>::NO_THRUST) {
         // Use the fourier series for the coasting coefficients, then take the cos^2(coasting)
         T coastValue = pow( sin(calc_Series(coeff.coast, coeff.coastSize, curTime, timeFinal, thrust)), 2);
         // if it is above the optimized threshold we return true for not coasting
