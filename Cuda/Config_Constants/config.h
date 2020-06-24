@@ -64,6 +64,26 @@ struct cudaConstants {
     double f_min; // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
     double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    // WIP
+    
+    int optim_vars;
+    int num_starts; // Used when random_start is false, is the number of parameter sets that the file being read contains // Original value is 14
+    int gamma_size;
+    int tau_size;
+    int coast_size;
+
+    int gamma_offset;
+    int tau_offset;
+    int alpha_offset;
+    int beta_offset;
+    int zeta_offset;
+    int triptime_offset;
+    int coast_offset;
+
+
+
+
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
     cudaConstants();
 

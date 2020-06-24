@@ -174,8 +174,48 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stod(variableValue);
                 }
+                /////////////////////////////////////////////////////////////////////////////////////
+                // WIP - thinking having offset be determined by size, as well as OPTIM vars! but this will be after initial implementation for the variables in general is working in the rest of the code
+                
+                else if (variableName == "optim_vars") {
+                    this->optim_vars = std::stoi(variableValue);
+                }
+                else if (variableName == "num_starts") {
+                    this->num_starts = std::stoi(variableValue);
+                }
+                else if (variableName == "gamma_size") {
+                    this->gamma_size = std::stoi(variableValue);
+                }
+                else if (variableName == "tau_size") {
+                    this->tau_size = std::stoi(variableValue);
+                }
+                else if (variableName == "coast_size") {
+                    this->coast_size = std::stoi(variableValue);
+                }
+                else if (variableName == "gamma_offset") {
+                    this->gamma_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "tau_offset") {
+                    this->tau_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "alpha_offset") {
+                    this->alpha_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "beta_offset") {
+                    this->beta_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "zeta_offset") {
+                    this->zeta_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "triptime_offset") {
+                    this->triptime_offset = std::stoi(variableValue);
+                }
+                else if (variableName == "coast_offset") {
+                    this->coast_offset = std::stoi(variableValue);
+                }
 
 
+                /////////////////////////////////////////////////////////////////////////////////////
                 else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to time(0) 
                     if (variableValue != "NONE") {
                         // If variableValue is not NONE, assumption is that it is a valid double value that can be converted and used

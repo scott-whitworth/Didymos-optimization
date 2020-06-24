@@ -165,7 +165,8 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     // If not a random start, read from file
     else {
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
-        const int numStarts = 14; // the number of different sets of starting parameters in the input file
+
+        //const int numStarts = 14; // the number of different sets of starting parameters in the input file
 
         std::ifstream starts;
         starts.open(gConstant->initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
@@ -174,9 +175,19 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
         // one row is one set of starting parameters
         // each column is a specific variable:
         double startDoubles;
-        double arrayCPU[numStarts][OPTIM_VARS];
-        for (int i = 0; i < OPTIM_VARS; i++) { // rows
-            for (int j = 0; j < numStarts; j++) { // columns
+        // arrayCPU needs to be updated to handle the fact that OPTIM_VARS now is defined from gConstant
+        //        double arrayCPU[numStarts][OPTIM_VARS];
+
+        // Source of help in creating a dynamicly sized 2D array: https://stackoverflow.com/questions/1946830/multidimensional-variable-size-array-in-c
+        // arrayCPU is a double pointer to double values
+        double **arrayCPU = new double*[gConstant->num_starts];
+
+        for (int i = 0; i < gConstant->num_starts; i++) {
+            arrayCPU[i] = new double[gConstant->optim_vars];
+        }
+
+        for (int i = 0; i < gConstant->optim_vars; i++) { // rows
+            for (int j = 0; j < gConstant->num_starts; j++) { // columns
                 starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
                 arrayCPU[j][i] = startDoubles;
             }
@@ -185,7 +196,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
 
          // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
         for (int i = 0; i < numThreads; i++) {
-            int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
+            int row = mt_rand() % gConstant->num_starts; // Choose a random row to get the parameters from
 
             double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
             double alpha = arrayCPU[row][ALPHA_OFFSET];
@@ -209,6 +220,13 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
 
             inputParameters[i].startParams = example;
         }
+        
+        // Delete contents of arrayCPU
+        for (int i = 0; i < gConstant->num_starts; i++) {
+            delete arrayCPU[i];
+        }
+        delete arrayCPU;
+
     }
 
 
@@ -349,7 +367,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
-    double *start = new double[OPTIM_VARS];
+    double *start = new double[gConstant->optim_vars];
     double cost = 0;
 
     // Output to excel

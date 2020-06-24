@@ -150,7 +150,7 @@ void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double>
 
   output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
 
-  for (int j = 0; j < OPTIM_VARS; j++) {
+  for (int j = 0; j < cConstants->optim_vars; j++) {
     output.write((char*)&start[j], sizeof (double));
   }
 

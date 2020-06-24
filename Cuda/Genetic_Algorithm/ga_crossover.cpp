@@ -23,10 +23,10 @@ enum maskValue {
 // in/out: mask - all data will be overwritten
 //              - Based on random index, first selection will be 1's, last selection will be 2's
 //              - ex: [1, 1, 1, 1, 2, 2]
-void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
-    int crossIndex = rng() % (OPTIM_VARS-1);
+void crossOver_randHalf(int * mask, int size, std::mt19937_64 & rng) {
+    int crossIndex = rng() % (size-1);
     //cout << "Random Index: " << crossIndex << endl;
-    for (int i = 0; i < OPTIM_VARS; i++) {
+    for (int i = 0; i < size; i++) {
         if (i > crossIndex) {
             mask[i] = PARTNER2;
         }
@@ -41,8 +41,8 @@ void crossOver_randHalf(int mask[], std::mt19937_64 & rng) {
 // Each element in a mask is randomly set to either 1 or 2
 // in/out : All data overwritten, set randomly
 // input: rng - a constructed mt19937_64 random number generator
-void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
-    for (int i = 0; i < OPTIM_VARS; i++ ) {
+void crossOver_wholeRandom(int * mask, int size, std::mt19937_64 & rng) {
+    for (int i = 0; i < size; i++ ) {
         if (rng() % 2) { //Coin flip, either 1/0
             mask[i] = PARTNER2;
         }
@@ -54,7 +54,7 @@ void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng) {
 }
 
 // This crossover method randomly chooses between partners for each variable. Similar to crossOver_wholeRandom, but this keeps all parameters for each variable together
-void crossOver_bundleVars(int mask[], std::mt19937_64 & rng) {
+void crossOver_bundleVars(int * mask, std::mt19937_64 & rng) {
     int p_gamma = 1 + rng() % 2; // partners for each variable are randomly chosen between 1 and 2
     int p_tau = 1 + rng() % 2;
     int p_coast = 1 + rng() % 2;
@@ -88,8 +88,8 @@ void crossOver_bundleVars(int mask[], std::mt19937_64 & rng) {
 }
 
 // Sets the entire mask to be AVG
-void crossOver_average(int mask[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
+void crossOver_average(int * mask, int size) {
+    for (int i = 0; i < size; i++) {
         mask[i] = AVG;
     }
     return;
@@ -130,8 +130,8 @@ void crossOver_average(int mask[]) {
 //Utility to flip the polarity of a mask
 // input:  mask is an array of size OPTIM_VARS, input with either 1 or 2 as a mask
 // output: each 1 in mask will be reassigned to be a 2, each 2 will be reassigned 1
-void flipMask(int mask[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
+void flipMask(int * mask, int size) {
+    for (int i = 0; i < size; i++) {
         if (mask[i] == 1) {
             mask[i] = 2;
         }
@@ -143,27 +143,27 @@ void flipMask(int mask[]) {
 }
 
 //Copy contents of maskIn into maskOut
-void copyMask(int maskIn[], int maskOut[]) {
-    for (int i = 0; i < OPTIM_VARS; i++) {
+void copyMask(int * maskIn, int * maskOut, int size) {
+    for (int i = 0; i < size; i++) {
         maskOut[i] = maskIn[i];
     }
 }
 
 // Display mask contents onto the terminal
-void printMask(int mask[]) {
+void printMask(int * mask, int size) {
     std::cout << "[";
 
-    for(int i = 0; i < OPTIM_VARS; i++) {
+    for(int i = 0; i < size; i++) {
         std::cout << mask[i];
         // If not the last item, need a comma to seperate between the items in the display
-        if ( i < OPTIM_VARS-1 ) {
+        if ( i < size-1 ) {
             std::cout <<", ";
         }
     }
     std::cout << "]";
 }
 
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust) {
     // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
     rkParameters<double> newInd = p1;
 
@@ -252,17 +252,17 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
     int mutatedGenes[3]; // index of genes to mutate
 
-    mutatedGenes[0] = rng() % OPTIM_VARS;
+    mutatedGenes[0] = rng() % gConstant->optim_vars;
 
     if (genesToMutate > 1) {
         do {
-            mutatedGenes[1] = rng() % OPTIM_VARS;
+            mutatedGenes[1] = rng() % gConstant->optim_vars;
         } while (mutatedGenes[1] == mutatedGenes[0]); // make sure that each mutated gene is unique
     }
 
     if (genesToMutate > 2) {
         do {
-            mutatedGenes[2] = rng() % OPTIM_VARS;
+            mutatedGenes[2] = rng() % gConstant->optim_vars;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
 
@@ -341,7 +341,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
         pool[poolSize - 1 - (2 * index)].startParams = mutate(pool[poolSize - 1 - (4 * index)].startParams, rng, annealing, gConstant, thrust);
     }
 
-    flipMask(mask); // get the opposite offspring
+    flipMask(mask, gConstant->optim_vars); // get the opposite offspring
     pool[poolSize - 1 - (2 * index) - 1] = Individual();
     pool[poolSize - 1 - (2 * index) - 1].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust);
     
@@ -354,19 +354,19 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, cudaConstants* gConstant, thruster<double>& thrust) {
     std::mt19937_64 rng(gConstant->time_seed);
 
-    int mask[OPTIM_VARS];
+    int * mask = new int[gConstant->optim_vars];
 
     int index = 0;
 
     // Generate two offspring through each crossover method, total of 8 offspring per parent pair
     for (int i = 0; i < survivorSize / 2; i++) {
-        crossOver_wholeRandom(mask, rng);
+        crossOver_wholeRandom(mask, gConstant->optim_vars, rng);
         mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
 
     for (int i = 0; i < survivorSize / 2; i++) {
-        crossOver_average(mask);
+        crossOver_average(mask, gConstant->optim_vars);
         mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
@@ -382,6 +382,6 @@ int crossover(Individual *survivors, Individual *pool, int survivorSize, int poo
         mutateNewIndividual(pool, survivors, mask, index, i, annealing, poolSize, rng, gConstant, thrust);
         index++;
     }
-
+    delete [] mask;
     return index * 2;
 }
