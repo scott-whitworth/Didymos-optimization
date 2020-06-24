@@ -149,7 +149,6 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 }
                 else if (variableName == "vr_fin_earth") {
                     this->vr_fin_earth = std::stod(variableValue);
-                    std::cout << variableName << ": " << this->vr_fin_earth << std::endl;
                 }
                 else if (variableName == "vtheta_fin_earth") {
                     this->vtheta_fin_earth = std::stod(variableValue);
@@ -158,10 +157,10 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                     this->vz_fin_earth = std::stod(variableValue);
                 }
                 else if (variableName == "dry_mass") {
-                   this->dry_mass = std::stoi(variableValue);
+                   this->dry_mass = std::stod(variableValue);
                 }
                 else if (variableName == "fuel_mass") {
-                    this->fuel_mass = std::stoi(variableValue);
+                    this->fuel_mass = std::stod(variableValue);
                 }
                 else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to time(0) 
                     if (variableValue != "NONE") {
