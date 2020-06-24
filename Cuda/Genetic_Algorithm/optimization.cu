@@ -387,7 +387,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* gCo
     generationPerformanceWorstExcel.close();
     generationWorstPerformanceBin.close();
 
-    if (thrust.type) {
+    if (thrust.type != thruster<double>::NO_THRUST) {
         generationThrustBestExcel.close();
         generationThrustWorstExcel.close();
         generationThrustBestBin.close();
