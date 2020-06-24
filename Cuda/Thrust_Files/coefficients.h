@@ -4,6 +4,8 @@
 #include "../constants.h"
 #include "../Config_Constants/config.h"
 #include <iostream>
+// This file needs to be updated to not use constants.h for optim_vars values
+
 
 //Utility to calculate the coefficients vector
 //Coefficients struct holds gamma and tau values

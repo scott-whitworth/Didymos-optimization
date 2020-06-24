@@ -52,12 +52,15 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
-  elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);
+  elements<double> earth =  launchCon->getCondition(x[cConstants->triptime_offset]);
   
   // setting initial conditions of the spacecraft
-  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]), earth.theta + asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r), earth.z,
-                                                 earth.vr + cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*cConstants->v_escape, earth.vtheta + cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*cConstants->v_escape,
-                                                 earth.vz + sin(x[ZETA_OFFSET])*cConstants->v_escape);
+  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[cConstants->alpha_offset]),
+                                                 earth.theta + asin(sin(M_PI-x[cConstants->alpha_offset])*ESOI/earth.r),
+                                                 earth.z,
+                                                 earth.vr + cos(x[cConstants->zeta_offset])*sin(x[cConstants->beta_offset])*cConstants->v_escape,
+                                                 earth.vtheta + cos(x[cConstants->zeta_offset])*cos(x[cConstants->beta_offset])*cConstants->v_escape,
+                                                 earth.vz + sin(x[cConstants->zeta_offset])*cConstants->v_escape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -95,7 +98,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
-  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
+  rk4sys(timeInitial, x[cConstants->triptime_offset] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
   lastStep = lastStepInt;
 
