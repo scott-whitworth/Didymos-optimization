@@ -149,7 +149,7 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 }
                 else if (variableName == "vr_fin_earth") {
                     this->vr_fin_earth = std::stod(variableValue);
-                    std::cout << variableName << ": " << variableValue << std::endl;
+                    std::cout << variableName << ": " << this->vr_fin_earth << std::endl;
                 }
                 else if (variableName == "vtheta_fin_earth") {
                     this->vtheta_fin_earth = std::stod(variableValue);
