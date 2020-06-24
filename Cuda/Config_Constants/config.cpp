@@ -9,10 +9,13 @@
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 cudaConstants::cudaConstants() {
     geneticFileRead("genetic.config");
+    this->wet_mass = this->dry_mass + this->fuel_mass;
 }
 // Operates same as default, however uses configFile as address for where the config file to be used is located
 cudaConstants::cudaConstants(std::string configFile) {
     geneticFileRead(configFile);
+    // Now that dry_mass and fuel_mass have been acquired, set wet_mass
+    this->wet_mass = this->dry_mass + this->fuel_mass;
 }
 
 
@@ -156,8 +159,8 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "dry_mass") {
                    this->dry_mass = std::stoi(variableValue);
                 }
-                else if (variableName == "wet_mass") {
-                    this->wet_mass = std::stoi(variableValue);
+                else if (variableName == "fuel_mass") {
+                    this->fuel_mass = std::stoi(variableValue);
                 }
                 else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to time(0) 
                     if (variableValue != "NONE") {

@@ -3,7 +3,6 @@
 
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Motion_Eqns/elements.h"
-#include "../constants.h"
 #include "../Earth_calculations/earthInfo.h"
 #include "../Config_Constants/config.h"
 

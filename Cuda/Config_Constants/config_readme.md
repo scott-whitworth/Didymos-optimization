@@ -1,7 +1,7 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: June 22nd, 2020
+Last Updated: June 23rd, 2020
 
-<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h3>
+<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces with variables</h3>
 <h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function</h3>
 <h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
 <h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
@@ -32,8 +32,9 @@ Last Updated: June 22nd, 2020
 | alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
 | thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
 | dry_mass                     	| int        	| kg      	| Set the mass of the spacecraft without fuel 	                                                                                                                                    |   	|
-| wet_mass                     	| int        	| kg      	| Set the mass of the spacecraft with fuel                                                                                                                  	                    |   	|
-| coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
+| fuel_mass                     | int        	| kg      	| Sets the initial mass of fuel in the spacecraft, determines wet_mass 	                                                                                                            |   	|
+| wet_mass                     	| int        	| kg      	| The total mass of the spacecraft with fuel                                                                                                                  	                    |   	|
+| coast_threshold             	| double     	| None  	| In a range from 0 to 1, 0 sets the spacecraft to coast at all times while 1 sets the spacecraft to always have thruster on 	                                                    |   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving earth's sphere of influence, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
 | v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving earth's sphere of influence, not in config file but rather derived from c3energy 	                        |   	|
 | r_fin_ast           	        | double     	| AU      	| The radius position of the asteriod at impact date, relative to the Sun 	                                                                                                        |   	|

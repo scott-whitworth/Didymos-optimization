@@ -1,28 +1,22 @@
 //Didymos-Optimization_Project:
-//Last Editor: Ben and Lauren
-//Tasks Completed: 
-      //Created thruster file which sets the thruster being used in the optimization.
-      //NEXT:
-        //Inserted a function which relates effciency to the power going in to the spacecraft based off of an excel best fit line.
-        //Created a variable mDot by adding if statements which relate the power going in to the spacecraft to the amount of fuel consumption for a given iteration.
 
 #include "thruster.h"
 #include <iomanip> // used for setPrecision()
 
 template <class T>
-thruster<T>::thruster(geneticConstants & gConfig) {
+thruster<T>::thruster(cudaConstants* gConfig) {
     // no thruster
-    if (gConfig.thruster_type == THRUST_TYPE::NO_THRUST) {
+    if (gConfig->thruster_type == THRUST_TYPE::NO_THRUST) {
         m_Dot = P0 = 0;
     }
 
     // setting values (defined in header) for when type 1 is called (NEXT)
-    else if (gConfig.thruster.type == THRUST_TYPE::NEXT_C) {
+    else if (gConfig->thruster_type == THRUST_TYPE::NEXT_C) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
-    type = gConfig.thruster_type;
-    coastThreshold = gConfig.coast_threshold;
+    type = gConfig->thruster_type;
+    coastThreshold = gConfig->coast_threshold;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin) {
