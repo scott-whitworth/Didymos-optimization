@@ -6,7 +6,7 @@
 #include <string> // to_string()
 #include "earthInfo.h" // reference to launchCon
 
-elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth) {
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth, cudaConstants * cConstants) {
   // Time step
   double deltaT; 
 
@@ -17,23 +17,23 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime,co
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp, cConstants->rk_tol);
  
   return yp;
 }
 
-elements<double> earthInitial(double timeInitial, double tripTime,const elements<double> & earth) {
+elements<double> earthInitial(double timeInitial, double tripTime,const elements<double> & earth, cudaConstants * cConstants) {
   // Time step
   double deltaT; 
 
   // Initial guess for time step, cannot be greater than the time resolution.
-  deltaT = -(tripTime - timeInitial)/static_cast <double> (MAX_NUMSTEPS); 
+  deltaT = -(tripTime - timeInitial)/static_cast <double> (cConstants->max_numsteps); 
 
   // Declaring the solution vector.
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp,RK_TOL);
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp, cConstants->rk_tol);
  
   return yp;
 }
@@ -64,7 +64,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
-  deltaT = (timeFinal-timeInitial) / MAX_NUMSTEPS; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial) / cConstants->max_numsteps; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   coefficients<double> coeff;
@@ -75,9 +75,9 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   double wetMass = cConstants->wet_mass;
 //  double wetMass = WET_MASS;
   // setting Runge-Kutta tolerance
-  double absTol = RK_TOL;
+  double absTol = cConstants->rk_tol;
   //set optmization minimum
-  double Fmin = F_MIN;
+  double Fmin = cConstants->f_min;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
