@@ -1,6 +1,7 @@
 % impactParams(): script to calculate position and velocity vector
 % components in cylindrical coordinates at impact using Cartesian vector
 % components retrieved from https://ssd.jpl.nasa.gov/sbdb.cgi 
+% impact date: 09-30-2022 19:54:55 UTC (data available at 19:55:00)
 clc,clear
 day2sec = 3600*24;
 
