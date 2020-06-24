@@ -1,7 +1,7 @@
 <h1> Config File Specifications/Information </h1>
 Last Updated: June 23rd, 2020
 
-<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents</h3>
+<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces with variables</h3>
 <h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function</h3>
 <h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
 <h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
