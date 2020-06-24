@@ -116,7 +116,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust) {
+double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust, double c3Energy, int runNumber) {
     double calcPerS = 0;
 
     time_t timeSeed = gConstant.time_seed;
@@ -262,7 +262,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     double distinguishRate = 1.0e-7;
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (numThreads - newInd), newInd);
+        initializePosition(inputParameters + (numThreads - newInd), newInd, c3Energy);
 
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust); // calculate trajectories for new individuals
 
@@ -437,10 +437,11 @@ int main () {
     
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant);
-
-
-    optimize(numThreads, blockThreads, gConstant, thrust);
-
+    double c3Energy = 4.676e6;
+    for(int i = 0; i < 10; i++) {
+        
+        optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, i);
+    }
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     

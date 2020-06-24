@@ -17,7 +17,7 @@ struct Individual {
     double velDiff; // difference in velocity between spacecraft and asteroid at end of run
 
     // get the inital position of the spacecraft according to this Individual's launch time
-    void initialize();
+    void initialize(double c3);
 
     // Calculates a cost value to quantitatively evaluate this Individual
     double getCost();

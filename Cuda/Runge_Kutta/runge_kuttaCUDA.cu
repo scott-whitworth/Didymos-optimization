@@ -172,9 +172,9 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     return;
 }
 
-__host__ void initializePosition(Individual *individuals, int size) {
+__host__ void initializePosition(Individual *individuals, int size, double c3) {
     for (int i = 0; i < size ;i++) {
-        individuals[i].initialize();
+        individuals[i].initialize(c3);
     }
 }
     

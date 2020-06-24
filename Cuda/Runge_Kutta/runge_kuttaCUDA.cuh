@@ -14,7 +14,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust);
 
 // gets the y0 for size number of Individuals
-__host__ void initializePosition(Individual *individuals, int size);
+__host__ void initializePosition(Individual *individuals, int size, double c3);
 
 // THIS FUNCTION HAS NOT BEEN COMPLETED AND IS NOT IN USE
 // takes in the best individual of a generation
