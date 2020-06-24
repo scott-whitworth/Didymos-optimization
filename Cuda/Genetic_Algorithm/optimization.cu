@@ -18,8 +18,8 @@
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBest, double currentBest) {
-    if (previousBest != currentBest) {
+bool changeInBest(double previousBest, double currentBest, double distinguishRate) {
+    if (trunc(previousBest/distinguishRate) != trunc(currentBest/distinguishRate)) {
         return true;
     }
     else {
@@ -258,7 +258,8 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     double tolerance = gConstant.pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
     //double ptol = gConstant.pos_threshold;
-
+    bool convflag = false;
+    double distinguishRate = 1.0e-7;
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd);
@@ -317,8 +318,10 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         double currentBest;
         if (static_cast<int>(generation) % gConstant.change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
-            if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
+            if ( !(changeInBest(previousBest, currentDistance, distinguishRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * gConstant.anneal_factor;
+                std::cout << "\nanneal changed to: " << currentAnneal << std::endl;
+                if(trunc(inputParameters[0].posDiff/distinguishRate)==0) { distinguishRate = distinguishRate/10; }
             }
             previousBest = inputParameters[0].posDiff;
         }
@@ -346,9 +349,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
         // Create a new generation and increment the generation counter
         newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, gConstant, thrust);
         ++generation;
+
+        if( inputParameters[0].posDiff <= tolerance) {
+            convflag = true;
+        }
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
-    } while ( !allWithinTolerance(tolerance, inputParameters, generation, gConstant) );
+    } while ( !convflag ); //allWithinTolerance(tolerance, inputParameters, generation, gConstant) );
 
 
     
