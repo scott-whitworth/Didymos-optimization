@@ -26,7 +26,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     elements<double> earth = elements<double>(cConstants->r_fin_earth, cConstants->theta_fin_earth, cConstants->z_fin_earth, cConstants->vr_fin_earth, cConstants->vtheta_fin_earth, cConstants->vz_fin_earth);
 
     // Get the actual initial position for the time frame chosen.
-    earth = earthInitial_incremental(0,startTime,earth, cConstants);
+    earth = earthInitial_incremental(0, startTime, earth, cConstants);
 
     // Setting the first element of earthCon to be equal to the earth conditions at impact
     //earthCon[0]=earthInitial_incremental(startTime,startTime,earth);
@@ -38,7 +38,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
 
     for(int i=1; i < tolData; i++) { 
         // Calculates earth's condition at each point (time) from the previously calculated point.
-        earthCon[i]=earthInitial_incremental(calc_time(i)-timeRes,calc_time(i),earth, cConstants);// Obtaining conditions of the earth
+        earthCon[i] = earthInitial_incremental(calc_time(i)-timeRes, calc_time(i), earth, cConstants); // Obtaining conditions of the earth
 
         // Filling progress bar
         if ((i % (tolData/30)) == 0) {

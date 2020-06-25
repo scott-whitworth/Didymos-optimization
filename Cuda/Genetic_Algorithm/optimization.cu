@@ -71,25 +71,25 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
 
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, cudaConstants * cConstants) {
     ExcelOutput << currentGeneration << ',';
-    for (int i = 0; i < cConstants->gamma_size; i++) {
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
     }
-    for (int i = 0; i < cConstants->tau_size; i++) {
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.tau[i] << ',';
     }
-    for (int i = 0; i < cConstants->coast_size; i++) {
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.coast[i] << ',';
     }
     ExcelOutput << std::endl;
 
     BinOutput.write((char*)&currentGeneration, sizeof(double));
-    for (int i = 0; i < cConstants->gamma_size; i++) {
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
         BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
     }
-    for (int i = 0; i < cConstants->tau_size; i++) {
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
         BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
     }
-    for (int i = 0; i < cConstants->coast_size; i++) {
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
         BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
     }
 }
@@ -166,7 +166,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
     else {
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
 
-        //const int numStarts = 14; // the number of different sets of starting parameters in the input file
+        const int numStarts = 14; // the number of different sets of starting parameters in the input file
 
         std::ifstream starts;
         starts.open(cConstants->initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
@@ -176,18 +176,10 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
         // each column is a specific variable:
         double startDoubles;
         // arrayCPU needs to be updated to handle the fact that OPTIM_VARS now is defined from cConstants
-        //        double arrayCPU[numStarts][OPTIM_VARS];
-
-        // Source of help in creating a dynamicly sized 2D array: https://stackoverflow.com/questions/1946830/multidimensional-variable-size-array-in-c
-        // arrayCPU is a double pointer to double values
-        double **arrayCPU = new double*[cConstants->num_starts];
-
-        for (int i = 0; i < cConstants->num_starts; i++) {
-            arrayCPU[i] = new double[cConstants->optim_vars];
-        }
-
-        for (int i = 0; i < cConstants->optim_vars; i++) { // rows
-            for (int j = 0; j < cConstants->num_starts; j++) { // columns
+        double arrayCPU[numStarts][OPTIM_VARS];
+        
+        for (int i = 0; i < OPTIM_VARS; i++) { // rows
+            for (int j = 0; j < numStarts; j++) { // columns
                 starts.read( reinterpret_cast<char*>( &startDoubles ), sizeof startDoubles );
                 arrayCPU[j][i] = startDoubles;
             }
@@ -196,37 +188,30 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
 
          // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
         for (int i = 0; i < numThreads; i++) {
-            int row = mt_rand() % cConstants->num_starts; // Choose a random row to get the parameters from
+            int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
 
-            double tripTime = arrayCPU[row][cConstants->triptime_offset];
-            double alpha = arrayCPU[row][cConstants->alpha_offset];
-            double beta = arrayCPU[row][cConstants->beta_offset];
-            double zeta = arrayCPU[row][cConstants->zeta_offset];
+            double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
+            double alpha = arrayCPU[row][ALPHA_OFFSET];
+            double beta = arrayCPU[row][BETA_OFFSET];
+            double zeta = arrayCPU[row][ZETA_OFFSET];
 
             coefficients<double> testcoeff;
             for (int j = 0; j < testcoeff.gammaSize; j++) {
-                testcoeff.gamma[j] = arrayCPU[row][j+cConstants->gamma_offset];
+                testcoeff.gamma[j] = arrayCPU[row][j + GAMMA_OFFSET];
             }
 
             for (int j = 0; j < testcoeff.tauSize; j++) {
-                testcoeff.tau[j] =  arrayCPU[row][j+cConstants->tau_offset];
+                testcoeff.tau[j] =  arrayCPU[row][j + TAU_OFFSET];
             }
 
             for (int j = 0; j < testcoeff.coastSize; j++) {
-                testcoeff.coast[j] = arrayCPU[row][j+cConstants->coast_offset];
+                testcoeff.coast[j] = arrayCPU[row][j + COAST_OFFSET];
             }
 
             rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
             inputParameters[i].startParams = example;
         }
-        
-        // Delete contents of arrayCPU
-        for (int i = 0; i < cConstants->num_starts; i++) {
-            delete arrayCPU[i];
-        }
-        delete arrayCPU;
-
     }
 
 
@@ -366,7 +351,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
     
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
-    double *start = new double[cConstants->optim_vars];
+    double *start = new double[OPTIM_VARS];
     double cost = 0;
 
     // Output to excel
@@ -379,19 +364,19 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < cConstants->best_count; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
-            start[cConstants->gamma_offset + j] = inputParameters[i].startParams.coeff.gamma[j];
+            start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
         }
         for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
-            start[cConstants->tau_offset + j] = inputParameters[i].startParams.coeff.tau[j];
+            start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
         }
         for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
-            start[cConstants->coast_offset + j] = inputParameters[i].startParams.coeff.coast[j];
+            start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
         }
 
-        start[cConstants->triptime_offset] = inputParameters[i].startParams.tripTime;
-        start[cConstants->alpha_offset] = inputParameters[i].startParams.alpha;
-        start[cConstants->beta_offset] = inputParameters[i].startParams.beta;
-        start[cConstants->zeta_offset] = inputParameters[i].startParams.zeta;
+        start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
+        start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
+        start[BETA_OFFSET] = inputParameters[i].startParams.beta;
+        start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals

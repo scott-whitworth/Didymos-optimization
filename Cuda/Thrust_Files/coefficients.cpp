@@ -12,18 +12,18 @@ template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cud
     // in-plane angle
     for (int i = 0; i < coeff.gammaSize; i++)
     {
-        coeff.gamma[i] = x[i + cConstants->gamma_offset];
+        coeff.gamma[i] = x[i + GAMMA_OFFSET];
     }
     // out-of-plane angle
     for (int i = 0; i < coeff.tauSize; i++)
     {
-        coeff.tau[i] = x[i + cConstants->tau_offset];
+        coeff.tau[i] = x[i + TAU_OFFSET];
     }
 
     // setup of coast determination calculations based off of optimized coefficients
     for (int i = 0; i < coeff.coastSize; i++)
     {
-        coeff.coast[i] = x[i + cConstants->coast_offset];
+        coeff.coast[i] = x[i + COAST_OFFSET];
     }
 
     coeff.coastThreshold = cConstants->coast_threshold;

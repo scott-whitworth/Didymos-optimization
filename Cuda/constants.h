@@ -14,10 +14,9 @@
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define orbitalInclination 0.0594906 //orbital inclination of the asteroid (rad)
 
-// June 24th 2020; Beginning work to remove the constants defined below, replacing them with values defined in CudaConstants structure in Config_Constants folder
 
 // Starting location and sizes in the optimization array for navigation to access specific values
-// #define OPTIM_VARS 19 // Number of variables in the optimization
+#define OPTIM_VARS 19 // Number of variables in the optimization
 #define GAMMA_ARRAY_SIZE 7 // Length of the array of coefficients for gamma
 #define TAU_ARRAY_SIZE 3 // Length of the array of coefficients for tau
 #define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting

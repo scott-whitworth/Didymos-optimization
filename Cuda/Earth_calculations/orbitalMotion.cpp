@@ -6,7 +6,7 @@
 #include <string> // to_string()
 #include "earthInfo.h" // reference to launchCon
 
-elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth, cudaConstants * cConstants) {
+elements<double> earthInitial_incremental(double timeInitial, double tripTime, const elements<double> & earth, cudaConstants * cConstants) {
   // Time step
   double deltaT; 
 
@@ -33,7 +33,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp, cConstants->rk_tol);
+  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol);
  
   return yp;
 }
@@ -52,15 +52,15 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
 
 
   // setting initial conditions of earth based off of the impact date (October 5, 2022) minus the trip time (optimized).
-  elements<double> earth =  launchCon->getCondition(x[cConstants->triptime_offset]);
+  elements<double> earth =  launchCon->getCondition(x[TRIPTIME_OFFSET]);
   
   // setting initial conditions of the spacecraft
-  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[cConstants->alpha_offset]),
-                                                 earth.theta + asin(sin(M_PI-x[cConstants->alpha_offset])*ESOI/earth.r),
+  elements<double> spaceCraft = elements<double>(earth.r+ESOI*cos(x[ALPHA_OFFSET]),
+                                                 earth.theta + asin(sin(M_PI-x[ALPHA_OFFSET])*ESOI/earth.r),
                                                  earth.z,
-                                                 earth.vr + cos(x[cConstants->zeta_offset])*sin(x[cConstants->beta_offset])*cConstants->v_escape,
-                                                 earth.vtheta + cos(x[cConstants->zeta_offset])*cos(x[cConstants->beta_offset])*cConstants->v_escape,
-                                                 earth.vz + sin(x[cConstants->zeta_offset])*cConstants->v_escape);
+                                                 earth.vr + cos(x[ZETA_OFFSET])*sin(x[BETA_OFFSET])*cConstants->v_escape,
+                                                 earth.vtheta + cos(x[ZETA_OFFSET])*cos(x[BETA_OFFSET])*cConstants->v_escape,
+                                                 earth.vz + sin(x[ZETA_OFFSET])*cConstants->v_escape);
 
   // setting time parameters
   double timeInitial=0; 
@@ -98,7 +98,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
-  rk4sys(timeInitial, x[cConstants->triptime_offset] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
+  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
   lastStep = lastStepInt;
 
@@ -107,7 +107,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   // cost equation determines how close a given run is to impact.
   // based off the position components of the spacecraft and asteroid.
   double cost_pos/*, vel*/;
-  cost_pos = pow(asteroid.r-yOut.r,2)+pow(asteroid.theta-fmod(yOut.theta,2*M_PI),2)+pow(asteroid.z-yOut.z,2);         
+  cost_pos = pow(asteroid.r-yOut.r,2) + pow(asteroid.theta-fmod(yOut.theta,2*M_PI),2) + pow(asteroid.z-yOut.z,2);         
 //  vel = sqrt(pow(asteroid.vr-yOut.vr,2)+pow(asteroid.vtheta-yOut.vtheta,2)+pow(asteroid.vz-yOut.vz,2));
   //cost = cost_pos<cost_vel?cost_pos:cost_vel;
   cost = cost_pos;
@@ -153,7 +153,7 @@ void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double>
 
   output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
 
-  for (int j = 0; j < cConstants->optim_vars; j++) {
+  for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&start[j], sizeof (double));
   }
 
