@@ -29,7 +29,7 @@ struct Individual {
 
     // returns the amount of weight placed on the posDiff rather than velDiff in comparison of two Individuals
     // output: 0.0 - 1.0
-//    double getPosRatio(Individual first, Individual second);
+    double getPosRatio(Individual first, Individual second);
 
 #include "individuals.cpp"
 

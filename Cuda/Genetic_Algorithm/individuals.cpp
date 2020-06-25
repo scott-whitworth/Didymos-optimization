@@ -7,6 +7,7 @@
 // Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
 double Individual::getCost() {
     double cost = this->posDiff;
+    
     //cost -= abs(this->velDiff);
     return cost;
 }
@@ -52,7 +53,8 @@ double getPosRatio(Individual first, Individual second) {
     else {
         return greaterDiff / POSITION_THRESH; // focus more on position the greater the difference is based on linear scale
     }
-}*/
+}
+*/
 
 // Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
 void Individual::initialize(cudaConstants* cConstants) {
