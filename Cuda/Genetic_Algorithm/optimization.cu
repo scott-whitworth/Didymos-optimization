@@ -16,6 +16,9 @@
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
 
+double ConvergeNumber=0;
+double time2Seed=0;
+
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
 bool changeInBest(double previousBest, double currentBest, double distinguishRate) {
@@ -115,11 +118,19 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     return true;
 }
 
+double getConvergeNumber() {
+    return ConvergeNumber;
+}
+
+double getTimeSeed() {
+    return time2Seed;
+}
+
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
 double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust, double c3Energy, int runNumber) {
     double calcPerS = 0;
 
-    time_t timeSeed = gConstant.time_seed;
+    time_t timeSeed = time(0); //gConstant.time_seed;
     
 
     std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
@@ -219,7 +230,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     // setup output of generation results over time onto a .csv file
     std::ofstream generationPerformanceBestExcel;
-    generationPerformanceBestExcel.open("BestInGenerations.csv");
+    generationPerformanceBestExcel.open(std::to_string(runNumber) + "BestInGenerations.csv");
     // Set first row in the file be a header for the columns
     generationPerformanceBestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
@@ -228,7 +239,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
 
    std::ofstream generationPerformanceWorstExcel;
-   generationPerformanceWorstExcel.open("WorstInGenerations.csv");
+   generationPerformanceWorstExcel.open(std::to_string(runNumber) + "WorstInGenerations.csv");
    // Set first row in the file be a header for the columns
     generationPerformanceWorstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
@@ -241,13 +252,13 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
     std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
     if (thrust.type) {
-        generationThrustBestExcel.open("BestThrustGens.csv");
+        generationThrustBestExcel.open(std::to_string(runNumber) + "BestThrustGens.csv");
         generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
-        generationThrustWorstExcel.open("WorstThrustGens.csv");
+        generationThrustWorstExcel.open(std::to_string(runNumber) + "WorstThrustGens.csv");
         generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
 
-        generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
-        generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
+        generationThrustBestBin.open(std::to_string(runNumber) + "BestThrustGens.bin", std::ios::binary);
+        generationThrustWorstBin.open(std::to_string(runNumber) + "WorstThrustGens.bin", std::ios::binary);
     }
 
     double generation = 0;    // A counter for number of generations calculated
@@ -352,6 +363,8 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         if( inputParameters[0].posDiff <= tolerance) {
             convflag = true;
+            ConvergeNumber = generation;
+            time2Seed = timeSeed;
         }
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -386,7 +399,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
 
         cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust);
+        writeTrajectoryToFile(start, cost, i + 1, thrust, runNumber);
     }
 
     // Close the performance files now that the algorithm is finished
@@ -437,11 +450,18 @@ int main () {
     
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant);
+
     double c3Energy = 4.676e6;
-    for(int i = 0; i < 10; i++) {
-        
+    std::ofstream c3EnergyFile;
+    c3EnergyFile.open("C3EnergyChange.csv");
+    c3EnergyFile << "Number of convergences" << "," << "C3Energy" << "," << "\n";
+
+    for(int i = 0; i < 20; i++) { 
         optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, i);
+        c3EnergyFile << getConvergeNumber() << "," << c3Energy << "," << "\n";
+        c3Energy = c3Energy - 1000;   
     }
+    c3EnergyFile.close();
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     

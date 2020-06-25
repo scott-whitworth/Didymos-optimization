@@ -45,7 +45,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 //taken from CPU code to output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust) {
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, int runNumber) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
@@ -120,7 +120,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
     // Output of yp to a binary file
     std::ofstream output;
     
-    output.open ("orbitalMotion-accel"+std::to_string(j)+".bin", std::ios::binary); 
+    output.open ("orbitalMotion-accel"+std::to_string(runNumber)+".bin", std::ios::binary); 
 
     for(int i = 0; i <= lastStep; i++) {
       //output << yp[i];
@@ -142,14 +142,14 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   return cost;
 }
 
-void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust) {
+void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, int runNumber) {
   double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
-  trajectoryPrint(start, numStep, cost, i, yp, thrust);
+  trajectoryPrint(start, numStep, cost, i, yp, thrust, runNumber);
   //writes final optimization values to a seperate file
   std::ofstream output;
 
-  output.open ("final-optimization"+std::to_string(i)+".bin", std::ios::binary);
+  output.open ("final-optimization"+std::to_string(runNumber)+".bin", std::ios::binary);
 
   for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&start[j], sizeof (double));
