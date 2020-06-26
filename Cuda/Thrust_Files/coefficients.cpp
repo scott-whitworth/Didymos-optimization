@@ -19,7 +19,6 @@ template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cud
     {
         coeff.tau[i] = x[i + TAU_OFFSET];
     }
-
     // setup of coast determination calculations based off of optimized coefficients
     for (int i = 0; i < coeff.coastSize; i++)
     {

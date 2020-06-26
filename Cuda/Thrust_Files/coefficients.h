@@ -28,7 +28,7 @@ template <class T> struct coefficients {
     T coast[coastSize];
 
     // threshold: after sine squared of the fourier series is evaluated, if above the threshold, acceleration occurs. When below, coasting occurs.
-    // now fixed to a constant
+    // Is assigned a value from cudaConstants in initCoefficient()
     T coastThreshold;
 
     //overload the stream output for elements used for writing to a file

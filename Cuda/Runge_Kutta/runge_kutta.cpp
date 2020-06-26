@@ -15,24 +15,24 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
     T curTime = timeInitial; // setting time equal to the start time
-    int n=0; // setting the initial iteration number equal to 0
-    int minStep=0;
-    int maxStep=0;
+    int n = 0; // setting the initial iteration number equal to 0
+    int minStep = 0;
+    int maxStep = 0;
 
     //mass of fuel expended (kg)
     //set to 0 initially
-    T massFuelSpent =0;
+    T massFuelSpent = 0;
 
     // Set the first element of the solution vector to the initial conditions
     y_new[0] = y0;
-    times[0]=timeInitial;
+    times[0] = timeInitial;
     // array of gamma for binary output
     gamma[0] = calc_gamma(coeff, timeInitial, timeFinal, thrust);
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal, thrust); 
     // array of acceleration for binary output
     accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
-    fuelSpent[0]=massFuelSpent;
+    fuelSpent[0] = massFuelSpent;
 
     elements<T> u, error;
 
