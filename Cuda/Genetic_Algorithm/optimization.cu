@@ -108,8 +108,8 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 // Output: Returns true if top ten individuals within the pool are within the tolerance
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
-    for (int i = 0; i < gConstant->best_count; i++) {
-        if(pool[i].posDiff >= gConstant->pos_threshold) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
+    for (int i = 0; i < cConstants->best_count; i++) {
+        if(pool[i].posDiff >= cConstants->pos_threshold) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
@@ -318,7 +318,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
             currentBest = inputParameters[0].posDiff;
           
             if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * gConstant->anneal_factor;
+                currentAnneal = currentAnneal * cConstants->anneal_factor;
                 std::cout << "\n new anneal: " << currentAnneal << std::endl;
                 if(trunc(inputParameters[0].posDiff/dRate)==0) { dRate = dRate/10; }
             }
