@@ -20,8 +20,8 @@
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBest, double currentBest) {
-    if (previousBest != currentBest) {
+bool changeInBest(double previousBest, double currentBest, double dRate) {
+    if (trunc(previousBest/dRate) != trunc(currentBest/dRate)) {
         return true;
     }
     else {
@@ -108,8 +108,8 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 // Output: Returns true if top ten individuals within the pool are within the tolerance
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
-    for (int i = 0; i < cConstants->best_count; i++) {
-        if (pool[i].getCost() >= tolerance ) {
+    for (int i = 0; i < gConstant->best_count; i++) {
+        if(pool[i].posDiff >= gConstant->pos_threshold) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
@@ -258,6 +258,7 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
+    double dRate = 1.0e-7;
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -315,8 +316,11 @@ double optimize(const int numThreads, const int blockThreads, cudaConstants* cCo
         double currentBest;
         if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0].posDiff;
-            if ( !(changeInBest(previousBest, currentBest)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * cConstants->anneal_factor;
+          
+            if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
+                currentAnneal = currentAnneal * gConstant->anneal_factor;
+                std::cout << "\n new anneal: " << currentAnneal << std::endl;
+                if(trunc(inputParameters[0].posDiff/dRate)==0) { dRate = dRate/10; }
             }
             previousBest = inputParameters[0].posDiff;
         }
