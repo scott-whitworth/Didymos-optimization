@@ -71,9 +71,9 @@ struct cudaConstants {
     cudaConstants(std::string configFile);
 
     // Sets properties to what is within the config file
-    // Input: Contents of genetic.config file that is in same folder as the executable file
-    // Output: Properties explicitly set in the config file are set to values following 
-    void geneticFileRead(std::string fileName);
+    // Input: File address that is used to open a text-based file and parses through to assign variables
+    // Output: Properties explicitly set in the config file are set to values following equal sign, ignores comments or empty lines in files 
+    void FileRead(std::string fileName);
 };
 
 

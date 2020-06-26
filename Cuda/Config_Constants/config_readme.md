@@ -1,7 +1,8 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: June 23rd, 2020
+Last Updated: June 26th, 2020
 
-<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces with variables</h3>
+<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments</h3>
+<h3>The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).</h3>
 <h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function</h3>
 <h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
 <h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
@@ -31,9 +32,9 @@ Last Updated: June 23rd, 2020
 | zeta_mutate_scale          	| double     	| None  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
 | alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
 | thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
-| dry_mass                     	| double        	| kg      	| Set the mass of the spacecraft without fuel 	                                                                                                                                    |   	|
-| fuel_mass                     | double        	| kg      	| Sets the initial mass of fuel in the spacecraft, determines wet_mass 	                                                                                                            |   	|
-| wet_mass                     	| double        	| kg      	| The total mass of the spacecraft with fuel                                                                                                                  	                    |   	|
+| dry_mass                     	| double        | kg      	| Set the mass of the spacecraft without fuel 	                                                                                                                                    |   	|
+| fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, determines wet_mass 	                                                                                                            |   	|
+| wet_mass                     	| double        | kg      	| The total mass of the spacecraft with fuel                                                                                                                  	                    |   	|
 | coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving earth's sphere of influence, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
 | v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving earth's sphere of influence, not in config file but rather derived from c3energy 	                        |   	|
@@ -49,3 +50,7 @@ Last Updated: June 23rd, 2020
 | vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	    |   	|
 | vtheta_fin_earth         	    | double     	| Rad/s  	| The velocity of the theta angle component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	|   	|
 | vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
+| v_impact                 	    | double     	| AU/s  	| NASA's official mission impact velocity difference the spacecraft will collide with Dimorphos	            |   	|
+| rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	            |   	|
+| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	            |   	|
+| max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	            |   	|

@@ -8,19 +8,19 @@
 
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 cudaConstants::cudaConstants() {
-    geneticFileRead("genetic.config");
+    FileRead("genetic.config");
     this->wet_mass = this->dry_mass + this->fuel_mass;
 }
 // Operates same as default, however uses configFile as address for where the config file to be used is located
 cudaConstants::cudaConstants(std::string configFile) {
-    geneticFileRead(configFile);
+    FileRead(configFile);
     // Now that dry_mass and fuel_mass have been acquired, set wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
 }
 
 
 //http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
-void cudaConstants::geneticFileRead(std::string fileName) {
+void cudaConstants::FileRead(std::string fileName) {
     // Use string line to hold a line read from the config file in variable configFile
     std::string line;
     std::ifstream configFile;
