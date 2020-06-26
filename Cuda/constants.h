@@ -8,19 +8,12 @@
 #define earthRadius 1.49598261e11/AU // radius of the earth (au)
 #define earthMass 5.9742e24 // mass of the earth (kg)
 #define ESOI earthRadius*pow((earthMass/massSun),0.4) // escape sphere of influence (au)
-#define AU 1.49597870691e11// used to convert meters to astronomical units (m) 
-#define constG 1.99349603314131e-44 //gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
-#define massSun 1.988500e30// mass of the sun (kg)
+#define AU 1.49597870691e11 // used to convert meters to astronomical units (m) 
+#define constG 1.99349603314131e-44 // gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
+#define massSun 1.988500e30 // mass of the sun (kg)
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
-#define orbitalInclination 0.0594906//orbital inclination of the asteroid (rad)
+#define orbitalInclination 0.0594906 //orbital inclination of the asteroid (rad)
 
-// Various constants (tolerance)
-#define RK_TOL 1e-12 // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
-#define F_MIN 1e-20 // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
-#define MAX_NUMSTEPS 1e9 // used for time stepping in runge_kuttaCuda.cu
-
-// Official DART mission data
-#define V_IMPACT 4.399378072e-08 //impact velocity in AU/s
 
 // Starting location and sizes in the optimization array for navigation to access specific values
 #define OPTIM_VARS 19 // Number of variables in the optimization

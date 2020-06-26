@@ -27,7 +27,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     y_new[0] = y0;
     times[0]=timeInitial;
     // array of gamma for binary output
-    gamma[0] = calc_gamma(coeff,timeInitial, timeFinal, thrust);
+    gamma[0] = calc_gamma(coeff, timeInitial, timeFinal, thrust);
     // array of tau for binary output
     tau[0] = calc_tau(coeff,timeInitial, timeFinal, thrust); 
     // array of acceleration for binary output

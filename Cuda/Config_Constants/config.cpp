@@ -162,6 +162,18 @@ void cudaConstants::geneticFileRead(std::string fileName) {
                 else if (variableName == "fuel_mass") {
                     this->fuel_mass = std::stod(variableValue);
                 }
+                else if (variableName == "v_impact") {
+                    this->v_impact = std::stod(variableValue);
+                }
+                else if (variableName == "rk_tol") {
+                    this->rk_tol = std::stod(variableValue);
+                }
+                else if (variableName == "f_min") {
+                    this->f_min = std::stod(variableValue);
+                }
+                else if (variableName == "max_numsteps") {
+                    this->max_numsteps = std::stod(variableValue);
+                }
                 else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to time(0) 
                     if (variableValue != "NONE") {
                         // If variableValue is not NONE, assumption is that it is a valid double value that can be converted and used

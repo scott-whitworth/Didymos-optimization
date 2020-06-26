@@ -58,6 +58,11 @@ struct cudaConstants {
     double vtheta_fin_earth; // Radians/s
     double vz_fin_earth; // AU/s
 
+    double v_impact; // AU/s, the official DART mission data
+
+    double rk_tol; // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
+    double f_min; // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
+    double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
     cudaConstants();
