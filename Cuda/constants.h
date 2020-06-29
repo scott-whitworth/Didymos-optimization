@@ -22,20 +22,20 @@
 #define MAX_NUMSTEPS 1e9 // used for time stepping in runge_kuttaCuda.cu
 
 // Final conditions of the asteroid on impact date
-#define R_FIN_AST 1.02696822710421 // radial position (au)
-#define THETA_FIN_AST 0.238839574416454 // angular postion (rad)
-#define Z_FIN_AST -0.0526614832914496 // axial position (au)
-#define VR_FIN_AST -2.05295246185041e-08 // radial velocity (au/s)
-#define VTHETA_FIN_AST 2.29132593453064e-07 // angular velocity (au/s)
-#define VZ_FIN_AST 8.00663905822009e-09 // axial velocity (au/s)
+#define R_FIN_AST 1.0352402142370513704605627935962//1.02696822710421 // radial position (au)
+#define THETA_FIN_AST 1.5907019223523019557653412903164e-1 //0.238839574416454 // angular postion (rad)
+#define Z_FIN_AST -5.5419274024321327209996468354802e-2 //-0.0526614832914496 // axial position (au)
+#define VR_FIN_AST 6.9649224978671620723449185328992e-8 //-2.05295246185041e-08 // radial velocity (au/s)
+#define VTHETA_FIN_AST 2.1785244099532985232326964721624e-7 //2.29132593453064e-07 // angular velocity (au/s)
+#define VZ_FIN_AST 7.2985441781536943212764895715355e-9 //8.00663905822009e-09 // axial velocity (au/s)
 
 // Final conditions of the earth on impact date
-#define R_FIN_EARTH 1.00021392223428 // radial position (au)
-#define THETA_FIN_EARTH 0.199470650149394 // angular postion (rad)
-#define Z_FIN_EARTH -1.54878511585620e-05 // axial position (au)
-#define VR_FIN_EARTH -3.32034068725821e-09 // radial velocity (au/s)
-#define VTHETA_FIN_EARTH 1.99029138292504e-07 // angular velocity (au/s)
-#define VZ_FIN_EARTH -9.71518257891386e-12 // axial velocity (au/s)
+#define R_FIN_EARTH  1.0014224846404500279817284535966 //1.00021392223428 // radial position (au)
+#define THETA_FIN_EARTH 1.2788791031361881889161224989948e-1 //0.199470650149394 // angular postion (rad)
+#define Z_FIN_EARTH -1.0777011320143019702105791068902e-5 //-1.54878511585620e-05 // axial position (au)
+#define VR_FIN_EARTH 3.7954372630903478151771370636104e-8 //-3.32034068725821e-09 // radial velocity (au/s)
+#define VTHETA_FIN_EARTH 1.952038461699848314040296560165e-7 //1.99029138292504e-07 // angular velocity (au/s)
+#define VZ_FIN_EARTH -2.9789039378823379952969230294219e-12 //-9.71518257891386e-12 // axial velocity (au/s)
 
 // Official DART mission data
 #define POS_THRESH = 1.0e-10 // impact posdiff

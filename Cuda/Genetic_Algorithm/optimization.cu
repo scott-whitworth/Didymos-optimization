@@ -129,7 +129,7 @@ double getTimeSeed() {
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
 double optimize(const int numThreads, const int blockThreads, geneticConstants& gConstant, thruster<double> thrust, double c3Energy, int runNumber) {
     double calcPerS = 0;
-
+    double finalPosDIff = 0;
     time_t timeSeed = time(0); //gConstant.time_seed;
     
 
@@ -365,6 +365,15 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
             convflag = true;
             ConvergeNumber = generation;
             time2Seed = timeSeed;
+            finalPosDIff = inputParameters[0].posDiff;
+            std::cout << "converged on tolerance" << std::endl;
+        }
+        if(generation >= 10000) {
+            ConvergeNumber = generation;
+            time2Seed = timeSeed;
+            finalPosDIff = inputParameters[0].posDiff;
+            std::cout << "didn't converge on tolerance" << std::endl;
+            convflag = true;
         }
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -419,7 +428,7 @@ double optimize(const int numThreads, const int blockThreads, geneticConstants& 
     delete [] survivors;
     delete start;
 
-    return calcPerS;
+    return finalPosDIff;
 }
 
 int main () {
@@ -451,14 +460,14 @@ int main () {
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant);
 
-    double c3Energy = 4.676e6;
+    double c3Energy = 4.660e6;
     std::ofstream c3EnergyFile;
     c3EnergyFile.open("C3EnergyChange.csv");
-    c3EnergyFile << "Number of convergences" << "," << "C3Energy" << "," << "\n";
-
+    c3EnergyFile << "Number of convergences" << "," << "C3Energy" << "," << "posDiff" << "\n";
+    double posDiff = 0;
     for(int i = 0; i < 20; i++) { 
-        optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, i);
-        c3EnergyFile << getConvergeNumber() << "," << c3Energy << "," << "\n";
+        posDiff = optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, i);
+        c3EnergyFile << getConvergeNumber() << "," << c3Energy << "," << posDiff << "," << "\n";
         c3Energy = c3Energy - 1000;   
     }
     c3EnergyFile.close();
