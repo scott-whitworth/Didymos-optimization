@@ -23,8 +23,8 @@ bool converge(Individual* pool, const cudaConstants* gConstants) {
     return (posConverge(pool, gConstants) && velConverge(pool, gConstants));
 }
 
-bool posConverge(Individual* pool, const cudaConstants* gConstants) {
-    return pool[0].posDiff < gConstants->pos_threshold;
+bool posConverge(Individual* pool, cudaConstants* gConstants) {
+    return pool[0].posDiff < gConstants->v_impact;
 }
 
 bool velConverge(Individual* pool, const cudaConstants* gConstants) {
