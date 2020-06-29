@@ -460,16 +460,16 @@ int main () {
     geneticConstants gConstant("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     thruster<double> thrust(gConstant);
 
-    double c3Energy = 4.660e6;
+    double c3Energy = 4.676e6;
     std::ofstream c3EnergyFile;
     c3EnergyFile.open("C3EnergyChange.csv");
     c3EnergyFile << "Number of convergences" << "," << "C3Energy" << "," << "posDiff" << "\n";
     double posDiff = 0;
-    for(int i = 0; i < 20; i++) { 
-        posDiff = optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, i);
+    //for(int i = 0; i < 20; i++) { 
+        posDiff = optimize(numThreads, blockThreads, gConstant, thrust, c3Energy, 1);
         c3EnergyFile << getConvergeNumber() << "," << c3Energy << "," << posDiff << "," << "\n";
         c3Energy = c3Energy - 1000;   
-    }
+    //}
     c3EnergyFile.close();
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
