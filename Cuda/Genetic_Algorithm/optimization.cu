@@ -69,7 +69,7 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, cudaConstants * cConstants) {
+void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
     ExcelOutput << currentGeneration << ',';
     for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
@@ -106,7 +106,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
 // Output: Returns true if top ten individuals within the pool are within the tolerance
-bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, cudaConstants* cConstants) {
+bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, const cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < cConstants->best_count; i++) {
         if(pool[i].posDiff >= cConstants->pos_threshold) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
@@ -118,7 +118,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
-double optimize(const int numThreads, const int blockThreads, cudaConstants* cConstants, thruster<double> thrust) {
+double optimize(const int numThreads, const int blockThreads, const cudaConstants* cConstants, thruster<double> thrust) {
     double calcPerS = 0;
 
     time_t timeSeed = cConstants->time_seed;
@@ -412,10 +412,19 @@ int main () {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
     std::cout << "Device Number: 0 \n";
-    std::cout << "- Device name: " << prop.name << std::endl;
+    std::cout << "- Device name: " << prop.name << std::endl << std::endl;
     cudaSetDevice(0);
     
-    cudaConstants * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+    cudaConstants const * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
+
+    // cudaConstants const * compareConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declaring a comparison cudaConstants to verify no changes to values after optimize
+    // Display contents of cConstants resulting from reading the file
+    std::cout << *cConstants << std::endl;
+
+    //if ( !(sameConstants(*cConstants, *compareConstants))) {
+    //   std::cout << "\nERROR - cConstants and compareConstants not the same at begginning!\n";
+    //}
+
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
@@ -424,6 +433,7 @@ int main () {
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
+
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = 32;
@@ -441,8 +451,14 @@ int main () {
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     
+    //if ( !(sameConstants(*cConstants, *compareConstants))) {
+    //    std::cout << "\nERROR - cConstants had changed after optimize()!\n";
+    //}
+
+
     delete launchCon;
     delete cConstants;
-
+    // delete compareConstants;
+    
     return 0;
 }

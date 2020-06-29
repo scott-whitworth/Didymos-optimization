@@ -163,7 +163,7 @@ void printMask(int * mask) {
     std::cout << "]";
 }
 
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, cudaConstants * cConstants) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, const cudaConstants * cConstants) {
     // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
     rkParameters<double> newInd = p1;
 
@@ -236,7 +236,7 @@ double getRand(double max, std::mt19937_64 & rng) {
 
 // in a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene some times.
 // mutate a gene by adding or subtracting a small, random value from a parameter
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, cudaConstants* cConstants, thruster<double>& thrust) {
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust) {
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
@@ -333,7 +333,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 // Uses generateNewIndividual to create new Individuals by crossing over properties with mask, followed by random chance for mutations
 // Output is 2 new individual in pool
 // Can only be used within crossover function in its current state because of int i input
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, std::mt19937_64 & rng, cudaConstants* cConstants, thruster<double>& thrust) {
+void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust) {
     pool[poolSize - 1 - (2 * index)] = Individual(); // create a new Individual instead of overwriting values
     pool[poolSize - 1 - (2 * index)].startParams = generateNewIndividual(survivors[2*i].startParams, survivors[(2*i)+1].startParams, mask, thrust, cConstants);
     
@@ -351,7 +351,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 }
 
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, cudaConstants* cConstants, thruster<double>& thrust) {
+int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust) {
     std::mt19937_64 rng(cConstants->time_seed);
 
     int * mask = new int[OPTIM_VARS];

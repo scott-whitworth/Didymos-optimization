@@ -6,7 +6,7 @@
 #include <string> // to_string()
 #include "earthInfo.h" // reference to launchCon
 
-elements<double> earthInitial_incremental(double timeInitial, double tripTime, const elements<double> & earth, cudaConstants * cConstants) {
+elements<double> earthInitial_incremental(double timeInitial, double tripTime, const elements<double> & earth, const cudaConstants * cConstants) {
   // Time step
   double deltaT; 
 
@@ -41,7 +41,7 @@ elements<double> earthInitial(double timeInitial, double tripTime,const elements
 
 // Output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, cudaConstants* cConstants) {
+double trajectoryPrint( double x[], double & lastStep, double & cost, int j, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), off-plane position(au),
   radial velocity(au/s), azimuthal velocity(rad/s), off-plane velocity(au/s)*/
@@ -144,7 +144,7 @@ double trajectoryPrint( double x[], double & lastStep, double & cost, int j, ele
   return cost;
 }
 
-void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, cudaConstants* cConstants) {
+void writeTrajectoryToFile(double *start, double & cost, int i, thruster<double> thrust, const cudaConstants* cConstants) {
   double numStep = 0; // must be double to match output to binary file
   elements<double> yp;
   trajectoryPrint(start, numStep, cost, i, yp, thrust, cConstants);
