@@ -122,10 +122,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     double calcPerS = 0;
 
     time_t timeSeed = cConstants->time_seed;
-
-    std::cout << "Seed for this run: " << timeSeed << std::endl; // note there are other mt_rands in the code that use different seeds
-    std::cout << "------------------------------------------------------------------------" << std::endl;
     std::mt19937_64 mt_rand(timeSeed);
+    std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
 
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
