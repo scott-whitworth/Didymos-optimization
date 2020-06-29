@@ -27,7 +27,7 @@ class EarthInfo {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public:
         // Used to initialize the earth calculation data. Fills up earthCon.
-        EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, cudaConstants* cConstants);
+        EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, const cudaConstants* cConstants);
         // Returns the interpolated conditions of earth for a given time input.
         elements<double> getCondition(const double & currentTime);
         // Returns the total amount of data for a run with a given time span and resolution.

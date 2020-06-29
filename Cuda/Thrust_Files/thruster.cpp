@@ -4,8 +4,8 @@
 #include <iomanip> // used for setPrecision()
 
 template <class T>
-thruster<T>::thruster(cudaConstants* gConfig) {
-    // no thruster
+thruster<T>::thruster(const cudaConstants* gConfig) {
+    // If no thruster, set values to 0
     if (gConfig->thruster_type == THRUST_TYPE::NO_THRUST) {
         m_Dot = P0 = 0;
     }
@@ -15,6 +15,7 @@ thruster<T>::thruster(cudaConstants* gConfig) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
+    
     type = gConfig->thruster_type;
     coastThreshold = gConfig->coast_threshold;
 }
