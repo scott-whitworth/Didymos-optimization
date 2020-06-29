@@ -417,13 +417,13 @@ int main () {
     
     cudaConstants const * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
 
-//    cudaConstants const * compareConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declaring a comparison cudaConstants to verify no changes to values after optimize
-
+    // cudaConstants const * compareConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declaring a comparison cudaConstants to verify no changes to values after optimize
+    // Display contents of cConstants resulting from reading the file
     std::cout << *cConstants << std::endl;
 
-//    if ( !(same(*cConstants, *compareConstants))) {
-//        std::cout << "\nERROR - cConstants and compareConstants not the same at begginning!\n";
-//    }
+    //if ( !(sameConstants(*cConstants, *compareConstants))) {
+    //   std::cout << "\nERROR - cConstants and compareConstants not the same at begginning!\n";
+    //}
 
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
@@ -451,14 +451,14 @@ int main () {
     //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
     //efficiencyGraph.close();
     
-//    if ( !(same(*cConstants, *compareConstants))) {
-//        std::cout << "\nERROR - cConstants had changed!\n";
-//    }
+    //if ( !(sameConstants(*cConstants, *compareConstants))) {
+    //    std::cout << "\nERROR - cConstants had changed after optimize()!\n";
+    //}
 
 
     delete launchCon;
     delete cConstants;
-//    delete compareConstants;
+    // delete compareConstants;
     
     return 0;
 }

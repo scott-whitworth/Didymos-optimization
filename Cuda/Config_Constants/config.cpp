@@ -18,8 +18,7 @@ cudaConstants::cudaConstants(std::string configFile) {
     this->wet_mass = this->dry_mass + this->fuel_mass;
 }
 
-
-//http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
+// http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
 void cudaConstants::FileRead(std::string fileName) {
     // Use string line to hold a line read from the config file in variable configFile
     std::string line;
@@ -196,7 +195,8 @@ void cudaConstants::FileRead(std::string fileName) {
     }
 }
 
-bool same(const cudaConstants& a, const cudaConstants& b) {
+// Compare a and b cudaConstants and return true if all variables are equivalent
+bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
     if (a.time_seed != b.time_seed) {
         std::cout << "time_seed not equal!\n";
         return false;
@@ -371,7 +371,7 @@ bool same(const cudaConstants& a, const cudaConstants& b) {
     }
 }
 
-
+// Output cudaConstant contents with formatting for better readibility
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "================CONFIG=DATA==============================================================\n";
@@ -396,7 +396,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "Earth Info:\n";
     os << "\t R: " << object.r_fin_earth << "\t 0: " << object.theta_fin_earth << "\t Z: " << object.z_fin_earth << "\n";
     os << "\tvR: " << object.vr_fin_earth << "\tv0: " << object.vtheta_fin_earth << "\tvZ: " << object.vz_fin_earth << "\n\n";
-    os << "===============================================================================\n";
+    os << "=========================================================================================\n";
     
     return os;
 }

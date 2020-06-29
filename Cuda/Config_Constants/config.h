@@ -80,8 +80,11 @@ struct cudaConstants {
 };
 
 // Comparison operator to check if to sets of cudaCosntants are the same, used to verify that one has not changed
-bool same(const cudaConstants& a,const cudaConstants& b);
-// Output function to stream
+// Input: Two const cudaConstants a and b that are to be compared
+// Output: Returns true if all values contained in a and b are equivalent, returns false if at least one variable is not equivalent, also outputs to terminal result (such as a variable found not equivalent)
+bool sameConstants(const cudaConstants& a,const cudaConstants& b);
+
+// Output function to stream, with some formatting to help be more readible on terminal
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object);
 
 
