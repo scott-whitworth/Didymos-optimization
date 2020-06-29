@@ -76,7 +76,6 @@ struct cudaConstants {
     // Input: File address that is used to open a text-based file and parses through to assign variables
     // Output: Properties explicitly set in the config file are set to values following equal sign, ignores comments or empty lines in files 
     void FileRead(std::string fileName);
-
 };
 
 // Comparison operator to check if to sets of cudaCosntants are the same, used to verify that one has not changed

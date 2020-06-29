@@ -5,6 +5,7 @@
 
 template <class T>
 thruster<T>::thruster(const cudaConstants* gConfig) {
+
     // If no thruster, set values to 0
     if (gConfig->thruster_type == THRUST_TYPE::NO_THRUST) {
         m_Dot = P0 = 0;
