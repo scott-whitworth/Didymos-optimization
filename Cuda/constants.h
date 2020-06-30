@@ -6,8 +6,9 @@
 
 // Planetary properties and constants
 #define earthRadius 1.49598261e11/AU // radius of the earth (au)
-#define earthMass 5.9742e24 // mass of the earth (kg)
-#define ESOI earthRadius*pow((earthMass/massSun),0.4) // escape sphere of influence (au)
+#define earthMass 5.97237e24 // mass of the earth (kg)
+#define lunarMass 7.34767e22 // mass of the earth's moon (kg)
+#define ESOI earthRadius*pow(((earthMass+lunarMass)/massSun),0.4) // escape sphere of influence (au)
 #define AU 1.49597870691e11 // used to convert meters to astronomical units (m) 
 #define constG 1.99349603314131e-44 // gravitational constant- used to calculate the gravitational force (AU^3/(s^2 * kg)) 
 #define massSun 1.988500e30 // mass of the sun (kg)
