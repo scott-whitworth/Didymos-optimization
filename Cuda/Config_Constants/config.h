@@ -1,6 +1,8 @@
 #ifndef CUDACONSTANTS_h
 #define CUDACONSTANTS_h
 
+#include <iostream>
+
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
     double time_seed; // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0) for genuine randomness
@@ -75,6 +77,14 @@ struct cudaConstants {
     // Output: Properties explicitly set in the config file are set to values following equal sign, ignores comments or empty lines in files 
     void FileRead(std::string fileName);
 };
+
+// Comparison operator to check if to sets of cudaCosntants are the same, used to verify that one has not changed
+// Input: Two const cudaConstants a and b that are to be compared
+// Output: Returns true if all values contained in a and b are equivalent, returns false if at least one variable is not equivalent, also outputs to terminal result (such as a variable found not equivalent)
+bool sameConstants(const cudaConstants& a,const cudaConstants& b);
+
+// Output function to stream, with some formatting to help be more readible on terminal
+std::ostream& operator<<(std::ostream& os, const cudaConstants& object);
 
 
 #include "config.cpp"

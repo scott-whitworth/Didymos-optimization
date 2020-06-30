@@ -8,7 +8,7 @@
 #include "coefficients.h"
 #include <iomanip> // setprecision(int)
 
-template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cudaConstants* cConstants) {
+template <class T> void initCoefficient(double x[], coefficients<T> & coeff, const cudaConstants* cConstants) {
     // in-plane angle
     for (int i = 0; i < coeff.gammaSize; i++)
     {

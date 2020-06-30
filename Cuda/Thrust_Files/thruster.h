@@ -15,7 +15,7 @@ template <class T> struct thruster {
     double coastThreshold; // threshold to activate thruster
 
     // Constructor - takes cudaConstants to determine thruster type
-    __host__ __device__ thruster<T>(cudaConstants* gConfig);
+    __host__ __device__ thruster<T>(const cudaConstants* gConfig);
 
     //overload the stream output for elements used for writing to a file
     template <class T> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 

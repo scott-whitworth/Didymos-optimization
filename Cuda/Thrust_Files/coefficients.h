@@ -10,7 +10,7 @@
 //Utility to calculate the coefficients vector
 //Coefficients struct holds gamma and tau values
 template <class T> struct coefficients {
-    template <class T> void initCoefficient(double x[], coefficients<T> & coeff, cudaConstants* cConstants);
+    template <class T> void initCoefficient(double x[], coefficients<T> & coeff, const cudaConstants* cConstants);
     
     // fourth order fourier series
     // setting the size of gamma array (in-plane coefficients angle)

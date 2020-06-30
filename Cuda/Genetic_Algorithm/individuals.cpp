@@ -57,7 +57,7 @@ double getPosRatio(Individual first, Individual second) {
 */
 
 // Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
-void Individual::initialize(cudaConstants* cConstants) {
+void Individual::initialize(const cudaConstants* cConstants) {
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
 
     this->startParams.y0 = elements<double>( // calculate the starting position and velocity of the spacecraft from Earth's position and velocity and spacecraft launch angles

@@ -7,6 +7,8 @@ Last Updated: June 26th, 2020
 <h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
 <h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
 <h3>In the code, the structure that uses the config file is called <b>cudaConstants</b></h3>
+<h3>Other functions include an overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility when outputting onto terminal screen.  Also function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, used in the genetic algorithm as means of verifying that the values are not changing during runtime.</h3>
+
 
 <h2>Variables in Config/cudaConstants</h2>
 
