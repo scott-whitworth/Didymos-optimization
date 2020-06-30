@@ -210,10 +210,6 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
         std::cout << "pos_threshold not equal!\n";
         return false;
     }
-    else if (a.speed_threshold != b.speed_threshold) {
-        std::cout << "speed_threshold not equal!\n";
-        return false;
-    }
     else if (a.coast_threshold != b.coast_threshold) {
         std::cout << "coast_threshold not equal!\n";
         return false;
