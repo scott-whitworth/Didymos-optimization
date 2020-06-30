@@ -101,7 +101,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
     std::cout << "Best individual:" << std::endl;
     std::cout << "\tposDiff: " << individual.posDiff << std::endl;
     std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
-    std::cout << "\tcost: "    << individual.getCost() << std::endl;
+    std::cout << "\tcost: "    << individual.cost << std::endl;
 }
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
@@ -298,7 +298,11 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
              }
+
+            // calculate its new cost function
+            inputParameters[k].getCost(cConstants);
         }
+
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones

@@ -11,7 +11,6 @@ struct cudaConstants {
     std::string initial_start_file_address; // If random_start is false, use file_address to find what file is being used for the initial start
     
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory (AU)
-    double speed_threshold; // threshold for desired speed the spacecraft must make (AU/s)
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
     int write_freq; // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file

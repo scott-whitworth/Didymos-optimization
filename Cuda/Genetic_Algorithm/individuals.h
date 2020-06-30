@@ -14,12 +14,13 @@ struct Individual {
 
     double posDiff; // difference in position between spacecraft and center of asteroid at end of run
     double velDiff; // difference in velocity between spacecraft and asteroid at end of run
+    double cost; // cost function of the individual
 
     // get the inital position of the spacecraft according to this Individual's launch time
     void initialize(const cudaConstants* cConstants);
 
     // Calculates a cost value to quantitatively evaluate this Individual
-    double getCost();
+    double getCost(const cudaConstants* cConstants);
 
     // Some comparison operators overloaded to compare individuals by their cost values (determined in getCost())
     bool operator>(Individual &other);

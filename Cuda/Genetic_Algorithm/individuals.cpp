@@ -5,15 +5,18 @@
 
 // An experimental equation to determine cost (currently is being minimized in the genetic algorithm)
 // Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
-double Individual::getCost() {
-    double cost = this->posDiff;
-    
-    //cost -= abs(this->velDiff);
+double Individual::getCost(cudaConstants* cConstants) {
+    if (this->posDiff < cConstants->pos_threshold) {
+        cost = abs(this->velDiff - cConstants->v_impact)/cConstants->c3energy;
+    }
+    else {
+        cost = posDiff * cConstants->c3energy;
+    }
     return cost;
 }
 
 bool Individual::operator>(Individual &other) {
-    if (this->getCost() > other.getCost()) {
+    if (this->cost > other.cost) {
         return true;
     }
     else {
@@ -22,7 +25,7 @@ bool Individual::operator>(Individual &other) {
 }
 
 bool Individual::operator<(Individual &other) {
-    if (this->getCost() < other.getCost()) {
+    if (this->cost < other.cost) {
         return true;
     }
     else {
@@ -31,7 +34,7 @@ bool Individual::operator<(Individual &other) {
 }
 
 bool Individual::operator==(Individual &other) {
-    if (this->getCost() == other.getCost()) {
+    if (this->cost == other.cost) {
         return true;
     }
     else {
