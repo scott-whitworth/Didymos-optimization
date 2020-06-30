@@ -369,7 +369,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "================CONFIG=DATA==============================================================\n";
     os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\t\taddress: "     << object.initial_start_file_address << "\n";
-    os << "pos_threshold: " << object.pos_threshold << "\tspeed_threshold: "<< object.speed_threshold   << "\tcoast_threshold: " << object.coast_threshold            << "\n\n";
+    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold            << "\n\n";
     
     os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps               << "\t v_impact: " << object.v_impact << "\n";
     os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check               << "\n";
