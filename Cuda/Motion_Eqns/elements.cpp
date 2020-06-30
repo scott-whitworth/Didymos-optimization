@@ -84,9 +84,9 @@ template <class T> bool elements<T>::compare(const elements<T> & other, T comp_T
 
 template <class T> std::ostream & operator<<(std::ostream & Str, const elements<T> & e) {
     Str << std::fixed;
-    Str << std::setprecision(16); // number of decimals output into text file
+    Str << std::setprecision(16); // number of decimals output into .csv file
     Str << std::scientific;
-    Str << e.r << "\t" << e.theta << "\t" << e.z << "\t" << e.vr << "\t" << e.vtheta << "\t" << e.vz << "\n";
+    Str << e.r << "," << e.theta << "," << e.z << "," << e.vr << "," << e.vtheta << "," << e.vz << "\n";
     return Str;
 }
 

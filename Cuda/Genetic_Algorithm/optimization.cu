@@ -16,7 +16,7 @@
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
 #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
-#define SECONDS_IN_YEAR 365*24*3600
+#define SECONDS_IN_YEAR 365.25*24*3600
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
@@ -414,14 +414,8 @@ int main () {
     cudaSetDevice(0);
     
     cudaConstants const * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
-
-    // cudaConstants const * compareConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declaring a comparison cudaConstants to verify no changes to values after optimize
     // Display contents of cConstants resulting from reading the file
     std::cout << *cConstants << std::endl;
-
-    //if ( !(sameConstants(*cConstants, *compareConstants))) {
-    //   std::cout << "\nERROR - cConstants and compareConstants not the same at begginning!\n";
-    //}
 
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
@@ -438,25 +432,14 @@ int main () {
     int numThreads = 2880; // the number of cores on a Tesla k40
     //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
 
-    //std::ofstream efficiencyGraph; // for viewing how many runge-kuttas ran per second for each combination of threads per block and total threads 
-    //efficiencyGraph.open("efficiencyGraph.csv");
-    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
-    
+    // std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
     thruster<double> thrust(cConstants);
 
     optimize(numThreads, blockThreads, cConstants, thrust);
 
-    //efficiencyGraph << blockThreads << "," << numThreads << "," << calcPerS  << "\n";
-    //efficiencyGraph.close();
-    
-    //if ( !(sameConstants(*cConstants, *compareConstants))) {
-    //    std::cout << "\nERROR - cConstants had changed after optimize()!\n";
-    //}
-
 
     delete launchCon;
     delete cConstants;
-    // delete compareConstants;
     
     return 0;
 }
