@@ -20,12 +20,15 @@
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBest, double currentBest, double dRate) {
-    if (trunc(previousBest/dRate) != trunc(currentBest/dRate)) {
+bool changeInBest(double previousBestPos, double previousBestVel, Individual* currentBest, double dRate) {
+    if (trunc(previousBestPos/dRate) != trunc(currentBest->posDiff/dRate)) {
         return true;
     }
     else {
-        return false;
+        if (trunc(previousBestVel/dRate) != trunc(currentBest->velDiff/dRate)) {
+            return true;
+        }
+        else return false;
     }
 }
 
@@ -136,7 +139,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
+    double previousBestPos = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
+    double previousBestVel = 0;
 
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
@@ -317,19 +321,20 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
-        double currentBest;
+        Individual* currentBest;
         if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
-            currentBest = inputParameters[0].posDiff;
+            currentBest = inputParameters[0];
           
             if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * cConstants->anneal_factor;
                 std::cout << "\n new anneal: " << currentAnneal << std::endl;
-                if(trunc(currentBest/dRate)==0) { 
+                if(trunc(currentBest->posDiff/dRate)==0 || trunc(currentBest->velDiff/dRate)==0) { 
                     dRate = dRate/10; 
                     std::cout << "\nnew dRate: " << dRate << std::endl;
                 }
             }
-            previousBest = currentBest;
+            previousBestPos = currentBest->posDiff;
+            previousBestVel = currentBest->velDiff;
         }
 
         // Display a '.' to the terminal to show that a generation has been performed
