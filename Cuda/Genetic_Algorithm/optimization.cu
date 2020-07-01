@@ -160,7 +160,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
             inputParameters[i].startParams = example;
         }
     }
-    // If not a random start, read from file
+    // If not a random start, read from file using cConstants initial_start_file_address to get path
     else {
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
 
@@ -302,6 +302,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads); // put the individuals in order so we can replace the worst ones
 
+        // Display a '.' to the terminal to show that a generation has been performed
+        // This also serves to visually seperate the generation display on the terminal screen
+        std::cout << '.';
+
         // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
         currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
 
@@ -317,15 +321,12 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
           
             if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * cConstants->anneal_factor;
-                std::cout << "\n new anneal: " << currentAnneal << std::endl;
+                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
                 if(trunc(inputParameters[0].posDiff/dRate)==0) { dRate = dRate/10; }
             }
             previousBest = inputParameters[0].posDiff;
         }
 
-        // Display a '.' to the terminal to show that a generation has been performed
-        // This also serves to visually seperate the generation display on the terminal screen
-        std::cout << '.';
 
         // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
         if (static_cast<int>(generation) % cConstants->write_freq == 0) {
@@ -409,7 +410,7 @@ int main () {
     // display GPU properties and ensure we are using the right one
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
-    std::cout << "Device Number: 0 \n";
+    std::cout << "\n\nDevice Number: 0 \n";
     std::cout << "- Device name: " << prop.name << std::endl << std::endl;
     cudaSetDevice(0);
     
@@ -420,22 +421,24 @@ int main () {
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
-    double startTime = 0; // 0.0 year (s)
+    double startTime = 15778800; // 0.5 year (s)
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
-    double timeStamp = 0;
+    double timeStamp = startTime;
     // File stream for outputting values that were calculated in EarthInfo constructor
     std::ofstream earthValues;
     earthValues.open("EarthCheckValues.csv");
-    // Set header row
+    // Set header row for the table to record values, with timeStamp
     earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
+
     while (timeStamp < endTime) {
         earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
         timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
     }
+    // Done recording earth calculations, close file and move on
     earthValues.close();
     
     //----------------------------------------------------------------
@@ -444,12 +447,14 @@ int main () {
     int numThreads = 2880; // the number of cores on a Tesla k40
     //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
 
-    // std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+    std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
+
     thruster<double> thrust(cConstants);
 
+    // Perform the optimization with optimize function
     optimize(numThreads, blockThreads, cConstants, thrust);
 
-
+    // Now that the optimize function is done (assumed taht optimize() also records it), deallocate memory of the earth calculations and cudaConstants
     delete launchCon;
     delete cConstants;
     

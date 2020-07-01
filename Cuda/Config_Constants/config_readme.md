@@ -1,29 +1,27 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: June 29th, 2020
+Last Updated: July 1st, 2020
 
 <h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments</h3>
 <h3>The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).</h3>
-<h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function</h3>
-<h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables</h3>
-<h3>Default address is "genetic.config", must be in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
-<h3>In the code, the structure that uses the config file is called <b>cudaConstants</b></h3>
+<h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu</h3>
+<h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables and will result in exception thrown if invalid value (such as string instead of double) is used</h3>
+<h3>Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
+<h3>In the code, the structure that uses the config file is called <b>cudaConstants</b> and is only accessed when being constructed (therefore changing the config file during a run would have no impact)</h3>
 <h3>Other functions include an overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility when outputting onto terminal screen.  Also function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, used in the genetic algorithm as means of verifying that the values are not changing during runtime.</h3>
-
-
+<h3>Along with constructor for the structure, there is also an overloaded << operator for cudaConstants to display the contents it obtained. Also a comparison function called sameConstants() that takes two cudaConstants structures and returns true if all their variables are the same.  Can be used to verify no change in a cudaConstants variable as the program runs.
 <h2>Variables in Config/cudaConstants</h2>
 
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
-|----------------------------	|------------	|-------	|------------------------------------------------------------------------------------------------------------------------------------------------------------	                    |---	|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
 | time_seed                  	| int/string 	| None  	| Sets the seed used in random generation, either specify a seed to use or place "NONE" for the seed to be time(0)                                           	                    |   	|
-| random_start               	| boolean    	| None  	| If true, sets initial generation's individuals to hold parameters with random values, if false it initializes the individuals from a file                  	                    |   	|
+| random_start               	| boolean    	| None  	| If "true", sets initial generation's individuals to hold parameters with random values, if "false" it initializes the individuals from a provided file                  	        |   	|
 | initial_start_file_address 	| string     	| None  	| If random_start is false, the program uses this address to get parameter values for the initial individuals with the assumption that the file hold 14 sets 	                    |   	|
 | pos_threshold              	| double     	| AU      	| Sets the maximum positional difference of the spacecraft to the asteriod at end of its trajectory path                                                    	                    |   	|
-| speed_threshold            	| double     	| AU/s  	| (Currently not used?) Sets the minimum velocity difference with the asteriod that the spacecraft must obtain at the end of its trajectory path            	                    |   	|
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
-| best_count                 	| int        	| None  	| How many individuals must converge to a solution before ending the algorithm 	                                                                                                    |   	|
-| change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced                                 	                    |   	|
-| anneal_initial             	| double     	| None  	| The initial anneal value, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                    |   	|
+| best_count                 	| int        	| None  	| How many individuals must have obtained a solution before ending the algorithm, also outputs the top number of individuals up to best_count 	                                    |   	|
+| change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced by multiplying with anneal_factor                    |   	|
+| anneal_initial             	| double     	| None  	| The initial anneal value used, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                |   	|
 | mutation_rate              	| double     	| None  	| The probability of a mutation occurring when generating a new individual, gurantees at least one gene is changed                                           	                    |   	|
 | double_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects two genes 	                                                                                                        |   	|
 | triple_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects 3 genes 	                                                                                                            |   	|
@@ -34,8 +32,8 @@ Last Updated: June 29th, 2020
 | zeta_mutate_scale          	| double     	| None  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
 | alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
 | thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
-| dry_mass                     	| double        | kg      	| Set the mass of the spacecraft without fuel 	                                                                                                                                    |   	|
-| fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, determines wet_mass 	                                                                                                            |   	|
+| dry_mass                     	| double        | kg      	| Set the mass of the spacecraft without fuel, also used in determining wet_mass 	                                                                                                |   	|
+| fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, used in determining wet_mass 	                                                                                                |   	|
 | wet_mass                     	| double        | kg      	| The total mass of the spacecraft with fuel                                                                                                                  	                    |   	|
 | coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving earth's sphere of influence, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
@@ -52,7 +50,7 @@ Last Updated: June 29th, 2020
 | vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	    |   	|
 | vtheta_fin_earth         	    | double     	| Rad/s  	| The velocity of the theta angle component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	|   	|
 | vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
-| v_impact                 	    | double     	| AU/s  	| NASA's official mission impact velocity difference the spacecraft will collide with Dimorphos	            |   	|
-| rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	            |   	|
-| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	            |   	|
-| max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	            |   	|
+| v_impact                 	    | double     	| AU/s  	| NASA's official mission impact velocity difference the spacecraft will collide with Dimorphos, does not impact the performance of the code	                                    |   	|
+| rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
+| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	                                            |   	|
+| max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	                                                                                                                                    |   	|

@@ -366,26 +366,26 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "==========CONFIG=DATA===============================================================================\n";
-    os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\t\taddress: "     << object.initial_start_file_address << "\n";
-    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold            << "\n\n";
+    os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\taddress: "     << object.initial_start_file_address << "\n";
+    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold  << "\n\n";
     
-    os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps               << "\t v_impact: " << object.v_impact << "\n";
-    os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check               << "\n";
-    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count                 << "\n\n";
+    os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps << "\n";
+    os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
+    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n\n";
     
     os << "mutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
     os << "gamma_m_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
     os << "triptime_m_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
-    os << "thruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\twet_mass: " << object.wet_mass << "\n\n";
-    os << "c3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\n\n";
+    os << "thruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n\n";
+    os << "c3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\tv_impact: " << object.v_impact << "\n\n";
 
     os << "Asteriod Info:\n";
     os << "\t R: " << object.r_fin_ast << "\t 0: " << object.theta_fin_ast << "\t Z: " << object.z_fin_ast << "\n";
     os << "\tvR: " << object.vr_fin_ast << "\tv0: " << object.vtheta_fin_ast << "\tvZ: " << object.vz_fin_ast << "\n\n";
 
     os << "Earth Info:\n";
-    os << "\t R: " << object.r_fin_earth << "\t 0: " << object.theta_fin_earth << "\t Z: " << object.z_fin_earth << "\n";
+    os << "\t R: " << object.r_fin_earth  << "\t 0: " << object.theta_fin_earth  << "\t Z: " << object.z_fin_earth << "\n";
     os << "\tvR: " << object.vr_fin_earth << "\tv0: " << object.vtheta_fin_earth << "\tvZ: " << object.vz_fin_earth << "\n\n";
     os << "====================================================================================================\n";
     
