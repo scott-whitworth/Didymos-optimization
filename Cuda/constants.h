@@ -5,7 +5,7 @@
 #define _USE_MATH_DEFINES // for use of M_PI
 
 // Planetary properties and constants
-#define earthRadius 1.49598261e11/AU // radius of the earth (au)
+#define earthRadius 1.49598261e11/AU // radial distance of Earth from Sun (au)
 #define earthMass 5.97237e24 // mass of the earth (kg)
 #define lunarMass 7.34767e22 // mass of the earth's moon (kg)
 #define ESOI earthRadius*pow(((earthMass+lunarMass)/massSun),0.4) // escape sphere of influence (au)
