@@ -321,7 +321,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
-        Individual* currentBest;
+        Individual currentBest;
         if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0];
           
