@@ -38,11 +38,6 @@ There are many folders and files in this project, so here's a short rundown of f
   - orbitalOptimization: 2019's non-GPU dependent optimization method that utilizes Nelder-Mead instead of a genetic algorithm, also not actively used in current appraoch to the task.
   - DerivingImpactValues.xlsx : A current (likely temporary) method of converting JPL data values from cartesian to cylindrical units by using spreadhsheet fields and computations.  The converted values are then copied and put into genetic.config to be read and used.  This does not directly impact the code.
 
-<h2>Current Approach</h2>
---WIP-
-  The program utilizes a config file to determine multiple properties that affect the performance of the algorithm.  This includes but not limmited to mutation rates and how often to record the progress of its best individual.  It also includes options such as the asteriod's location and mass of the spacecraft.  For more information on the config file, refer to <b>config_readme.md</b> found in CUDA/Config_Constants.
-  The genetic algorithm as of the time of this writing does not optimize the trajectory for higher speed velocity, currently only concerned with reducing the positional difference to what is specified in the config file under pos_threshold.
-
 <h2> Running CUDA Code: </h2>
 
 On WU System & Personal Computers:
@@ -94,4 +89,4 @@ Here is how the impact data was obtained to be used in the config value.
 
 3.  To obtain final Earth elements, change the target body to Earth-Moon barycenter and generate a new ephemeris.
 
-4.  Using impactParams.m or DerivingImpactValues.xlsx, convert the values to cylindrical coordinates with velocity changed from AU/day to AU/s.
+4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.

@@ -1,14 +1,21 @@
 <h1> Config File Specifications/Information </h1>
 Last Updated: July 1st, 2020
 
-<h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments</h3>
-<h3>The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).</h3>
-<h3>For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu</h3>
-<h3>If config file address is invalid, will output to terminal that is the case.  Also assumption is made that the config file contains valid values for all variables and will result in exception thrown if invalid value (such as string instead of double) is used</h3>
-<h3>Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
-<h3>In the code, the structure that uses the config file is called <b>cudaConstants</b> and is only accessed when being constructed (therefore changing the config file during a run would have no impact)</h3>
-<h3>Other functions include an overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility when outputting onto terminal screen.  Also function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, used in the genetic algorithm as means of verifying that the values are not changing during runtime.</h3>
-<h3>Along with constructor for the structure, there is also an overloaded << operator for cudaConstants to display the contents it obtained. Also a comparison function called sameConstants() that takes two cudaConstants structures and returns true if all their variables are the same.  Can be used to verify no change in a cudaConstants variable as the program runs.
+<h2>File format for config file</h2>
+
+- The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments
+- The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).
+- When reading the file, the assumption is made that the config file contains valid values for all variables and will result in exception thrown if invalid value (such as string instead of double) is used
+
+<h2>The cudaConstants struct</h2>
+
+- In the code, the structure that uses the config file is called <b>cudaConstants</b> and is only accessed when being constructed (therefore changing the config file during a run would have no impact).
+- An overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility to outputt onto terminal screen in the main optimization program.
+- Function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, used in the genetic algorithm as means of verifying that the values are not changing during runtime.
+- For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu.
+- Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
+- If config file address is invalid, will output to terminal that is the case.
+
 <h2>Variables in Config/cudaConstants</h2>
 
 Table 1. Setup & General Values
