@@ -420,13 +420,13 @@ int main () {
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
-    double startTime = 0; // 0.0 year (s)
+    double startTime = 15778800; // 0.5 year (s)
     double endTime = 78894000; // 2.5 years (s)
     double timeRes = 3600; // (s) position of earth is calculated for every hour
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
-    double timeStamp = 0;
+    double timeStamp = startTime;
     // File stream for outputting values that were calculated in EarthInfo constructor
     std::ofstream earthValues;
     earthValues.open("EarthCheckValues.csv");

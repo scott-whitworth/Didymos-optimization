@@ -28,7 +28,7 @@ There are many folders and files in this project, so here's a short rundown of f
     * Motion_Eqns: Defines elements structure that is used to describe the position and velocity of an object in space (such as Earth). Dependent on Thrust_Files and Config_Constants/config.h.
     * Runge_Kutta: Holds the runge_kutta functions with versions for both CPU and GPU usage. Also defines rkParameters structure that holds the information that the genetic algorithm attempts to optimize.  Dependent on Thrust_Files, Config_Constants, etc.
     * Thrust_Files: Contains the code that describes the thruster and its behavior using a Fourier series to determine angles of direction. Dependent on Config_Constants/config.h
-    * constants.h: Stores constant properties, such as AU unit value and optimized variable offsets for the array that stores the values
+    * constants.h: Stores constant properties, such as AU unit value and optimized variable offsets for the array that stores the values, these are constants that should not be easily changed.
     * optimizedVector.bin: Binary file containing 14 parameters that can be used as initial guesses in the genetic algorithm, values derived from previous code in orbitalOptimization folder which is also based on old impact date data.
   
   - PostProcessing: Contains MATLAB files that take in output files from the Cuda program to display results.
@@ -45,39 +45,44 @@ There are many folders and files in this project, so here's a short rundown of f
 
 <h2> Running CUDA Code: </h2>
 
-On WU System:
+On WU System & Personal Computers:
 1. To Compile:
-   - Enter the following into command prompt within VSCode 
-
-      `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\bin\Hostx64\x64\cl.exe" -o <OutputFileNameHere>.exe optimization.cu`
-
-   
-   - Make sure that <OutputFileNameHere> has a specific name (it will create a .exe file with whatever you named it)
-
-    
-     *If your computer can’t find the file, then there is a problem with the path. Copy and paste the file path into a file explorer, and delete everything after `\MSVC\` then click through until you get to `\cl.exe`. Copy this path and use it to replace the old path.*
-
+   1. Open VSCode and open the Didymos project folder
+   2. Open command prompt in the VScode terminal.
+   3. Navigate to the Genetic_Algorithm folder (input and enter "cd Cuda" then "cd Genetic_Algorithm").
+   4. Enter the following
+      `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\bin\Hostx64\x64\cl.exe" -o <OutputFileNameHere>.exe optimization.cu`   
+    - Make sure that <OutputFileNameHere> has a specific name (it will create a .exe file with whatever you named it), a file path could also be made so that the files created from the compiler are not in the same folder
+    - *If your computer can’t find the file, then there is a problem with the path. Copy and paste the file path into a file explorer, and delete everything after `\MSVC\` then click through until you get to `\cl.exe`. Copy this path and use it to replace the old path.*
     - This code should add an .exe file with the output name that was entered
-		
-  1. To run:
-			
-      Type the .exe file name from above (don't forget to add .exe) and enter
-      
-  2. Changing properties:
-    
-      In Config_Constants, genetic.config holds a set of variables that can be changed before running the .exe file.  Refer to config_readme.md for specifics on how each variable impacts the program's behavior.
-      
-		
-  For Tesla Machine:
-			  
-   - Do the same as above, but compile using this:
 
+  For Tesla Machine:			  
+   - Do the same as above, but for step 3 use this command:
      `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\cl.exe" optimization.cu -o <nameOfOutput>`
-       
- 
- <n>
-<h2> Running Matlab Code </h2>
+		
+2. To Run:
+    1. Open command prompt in the VScode terminal.
+    2. Navigate to the Genetic_Algorithm folder (input and enter "cd Cuda" then "cd Genetic_Algorithm").
+    3. Type the .exe file name from above (don't forget to add .exe) and enter
+    4. The program will begin and should show the following in order on the terminal;
+       1. Outputs the GPU device name and intial values read from genetic.config that is in Config_Constants folder.
+       2. Calculate the Earth data with a visible loading bar.  The range of this data is 0.5-2.5 years before impact date
+       3. Outputs the number of threads and blocks that will be used in the optimize function and starts the algorithm.
+       4. On the terminal, displays a "." for every generation calculated and sorted.  Every disp_freq generation it displays the current generation number (how many have been calculated up to this point minus 1) and best individual in the pool.  Also displays change in anneal size every change_check generations.
+       5. Along with terminal display, there are serveral file outputs made during the program's run.
+       6. Once the best_count number of individuals in the pool have passed the tolerance (less than pos_threshold set in config file), the algorithm has "succeeded" and will output best_count number of files that describe that individual's parameters that can be used in PostProcessing to observe.
+       7. The program is finished and so closes
 
+3. Changing properties:
+      In Config_Constants, genetic.config holds a set of variables that can be changed before running the .exe file.  Refer to config_readme.md for specifics on how each variable impacts the program's behavior and format of the file.
+
+4. Output Resulting Files
+  - EarthCheckValues.csv : Recorded prior to starting the optimizing genetic algorithm, contains the position and velocity for every day of Earth (lower resolution than what is calculated which is every hour).  Used to verify that it matches with the JPL database.
+  - BestInGenerations.csv/.bin : A record of the best individual's parameters (not including thruster values) and posDiff and velDiff as well as the following generations anneal value.  Records every write_freq generation.  Also records the best individual at the end of the algorithm.
+  - WorstInGenerations.csv/.bin : Similar to BestInGenerations except it selects the worst individual instead.
+  - final-optimization#.bin and orbitalMotion-accel#.bi : For best_count number of individuals, files are made of this format when the algorithm is finished to save the best individuals (replace # with and you get that numbered best individual) to then be used by PostProcessing to show the best trajectory found.
+
+<h2> Running Matlab Code </h2>
   --WIP--
 
 <h2>NASA JPL Data for Impact Date Position & Velocity</h2>
