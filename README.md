@@ -80,9 +80,11 @@ On WU System & Personal Computers:
 <h2> Running Matlab Code </h2>
 
 0. In order to run the Matlab code, you must be on a Whitworth machine that has Matlab installed.
-1. Copy the binary files outputted by the Cuda application generated when it finished.
-2. Open Matlab client with directory to PostProcessinng contents.
-3. In the command window, enter "filePlot(#)" with # as the number referring to the individual being plotted (1 would be the best individual, 2 would be 2nd best, etc.).
+1. Copy the binary files outputted by the Cuda application generated when it finished into same folder as the matlab code being used.
+2. Open Matlab client with directory to where the matlab code files and binary files are placed.
+3. Run the matlab script in the command window:
+   - To view an individual's path, enter "filePlot(#)" with # as the number referring to the individual being plotted (1 would be the best individual, 2 would be 2nd best, etc.).
+   - To compare different paths, replace "filePlot(#)" with "filePlotCompare(#,#)" with the # being two different numbers for the individuals being compared.
 4. Graphs will be generated that show the path in a three dimensional graph, coast behavior, etc. that could be exported into png format.
 
 <h2>NASA JPL Data for Impact Date Position & Velocity</h2>
