@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: June 26th, 2020
+Last Updated: June 29th, 2020
 
 <h3>The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments</h3>
 <h3>The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).</h3>

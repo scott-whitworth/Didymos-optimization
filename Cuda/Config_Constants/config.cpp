@@ -48,12 +48,10 @@ void cudaConstants::FileRead(std::string fileName) {
                 }
                 else if (variableName == "random_start") {
                     if (variableValue == "false") {
-                        std::cout << "Initial generation based on file\n";
                         this->random_start = false;
                     }
                     else {
                         // If not set to false, then it is assumed the value is for true
-                        std::cout << "Initial generation based on random values within set range\n";
                         this->random_start = true;
                     }
                 }
@@ -371,7 +369,7 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
 // Output cudaConstant contents with formatting for better readibility
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
-    os << "================CONFIG=DATA==============================================================\n";
+    os << "==========CONFIG=DATA===============================================================================\n";
     os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\t\taddress: "     << object.initial_start_file_address << "\n";
     os << "pos_threshold: " << object.pos_threshold << "\tspeed_threshold: "<< object.speed_threshold   << "\tcoast_threshold: " << object.coast_threshold            << "\n\n";
     
@@ -393,7 +391,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "Earth Info:\n";
     os << "\t R: " << object.r_fin_earth << "\t 0: " << object.theta_fin_earth << "\t Z: " << object.z_fin_earth << "\n";
     os << "\tvR: " << object.vr_fin_earth << "\tv0: " << object.vtheta_fin_earth << "\tvZ: " << object.vz_fin_earth << "\n\n";
-    os << "=========================================================================================\n";
+    os << "====================================================================================================\n";
     
     return os;
 }
