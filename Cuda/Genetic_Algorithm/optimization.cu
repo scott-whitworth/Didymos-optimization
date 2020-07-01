@@ -323,9 +323,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
           
             if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * cConstants->anneal_factor;
-                if (static_cast<int>(generation) % 2 == 0) {
-                    currentAnneal = currentAnneal * 3;
-                }
                 std::cout << "\n new anneal: " << currentAnneal << std::endl;
                 if(trunc(currentBest/dRate)==0) { 
                     dRate = dRate/10; 
