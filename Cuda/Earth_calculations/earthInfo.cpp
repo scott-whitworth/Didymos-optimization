@@ -33,7 +33,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     earthCon[0] = earth;
 
     // Shows progress of earth position calculations before the optimization in cuda can occur.
-    std::cout << std::endl << "calculating earth positions for the trip time range" << std::endl;
+    std::cout << "Calculating earth positions for the trip time range" << std::endl;
     std::cout << "          10 20 30 40 50 60 70 80 90 100" << std::endl;
     std::cout << "progress:[";
 
