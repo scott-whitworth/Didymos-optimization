@@ -327,7 +327,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
           
             if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 
-                if (trunc(currentBest.posDiff/dRate)==0 || trunc(currentBest.velDiff/dRate)==0) { 
+                if (trunc(currentBest.velDiff/dRate)==0) { 
                     dRate = dRate/10; 
                     std::cout << "\nnew dRate: " << dRate << std::endl;
                 }
