@@ -78,7 +78,12 @@ On WU System & Personal Computers:
   - final-optimization#.bin and orbitalMotion-accel#.bi : For best_count number of individuals, files are made of this format when the algorithm is finished to save the best individuals (replace # with and you get that numbered best individual) to then be used by PostProcessing to show the best trajectory found.
 
 <h2> Running Matlab Code </h2>
-  --WIP--
+
+0. In order to run the Matlab code, you must be on a Whitworth machine that has Matlab installed.
+1. Copy the binary files outputted by the Cuda application generated when it finished.
+2. Open Matlab client with directory to PostProcessinng contents.
+3. In the command window, enter "filePlot(#)" with # as the number referring to the individual being plotted (1 would be the best individual, 2 would be 2nd best, etc.).
+4. Graphs will be generated that show the path in a three dimensional graph, coast behavior, etc. that could be exported into png format.
 
 <h2>NASA JPL Data for Impact Date Position & Velocity</h2>
 Here is how the impact data was obtained to be used in the config value.
