@@ -47,7 +47,7 @@ There are many folders and files in this project, so here's a short rundown of f
 
 On WU System & Personal Computers:
 1. To Compile:
-   1. Open VSCode and open the Didymos project folder
+   1. Open VSCode and open the Didymos Optimization project folder
    2. Open command prompt in the VScode terminal.
    3. Navigate to the Genetic_Algorithm folder (input and enter "cd Cuda" then "cd Genetic_Algorithm").
    4. Enter the following

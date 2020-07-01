@@ -11,6 +11,7 @@ Last Updated: July 1st, 2020
 <h3>Along with constructor for the structure, there is also an overloaded << operator for cudaConstants to display the contents it obtained. Also a comparison function called sameConstants() that takes two cudaConstants structures and returns true if all their variables are the same.  Can be used to verify no change in a cudaConstants variable as the program runs.
 <h2>Variables in Config/cudaConstants</h2>
 
+Table 1. Setup & General Values
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
 | time_seed                  	| int/string 	| None  	| Sets the seed used in random generation, either specify a seed to use or place "NONE" for the seed to be time(0)                                           	                    |   	|
@@ -19,9 +20,17 @@ Last Updated: July 1st, 2020
 | pos_threshold              	| double     	| AU      	| Sets the maximum positional difference of the spacecraft to the target at end of its trajectory path                                                    	                    |   	|
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
-| best_count                 	| int        	| None  	| How many individuals must have obtained a solution before ending the algorithm, also outputs the top number of individuals up to best_count 	                                    |   	|
 | change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced by multiplying with anneal_factor                    |   	|
+| rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
+| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	                                            |   	|
+| max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	                                                                                                                                    |   	|
+
+Table 2. Genetic Algorithm Values
+| Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
 | anneal_initial             	| double     	| None  	| The initial anneal value used, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                |   	|
+| anneal_factor             	| double     	| None  	| The multiplier applied to anneal value if no change in the best individual is occurring                                                                        	                                |   	|
+| best_count                 	| int        	| None  	| How many individuals must have obtained a solution before ending the algorithm, also outputs the top number of individuals up to best_count 	                                    |   	|
 | mutation_rate              	| double     	| None  	| The probability of a mutation occurring when generating a new individual, gurantees at least one gene is changed                                           	                    |   	|
 | double_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects two genes 	                                                                                                        |   	|
 | triple_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects 3 genes 	                                                                                                            |   	|
@@ -31,6 +40,11 @@ Last Updated: July 1st, 2020
 | triptime_mutate_scale 	    | double     	| None  	| Affects the maximum mutation range for triptime values 	                                                                                                                        |   	|
 | zeta_mutate_scale          	| double     	| None  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
 | alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
+
+
+Table 3. Mission Values
+| Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
 | thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
 | dry_mass                     	| double        | kg      	| Set the mass of the spacecraft without fuel, also used in determining wet_mass 	                                                                                                |   	|
 | fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, used in determining wet_mass 	                                                                                                |   	|
@@ -38,19 +52,21 @@ Last Updated: July 1st, 2020
 | coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
 | v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, not in config file but rather derived from c3energy 	                        |   	|
-| r_fin_ast           	        | double     	| AU      	| The radius position of the target at impact date, relative to the Sun 	                                                                                                        |   	|
-| theta_fin_ast        	        | double     	| Radians  	| The theta angle position of the target at impact date, relative to the Sun 	                                                                                                    |   	|
-| z_fin_ast           	        | double     	| AU      	| The z (off-plane offset) position of the target at impact date, relative to the Sun 	                                                                                        |   	|
-| vr_fin_ast           	        | double     	| AU/s  	| The velocity of the radius component of the target at impact date, relative to the Sun 	                                                                                        |   	|
-| vtheta_fin_ast      	        | double     	| AU/s  	| The tangental velocity of the target at impact date, relative to the Sun 	                                                                                |   	|
-| vz_fin_ast           	        | double     	| AU/s  	| The velocity of the z component of the target at impact date, relative to the Sun 	                                                                                            |   	|
-| r_fin_earth           	    | double     	| AU     	| The radius position of the earth-moon center of mass at impact date, relative to the Sun 	                                                                                                            |   	|
-| theta_fin_earth          	    | double     	| Radians  	| The theta angle position of the earth-moon center of mass at impact date, relative to the Sun 	                                                                                                    |   	|
-| z_fin_earth           	    | double     	| AU      	| The z (off-plane offset) position of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	        |   	|
-| vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	    |   	|
-| vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	|   	|
-| vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
 | v_impact                 	    | double     	| AU/s  	| NASA's official mission impact velocity difference the spacecraft will collide with Dimorphos, does not impact the performance of the code	                                    |   	|
-| rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
-| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	                                            |   	|
-| max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	                                                                                                                                    |   	|
+
+
+Table 3a. Impact Position & Velocity Values
+| Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
+| r_fin_ast           	        | double     	| AU      	| The radius position of the target at impact date, relative to the Sun bodycenter 	                                                                                                        |   	|
+| theta_fin_ast        	        | double     	| Radians  	| The theta angle position of the target at impact date, relative to the Sun bodycenter	                                                                                                    |   	|
+| z_fin_ast           	        | double     	| AU      	| The z (off-plane offset) position of the target at impact date, relative to the Sun bodycenter	                                                                                        |   	|
+| vr_fin_ast           	        | double     	| AU/s  	| The velocity of the radius component of the target at impact date, relative to Sun bodycenter	                                                                                        |   	|
+| vtheta_fin_ast      	        | double     	| AU/s  	| The tangental velocity of the target at impact date	                                                                                |   	|
+| vz_fin_ast           	        | double     	| AU/s  	| The velocity of the z component of the target at impact date, relative to the Sun bodycenter	                                                                                            |   	|
+| r_fin_earth           	    | double     	| AU     	| The radius position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                                            |   	|
+| theta_fin_earth          	    | double     	| Radians  	| The theta angle position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                                    |   	|
+| z_fin_earth           	    | double     	| AU      	| The z (off-plane offset) position of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	        |   	|
+| vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date 	    |   	|
+| vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date 	|   	|
+| vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to Sun bodycenter and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
