@@ -262,7 +262,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
-    double dRate = 1.0e-7;
+    double dRate = 1.0e-8;
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -326,15 +326,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
             currentBest = inputParameters[0];
           
             if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                
-                if (trunc(currentBest.velDiff/dRate)==0) { 
-                    dRate = dRate/10; 
-                    std::cout << "\nnew dRate: " << dRate << std::endl;
-                }
-                else {
-                    currentAnneal = currentAnneal * cConstants->anneal_factor;
-                    std::cout << "\nnew anneal: " << currentAnneal << std::endl;
-                }
+                currentAnneal = currentAnneal * cConstants->anneal_factor;
+                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
             }
             previousBestPos = currentBest.posDiff;
             previousBestVel = currentBest.velDiff;
