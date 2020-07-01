@@ -7,7 +7,7 @@
 // Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
 double Individual::getCost(const cudaConstants* cConstants) {
     if (this->posDiff < cConstants->pos_threshold) {
-        cost = abs(this->velDiff - cConstants->v_impact)/cConstants->c3energy;
+        cost = (cConstants->v_impact - this->velDiff)/cConstants->c3energy;
     }
     else {
         cost = posDiff * cConstants->c3energy;
