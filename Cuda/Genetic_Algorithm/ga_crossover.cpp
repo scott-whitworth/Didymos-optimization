@@ -8,7 +8,7 @@
 #include <iostream>
 #include <chrono>
 
-#define SECONDS_IN_YEAR 365*24*3600 // Used with getRand for triptime mutation scale
+#define SECONDS_IN_YEAR 365.25*24*3600 // Used with getRand for triptime mutation scale
 
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility
 enum maskValue {
@@ -152,7 +152,6 @@ void copyMask(int * maskIn, int * maskOut) {
 // Display mask contents onto the terminal
 void printMask(int * mask) {
     std::cout << "[";
-
     for(int i = 0; i < OPTIM_VARS; i++) {
         std::cout << mask[i];
         // If not the last item, need a comma to seperate between the items in the display
@@ -278,7 +277,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
                 newInd.coeff.tau[mutatedValue-TAU_OFFSET] += getRand(cConstants->tau_mutate_scale * annealing, rng);
             }
             else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE -1)) {//coast (14-18)
-                newInd.coeff.coast[mutatedValue-14] += getRand(cConstants->coast_mutate_scale * annealing, rng);
+                newInd.coeff.coast[mutatedValue-COAST_OFFSET] += getRand(cConstants->coast_mutate_scale * annealing, rng);
             }
         }
         if (mutatedValue == TRIPTIME_OFFSET) { //Time final
@@ -296,7 +295,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     }
     
 
-    return newInd;    
+    return newInd;
 }
 
 
