@@ -112,7 +112,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, const cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < cConstants->best_count; i++) {
-        if(pool[i].posDiff >= cConstants->pos_threshold || pool[i].velDiff < cConstants->v_impact) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
+        if(pool[i].getCost(cConstants) > 0) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
