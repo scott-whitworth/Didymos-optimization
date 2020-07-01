@@ -40,9 +40,6 @@ void cudaConstants::FileRead(std::string fileName) {
                 if (variableName == "pos_threshold") {
                     this->pos_threshold = std::stod(variableValue);
                 }
-                else if (variableName == "speed_threshold") {
-                    this->speed_threshold = std::stod(variableValue);
-                }
                 else if (variableName == "coast_threshold") {
                     this->coast_threshold = std::stod(variableValue);
                 }
