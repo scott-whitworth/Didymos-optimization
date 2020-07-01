@@ -20,12 +20,12 @@
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBestPos, double previousBestVel, Individual* currentBest, double dRate) {
-    if (trunc(previousBestPos/dRate) != trunc(currentBest->posDiff/dRate)) {
+bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double dRate) {
+    if (trunc(previousBestPos/dRate) != trunc(currentBest.posDiff/dRate)) {
         return true;
     }
     else {
-        if (trunc(previousBestVel/dRate) != trunc(currentBest->velDiff/dRate)) {
+        if (trunc(previousBestVel/dRate) != trunc(currentBest.velDiff/dRate)) {
             return true;
         }
         else return false;
