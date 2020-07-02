@@ -355,8 +355,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     start[ZETA_OFFSET] = inputParameters[0].startParams.zeta;
 
     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    writeTrajectoryToFile(start, i+1, thrust, cConstants);
-    progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
+    writeTrajectoryToFile(start, 1, thrust, cConstants);
 
     // Write config parameters to file
     writeConfigToFile(cConstants);
