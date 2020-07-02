@@ -379,6 +379,34 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
         std::cout << "vz_fin_earth not equal!\n";
         return false;
     }
+    else if (a.survivor_count != b.survivor_count) {
+        std::cout << "survivor_count not equal!\n";
+        return false;
+    }
+    else if (a.num_individuals != b.num_individuals) {
+        std::cout << "num_individuals not equal!\n";
+        return false;
+    }
+    else if (a.thread_block_size != b.thread_block_size) {
+        std::cout << "thread_block_size not equal!\n";
+        return false;
+    }
+    else if (a.startTime != b.startTime) {
+        std::cout << "startTime not equal!\n";
+        return false;
+    }
+    else if (a.endTime != b.endTime) {
+        std::cout << "endTime not equal!\n";
+        return false;
+    }
+    else if (a.durationTime != b.durationTime) {
+        std::cout << "durationTime not equal!\n";
+        return false;
+    }
+    else if (a.timeRes != b.timeRes) {
+        std::cout << "timeRes not equal!\n";
+        return false;
+    }
     else {
         std::cout << "\nThe two cudaConstants are equivalent!\n";
         return true;
