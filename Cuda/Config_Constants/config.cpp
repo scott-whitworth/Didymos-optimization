@@ -176,6 +176,9 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "num_individuals") {
                     this->num_individuals = std::stoi(variableValue);
                 }
+                else if (variableName == "survivor_count") {
+                    this->survivor_count = std::stoi(variableValue);
+                }
                 else if (variableName == "thread_block_size") {
                     this->thread_block_size = std::stoi(variableValue);
                 }
@@ -387,9 +390,11 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "==========CONFIG=DATA===============================================================================\n";
     os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\taddress: "     << object.initial_start_file_address << "\n";
-    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold  << "\n\n";
-    
+    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold  << "\n";
+    os << "num_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: " << object.thread_block_size << "\n\n";
+
     os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps << "\n";
+    os << "startTime: "     << object.startTime     << "\tendTime: "          << object.endTime         << "\tdurationTime: "    << object.durationTime << "\ttimeRes: " << object.timeRes << "\n";
     os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
     os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n\n";
     

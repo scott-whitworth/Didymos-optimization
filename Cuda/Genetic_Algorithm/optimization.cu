@@ -15,7 +15,7 @@
 
 //#define SURVIVOR_COUNT 240 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PAIR OFF FOR CROSSOVER
 // 240 (survivors) / 2 (parents per pair) * 8 (offspring per pair) = 960 = half of 1920 --for k620 GPU
-#define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
+// #define SURVIVOR_COUNT 360 // number of individuals to use for crossover each generation--MUST BE DIVISIBLE BY 2 TO PA
 #define SECONDS_IN_YEAR 365.25*24*3600
 
 // Used to see if the best individual is changing
@@ -152,7 +152,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     }
 
 
-    Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
+    Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
 //     // setup output of generation results over time onto a .csv file
@@ -242,7 +242,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
-        selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
+        selectWinners(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads); // put the individuals in order so we can replace the worst ones
 
         // Display a '.' to the terminal to show that a generation has been performed
@@ -289,7 +289,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Create a new generation and increment the generation counter
-        newInd = crossover(survivors, inputParameters, SURVIVOR_COUNT, numThreads, new_anneal, cConstants, thrust);
+        newInd = crossover(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -385,7 +385,7 @@ int main () {
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
-    double timeStamp = startTime;
+    // double timeStamp = startTime;
     
     // // File stream for outputting values that were calculated in EarthInfo constructor
     // std::ofstream earthValues;
