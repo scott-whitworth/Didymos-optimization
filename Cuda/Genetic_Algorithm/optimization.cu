@@ -385,18 +385,19 @@ int main () {
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
     double timeStamp = startTime;
-    // File stream for outputting values that were calculated in EarthInfo constructor
-    std::ofstream earthValues;
-    earthValues.open("EarthCheckValues.csv");
-    // Set header row for the table to record values, with timeStamp
-    earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
+    
+    // // File stream for outputting values that were calculated in EarthInfo constructor
+    // std::ofstream earthValues;
+    // earthValues.open("EarthCheckValues.csv");
+    // // Set header row for the table to record values, with timeStamp
+    // earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
 
-    while (timeStamp < endTime) {
-        earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
-        timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
-    }
-    // Done recording earth calculations, close file and move on
-    earthValues.close();
+    // while (timeStamp < endTime) {
+    //     earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
+    //     timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
+    // }
+    // // Done recording earth calculations, close file and move on
+    // earthValues.close();
     
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
