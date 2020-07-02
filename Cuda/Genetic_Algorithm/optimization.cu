@@ -299,7 +299,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
-    double cost = 0;
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact

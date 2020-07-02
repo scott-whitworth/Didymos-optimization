@@ -3,6 +3,7 @@
 
 #include "../Motion_Eqns/elements.h"
 #include "../Config_Constants/config.h"
+#include "../Runge_Kutta/runge_kutta.h"
 
 class EarthInfo {
     private:
