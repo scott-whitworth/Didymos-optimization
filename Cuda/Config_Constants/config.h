@@ -66,6 +66,7 @@ struct cudaConstants {
     double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
 
     int num_individuals; // Number of individuals in the pool, each individual contains its own thread
+    int survivor_count; // Number of survivors selected, every pair of survivors creates 8 new individuals
     int thread_block_size;
 
     // Used in generating time range for Earth calculations (units in seconds)
