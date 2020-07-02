@@ -11,6 +11,8 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 
 void writeConfigToFile(const cudaConstants* cConstants);
 
+void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config);
+
 void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing);
 
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants);
