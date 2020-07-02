@@ -299,47 +299,64 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
-
-    // Output to excel
-    double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
     
     // // Write the final best and worst performing individuals to their respective files
     // writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
     // writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
-    std::ofstream progressiveOutput;
-    progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
-    progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
-    progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
-    if (thrust.type) {
-        progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
-        progressiveOutput << "tau_a0,tau_a1,tau_b1,";
-        progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
-    }
-    progressiveOutput << std::endl;
-    // Write the best individuals with best_count in total outputted in seperate binary files
-    for (int i = 0; i < cConstants->best_count; i++) {
-        for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
-            start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
-        }
-        for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
-            start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
-        }
-        for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
-            start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
-        }
+    // std::ofstream progressiveOutput;
+    // progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
+    // progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
+    // progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
+    // if (thrust.type) {
+    //     progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
+    //     progressiveOutput << "tau_a0,tau_a1,tau_b1,";
+    //     progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
+    // }
+    // progressiveOutput << std::endl;
+    // // Write the best individuals with best_count in total outputted in seperate binary files
+    // for (int i = 0; i < cConstants->best_count; i++) {
+    //     for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
+    //         start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
+    //     }
+    //     for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
+    //         start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
+    //     }
+    //     for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
+    //         start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
+    //     }
 
-        start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
-        start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
-        start[BETA_OFFSET] = inputParameters[i].startParams.beta;
-        start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
+    //     start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
+    //     start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
+    //     start[BETA_OFFSET] = inputParameters[i].startParams.beta;
+    //     start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
 
-        // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, i+1, thrust, cConstants);
-        progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
+    //     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+    //     writeTrajectoryToFile(start, i+1, thrust, cConstants);
+    //     progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
+    // }
+    // progressiveOutput << std::endl;
+    // progressiveOutput.close();
+
+    // Only output the final best individual
+    for (int j = 0; j < inputParameters[0].startParams.coeff.gammaSize; j++) {
+        start[GAMMA_OFFSET + j] = inputParameters[0].startParams.coeff.gamma[j];
     }
-    progressiveOutput << std::endl;
-    progressiveOutput.close();
+    for (int j = 0; j < inputParameters[0].startParams.coeff.tauSize; j++) {
+        start[TAU_OFFSET + j] = inputParameters[0].startParams.coeff.tau[j];
+    }
+    for (int j = 0; j < inputParameters[0].startParams.coeff.coastSize; j++) {
+        start[COAST_OFFSET + j] = inputParameters[0].startParams.coeff.coast[j];
+    }
+
+    start[TRIPTIME_OFFSET] = inputParameters[0].startParams.tripTime;
+    start[ALPHA_OFFSET] = inputParameters[0].startParams.alpha;
+    start[BETA_OFFSET] = inputParameters[0].startParams.beta;
+    start[ZETA_OFFSET] = inputParameters[0].startParams.zeta;
+
+    // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+    writeTrajectoryToFile(start, i+1, thrust, cConstants);
+    progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
 
     // Write config parameters to file
     writeConfigToFile(cConstants);

@@ -68,7 +68,8 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   std::ofstream output;
   double seed = cConstants->time_seed;
-  output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+  output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
   for(int i = 0; i <= lastStep; i++) {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
@@ -88,27 +89,20 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 }
 
 void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrust, const cudaConstants* cConstants) {
-  elements<double> yp;
-  double numStep = 0;
-  trajectoryPrint(start, numStep, threadRank, yp, thrust, cConstants);
+    elements<double> yp;
+    double numStep = 0;
+    trajectoryPrint(start, numStep, threadRank, yp, thrust, cConstants);
 
-  //writes final optimization values to a seperate file
-  std::ofstream output;
-  double seed = cConstants->time_seed;
-  output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
-
-  for (int j = 0; j < OPTIM_VARS; j++) {
-    output.write((char*)&start[j], sizeof (double));
-  }
-  output.write((char*)&numStep, sizeof (double));
-
-  output.close();
-}
-
-void writeConfigToFile(const cudaConstants* cConstants) {
+    //writes final optimization values to a seperate file
     std::ofstream output;
     double seed = cConstants->time_seed;
-    output.open("configuration-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+
+    for (int j = 0; j < OPTIM_VARS; j++) {
+      output.write((char*)&start[j], sizeof (double));
+    }
+
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
     output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
     output.write((char*)&cConstants->z_fin_ast, sizeof(double));
@@ -122,7 +116,10 @@ void writeConfigToFile(const cudaConstants* cConstants) {
     output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
     output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    output.close();
+    
+    output.write((char*)&numStep, sizeof (double));
+
+  output.close();
 }
 
 void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config) {
