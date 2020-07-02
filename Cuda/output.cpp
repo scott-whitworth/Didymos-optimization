@@ -130,13 +130,13 @@ void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, con
     output << ind.startParams.alpha << ',' << ind.startParams.beta << ',' << ind.startParams.zeta << ',';
     if (config->thruster_type) {
       for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeffs.gamma[i] << ',';
+        output << ind.startParams.coeff.gamma[i] << ',';
       }
       for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeffs.tau[i] << ',';
+        output << ind.startParams.coeff.tau[i] << ',';
       }
       for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeffs.coast[i] << ',';
+        output << ind.startParams.coeff.coast[i] << ',';
       }
     }
     output << std::endl;
