@@ -48,7 +48,7 @@ struct cudaConstants {
     double theta_fin_ast; // Radians
     double z_fin_ast; // AU
     double vr_fin_ast; // AU/s
-    double vtheta_fin_ast; // Radians/s
+    double vtheta_fin_ast; // AU/s
     double vz_fin_ast; // AU/s
 
     // The final position and velocity of the earth at impact date to be used as reference point
@@ -56,7 +56,7 @@ struct cudaConstants {
     double theta_fin_earth; // Radians
     double z_fin_earth; // AU
     double vr_fin_earth; // AU/s
-    double vtheta_fin_earth; // Radians/s
+    double vtheta_fin_earth; // AU/s
     double vz_fin_earth; // AU/s
 
     double v_impact; // AU/s, the official DART mission data
