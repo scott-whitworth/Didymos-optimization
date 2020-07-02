@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: July 1st, 2020
+Last Updated: July 2nd, 2020
 
 <h2>File format for config file</h2>
 
