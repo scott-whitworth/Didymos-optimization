@@ -3,7 +3,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
 %% Data that is required
 
 % Solving differential motions
-timeFinal=(6.653820100923719e+07);
+timeFinal=(6.653820100923719e+07); % orbital period
 tspan=[timeFinal 0];
 options = odeset('RelTol',1e-12);
 [tE, yE] = ode45(@orbitalMotion,tspan,y0E,options,gammaCoeff,tauCoeff,timeFinal,0);
@@ -48,17 +48,17 @@ xlim([0 tripTime])
 title('Orbital radius')
 hold off
 
-%angular momentum vs. time
+%specific angular momentum vs. time
 subplot(2,3,2)
 plot(tE-(timeFinal-tripTime),yE(:,1).*yE(:,5))
 hold on
 plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC).*cR(5,1:sizeC))
-ylabel('L')
+ylabel('L/m')
 xlabel('t')
 xlim([0 tripTime])
-title('Angular momentum')
+title('Specific angular momentum')
 hold off
 
 %plot z

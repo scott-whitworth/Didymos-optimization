@@ -1,10 +1,7 @@
 #define _USE_MATH_DEFINES // for use of M_PI
 #include "runge_kuttaCUDA.cuh"
 #include "runge_kutta.h" // used for rkCalc() and distinguishableDifference()
-#include "../Thrust_Files/acceleration.h" //used for calc_accel() and calc_coast()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
-#include "../Earth_calculations/orbitalMotion.h"
-#include "../Genetic_Algorithm/geneticAlgorithm.h" // selectWinners()
 #include "../Genetic_Algorithm/ga_crossover.h" // crossover()
 #include <math.h>
 #include <iostream>
