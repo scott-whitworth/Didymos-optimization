@@ -17,6 +17,17 @@ enum maskValue {
     AVG,
 };
 
+void selectWinners(Individual* pool, int selectionSize, Individual* survivors) {
+    for(int i = 0; i < selectionSize; i++) {
+        if ( pool[2*i] < pool[(2*i)+1] ) {
+            survivors[i] = pool[2*i];
+        }
+        else {
+            survivors[i] = pool[(2*i)+1];
+        }
+    }   
+}
+
 // Creates a random bifurcation mask
 // Randomly picks one index to be the start of the '2's from mask
 // input: rng - a constructed mt19937_64 random number generator

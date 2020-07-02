@@ -2,7 +2,6 @@
 #define earthInfo_cpp
 
 #include "earthInfo.h"
-#include "orbitalMotion.h"
     
 #include <iostream>  // cout
 #include <iomanip> // setprecision(int)  
@@ -101,6 +100,22 @@ elements<double> EarthInfo::interpolate(const elements<double> & lower,const ele
 
 EarthInfo::~EarthInfo() {
     delete [] earthCon;
+}
+
+elements<double> earthInitial_incremental(double timeInitial, double tripTime, const elements<double> & earth, const cudaConstants * cConstants) {
+  // Time step
+  double deltaT; 
+
+  // Initial guess for time step, cannot be greater than the time resolution.
+  deltaT = -(tripTime - timeInitial)/static_cast <double> (60); 
+
+  // Declaring the solution vector.
+  elements<double> yp;
+
+  // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
+  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp, cConstants->rk_tol);
+ 
+  return yp;
 }
 
 #endif

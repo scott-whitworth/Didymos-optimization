@@ -11,6 +11,14 @@
 #include "../Thrust_Files/thruster.h"
 #include "../Config_Constants/config.h"
 
+// takes Individuals from the pool to compete in a head-to-head competition
+// input: 
+    // pool: the overall population (should be in randomized order)
+    // selectionSize: the number of survivors to return
+// output: 
+    //survivors: the winners of the competition
+void selectWinners(Individual* pool, int selectionSize, Individual* survivors);
+
 // creates a new Individual from two parents
 // mask determines which parent each gene is inherited from
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust);

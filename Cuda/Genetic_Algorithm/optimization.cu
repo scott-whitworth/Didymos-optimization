@@ -1,9 +1,9 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 
-#include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 #include "../Config_Constants/config.h"
+#include "../output.h"
 
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
@@ -29,71 +29,6 @@ bool changeInBest(double previousBestPos, double previousBestVel, Individual cur
             return true;
         }
         else return false;
-    }
-}
-
-// Utility function to observe the trend of best individual in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
-    // Output the information to excel spreadsheet
-    ExcelOutput << currentGeneration << ','
-                << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
-                << individual.finalPos.r << ',' << individual.finalPos.theta << ',' << individual.finalPos.z << ',' // Final position
-                << individual.finalPos.vr << ',' << individual.finalPos.vtheta << ',' << individual.finalPos.vz << ',' // Final velocity
-                << individual.startParams.y0.r << ',' << individual.startParams.y0.theta << ',' << individual.startParams.y0.z << ',' // Starting position
-                << individual.startParams.y0.vr << ',' << individual.startParams.y0.vtheta << ',' << individual.startParams.y0.vz << ',' // Starting velocity
-                << individual.startParams.alpha << ',' << individual.startParams.beta << ',' << individual.startParams.zeta << ',' // alpha, beta, zeta
-                << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
- 
-    // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(double));
-    // posDiff and velDiff
-    BinOutput.write( (char*)& individual.posDiff, sizeof(double));
-    BinOutput.write( (char*)& individual.velDiff, sizeof(double));
-    // Position and velocity information
-    BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vr,           sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vtheta,       sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vz,           sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.r,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.theta,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.z,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
-    // Alpha, Beta, Zeta, Annealing, Triptime
-    BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
-    BinOutput.write((char*)& annealing, sizeof(double));
-    BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
-}
-
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
-    ExcelOutput << currentGeneration << ',';
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
-    }
-    ExcelOutput << std::endl;
-
-    BinOutput.write((char*)&currentGeneration, sizeof(double));
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
     }
 }
 
@@ -390,9 +325,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         start[BETA_OFFSET] = inputParameters[i].startParams.beta;
         start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
 
-        cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust, cConstants);
+        writeTrajectoryToFile(start, i+1, thrust, cConstants);
     }
 
     // Close the performance files now that the algorithm is finished

@@ -30,4 +30,8 @@
 #define TRIPTIME_OFFSET 13 // x[13] total duration of the trip
 #define COAST_OFFSET 14 // x[14-16] second order fourier for coasting determination
 
+#define ASTEROID_OFFSET 0 // y0A
+#define EARTH_OFFSET 6 // y0E
+#define THRESHOLD_OFFSET 12 // coast threshold
+
 #endif

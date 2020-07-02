@@ -3,7 +3,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
 %% Data that is required
 
 % Solving differential motions
-timeFinal=(6.653820100923719e+07);
+timeFinal=(6.653820100923719e+07); % orbital period
 tspan=[timeFinal 0];
 options = odeset('RelTol',1e-12);
 [tE, yE] = ode45(@orbitalMotion,tspan,y0E,options,gammaCoeff,tauCoeff,timeFinal,0);

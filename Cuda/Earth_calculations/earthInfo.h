@@ -36,6 +36,12 @@ class EarthInfo {
         ~EarthInfo();
 };
 
+// Input for earthInitial_incremental:
+//      timeInitial: time (in seconds) of the impact date
+//      tripTime: optimized time period of the overall trip
+//      earth: earth's position and velocity on the impact date October 5, 2022 (passed in from earthInfo.cpp)
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth, const cudaConstants * cConstants);
+
 #include "earthInfo.cpp"
 
 // Makes a global variable for launchCon (called in optimization.cu)
