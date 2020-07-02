@@ -7,12 +7,12 @@ day2sec = 3600*24;
 
 % Asteroid position
 x_a = 6.061727293707692E-01; y_a = 8.369531060353675E-01;
-z_a = -2.015445997254413E-02;
+z_a = -5.541927402432133e-2;
 [th_a, r_a] = cart2pol(x_a,y_a);
 r_a = vpa(r_a), th_a = vpa(th_a), z_a = vpa(z_a)
 % Asteroid velocity
-vx_a = -1.472521774199771E-02/day2sec; vy_a = 1.321610726487941E-02/day2sec;
-vz_a = 1.066836745240369E-03/day2sec;
+vx_a = -5.273553581680452e-3/day2sec; vy_a = 1.904434089383773e-2/day2sec;
+vz_a = 6.305942169924792e-4/day2sec;
 vr_a = (x_a*vx_a+y_a*vy_a)/r_a; 
 vth_a = (x_a*vy_a-y_a*vx_a)/r_a; 
 vr_a = vpa(vr_a), vth_a = vpa(vth_a), vz_a = vpa(vz_a)
