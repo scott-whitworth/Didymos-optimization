@@ -1,5 +1,5 @@
 <h1>DART Mission Optimization Project</h1>
-Last updated: July 1st, 2020
+Last updated: July 2nd, 2020
 
 <h2>Project Background & Current Objective</h2>
 
@@ -97,3 +97,9 @@ Here is how the impact data was obtained to be used in the config value.
 3.  To obtain final Earth elements, change the target body to Earth-Moon barycenter and generate a new ephemeris.
 
 4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.
+
+<h2>Flowchart Overview of CUDA Code</h2>
+<i>Last updated on July 2nd, 2020</i>
+
+Note: Large arrows point to flowchart portion that describes that block's process
+<img src="flowchart.jpg">
