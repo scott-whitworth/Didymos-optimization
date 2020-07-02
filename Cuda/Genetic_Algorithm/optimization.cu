@@ -312,7 +312,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
     progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
     if (thrust.type) {
-        progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3";
+        progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
         progressiveOutput << "tau_a0,tau_a1,tau_b1,";
         progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
     }
