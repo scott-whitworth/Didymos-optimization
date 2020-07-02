@@ -338,6 +338,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         writeTrajectoryToFile(start, i+1, thrust, cConstants);
         progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
     }
+    progressiveOutput << std::endl;
     progressiveOutput.close();
 
     // Write config parameters to file
