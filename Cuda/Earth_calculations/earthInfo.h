@@ -3,6 +3,7 @@
 
 #include "../Motion_Eqns/elements.h"
 #include "../Config_Constants/config.h"
+#include "../Runge_Kutta/runge_kutta.h"
 
 class EarthInfo {
     private:
@@ -35,6 +36,12 @@ class EarthInfo {
         // Clears dynamic memory after each run
         ~EarthInfo();
 };
+
+// Input for earthInitial_incremental:
+//      timeInitial: time (in seconds) of the impact date
+//      tripTime: optimized time period of the overall trip
+//      earth: earth's position and velocity on the impact date October 5, 2022 (passed in from earthInfo.cpp)
+elements<double> earthInitial_incremental(double timeInitial, double tripTime,const elements<double> & earth, const cudaConstants * cConstants);
 
 #include "earthInfo.cpp"
 

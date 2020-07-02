@@ -1,9 +1,9 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 
-#include "../Earth_calculations/orbitalMotion.h" //used for trajectory() and trajectoryPrint()
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 #include "../Config_Constants/config.h"
+#include "../output.h"
 
 #include <iostream> // cout
 #include <iomanip> //used for setw(), sets spaces between values output
@@ -20,77 +20,15 @@
 
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBest, double currentBest, double dRate) {
-    if (trunc(previousBest/dRate) != trunc(currentBest/dRate)) {
+bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double dRate) {
+    if (trunc(previousBestPos/dRate) != trunc(currentBest.posDiff/dRate)) {
         return true;
     }
     else {
-        return false;
-    }
-}
-
-// Utility function to observe the trend of best individual in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
-    // Output the information to excel spreadsheet
-    ExcelOutput << currentGeneration << ','
-                << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
-                << individual.finalPos.r << ',' << individual.finalPos.theta << ',' << individual.finalPos.z << ',' // Final position
-                << individual.finalPos.vr << ',' << individual.finalPos.vtheta << ',' << individual.finalPos.vz << ',' // Final velocity
-                << individual.startParams.y0.r << ',' << individual.startParams.y0.theta << ',' << individual.startParams.y0.z << ',' // Starting position
-                << individual.startParams.y0.vr << ',' << individual.startParams.y0.vtheta << ',' << individual.startParams.y0.vz << ',' // Starting velocity
-                << individual.startParams.alpha << ',' << individual.startParams.beta << ',' << individual.startParams.zeta << ',' // alpha, beta, zeta
-                << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
- 
-    // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(double));
-    // posDiff and velDiff
-    BinOutput.write( (char*)& individual.posDiff, sizeof(double));
-    BinOutput.write( (char*)& individual.velDiff, sizeof(double));
-    // Position and velocity information
-    BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vr,           sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vtheta,       sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vz,           sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.r,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.theta,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.z,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
-    // Alpha, Beta, Zeta, Annealing, Triptime
-    BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
-    BinOutput.write((char*)& annealing, sizeof(double));
-    BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
-}
-
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
-    ExcelOutput << currentGeneration << ',';
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
-    }
-    ExcelOutput << std::endl;
-
-    BinOutput.write((char*)&currentGeneration, sizeof(double));
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
+        if (trunc(previousBestVel/dRate) != trunc(currentBest.velDiff/dRate)) {
+            return true;
+        }
+        else return false;
     }
 }
 
@@ -101,7 +39,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
     std::cout << "Best individual:" << std::endl;
     std::cout << "\tposDiff: " << individual.posDiff << std::endl;
     std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
-    std::cout << "\tcost: "    << individual.getCost() << std::endl;
+    std::cout << "\tcost: "    << individual.cost << std::endl;
 }
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
@@ -109,7 +47,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, const cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < cConstants->best_count; i++) {
-        if(pool[i].posDiff >= cConstants->pos_threshold) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
+        if(pool[i].getCost(cConstants) > 0) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
@@ -134,7 +72,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
     Individual *inputParameters = new Individual[numThreads]; // contains all input parameters besides those which are always common amongst every thread
 
-    double previousBest = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
+    double previousBestPos = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
+    double previousBestVel = 0;
 
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
@@ -256,7 +195,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                 // This could eventually take into account velocity too and become a more complex calculation
-    double dRate = 1.0e-7;
+    double dRate = 1.0e-8;
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
@@ -296,7 +235,11 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
              }
+
+            // calculate its new cost function
+            inputParameters[k].getCost(cConstants);
         }
+
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
         selectWinners(inputParameters, SURVIVOR_COUNT, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
@@ -315,16 +258,17 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
-        double currentBest;
+        Individual currentBest;
         if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
-            currentBest = inputParameters[0].posDiff;
+            currentBest = inputParameters[0];
           
-            if ( !(changeInBest(previousBest, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
+            if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
                 currentAnneal = currentAnneal * cConstants->anneal_factor;
                 std::cout << "\nnew anneal: " << currentAnneal << std::endl;
                 if(trunc(inputParameters[0].posDiff/dRate)==0) { dRate = dRate/10; }
             }
-            previousBest = inputParameters[0].posDiff;
+            previousBestPos = currentBest.posDiff;
+            previousBestVel = currentBest.velDiff;
         }
 
 
@@ -355,7 +299,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
-    double cost = 0;
 
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
@@ -381,10 +324,12 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         start[BETA_OFFSET] = inputParameters[i].startParams.beta;
         start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
 
-        cost = inputParameters[i].posDiff; // just look at position difference here for now
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-        writeTrajectoryToFile(start, cost, i + 1, thrust, cConstants);
+        writeTrajectoryToFile(start, i+1, thrust, cConstants);
     }
+
+    // Write config parameters to file
+    writeConfigToFile(cConstants);
 
     // Close the performance files now that the algorithm is finished
     generationPerformanceBestExcel.close();
@@ -421,9 +366,9 @@ int main () {
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo
-    double startTime = 15778800; // 0.5 year (s)
-    double endTime = 78894000; // 2.5 years (s)
-    double timeRes = 3600; // (s) position of earth is calculated for every hour
+    double startTime = cConstants->startTime; // 0.5 year (s)
+    double endTime = cConstants->endTime; // 2.5 years (s)
+    double timeRes = cConstants->timeRes; // (s) position of earth is calculated for every hour
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
@@ -443,8 +388,8 @@ int main () {
     
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
-    int blockThreads = 32;
-    int numThreads = 2880; // the number of cores on a Tesla k40
+    int blockThreads = cConstants->thread_block_size;
+    int numThreads = cConstants->num_individuals; // the number of cores on a Tesla k40
     //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
 
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
