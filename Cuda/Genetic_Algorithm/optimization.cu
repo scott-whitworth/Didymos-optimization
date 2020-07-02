@@ -155,38 +155,38 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     Individual *survivors = new Individual[SURVIVOR_COUNT]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-    // setup output of generation results over time onto a .csv file
-    std::ofstream generationPerformanceBestExcel;
-    generationPerformanceBestExcel.open("BestInGenerations.csv");
-    // Set first row in the file be a header for the columns
-    generationPerformanceBestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
-                               << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
-                               << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
-                               << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+//     // setup output of generation results over time onto a .csv file
+//     std::ofstream generationPerformanceBestExcel;
+//     generationPerformanceBestExcel.open("BestInGenerations.csv");
+//     // Set first row in the file be a header for the columns
+//     generationPerformanceBestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+//                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+//                                << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+//                                << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
 
 
-   std::ofstream generationPerformanceWorstExcel;
-   generationPerformanceWorstExcel.open("WorstInGenerations.csv");
-   // Set first row in the file be a header for the columns
-    generationPerformanceWorstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
-                               << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
-                               << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
-                               << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+//    std::ofstream generationPerformanceWorstExcel;
+//    generationPerformanceWorstExcel.open("WorstInGenerations.csv");
+//    // Set first row in the file be a header for the columns
+//     generationPerformanceWorstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+//                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+//                                << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+//                                << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
 
-    // setup output of generation results over time onto a .bin file
-    std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
-    std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
+//     // setup output of generation results over time onto a .bin file
+//     std::ofstream generationBestPerformanceBin("BestInGenerations.bin", std::ios::binary);
+//     std::ofstream generationWorstPerformanceBin("WorstInGenerations.bin", std::ios::binary);
 
-    std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
-    if (thrust.type != thruster<double>::NO_THRUST) {
-        generationThrustBestExcel.open("BestThrustGens.csv");
-        generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
-        generationThrustWorstExcel.open("WorstThrustGens.csv");
-        generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+//     std::ofstream generationThrustBestExcel, generationThrustWorstExcel, generationThrustBestBin, generationThrustWorstBin;
+//     if (thrust.type != thruster<double>::NO_THRUST) {
+//         generationThrustBestExcel.open("BestThrustGens.csv");
+//         generationThrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+//         generationThrustWorstExcel.open("WorstThrustGens.csv");
+//         generationThrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
 
-        generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
-        generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
-    }
+//         generationThrustBestBin.open("BestThrustGens.bin", std::ios::binary);
+//         generationThrustWorstBin.open("WorstThrustGens.bin", std::ios::binary);
+//     }
 
     double generation = 0;    // A counter for number of generations calculated
     
@@ -272,16 +272,16 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
 
-        // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
-        if (static_cast<int>(generation) % cConstants->write_freq == 0) {
-            writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
-            writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
+        // // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
+        // if (static_cast<int>(generation) % cConstants->write_freq == 0) {
+        //     writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
+        //     writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], new_anneal);
 
-            if (thrust.type != thruster<double>::NO_THRUST) {
-                writeThrustToFiles(generationThrustBestExcel, generationThrustBestBin, generation, inputParameters[0], cConstants);
-                writeThrustToFiles(generationThrustWorstExcel, generationThrustWorstBin, generation, inputParameters[numThreads-1], cConstants);
-            }
-        }
+        //     if (thrust.type != thruster<double>::NO_THRUST) {
+        //         writeThrustToFiles(generationThrustBestExcel, generationThrustBestBin, generation, inputParameters[0], cConstants);
+        //         writeThrustToFiles(generationThrustWorstExcel, generationThrustWorstBin, generation, inputParameters[numThreads-1], cConstants);
+        //     }
+        // }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
         if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
@@ -303,10 +303,20 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // Output to excel
     double annealPlacement = 0; //setting anneal to be a placeholder value that has no real meaning as there will be no next generation for anneal to impact
     
-    // Write the final best and worst performing individuals to their respective files
-    writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
-    writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
+    // // Write the final best and worst performing individuals to their respective files
+    // writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
+    // writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
+    std::ofstream progressiveOutput;
+    progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
+    progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
+    progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
+    if (thrust.type) {
+        progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3";
+        progressiveOutput << "tau_a0,tau_a1,tau_b1,";
+        progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
+    }
+    progressiveOutput << std::endl;
     // Write the best individuals with best_count in total outputted in seperate binary files
     for (int i = 0; i < cConstants->best_count; i++) {
         for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
@@ -326,23 +336,25 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
         writeTrajectoryToFile(start, i+1, thrust, cConstants);
+        progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
     }
+    progressiveOutput.close();
 
     // Write config parameters to file
     writeConfigToFile(cConstants);
 
-    // Close the performance files now that the algorithm is finished
-    generationPerformanceBestExcel.close();
-    generationBestPerformanceBin.close();
-    generationPerformanceWorstExcel.close();
-    generationWorstPerformanceBin.close();
+    // // Close the performance files now that the algorithm is finished
+    // generationPerformanceBestExcel.close();
+    // generationBestPerformanceBin.close();
+    // generationPerformanceWorstExcel.close();
+    // generationWorstPerformanceBin.close();
 
-    if (thrust.type != thruster<double>::NO_THRUST) {
-        generationThrustBestExcel.close();
-        generationThrustWorstExcel.close();
-        generationThrustBestBin.close();
-        generationThrustWorstBin.close();
-    }
+    // if (thrust.type != thruster<double>::NO_THRUST) {
+    //     generationThrustBestExcel.close();
+    //     generationThrustWorstExcel.close();
+    //     generationThrustBestBin.close();
+    //     generationThrustWorstBin.close();
+    // }
 
     delete [] inputParameters;
     delete [] survivors;
@@ -373,18 +385,19 @@ int main () {
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
     double timeStamp = startTime;
-    // File stream for outputting values that were calculated in EarthInfo constructor
-    std::ofstream earthValues;
-    earthValues.open("EarthCheckValues.csv");
-    // Set header row for the table to record values, with timeStamp
-    earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
+    
+    // // File stream for outputting values that were calculated in EarthInfo constructor
+    // std::ofstream earthValues;
+    // earthValues.open("EarthCheckValues.csv");
+    // // Set header row for the table to record values, with timeStamp
+    // earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
 
-    while (timeStamp < endTime) {
-        earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
-        timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
-    }
-    // Done recording earth calculations, close file and move on
-    earthValues.close();
+    // while (timeStamp < endTime) {
+    //     earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
+    //     timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
+    // }
+    // // Done recording earth calculations, close file and move on
+    // earthValues.close();
     
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
