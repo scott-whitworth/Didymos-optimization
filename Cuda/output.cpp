@@ -3,7 +3,7 @@
 
 // Output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-void trajectoryPrint( double x[], double & lastStep, double & threadRank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -104,7 +104,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
   output.close();
 }
 
-void writeConfigToFiles(const cudaConstants* cConstants) {
+void writeConfigToFile(const cudaConstants* cConstants) {
     std::ofstream output;
     double seed = cConstants->time_seed;
     output.open("configuration-"+std::to_string(seed)+".bin", std::ios::binary);
