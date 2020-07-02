@@ -357,9 +357,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
     writeTrajectoryToFile(start, 1, thrust, cConstants);
 
-    // Write config parameters to file
-    writeConfigToFile(cConstants);
-
     // // Close the performance files now that the algorithm is finished
     // generationPerformanceBestExcel.close();
     // generationBestPerformanceBin.close();
