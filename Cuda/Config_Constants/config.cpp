@@ -9,13 +9,18 @@
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 cudaConstants::cudaConstants() {
     FileRead("genetic.config");
+    // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
+    // Now that startTime and durationTime have been acquired, derive endTime
+    this->endTime = this->startTime + this->durationTime;
 }
 // Operates same as default, however uses configFile as address for where the config file to be used is located
 cudaConstants::cudaConstants(std::string configFile) {
     FileRead(configFile);
-    // Now that dry_mass and fuel_mass have been acquired, set wet_mass
+    // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
+    // Now that startTime and durationTime have been acquired, derive endTime
+    this->endTime = this->startTime + this->durationTime;
 }
 
 // http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
@@ -167,6 +172,21 @@ void cudaConstants::FileRead(std::string fileName) {
                 }
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stod(variableValue);
+                }
+                else if (variableName == "num_individuals") {
+                    this->num_individuals = std::stoi(variableValue);
+                }
+                else if (variableName == "thread_block_size") {
+                    this->thread_block_size = std::stoi(variableValue);
+                }
+                else if (variableName == "startTime") {
+                    this->startTime = std::stoi(variableValue);
+                }
+                else if (variableName == "durationTime") {
+                    this->durationTime = std::stoi(variableValue);
+                }
+                else if (variableName == "timeRes") {
+                    this->timeRes = std::stoi(variableValue);
                 }
                 else if (variableName == "time_seed") { // If the conifguration sets time_seed to NONE then time_seed is set to time(0) 
                     if (variableValue != "NONE") {
