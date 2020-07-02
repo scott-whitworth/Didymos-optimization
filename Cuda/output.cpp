@@ -38,8 +38,8 @@ void trajectoryPrint( double x[], double & lastStep, double & threadRank, elemen
 //  double wetMass = WET_MASS;
   // setting Runge-Kutta tolerance
   double absTol = cConstants->rk_tol;
-  //set optmization minimum
-  double Fmin = cConstants->f_min;
+  // set optmization minimum
+  // double Fmin = cConstants->f_min;
 
   // Initialize memory for the solution vector of the dependant solution
   elements<double>* yp;
@@ -65,7 +65,8 @@ void trajectoryPrint( double x[], double & lastStep, double & threadRank, elemen
   yOut = yp[(int)lastStep];
 
   std::ofstream output;
-  output.open("orbitalMotion-"+cConstants->time_seed+"-"+threadRank".bin", std::ios::binary);
+  double seed = cConstants->time_seed;
+  output.open("orbitalMotion-"+seed+"-"+threadRank+".bin", std::ios::binary);
   for(int i = 0; i <= lastStep; i++) {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
@@ -86,11 +87,13 @@ void trajectoryPrint( double x[], double & lastStep, double & threadRank, elemen
 
 void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrust, const cudaConstants* cConstants) {
   elements<double> yp;
-  trajectoryPrint(start, 0, threadNum, yp, thrust, cConstants);
+  double numStep = 0;
+  trajectoryPrint(start, numStep, threadRank, yp, thrust, cConstants);
 
   //writes final optimization values to a seperate file
   std::ofstream output;
-  output.open ("finalOptimization-"+cConstants->time_seed+"-"+threadRank+".bin", std::ios::binary);
+  double seed = cConstants->time_seed;
+  output.open ("finalOptimization-"+seed+"-"+threadRank+".bin", std::ios::binary);
 
   for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&start[j], sizeof (double));
@@ -102,7 +105,8 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 
 void writeConfigToFiles(const cudaConstants* cConstants) {
     std::ofstream output;
-    output.open("configuration-"+cConstants->time_seed+".bin", std::ios::binary);
+    double seed = cConstants->time_seed;
+    output.open("configuration-"+seed+".bin", std::ios::binary);
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
     output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
     output.write((char*)&cConstants->z_fin_ast, sizeof(double));
