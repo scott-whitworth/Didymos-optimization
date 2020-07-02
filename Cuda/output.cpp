@@ -1,5 +1,6 @@
 #include "output.h"
 #include <string>
+#include <iomanip>
 
 // Output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   std::ofstream output;
   double seed = cConstants->time_seed;
-  output.open("orbitalMotion-"+std::to_string(seed)+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+  output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
   for(int i = 0; i <= lastStep; i++) {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
@@ -94,7 +95,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
   //writes final optimization values to a seperate file
   std::ofstream output;
   double seed = cConstants->time_seed;
-  output.open ("finalOptimization-"+std::to_string(seed)+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+  output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
   for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&start[j], sizeof (double));
@@ -107,7 +108,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 void writeConfigToFile(const cudaConstants* cConstants) {
     std::ofstream output;
     double seed = cConstants->time_seed;
-    output.open("configuration-"+std::to_string(seed)+".bin", std::ios::binary);
+    output.open("configuration-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
     output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
     output.write((char*)&cConstants->z_fin_ast, sizeof(double));
