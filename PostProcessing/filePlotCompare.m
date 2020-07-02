@@ -2,7 +2,7 @@ function [] = filePlotCompare(seed1,dataNum1,seed2,dataNum2)
 size=20;
 
 filenameC1=join(['configuration-',num2str(seed1),'.bin']);
-fileConfig1 = fopen(filename1);
+fileConfig1 = fopen(filenameC1);
 config1 = fread(fileConfig1,Inf,'double');
 filenameC2=join(['configuration-',num2str(seed2),'.bin']);
 fileConfig2 = fopen(filenameC2);
