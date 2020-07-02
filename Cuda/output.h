@@ -15,4 +15,6 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
 
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants);
 
+#include "output.cpp"
+
 #endif
