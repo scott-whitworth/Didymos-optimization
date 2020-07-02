@@ -336,7 +336,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
         writeTrajectoryToFile(start, i+1, thrust, cConstants);
-        progressiveAnalysis(progressiveOutput,static_cast<int>(generation),i+1,inputParameters[i],cConstants);
+        progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
     }
     progressiveOutput.close();
 
