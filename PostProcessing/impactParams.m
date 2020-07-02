@@ -13,8 +13,8 @@ r_a = vpa(r_a), th_a = vpa(th_a), z_a = vpa(z_a)
 % Asteroid velocity
 vx_a = -5.273553581680452e-3/day2sec; vy_a = 1.904434089383773e-2/day2sec;
 vz_a = 6.305942169924792e-4/day2sec;
-vr_a = sqrt((cos(th_a)*vx_a)^2 + (sin(th_a)*vy_a)^2); 
-vth_a = sqrt((-sin(th_a)*vx_a)^2 + (cos(th_a)*vy_a)^2); 
+vr_a = (x_a*vx_a+y_a*vy_a)/r_a; 
+vth_a = (x_a*vy_a-y_a*vx_a)/r_a; 
 vr_a = vpa(vr_a), vth_a = vpa(vth_a), vz_a = vpa(vz_a)
 
 % Earth position
@@ -25,6 +25,6 @@ r_e = vpa(r_e), th_e = vpa(th_e), z_e = vpa(z_e)
 % Earth velocity
 vx_e = -2.480282587602037e-3/day2sec; vy_e = 1.700148842113997e-2/day2sec;
 vz_e = -2.573773002330340e-7/day2sec;
-vr_e = sqrt((cos(th_e)*vx_e)^2 + (sin(th_e)*vy_e)^2); 
-vth_e = sqrt((-sin(th_e)*vx_e)^2 + (cos(th_e)*vy_e)^2);
+vr_e = (x_e*vx_e+y_e*vy_e)/r_e; 
+vth_e = (x_e*vy_e-y_e*vx_e)/r_e; 
 vr_e = vpa(vr_e), vth_e = vpa(vth_e), vz_e = vpa(vz_e)
