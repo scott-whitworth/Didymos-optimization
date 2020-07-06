@@ -17,21 +17,22 @@
 
 
 // Starting location and sizes in the optimization array for navigation to access specific values
-#define OPTIM_VARS 19 // Number of variables in the optimization
-#define GAMMA_ARRAY_SIZE 7 // Length of the array of coefficients for gamma
-#define TAU_ARRAY_SIZE 3 // Length of the array of coefficients for tau
-#define COAST_ARRAY_SIZE 5 // Length of the array of coefficients for coasting
+// WARNING: As of July 6th, the file used in non-random start is based on previous definition of values and so if these are changed from old sizes then it may cause issues for it
 
-#define GAMMA_OFFSET 0 // x[0-6] fourth order fourier for in-plane angle
-#define TAU_OFFSET 7 // x[7-9] first order fourier for out-of-plane angle
-#define ALPHA_OFFSET 10 // x[10] position escape earth angle
-#define BETA_OFFSET 11 // x[11] velocity escape in-plane earth angle
-#define ZETA_OFFSET 12 // x[12] velocity escape out-of-plane earth angle
-#define TRIPTIME_OFFSET 13 // x[13] total duration of the trip
-#define COAST_OFFSET 14 // x[14-16] second order fourier for coasting determination
+#define GAMMA_ARRAY_SIZE 7  // Number of coefficients for gamma
+#define   TAU_ARRAY_SIZE 3  // Number of coefficients for tau
+#define COAST_ARRAY_SIZE 5  // Number of coefficients for coasting
 
-#define ASTEROID_OFFSET 0 // y0A
-#define EARTH_OFFSET 6 // y0E
-#define THRESHOLD_OFFSET 12 // coast threshold
+// Offset values and total length are based on the array sizes defined above
+#define GAMMA_OFFSET     0                            // In the array of variables, GAMMA is at start index
+#define TAU_OFFSET      (GAMMA_ARRAY_SIZE)            // TAU follows after GAMMA values
+#define ALPHA_OFFSET    (TAU_OFFSET + TAU_ARRAY_SIZE) // ALPHA follows TAU
+#define BETA_OFFSET     ( ALPHA_OFFSET + 1)           // BETA follows ALPHA
+#define ZETA_OFFSET     (  BETA_OFFSET + 1)           // ZETA follows BETA
+#define TRIPTIME_OFFSET (  ZETA_OFFSET + 1)           // TRIPTIME follows ZETA
+#define COAST_OFFSET    (TRIPTIME_OFFSET + 1)         // COAST follows TRIPTIME
+
+// OPTIM_VARS = Number of variables (array sizes plus 4 for alpha, beta, zeta, and triptime)
+#define OPTIM_VARS (GAMMA_ARRAY_SIZE + TAU_ARRAY_SIZE + COAST_ARRAY_SIZE + 4)
 
 #endif

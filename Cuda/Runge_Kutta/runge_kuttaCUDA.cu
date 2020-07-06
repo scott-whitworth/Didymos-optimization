@@ -112,7 +112,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             }
 
             // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft artificially increases to 1000, to force that path to not be used in the optimization.
-            if ( sqrt(pow(curPos.r,2)+pow(curPos.z,2)) < 0.5) {
+            if ( sqrt(pow(curPos.r,2) + pow(curPos.z,2)) < 0.5) {
                 curPos.r = 1000;
 
                 // output to this thread's index
@@ -136,7 +136,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 }
 
 __host__ void initializePosition(Individual *individuals, int size, const cudaConstants* cConstant) {
-    for (int i = 0; i < size ;i++) {
+    for (int i = 0; i < size; i++) {
         individuals[i].initialize(cConstant);
     }
 }

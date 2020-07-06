@@ -58,24 +58,24 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         //array of time output as t         
         curTime += stepSize;
         //Time of iteration is set to the previous time plus the step size used within that iteration
-        times[n+1]=curTime;
+        times[n+1] = curTime;
         //array of gamma for binary output
         gamma[n+1] = calc_gamma(coeff,curTime, timeFinal, thrust);
         //array of tau for binary output
         tau[n+1] = calc_tau(coeff,curTime, timeFinal, thrust);  
         //array of accel for binary output
-        accel_output[n+1]= accel;
+        accel_output[n+1] = accel;
 
 
         //Alter the step size for the next iteration
         stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize>(timeFinal-timeInitial)/10) {
+        if (stepSize > (timeFinal-timeInitial)/10) {
             stepSize = (timeFinal-timeInitial)/10;
             maxStep++;
         }
-        else if (stepSize<((timeFinal-timeInitial)/1000)) {
+        else if (stepSize < ((timeFinal-timeInitial)/1000)) {
             stepSize = (timeFinal-timeInitial)/1000;
             minStep++;
         }
@@ -91,8 +91,6 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     lastStep = n;
     //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
-
-
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
                                     T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster <T> thrust) {
@@ -134,13 +132,12 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
             stepSize = (timeFinal-timeInitial)/1000;
         }
         // shorten the last step to end exactly at time final
-        if((curTime+stepSize)>timeFinal)
+        if ((curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
-        
+        }
 
         // if the spacecraft is within 0.5 au of the sun, the radial position of the spacecraft increases to 1000, so that path is not used for optimization.
-        if (sqrt(pow(y_new.r,2)+pow(y_new.z,2))<0.5)
-        {
+        if (sqrt( pow(y_new.r,2) + pow(y_new.z,2) ) < 0.5) {
             y_new.r = 1000;
             return;
         }
@@ -169,14 +166,14 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize)/2;
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize>(timeFinal-timeInitial)/100) {
+        if (-stepSize > (timeFinal-timeInitial)/100) {
             stepSize = -(timeFinal-timeInitial)/100;
         }
-        else if (-stepSize<((timeFinal-timeInitial)/1000)) {
+        else if (-stepSize < ((timeFinal-timeInitial)/1000)) {
             stepSize = -(timeFinal-timeInitial)/1000;
         }
         // shorten the last step to end exactly at time final
-        if ( (curTime+stepSize) < timeInitial){
+        if ( (curTime+stepSize) < timeInitial) {
             stepSize = -(curTime-timeInitial);
         }
     } //end of while

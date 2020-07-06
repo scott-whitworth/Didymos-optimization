@@ -36,7 +36,7 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
     std::cout << "          10 20 30 40 50 60 70 80 90 100" << std::endl;
     std::cout << "progress:[";
 
-    for(int i=1; i < tolData; i++) { 
+    for (int i = 1; i < tolData; i++) { 
         // Calculates earth's condition at each point (time) from the previously calculated point.
         earthCon[i] = earthInitial_incremental(calc_time(i)-timeRes, calc_time(i), earth, cConstants); // Obtaining conditions of the earth
 
@@ -67,17 +67,10 @@ elements<double> EarthInfo::getCondition(const double & currentTime) {
     upper = earthCon[index + 1];
     
     // Weights are used for interpolation
-    double lowerWeight = 1 - ((currentTime-calc_time(index))/timeRes);
-    double upperWeight = 1 - ((calc_time(index+1)-currentTime)/timeRes);
+    double lowerWeight = 1 - ((currentTime-calc_time(index)) / timeRes);
+    double upperWeight = 1 - ((calc_time(index+1)-currentTime) / timeRes);
     elements<double> result = interpolate(lower,upper,lowerWeight,upperWeight);
-/*    
-    if(result.r<=0.1)
-    {
-        std::cout<<"NaN incoming \n" << result;
-        std::cout<<"LowerW : "<<lowerWeight<<"  UpperW : "<<upperWeight << "\n";
-        std::cout<<"Timne 1 : "<<calc_time(index)<<"  Time 2 : "<<calc_time(index+1) << "\n";
-    }
-*/
+
     return result;
 }
 
@@ -113,7 +106,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime, c
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial,tripTime,earth,deltaT,yp, cConstants->rk_tol);
+  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol);
  
   return yp;
 }
