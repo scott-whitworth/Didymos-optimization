@@ -113,9 +113,10 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
     output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
     output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    output.write((char*)&GAMMA_ARRAY_SIZE, sizeof(double));
-    output.write((char*)&TAU_ARRAY_SIZE, sizeof(double));
-    output.write((char*)&COAST_ARRAY_SIZE, sizeof(double));
+    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+    output.write((char*)&gsize, sizeof(double));
+    output.write((char*)&tsize, sizeof(double));
+    output.write((char*)&csize, sizeof(double));
 
     for (int j = 0; j < OPTIM_VARS; j++) {
       output.write((char*)&start[j], sizeof (double));
