@@ -1,10 +1,9 @@
 function [] = filePlot(seed)
-cSize=36;
 
 filenameO=join(['finalOptimization-',num2str(seed),'.bin']);
 filenameT=join(['orbitalMotion-',num2str(seed),'.bin']);
 fileC = fopen(filenameO);
-cVector = fread(fileC,cSize,'double');
+cVector = fread(fileC,Inf,'double');
 fileY = fopen(filenameT);
 sizeC=cVector(end)+1;
 cR = fread(fileY,[11, sizeC],'double');
