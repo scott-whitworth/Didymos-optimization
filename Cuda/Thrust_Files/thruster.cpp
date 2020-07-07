@@ -70,12 +70,12 @@ template <class T> __host__ __device__ T calc_accel(const T & radius, const T & 
     T thrust;
 
     // Power going into the spacecraft as a function of the radius of the spacecraft from the sun (r is non-dimensionalized by dividing by 1 AU).
-    T sepparation = sqrt( pow(radius, 2) + pow(z, 2) );
-    Pin = thrusterType.P0/sepparation; 
+    T separation = sqrt( pow(radius, 2) + pow(z, 2) );
+    Pin = thrusterType.P0/pow(separation, 2); 
 
     //If the spacecraft is closer to the sun than the earth, the power in can not be greater than the power experimentally measured on earth.
     //This creates a "sphere" around the sun to ensure the power does not exceed the tested limit.
-    if (sepparation <= 1) {
+    if (separation <= 1) {
         Pin = thrusterType.P0; // It is devided by 1 astronomical unit to normalize it P0/(1 AU)
     }
 
