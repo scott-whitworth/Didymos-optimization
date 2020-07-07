@@ -299,6 +299,13 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
         }
         if (mutatedValue == BETA_OFFSET) { //beta
             newInd.beta += getRand(cConstants->beta_mutate_scale * annealing, rng);
+            // A check to ensure beta remains in value range 0 to pi
+            if (newInd.beta < 0) {
+                newInd.beta = 0;
+            }
+            else if (newInd.beta > M_PI) {
+                newInd.beta = M_PI;
+            }
         }
         if (mutatedValue == ALPHA_OFFSET) { //alpha
             newInd.alpha += getRand(cConstants->alpha_mutate_scale * annealing, rng);
