@@ -1,4 +1,5 @@
 #include "output.h"
+#include "constants.h"
 #include <string>
 #include <iomanip>
 
@@ -99,10 +100,6 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
     output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
-    for (int j = 0; j < OPTIM_VARS; j++) {
-      output.write((char*)&start[j], sizeof (double));
-    }
-
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
     output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
     output.write((char*)&cConstants->z_fin_ast, sizeof(double));
@@ -116,6 +113,13 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
     output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
     output.write((char*)&cConstants->coast_threshold, sizeof(double));
+    output.write((char*)&GAMMA_ARRAY_SIZE, sizeof(double));
+    output.write((char*)&TAU_ARRAY_SIZE, sizeof(double));
+    output.write((char*)&COAST_ARRAY_SIZE, sizeof(double));
+
+    for (int j = 0; j < OPTIM_VARS; j++) {
+      output.write((char*)&start[j], sizeof (double));
+    }
     
     output.write((char*)&numStep, sizeof (double));
 

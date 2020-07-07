@@ -1,5 +1,5 @@
 function [] = filePlot(seed)
-cSize=33;
+cSize=36;
 
 filenameO=join(['finalOptimization-',num2str(seed),'.bin']);
 filenameT=join(['orbitalMotion-',num2str(seed),'.bin']);

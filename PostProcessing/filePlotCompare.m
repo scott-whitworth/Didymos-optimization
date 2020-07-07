@@ -1,5 +1,5 @@
 function [] = filePlotCompare(seed1,seed2)
-size=33;
+size=36;
 
 fileC = fopen(join(['finalOptimization-',num2str(seed1),'.bin']));
 cVector = fread(fileC,size,'double');
