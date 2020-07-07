@@ -2,6 +2,11 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast] = loadTrip
 
 %% Array offsets
 
+        %% config offsets
+        asteroid_offset = 1; % x(1:6) y0A
+        earth_offset = 7; % x7:12) y0E
+        threshold_offset = 13; % x(13) coast threshold
+
         % array sizes
         gamma_size = cVector(14);
         tau_size = cVector(15);
@@ -11,11 +16,6 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast] = loadTrip
         TAU_OFFSET = GAMMA_OFFSET + gamma_size; %x(8:10) first order fourier for out-of-plane angle
         TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; %x(14) total duration of the trip (tau coeffs + alpha, beta, zeta)
         COAST_OFFSET = TRIPTIME_OFFSET + 1; %x(15:19) second order fourier for coasting determination
-
-        %% config offsets
-        asteroid_offset = 1; % x(1:6) y0A
-        earth_offset = 7; % x7:12) y0E
-        threshold_offset = 13; % x(13) coast threshold
         
         %% Constants
         
