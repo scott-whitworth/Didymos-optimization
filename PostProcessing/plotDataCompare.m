@@ -166,7 +166,7 @@ hold off
 
 subplot(2,3,4)
 plot(cR(7,1:sizeC),sin(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
-xlim([0 tripTime1])
+xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Radial thrust fraction')
 xlabel('t')
@@ -174,7 +174,7 @@ ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
 plot(cR(7,1:sizeC),cos(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
-xlim([0 tripTime1])
+xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Tangential thrust fraction')
 xlabel('t')
@@ -182,7 +182,7 @@ ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
 plot(cR(7,1:sizeC),sin(cR(9,1:sizeC)))
-xlim([0 tripTime1])
+xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Off-plane thrust fraction')
 xlabel('t')
@@ -197,7 +197,7 @@ xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 plot(cR(7,1:sizeC),coast_threshold1)
-xlim([0 tripTime1])
+xlim([0 tripTime1]), ylim([0,1])
 legend({'spacecraft 1','threshold 1'})
 hold off
 
@@ -213,7 +213,7 @@ hold off
 
 subplot(2,3,4)
 plot(dR(7,1:sizeD),sin(dR(8,1:sizeD)).*cos(dR(9,1:sizeD)))
-xlim([0 tripTime2])
+xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Radial thrust fraction')
 xlabel('t')
@@ -221,7 +221,7 @@ ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
 plot(dR(7,1:sizeD),cos(dR(8,1:sizeD)).*cos(dR(9,1:sizeD)))
-xlim([0 tripTime2])
+xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Tangential thrust fraction')
 xlabel('t')
@@ -229,7 +229,7 @@ ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
 plot(dR(7,1:sizeD),sin(dR(9,1:sizeD)))
-xlim([0 tripTime2])
+xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Off-plane thrust fraction')
 xlabel('t')
@@ -244,7 +244,7 @@ xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 plot(dR(7,1:sizeD),coast_threshold2)
-xlim([0 tripTime2])
+xlim([0 tripTime2]), ylim([0,1])
 legend({'spacecraft 2','threshold 2'})
 hold off
 
