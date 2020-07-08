@@ -352,7 +352,7 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
     int numPairs = survivorSize / 2; // Value for how many pairs to produce with each type of mask
 
-    // Generate two offspring through each crossover method, total of 8 offspring per parent pair
+    // Generate two offspring through each crossover method, total is 4 * numPairs offspring in pool
     for (int i = 0; i < numPairs; i++) {
         crossOver_wholeRandom(mask, rng);
         generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust);
