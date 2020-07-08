@@ -35,7 +35,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 // generates new Individuals from the survivors(winners of competition) and replaces the worst Individuals in the pool(population) with these new ones
 // Uses mutateNewIndividual and the crossOver mask methods
 // returns the number of new Individuals put into the pool
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* gConstant, thruster<double>& thrust);
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* gConstant, thruster<double>& thrust);
 
 void crossOver_randHalf(int mask[], std::mt19937_64 & rng);
 

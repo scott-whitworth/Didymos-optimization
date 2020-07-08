@@ -289,7 +289,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Create a new generation and increment the generation counter
-        newInd = crossover(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust);
+        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
