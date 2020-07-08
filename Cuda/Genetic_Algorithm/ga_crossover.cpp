@@ -368,7 +368,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 }
 
 
-int crossover(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust) {
+int nextGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust) {
     std::mt19937_64 rng(cConstants->time_seed);
 
     int * mask = new int[OPTIM_VARS];
