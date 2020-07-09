@@ -24,6 +24,8 @@ cudaConstants::cudaConstants(std::string configFile) {
 }
 
 // http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
+// Input: fileName - string address to the path to open the file being used
+// Output - variable names found in the file that correspond to the cudaConstants' will be assigned the value followed by the name and '=', following a certain format assumption base (refer to config_readme.md for more precise information on format)
 void cudaConstants::FileRead(std::string fileName) {
     // Use string line to hold a line read from the config file in variable configFile
     std::string line;
@@ -214,6 +216,8 @@ void cudaConstants::FileRead(std::string fileName) {
 }
 
 // Compare a and b cudaConstants and return true if all variables are equivalent
+// Input: two cudaConstants objects to compare
+// Output: true if all properties are equivalent and cout output that states that they are equivalent, false if atleast one is not equivalent with cout output on one of the properties that was not (if more than one is inequivalent, will not check/show what the other ones are)
 bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
     if (a.time_seed != b.time_seed) {
         std::cout << "time_seed not equal!\n";
