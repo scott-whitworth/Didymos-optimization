@@ -242,7 +242,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
-        selectWinners(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
+        selectSurvivors(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads); // put the individuals in order so we can replace the worst ones
 
         // Display a '.' to the terminal to show that a generation has been performed

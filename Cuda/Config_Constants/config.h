@@ -14,7 +14,7 @@ struct cudaConstants {
     double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
 
     int write_freq; // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file
-    int disp_freq; // Determine how many generations between outputing contents onto the terminal screen
+    int disp_freq;  // Determine how many generations between outputing contents onto the terminal screen
 
     int best_count; // Number of individuals that needs to be within the acceptable condition before ending the algorithm, also how many of the top individuals are recorded
     int change_check; // How often it checks for if the best individual has changed, used in the basis of Jeremy's method of anneal value dependent on if there was no change
@@ -35,38 +35,38 @@ struct cudaConstants {
 
     // Used in thruster construction and corresponding calculations
     int thruster_type; // 0 is for no thruster, 1 is for NEXT ion thruster
-    double dry_mass; // Mass of the spacecraft with no fuel (kg)
-    double fuel_mass; // The mass quantity of fuel the spacecraft starts with, used to derive wet_mass
-    double wet_mass; // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config (kg)
+    double dry_mass;   // Mass of the spacecraft with no fuel (kg)
+    double fuel_mass;  // The mass quantity of fuel the spacecraft starts with, used to derive wet_mass
+    double wet_mass;   // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config (kg)
 
     double coast_threshold; // 0 results in the thruster never coasting, 1 results in always coasting
-    double c3energy; // specific energy of spacecraft at earth escape (m^2/s^2), determines vEscape
-    double v_escape; // magnitude of velocity at earth escape  (au/s), this variable is not directly accessible in the config file as it is derived from c3energy
+    double c3energy;        // specific energy of spacecraft at earth escape (m^2/s^2), determines vEscape
+    double v_escape;        // magnitude of velocity at earth escape  (au/s), this variable is not directly accessible in the config file as it is derived from c3energy
 
     // The final position and velocity of the asteriod/target at impact date
-    double r_fin_ast; // AU
-    double theta_fin_ast; // Radians
-    double z_fin_ast; // AU
-    double vr_fin_ast; // AU/s
+    double r_fin_ast;      // AU
+    double theta_fin_ast;  // Radians
+    double z_fin_ast;      // AU
+    double vr_fin_ast;     // AU/s
     double vtheta_fin_ast; // AU/s
-    double vz_fin_ast; // AU/s
+    double vz_fin_ast;     // AU/s
 
     // The final position and velocity of the earth at impact date to be used as reference point
-    double r_fin_earth; // AU
-    double theta_fin_earth; // Radians
-    double z_fin_earth; // AU
-    double vr_fin_earth; // AU/s
+    double r_fin_earth;      // AU
+    double theta_fin_earth;  // Radians
+    double z_fin_earth;      // AU
+    double vr_fin_earth;     // AU/s
     double vtheta_fin_earth; // AU/s
-    double vz_fin_earth; // AU/s
+    double vz_fin_earth;     // AU/s
 
     double v_impact; // AU/s, the official DART mission data
 
-    double rk_tol; // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
-    double f_min; // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
+    double rk_tol;       // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
+    double f_min;        // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
     double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
 
     int num_individuals; // Number of individuals in the pool, each individual contains its own thread
-    int survivor_count; // Number of survivors selected, every pair of survivors creates 8 new individuals
+    int survivor_count;  // Number of survivors selected, every pair of survivors creates 8 new individuals
     int thread_block_size;
 
     // Used in generating time range for Earth calculations (units in seconds)
