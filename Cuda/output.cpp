@@ -3,37 +3,31 @@
 #include <string>
 #include <iomanip>
 
-double calc_work(double time, elements<double> yp, double gamma, double tau, double accel, double mass) {
-  return mass * accel * time * sqrt(pow(sin(gamma)*cos(tau)*yp.vr, 2) + pow(cos(gamma)*cos(tau)*yp.vtheta, 2) + pow(sin(tau)*yp.vz, 2)) / pow(AU,2);
-}
-
-double calc_dE(double time, elements<double> yp, double mass) {
-  return mass * ((pow(yp.vr,2) + pow(yp.vtheta,2) + pow(yp.vz,2))/ 2 - constG * massSun / yp.r) / pow(AU,2);
-}
-
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
-  double *work, *dE_mech, *mass;
-  work = new double[lastStep];
-  dE_mech = new double[lastStep];
+  double *mass, *work, *energy;
   mass = new double[lastStep];
-  mass[0] = wetMass;
-  for (int i = 0; i < lastStep-1; i++) {
-    mass[i+1] = wetMass - fuelSpent[i+1];
-    work[i] = calc_work(time[i+1], yp[i+1], gamma[i+1], tau[i+1], accel[i+1], mass[i+1]) - calc_work(time[i], yp[i], gamma[i], tau[i], accel[i], mass[i]);
-    dE_mech[i] = calc_dE(time[i+1], yp[i+1], mass[i+1]) - calc_dE(time[i], yp[i], mass[i]);
+  work = new double[lastStep];
+  energy = new double[lastStep];
+  
+  for (int i = 0; i < lastStep; i++) {
+    mass[i] = wetMass - fuelSpent[i];
+    work[i] = mass[i] * accel[i] * time[i] * sqrt(pow(sin(gamma[i])*cos(tau[i])*yp[i].vr, 2) + pow(cos(gamma[i])*cos(tau[i])*yp[i].vtheta, 2) + pow(sin(tau[i])*yp[i].vz, 2)) / pow(AU,2);
+    energy[i] = mass[i] * ((pow(yp[i].vr,2) + pow(yp[i].vtheta,2) + pow(yp[i].vz,2))/ 2 - constG * massSun / yp[i].r) / pow(AU,2);
   }
 
   std::ofstream output;
   int seed = config->time_seed;
   output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
+
   for (int i = 0; i < lastStep-1; i++) {
     output.write((char*)&time[i], sizeof(double));
     output.write((char*)&work[i], sizeof(double));
-    output.write((char*)&dE_mech[i], sizeof(double));
+    output.write((char*)&energy[i], sizeof(double));
   }
 
+  output.close();
   delete work;
-  delete dE_mech;
+  delete energy;
   delete mass;
 }
 
