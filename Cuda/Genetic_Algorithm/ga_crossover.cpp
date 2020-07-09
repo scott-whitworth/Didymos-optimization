@@ -355,9 +355,9 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     int * mask = new int[OPTIM_VARS];
 
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
-    int numPairs = survivorSize / 2; // Value for how many pairs to produce with each type of mask
+    int numPairs = survivorSize / 2; // Value for how many pairs to use and produce in each loop (as one iteration through a loop produces a new pair)
 
-    // Generate two offspring through each crossover method, total is 4 * numPairs offspring in pool
+    // Generate two offspring through each crossover method, total is 4 * survivorSize offspring in pool
     // Every loop needs to reset the mask as it is flipped from generateChildrenPair, for ones that use randomization it also keeps from having same mask for all new pairs
 
     // Loop for wholeRandom mask

@@ -45,7 +45,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime,co
 
 #include "earthInfo.cpp"
 
-// Makes a global variable for launchCon (called in optimization.cu)
+// Makes a global variable for launchCon (assigned content in optimization.cu)
 EarthInfo *launchCon;
 
 #endif 
