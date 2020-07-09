@@ -326,6 +326,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
 }
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
+// Flips mask when creating opposite individual, is not reverted back!
 void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust) { 
     // Determine where the parents and the new individual being created are located in the pool
     int parent1Index = parentsIndex;
