@@ -1,7 +1,3 @@
-// Collection of functions to perform crossover operations on rkParameters
-// A crossover mask is an array of elements equal to the number of elements in the rkParameters list
-// The mask defines what elements come from parent 1 and parent 2 or if it is an average of the two values
-
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Config_Constants/config.h"
 #include "ga_crossover.h"

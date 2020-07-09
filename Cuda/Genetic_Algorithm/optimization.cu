@@ -386,15 +386,15 @@ int main () {
     cudaSetDevice(0);
     
     cudaConstants const * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
-    // Display contents of cConstants resulting from reading the file
+    // Display contents of cConstants resulting from reading the file onto the terminal
     std::cout << *cConstants << std::endl;
 
     // pre-calculate a table of Earth's position within possible mission time range
     //----------------------------------------------------------------
-    // Define variables to be passed into EarthInfo
-    double startTime = cConstants->startTime; // 0.5 year (s)
-    double endTime = cConstants->endTime; // 2.5 years (s)
-    double timeRes = cConstants->timeRes; // (s) position of earth is calculated for every hour
+    // Define variables to be passed into EarthInfo that determines the range of time to be calculated, accessed from cConstants
+    double startTime = cConstants->startTime;
+    double endTime = cConstants->endTime; 
+    double timeRes = cConstants->timeRes;
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
@@ -416,8 +416,7 @@ int main () {
     //----------------------------------------------------------------
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = cConstants->thread_block_size;
-    int numThreads = cConstants->num_individuals; // the number of cores on a Tesla k40
-    //int numThreads = 1920; // 384 cores on K620 * 5 = 1920
+    int numThreads = cConstants->num_individuals;
 
     std::cout << std::endl << "running optimize() with " << blockThreads << " threads per block and " << numThreads << " total threads" << std::endl;
 
