@@ -121,6 +121,8 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
   delete [] times;
   delete [] gamma;
   delete [] tau;
+  delete [] accel_output;
+  delete [] fuelSpent;
 }
 
 void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrust, const cudaConstants* cConstants) {
