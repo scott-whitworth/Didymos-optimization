@@ -3,6 +3,40 @@
 #include <string>
 #include <iomanip>
 
+double calc_work(double time, elements<double> yp, double gamma, double tau, double accel, double mass) {
+  return mass * accel * time * sqrt(pow(sin(gamma)*cos(tau)*yp.vr, 2) + pow(cos(gamma)*cos(tau)*yp.vtheta, 2) + pow(sin(tau)*yp.vz, 2)) / pow(AU,2);
+}
+
+double calc_dE(double time, elements<double> yp, double mass) {
+  return mass * ((pow(yp.vr,2) + pow(yp.vtheta,2) + pow(yp.vz,2))/ 2 - constG * massSun / yp.r) / pow(AU,2);
+}
+
+void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
+  double *work, *dE_mech, *mass;
+  work = new double[lastStep];
+  dE_mech = new double[lastStep];
+  mass = new double[lastStep];
+  mass[0] = wetMass;
+  for (int i = 0; i < lastStep-1; i++) {
+    mass[i+1] = wetMass - fuelSpent[i+1];
+    work[i] = calc_work(time[i+1], yp[i+1], gamma[i+1], tau[i+1], accel[i+1], mass[i+1]) - calc_work(time[i], yp[i], gamma[i], tau[i], accel[i], mass[i]);
+    dE_mech[i] = calc_dE(time[i+1], yp[i+1], mass[i+1]) - calc_dE(time[i], yp[i], mass[i]);
+  }
+
+  std::ofstream output;
+  int seed = config->time_seed;
+  output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
+  for (int i = 0; i < lastStep-1; i++) {
+    output.write((char*)&time[i], sizeof(double));
+    output.write((char*)&work[i], sizeof(double));
+    output.write((char*)&dE_mech[i], sizeof(double));
+  }
+
+  delete work;
+  delete dE_mech;
+  delete mass;
+}
+
 // Output final results of genetic algorithm
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
