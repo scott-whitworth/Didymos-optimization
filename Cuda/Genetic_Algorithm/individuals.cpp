@@ -3,8 +3,25 @@
 
 #include "individuals.h"
 
-// An experimental equation to determine cost (currently is being minimized in the genetic algorithm)
-// Currently simply returns the positional difference, but could be more elaborate by adjusting the value of cost that is returned
+// Set the inital position of the spacecraft according to this Individual's launch time
+// Input: cConstants - to access v_escape value that determines component velocities
+//        launchCon - access earth element at this individuals tripTime offset in determining position and velocity
+// Output: this individuals startParams.y0 is set to the initial position and velocity of the spacecraft
+void Individual::initialize(const cudaConstants* cConstants) {
+    elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
+
+    this->startParams.y0 = elements<double>( // calculate the starting position and velocity of the spacecraft from Earth's position and velocity and spacecraft launch angles
+        earth.r+ESOI*cos(this->startParams.alpha),
+        earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),
+        earth.z, // The spacecraft Individual is set to always be in-plane (no initial Z offset relative to earth) 
+        earth.vr+cos(this->startParams.zeta)*sin(this->startParams.beta)*cConstants->v_escape, 
+        earth.vtheta+cos(this->startParams.zeta)*cos(this->startParams.beta)*cConstants->v_escape,
+        earth.vz+sin(this->startParams.zeta)*cConstants->v_escape);
+}
+
+// Calculates a cost value to quantitatively evaluate this Individual
+// Input: cConstants in accessing properties such as pos_threshold, c3energy, and v_impact
+// Output: Assigns and returns this individuals cost value
 double Individual::getCost(const cudaConstants* cConstants) {
     if (this->posDiff < cConstants->pos_threshold) {
         this->cost = (cConstants->v_impact - this->velDiff)/cConstants->c3energy;
@@ -40,36 +57,6 @@ bool Individual::operator==(Individual &other) {
     else {
         return false;
     }
-}
-
-
-/*
-double getPosRatio(Individual first, Individual second) {
-    double greaterDiff = first.posDiff; // get the greater position difference
-    if (second.posDiff > greaterDiff) {
-        greaterDiff = second.posDiff;
-    }
-
-    if (greaterDiff > POSITION_THRESH) {
-        return 1.0; // focus entirely on position because the spacecraft is very far from the asteroid
-    }
-    else {
-        return greaterDiff / POSITION_THRESH; // focus more on position the greater the difference is based on linear scale
-    }
-}
-*/
-
-// Initialize's the Individual's location and velocity based on earth's location/velocity at starting trip time
-void Individual::initialize(const cudaConstants* cConstants) {
-    elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
-
-    this->startParams.y0 = elements<double>( // calculate the starting position and velocity of the spacecraft from Earth's position and velocity and spacecraft launch angles
-        earth.r+ESOI*cos(this->startParams.alpha),
-        earth.theta+asin(sin(M_PI-this->startParams.alpha)*ESOI/earth.r),
-        earth.z, // The spacecraft Individual is set to always be in-plane (no initial Z offset relative to earth) 
-        earth.vr+cos(this->startParams.zeta)*sin(this->startParams.beta)*cConstants->v_escape, 
-        earth.vtheta+cos(this->startParams.zeta)*cos(this->startParams.beta)*cConstants->v_escape,
-        earth.vz+sin(this->startParams.zeta)*cConstants->v_escape);
 }
 
 #endif
