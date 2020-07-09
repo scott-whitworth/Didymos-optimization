@@ -9,7 +9,7 @@ function [] = errorCheck(seed)
     dE = A(3,:);
     
     figure(1)
-    plot(t, W-dE)
+    plot(t, (W-dE)/dE)
     title('Error')
-    xlabel('t')
-    ylabel('W - \DeltaE')
+    xlabel('t (s)')
+    ylabel('W - \DeltaE (J)')
