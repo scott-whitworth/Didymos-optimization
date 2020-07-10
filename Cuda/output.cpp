@@ -90,16 +90,14 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
-  lastStep = lastStepInt;
-
   // gets the final y values of the spacecrafts for the cost function.
-  yOut = yp[(int)lastStep];
+  yOut = yp[lastStepInt];
 
   std::ofstream output;
-  double seed = cConstants->time_seed;
-  output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  int seed = cConstants->time_seed;
+  output.open("orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
   // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
-  for(int i = 0; i <= lastStep; i++) {
+  for(int i = 0; i <= lastStepInt; i++) {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
     output.write((char*)&times[i], sizeof (double));
