@@ -126,6 +126,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 
     //writes final optimization values to a seperate file
     std::ofstream output;
+    // type double for consistency in binary output
     double seed = cConstants->time_seed;
     output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
