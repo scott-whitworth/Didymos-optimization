@@ -4,24 +4,27 @@
 #include <iomanip>
 
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
-  double *mass, *work, *Etot, *dE;
+  double *mass, *work, *dE, *Etot, *Etot_avg;
   mass = new double[lastStep];
   work = new double[lastStep];
-  Etot = new double[lastStep];
   dE = new double[lastStep];
+  Etot = new double[lastStep];
+  Etot_avg = new double[lastStep];
   
-  work[0] = dE[0] = 0;
   for (int i = 0; i < lastStep; i++) {
     mass[i] = wetMass - fuelSpent[i];
-    // W = (F.v)dt
+    // W = (F.v)dt (less accurate; implementation uses old index format without averages)
     // work[i] = mass[i] * accel[i] * time[i] * sqrt(pow(sin(gamma[i])*cos(tau[i])*yp[i+1].vr, 2) + pow(cos(gamma[i])*cos(tau[i])*yp[i].vtheta, 2) + pow(sin(tau[i])*yp[i].vz, 2)) / pow(AU,2);
     Etot[i] = mass[i] * ((pow(yp[i].vr,2) + pow(yp[i].vtheta,2) + pow(yp[i].vz,2))/ 2 - constG * massSun / yp[i].r) / pow(AU,2);
     if (i) {
       // W = F.dL (more accurate)
-      work[i] = mass[i-1] * accel[i-1] * ((sin(gamma[i-1])*cos(tau[i-1])*(yp[i].r - yp[i-1].r)) + (cos(gamma[i-1])*cos(tau[i-1])*(yp[i].theta - yp[i-1].theta)) + (sin(tau[i-1])*(yp[i].z - yp[i-1].z))) / pow(AU,2);
+      work[i] = (mass[i] + mass[i-1])/2 * (accel[i] + accel[i-1])/2 * ((sin((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r - yp[i-1].r)) + (cos((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r + yp[i-1].r)/2*(yp[i].theta - yp[i-1].theta)) + (sin((tau[i] + tau[i-1])/2)*(yp[i].z - yp[i-1].z))) / pow(AU,2);
       dE[i] = Etot[i] - Etot[i-1];
+      Etot_avg[i] = (Etot[i] + Etot[i-1])/2;
     }
   }
+  work[0] = dE[0] = 0;
+  Etot_avg[0] = Etot[0];
 
   std::ofstream output;
   int seed = config->time_seed;
@@ -31,14 +34,15 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
     output.write((char*)&time[i], sizeof(double));
     output.write((char*)&work[i], sizeof(double));
     output.write((char*)&dE[i], sizeof(double));
-    output.write((char*)&Etot[i], sizeof(double));
+    output.write((char*)&Etot_avg[i], sizeof(double));
   }
 
   output.close();
   delete [] mass;
   delete [] work;
-  delete [] Etot;
   delete [] dE;
+  delete [] Etot;
+  delete [] Etot_avg;
 }
 
 // Output final results of genetic algorithm
