@@ -171,20 +171,10 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config) {
     output << rank << ',' << ind.posDiff << ',' << ind.velDiff << ',' << ind.startParams.tripTime << ',';
     output << ind.startParams.alpha << ',' << ind.startParams.beta << ',' << ind.startParams.zeta << ',';
-    if (config->thruster_type) {
-      for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.gamma[i] << ',';
-      }
-      for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.tau[i] << ',';
-      }
-      for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.coast[i] << ',';
-      }
-    }
     output << std::endl;
 }
 
+// CURRENTLY NOT IN USE:
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's information and anneal value
@@ -225,7 +215,12 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
     BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
 }
 
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
+
+// CURRENTLY NOT IN USE:
+// Utility function to observe the trend of best individual in the algorithm through the generations
+// Input: Two ofstreams (one to .csv file and another to binary), current generation number, and best individual
+// Output: The two streams are appended the individual's thrust angle and coast coefficients
+void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual) {
     ExcelOutput << currentGeneration << ',';
     for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.gamma[i] << ',';

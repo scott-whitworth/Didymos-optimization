@@ -155,6 +155,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
+// CURRENTLY NOT IN USE:
+// initializing file output for analysis over generations
 //     // setup output of generation results over time onto a .csv file
 //     std::ofstream generationPerformanceBestExcel;
 //     generationPerformanceBestExcel.open("BestInGenerations.csv");
@@ -271,7 +273,9 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
             previousBestVel = currentBest.velDiff;
         }
 
-
+        
+        // CURRENTLY NOT IN USE:
+        // file output for analysis every write_freq'th generation
         // // Write the best and worst Individuals in every write_freq generations into the files to view progress over generations
         // if (static_cast<int>(generation) % cConstants->write_freq == 0) {
         //     writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], new_anneal);
@@ -299,21 +303,22 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
     double *start = new double[OPTIM_VARS];
-    
+        
+    // CURRENTLY NOT IN USE:
+    // file output for analysis over generations
     // // Write the final best and worst performing individuals to their respective files
     // writeIndividualToFiles(generationPerformanceBestExcel, generationBestPerformanceBin, generation, inputParameters[0], annealPlacement);
     // writeIndividualToFiles(generationPerformanceWorstExcel, generationWorstPerformanceBin, generation, inputParameters[numThreads-1], annealPlacement);
 
-    // std::ofstream progressiveOutput;
-    // progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
-    // progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
-    // progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
-    // if (thrust.type) {
-    //     progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
-    //     progressiveOutput << "tau_a0,tau_a1,tau_b1,";
-    //     progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
-    // }
-    // progressiveOutput << std::endl;
+    std::ofstream progressiveOutput;
+    progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
+    progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
+    progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad)";
+    progressiveOutput << std::endl;
+
+    // CURRENTLY NOT IN USE: 
+    // file output for analysis of best_count number of individuals of the final generation
+    // the best individuals from the same run (same seed) appear to be more or less the same
     // // Write the best individuals with best_count in total outputted in seperate binary files
     // for (int i = 0; i < cConstants->best_count; i++) {
     //     for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
@@ -335,8 +340,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     //     writeTrajectoryToFile(start, i+1, thrust, cConstants);
     //     progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
     // }
-    // progressiveOutput << std::endl;
-    // progressiveOutput.close();
 
     // Only output the final best individual
     for (int j = 0; j < inputParameters[0].startParams.coeff.gammaSize; j++) {
@@ -357,6 +360,12 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
     writeTrajectoryToFile(start, 1, thrust, cConstants);
 
+    progressiveAnalysis(progressiveOutput,1,inputParameters[0],cConstants);
+    progressiveOutput << std::endl;
+    progressiveOutput.close();
+
+    // CURRENTLY NOT IN USE:
+    // closingfile output for analysis over generations
     // // Close the performance files now that the algorithm is finished
     // generationPerformanceBestExcel.close();
     // generationBestPerformanceBin.close();
