@@ -252,8 +252,6 @@ hold off
 
 % Thrust angle plots
 figure(4)
-title('Fourier series')
-hold on
 
 % Gamma plots
 subplot(3,1,1)
@@ -263,6 +261,7 @@ plot(dR(7,1:sizeD),mod(dR(8,1:sizeD),2*pi))
 xlabel('t'), ylabel('\gamma')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
+title('In-plane thrust angle')
 hold off
 
 % Tau plots
@@ -273,6 +272,7 @@ plot(dR(7,1:sizeD),dR(9,1:sizeD))
 xlabel('t'), ylabel('\tau')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
+title('Out-of-plane thrust angle')
 hold off
 
 % Psi plots
@@ -283,6 +283,7 @@ plot(dR(7,1:sizeD),do)
 xlabel('t'), ylabel('\psi')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
+title('Coast function')
 hold off
 
 %% full orbital plots (vectors and no vectors)

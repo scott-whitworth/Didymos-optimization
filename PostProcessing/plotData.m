@@ -161,23 +161,24 @@ hold off
 
 % Thrust angle plots
 figure(3)
-title('Fourier series')
-hold on
 
 subplot(3,1,1)
 plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
 xlabel('t'), ylabel('\gamma')
 xlim([0 tripTime])
+title('In-plane thrust angle')
 
 subplot(3,1,2)
 plot(cR(7,1:sizeC),cR(9,1:sizeC))
 xlabel('t'), ylabel('\tau')
 xlim([0 tripTime])
+title('Out-of-plane thrust angle')
 
 subplot(3,1,3)
 plot(cR(7,1:sizeC),co)
 xlabel('t'), ylabel('\psi')
 xlim([0 tripTime])
+title('Coast function')
 
 %% full orbital plots (vectors and no vectors)
 
