@@ -100,6 +100,8 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
+  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+
   lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
