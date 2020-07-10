@@ -2,7 +2,7 @@ function [] = errorCheck(seed)
 
     filename = join(['errorCheck-',num2str(seed),'.bin']);
     file = fopen(filename);
-    A = fread(file,[3,Inf],'double');
+    A = fread(file,[4,Inf],'double');
 
     t = A(1,:);
     W = A(2,:);
