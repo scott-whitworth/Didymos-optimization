@@ -100,7 +100,9 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
-  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  // // Creates a bin file to analyze the error in thrust calculations
+  // // Used with errorCheck.m
+  // errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
   lastStep = lastStepInt;
 
