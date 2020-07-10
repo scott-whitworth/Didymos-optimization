@@ -1,9 +1,6 @@
 #ifndef GA_CROSSOVER_h
 #define GA_CROSSOVER_h
 
-// Collection of functions to perform crossover operations on rkParameters
-// A crossover mask is an array of elements equal to the number of elements in the rkParameters list
-// The mask defines what elements come from partent n and parent m
 #include <random>
 
 #include "../Runge_Kutta/rkParameters.h"
