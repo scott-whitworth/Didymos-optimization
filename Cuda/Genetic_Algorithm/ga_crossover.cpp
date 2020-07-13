@@ -343,7 +343,7 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 
     int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
     // Generate new offspring with mask
-    mutateNewIndividual(pool, survivors, mask, parent1Index, parent2Index, newIndividualIndex, annealing, rng, cConstants, thrust);
+    mutateNewIndividual(pool, survivors, mask, parent1Index, parent2Index, newIndividualIndex, annealing, rng, cConstants, thrust, generation);
     newIndCount++;
 
     // Get the opposite offspring from the mask by flipping the mask
@@ -365,7 +365,7 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation ) {
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation) {
 
     int * mask = new int[OPTIM_VARS];
 
