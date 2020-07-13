@@ -62,7 +62,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     time_t timeSeed = cConstants->time_seed;
     std::mt19937_64 rng(timeSeed);
     std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
-
+    
+    //sets up mutate file
+    setMutateFile(cConstants);
+    
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
     double absTol = cConstants->rk_tol; // the tolerance is a constant number that is shared amongst all runs

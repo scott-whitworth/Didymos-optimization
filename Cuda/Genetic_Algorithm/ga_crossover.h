@@ -107,6 +107,8 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //         Returns number of new individuals created (newIndCount)
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation );
 
+//sets up the mutate file
+void setMutateFile(const cudaConstants* cConstants);
 
 #include "ga_crossover.cpp"
 #endif

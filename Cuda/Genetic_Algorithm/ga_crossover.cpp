@@ -6,7 +6,6 @@
 
 #define SECONDS_IN_YEAR 365.25*24*3600 // Used with getRand for triptime mutation scale
 
-std::ofstream mutateFile;
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility and clarity of value meaning
 enum maskValue {
     PARTNER1 = 1,
@@ -233,6 +232,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 // Output: Returns rkParameter object that is the mutated version of p1
 rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {    
     rkParameters<double> newInd = p1;
+
     int genesToMutate = 1; // number of genes to mutate
     int mutateChance = (static_cast<double>(rng()) / rng.max());
 
@@ -260,6 +260,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
     std::ofstream mutateFile;
     mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+    mutateFile << generation << ",";
     for (int i = 0; i < OPTIM_VARS; i++) {
         if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
             mutateFile << "1";
@@ -408,4 +409,11 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
 
     delete [] mask;
     return newIndCount;
+}
+
+void setMutateFile(const cudaConstants* cConstants) { 
+    std::ofstream mutateFile;
+    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+    mutateFile << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime, \n";
+    mutateFile.close();
 }
