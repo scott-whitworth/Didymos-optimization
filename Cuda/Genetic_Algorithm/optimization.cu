@@ -194,7 +194,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
-                                                // This could eventually take into account velocity too and become a more complex calculation
+                                                  // This could eventually take into account velocity too and become a more complex calculation
     double dRate = 1.0e-8;
 
     do { // Set as a do while loop so that the algorithm is set to run atleast once
@@ -289,7 +289,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Create a new generation and increment the generation counter
-        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, rng, cConstants, thrust);
+        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust, rng);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
