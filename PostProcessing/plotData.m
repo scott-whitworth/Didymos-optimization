@@ -155,7 +155,7 @@ xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
-plot(cR(7,1:sizeC),sin(coast_thresholdPlot).^2,'--','color','r')
+plot(cR(7,1:sizeC),coast_thresholdPlot,'--','color','r')
 xlim([0 tripTime])
 hold off
 

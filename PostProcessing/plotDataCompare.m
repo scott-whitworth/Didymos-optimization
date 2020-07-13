@@ -197,7 +197,7 @@ xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
-plot(cR(7,1:sizeC),sin(coast_threshold1Plot).^2,'--','color','r')
+plot(cR(7,1:sizeC),coast_threshold1Plot,'--','color','r')
 xlim([0 tripTime1]), ylim([0,1])
 legend({'spacecraft 1','threshold 1'})
 hold off
@@ -245,7 +245,7 @@ xlabel('t')
 ylabel('sin^2(\psi)')
 hold on
 coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
-plot(dR(7,1:sizeD),sin(coast_threshold2Plot).^2,'--','color','r')
+plot(dR(7,1:sizeD),coast_threshold2Plot,'--','color','r')
 xlim([0 tripTime2]), ylim([0,1])
 legend({'spacecraft 2','threshold 2'})
 hold off
