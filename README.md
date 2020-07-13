@@ -1,5 +1,5 @@
 <h1>DART Mission Optimization Project</h1>
-Last updated: July 2nd, 2020
+Last updated: July 10th, 2020
 
 <h2>Project Background & Current Objective</h2>
 
@@ -75,7 +75,7 @@ On WU System & Personal Computers:
   - EarthCheckValues.csv : Recorded prior to starting the optimizing genetic algorithm, contains the position and velocity for every day of Earth (lower resolution than what is calculated which is every hour).  Used to verify that it matches with the JPL database.
   - BestInGenerations.csv/.bin : A record of the best individual's parameters (not including thruster values) and posDiff and velDiff as well as the following generations anneal value.  Records every write_freq generation.  Also records the best individual at the end of the algorithm.
   - WorstInGenerations.csv/.bin : Similar to BestInGenerations except it selects the worst individual instead.
-  - final-optimization#.bin and orbitalMotion-accel#.bi : For best_count number of individuals, files are made of this format when the algorithm is finished to save the best individuals (replace # with and you get that numbered best individual) to then be used by PostProcessing to show the best trajectory found.
+  - final-optimization#.bin and orbitalMotion-accel#.bi : For the best individual that is reached as a solution, files are made of this format when the algorithm is finished to record it (replace # with and you get the time seed value used) to then be used by PostProcessing to show the best trajectory found.
 
 <h2> Running Matlab Code </h2>
 
@@ -99,7 +99,7 @@ Here is how the impact data was obtained to be used in the config value.
 4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.
 
 <h2>Flowchart Overview of CUDA Code</h2>
-<i>Last updated on July 2nd, 2020</i>
+<i>Last updated on July 10th, 2020</i>
 
 Note: Large arrows point to flowchart portion that describes that block's process
 <img src="flowchart.jpg">
