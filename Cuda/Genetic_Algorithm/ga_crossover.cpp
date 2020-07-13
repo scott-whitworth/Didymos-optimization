@@ -52,6 +52,15 @@ void crossOver_randHalf(int * mask, std::mt19937_64 & rng) {
     return;
 }
 
+// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs
+// Input: mask - pointer integer array of length OPTIM_VARS
+// Output: mask is set to contain all PARTNER1 values
+void crossOver_oneParent(int * mask) {
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        mask[i] = PARTNER1;
+    }
+}
+
 // Creates a random mask
 // Each element in a mask is randomly set to either PARTNER1 or PARTNER2
 // in/out : All data overwritten, set randomly
@@ -228,12 +237,12 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     
     rkParameters<double> newInd = p1;
     int genesToMutate = 1; // number of genes to mutate
-    int mutateChance = rng() % 100;
+    int mutateChance = (static_cast<double>(rng()) / rng.max());
 
-    if (mutateChance < cConstants->triple_mutation_rate * 100) {
+    if (mutateChance < cConstants->triple_mutation_rate) {
         genesToMutate = 3;
     }
-    else if (mutateChance < cConstants->double_mutation_rate * 100) {
+    else if (mutateChance < cConstants->double_mutation_rate) {
         genesToMutate = 2;
     }
 
@@ -352,12 +361,11 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        survivorSize - length of survivors array
 //        poolSize - length of pool array
 //        annealing - passed onto generateChildrenPair
-//        rng - Random number generator to use for making random number values
 //        cConstants - passed onto generateChildrenPair
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, std::mt19937_64 & rng, cudaConstants* cConstants, thruster<double>& thrust, double generation) {
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation ) {
 
     int * mask = new int[OPTIM_VARS];
 
