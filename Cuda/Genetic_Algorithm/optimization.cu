@@ -289,7 +289,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Create a new generation and increment the generation counter
-        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, rng, cConstants, thrust);
+        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, rng, cConstants, thrust, generation);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -380,6 +380,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 void mutateTest() {
     std::ofstream mutateTest;
     mutateTest.open("MutateTest.csv");
+
 
     mutateTest.close();
 }

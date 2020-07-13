@@ -48,12 +48,13 @@ void copyMask(int * maskIn, int * maskOut);
 // Output: A double value that is between -max and +max
 double getRand(double max, std::mt19937_64 & rng);
 
+
 // Creates a new rkParameters individual by combining properties of two parent Individuals using a mask to determine which
 // Input: two rkParameter individuals (p1 and p2) - used in creating the new individual
 //        mask - Contains maskValue values and length of OPTIM_VARS, determines how the two parent properties are merged into creating the new individual
 //        thrust - Determine if the thruster properties must be carried over
 // Output: Returns rkParameter object that is new individual
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust);
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust, double generation);
 
 
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
@@ -64,7 +65,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, cudaConstants& gConstant, thruster<double>& thrust);
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, cudaConstants& gConstant, thruster<double>& thrust, double generation);
 
 // Create a new individual, using two parents with a mask and also possible mutation occurring
 // Input: pool - pointer array to Individuals that is where the new individual is stored
@@ -91,7 +92,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], in
 // Output: pool contains two newly created individuals at (poolSize - 1 - newIndCount) and (poolSize - 2 - newIndCount)
 //         mask is flipped in polarity (refer to flipMask method)
 //         newIndCount is incremented by +2
-void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust);
+void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation);
 
 // Creates the next pool to be used in the optimize function in opimization.cu
 // Input: survivors - Individual pointer array of Individuals to be used in creating new individuals
@@ -104,7 +105,7 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, std::mt19937_64 & rng, const cudaConstants* gConstant, thruster<double>& thrust);
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, std::mt19937_64 & rng, const cudaConstants* gConstant, thruster<double>& thrust, double generation);
 
 
 #include "ga_crossover.cpp"
