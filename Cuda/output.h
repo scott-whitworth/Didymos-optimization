@@ -15,6 +15,9 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
 
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants);
 
+// Called in the case of recordMode is true, opens and sets up files to be outputted during the course of optimize
+void initializeRecord(const cudaConstants * cConstants);
+
 #include "output.cpp"
 
 #endif

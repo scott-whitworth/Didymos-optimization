@@ -1,5 +1,6 @@
 #include "output.h"
 #include "constants.h"
+#include "Thrust_files/thruster.h"
 #include <string>
 #include <iomanip>
 
@@ -143,6 +144,82 @@ void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, con
     }
     output << std::endl;
 }
+
+// Initialize the .csv files
+void initializeRecord(const cudaConstants * cConstants) {
+    // setup output of generation results over time onto a .csv file
+    std::ofstream bestExcel;
+    bestExcel.open("BestInGenerations-"+ std::to_string(cConstants->time_seed)+".csv");
+    // Set first row in the file be a header for the columns
+    bestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+                                   << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+                                   << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+                                   << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+    bestExcel.close();
+    std::ofstream worstExcel;
+    worstExcel.open("WorstInGenerations-"+ std::to_string(cConstants->time_seed)+".csv");
+    // Set first row in the file be a header for the columns
+    worstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," 
+                                << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" << "," << "vthetaFinal" << "," << "vzFinal" << ","
+                                << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" << "," << "vthetaInitial" << "," << "vzInitial" << ","
+                                << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
+    worstExcel.close();
+
+    if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
+        std::ofstream thrustBestExcel, thrustWorstExcel;
+
+        thrustBestExcel.open("BestThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
+        thrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+
+        thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
+        thrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+    }
+    
+}
+
+// Take in the current state of the generation and appends to files
+void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize) {
+  std::ofstream bestExcel, bestBin;
+  bestExcel.open("BestInGenerations-"+ std::to_string(cConstants->time_seed)+".csv", std::ios_base::app);
+  bestBin.open("BestInGenerations-"+ std::to_string(cConstants->time_seed)+".bin", std::ios_base::app);
+
+  writeIndividualToFiles(bestExcel, bestBin, generation, pool[0], new_anneal);
+
+  bestExcel.close();
+  bestBin.close();
+
+  std::ofstream worstExcel, worstBin;
+  worstExcel.open("WorstInGenerations-"+ std::to_string(cConstants->time_seed)+".csv", std::ios_base::app);
+  worstBin.open("WorstInGenerations-"+ std::to_string(cConstants->time_seed)+".bin", std::ios_base::app);
+
+  writeIndividualToFiles(worstExcel, worstBin, generation, pool[poolSize-1], new_anneal);
+
+  worstExcel.close();
+  worstBin.close();
+
+  if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
+    std::ofstream bestThrusterExcel, bestThrusterBin;
+    bestThrusterExcel.open("BestThrustGens-"+ std::to_string(cConstants->time_seed)+".csv", std::ios_base::app);
+    bestThrusterBin.open("BestThurstGens-"+ std::to_string(cConstants->time_seed)+".bin", std::ios_base::app);
+    
+    writeThrustToFiles(bestThrusterExcel, bestThrusterBin, generation, pool[0], cConstants);
+    
+    bestExcel.close();
+    bestBin.close();
+
+    std::ofstream worstThrusterExcel, worstThrusterBin;
+    worstExcel.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".csv", std::ios_base::app);
+    worstBin.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".bin", std::ios_base::app);
+
+    writeThrustToFiles(worstThrusterExcel, worstThrusterBin, generation, pool[poolSize-1], cConstants);
+    
+    worstThrusterExcel.close();
+    worstThrusterBin.close();
+  }
+
+}
+
+
 
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
