@@ -106,7 +106,7 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   // Creates a bin file to analyze the error in thrust calculations
   // Used with errorCheck.m
-  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  // errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
   lastStep = lastStepInt;
 
