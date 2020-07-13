@@ -257,22 +257,23 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             mutatedGenes[2] = rng() % OPTIM_VARS;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
-
-    std::ofstream mutateFile;
-    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    mutateFile << generation << ",";
-    for (int i = 0; i < OPTIM_VARS; i++) {
-        if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
-            mutateFile << "1";
+    // If in recording mode, append the mutate mask onto the appropriate file
+    if (cConstants->record_mode == true) {
+        std::ofstream mutateFile;
+        mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+        mutateFile << generation << ",";
+        for (int i = 0; i < OPTIM_VARS; i++) {
+            if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
+                mutateFile << "1";
+            }
+            else {
+                mutateFile << "0";
+            }
+            mutateFile << ",";
         }
-        else {
-            mutateFile << "0";
-        }
-        mutateFile << ",";
+        mutateFile << "\n";
+        mutateFile.close();
     }
-    mutateFile << "\n";
-    mutateFile.close();
-
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
         // alter thrust coefficients only when using a thruster
@@ -308,8 +309,6 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             newInd.alpha += getRand(cConstants->alpha_mutate_scale * annealing, rng);
         }
     }
-
-    mutateFile.close();
     return newInd;
 }
 
