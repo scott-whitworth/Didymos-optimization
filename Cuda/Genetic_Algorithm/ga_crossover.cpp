@@ -345,12 +345,12 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        survivorSize - length of survivors array
 //        poolSize - length of pool array
 //        annealing - passed onto generateChildrenPair
+//        rng - Random number generator to use for making random number values
 //        cConstants - passed onto generateChildrenPair
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust) {
-    std::mt19937_64 rng(cConstants->time_seed);
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, std::mt19937_64 & rng, cudaConstants* cConstants, thruster<double>& thrust) {
 
     int * mask = new int[OPTIM_VARS];
 

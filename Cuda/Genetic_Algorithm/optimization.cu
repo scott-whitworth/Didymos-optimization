@@ -60,7 +60,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     double calcPerS = 0;
 
     time_t timeSeed = cConstants->time_seed;
-    std::mt19937_64 mt_rand(timeSeed);
+    std::mt19937_64 rng(timeSeed);
     std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
 
     // input parameters for rk4Simple which are the same for each thread
@@ -78,20 +78,20 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         for (int i = 0; i < numThreads; i++) { 
-            double tripTime = SECONDS_IN_YEAR*(mt_rand() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
-            double alpha = PI * 2*((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI <-> PI
-            double beta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max())); // 0 <-> PI
-            double zeta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI/2 <-> PI/2
+            double tripTime = SECONDS_IN_YEAR*(rng() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+            double alpha = PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
+            double beta  = PI * ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
+            double zeta  = PI * ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
 
             coefficients<double> testcoeff;
             for (int j = 0; j < testcoeff.gammaSize; j++) {
-                testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+                testcoeff.gamma[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
             for (int j = 0; j < testcoeff.tauSize; j++) {
-                testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+                testcoeff.tau[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
             for (int j = 0; j < testcoeff.coastSize; j++) {
-                testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0; // -10.0 <-> 10.0
+                testcoeff.coast[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
             }
         
             rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
@@ -125,7 +125,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
          // set every thread's input parameters to a set of final values from CPU calculations for use as a good starting point
         for (int i = 0; i < numThreads; i++) {
-            int row = mt_rand() % numStarts; // Choose a random row to get the parameters from
+            int row = rng() % numStarts; // Choose a random row to get the parameters from
 
             double tripTime = arrayCPU[row][TRIPTIME_OFFSET];
             double alpha = arrayCPU[row][ALPHA_OFFSET];
@@ -210,20 +210,20 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
                 double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
-                double alpha = PI * 2*((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI <-> PI
-                double beta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max())); // 0 <-> PI
-                double zeta  = PI * ((static_cast<double>(mt_rand()) / mt_rand.max()) - 0.5); // -PI/2 <-> PI/2
+                double alpha = PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
+                double beta  = PI *   ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
+                double zeta  = PI *   ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
 
                 coefficients<double> testcoeff;
                 if (thrust.type) {
                     for (int j = 0; j < testcoeff.gammaSize; j++) {
-                        testcoeff.gamma[j] = mt_rand() % 201/10.0 - 10.0;
+                        testcoeff.gamma[j] = rng() % 201/10.0 - 10.0;
                     }
                     for (int j = 0; j < testcoeff.tauSize; j++) {
-                        testcoeff.tau[j] = mt_rand() % 201/10.0 - 10.0;
+                        testcoeff.tau[j] = rng() % 201/10.0 - 10.0;
                     }
                     for (int j = 0; j < testcoeff.coastSize; j++) {
-                        testcoeff.coast[j] = mt_rand() % 201/10.0 - 10.0;
+                        testcoeff.coast[j] = rng() % 201/10.0 - 10.0;
                     }
                 }
             
@@ -241,7 +241,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Note to future development, should shuffle and sort be within selectWinners method?
-        std::shuffle(inputParameters, inputParameters + numThreads, mt_rand); // shuffle the Individiuals to use random members for the competition
+        std::shuffle(inputParameters, inputParameters + numThreads, rng); // shuffle the Individiuals to use random members for the competition
         selectSurvivors(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + numThreads); // put the individuals in order so we can replace the worst ones
 
@@ -289,7 +289,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
 
         // Create a new generation and increment the generation counter
-        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust);
+        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, rng, cConstants, thrust);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
