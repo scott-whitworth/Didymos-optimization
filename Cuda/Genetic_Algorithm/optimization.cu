@@ -377,6 +377,13 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     return calcPerS;
 }
 
+void mutateTest() {
+    std::ofstream mutateTest;
+    mutateTest.open("MutateTest.csv");
+
+    mutateTest.close();
+}
+
 int main () {
     // display GPU properties and ensure we are using the right one
     cudaDeviceProp prop;
