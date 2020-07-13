@@ -66,6 +66,15 @@ void cudaConstants::FileRead(std::string fileName) {
                         this->random_start = true;
                     }
                 }
+                else if (variableName == "record_mode") {
+                    if (variableValue == "true") {
+                        this->record_mode = true;
+                    }
+                    else {
+                        // If not set to true, then it is assumed the value is false
+                        this->record_mode = false;
+                    }
+                }
                 else if (variableName == "initial_start_file_address") {
                     // Assumption that the address does not need to be converted/checked
                     this->initial_start_file_address = variableValue;

@@ -11,6 +11,7 @@ struct cudaConstants {
     std::mt19937_64 rng;
 
     bool random_start; // If set to false, the initial generation has individuals initialized from a file instead of randomly generated
+    bool record_mode; // If set to true, functions that record information onto files such as BestInGenerations.csv and MutateMask 
     std::string initial_start_file_address; // If random_start is false, use file_address to find what file is being used for the initial start
     
     double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory (AU)
