@@ -231,10 +231,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {
-    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    
-    
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {    
     rkParameters<double> newInd = p1;
     int genesToMutate = 1; // number of genes to mutate
     int mutateChance = (static_cast<double>(rng()) / rng.max());
@@ -260,6 +257,20 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             mutatedGenes[2] = rng() % OPTIM_VARS;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
+
+    std::ofstream mutateFile;
+    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
+            mutateFile << "1";
+        }
+        else {
+            mutateFile << "0";
+        }
+        mutateFile << ",";
+    }
+    mutateFile << "\n";
+    mutateFile.close();
 
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
