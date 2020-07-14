@@ -51,7 +51,7 @@ void crossOver_randHalf(int * mask, std::mt19937_64 & rng) {
     return;
 }
 
-// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs
+// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs, currently not in use
 // Input: mask - pointer integer array of length OPTIM_VARS
 // Output: mask is set to contain all PARTNER1 values
 void crossOver_oneParent(int * mask) {

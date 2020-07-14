@@ -11,7 +11,7 @@ void setMutateFile(const cudaConstants* cConstants) {
   mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
 
   mutateFile << "gen,";
-  for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     mutateFile << "gamma" << i << ",";
   }
   for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
@@ -249,12 +249,13 @@ void initializeRecord(const cudaConstants * cConstants) {
                << "," << "vthetaInitial" << "," << "vzInitial" << "," << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
     worstExcel.close();
 
+    // If this run is having a thruster, setup the thruster output excel files
     if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
         std::ofstream thrustBestExcel, thrustWorstExcel;
 
         thrustBestExcel.open("BestThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
         thrustBestExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
           thrustBestExcel << "gamma" << i << ",";
         }
         for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
@@ -268,7 +269,7 @@ void initializeRecord(const cudaConstants * cConstants) {
 
         thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
         thrustWorstExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
           thrustWorstExcel << "gamma" << i << ",";
         }
         for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
