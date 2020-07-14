@@ -162,7 +162,8 @@ hold off
 % Thrust angle plots
 figure(3)
 
-vpa(cR(8,1)), vpa(cR(9,1))
+% Test Fourier calculation for start
+% vpa(cR(8,1)), vpa(cR(9,1))
 
 subplot(3,1,1)
 plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
