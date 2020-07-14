@@ -171,7 +171,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 // output: progressiveAnalysis.csv file is appended header information, followed by writeTrajectoryToFile and progressiveAnalysis called for best_count individuals
 void progressiveRecord(const cudaConstants * cConstants, double generation, Individual * pool, double * start, thruster<double>& thrust) {
   std::ofstream progressiveOutput;
-  progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
+  progressiveOutput.open("progressiveAnalysis-"+std::to_string(cConstants->time_seed)+".csv", std::ios::app);
   progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
   progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
 
