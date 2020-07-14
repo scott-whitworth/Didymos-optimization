@@ -4,6 +4,15 @@
 #include <string>
 #include <iomanip>
 
+// input: cConstants - access time_seed to derive file name
+// output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
+void setMutateFile(const cudaConstants* cConstants) { 
+    std::ofstream mutateFile;
+    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+    mutateFile << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime, \n";
+    mutateFile.close();
+}
+
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
 //        lastStep - Used to store number of total steps as output
@@ -236,7 +245,8 @@ void initializeRecord(const cudaConstants * cConstants) {
         thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
         thrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
     }
-    
+    // call setMutateFile to set it up
+    setMutateFile(cConstants);
 }
 
 // Take in the current state of the generation and appends to files

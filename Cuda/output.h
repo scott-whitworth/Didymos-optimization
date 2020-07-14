@@ -80,6 +80,11 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
 // output: writeTrajectoryToFile is called, if in record_mode then progressiveRecord is called as well
 void finalRecord(const cudaConstants* cConstants, Individual * pool, double generation, thruster<double>& thrust);
 
+// input: cConstants - access time_seed to derive file name
+// output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
+void setMutateFile(const cudaConstants* cConstants);
+
+
 #include "output.cpp"
 
 #endif

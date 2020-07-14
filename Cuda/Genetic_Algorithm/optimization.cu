@@ -57,10 +57,12 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     time_t timeSeed = cConstants->time_seed;
     std::mt19937_64 rng(timeSeed);
     std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
-    
-    //sets up mutate file
-    setMutateFile(cConstants);
-    
+       
+    // Initialize the recording files if in record mode
+    if (cConstants->record_mode == true) {
+        initializeRecord(cConstants);
+    }
+     
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
     double absTol = cConstants->rk_tol; // the tolerance is a constant number that is shared amongst all runs
@@ -153,10 +155,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-    // Initialize the recording files if in record mode
-    if (cConstants->record_mode == true) {
-        initializeRecord(cConstants);
-    }
 
     double generation = 0;    // A counter for number of generations calculated
     

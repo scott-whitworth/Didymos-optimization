@@ -410,10 +410,3 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     delete [] mask;
     return newIndCount;
 }
-
-void setMutateFile(const cudaConstants* cConstants) { 
-    std::ofstream mutateFile;
-    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    mutateFile << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime, \n";
-    mutateFile.close();
-}
