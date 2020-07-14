@@ -3,6 +3,7 @@
 #include "ga_crossover.h"
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 #define SECONDS_IN_YEAR 365.25*24*3600 // Used with getRand for triptime mutation scale
 
@@ -262,53 +263,125 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
         std::ofstream mutateFile;
         mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
         mutateFile << generation << ",";
+        mutateFile << annealing << ",";
         for (int i = 0; i < OPTIM_VARS; i++) {
             if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
                 mutateFile << "1";
+                
             }
             else {
                 mutateFile << "0";
             }
             mutateFile << ",";
         }
-        mutateFile << "\n";
+        //mutateFile << "\n";
         mutateFile.close();
     }
+
+    std::vector<double> recordLog;
+
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
         // alter thrust coefficients only when using a thruster
         if (thrust.type != thruster<double>::NO_THRUST) {
             //check coeff
             if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
-                newInd.coeff.gamma[mutatedValue] += getRand(cConstants->gamma_mutate_scale * annealing, rng);
+                double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
+                newInd.coeff.gamma[mutatedValue] += randVar;
+                recordLog.push_back(1);
+                recordLog.push_back(randVar);
             }
-            else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value
-                newInd.coeff.tau[mutatedValue-TAU_OFFSET] += getRand(cConstants->tau_mutate_scale * annealing, rng);
+            else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
+                double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
+                newInd.coeff.tau[mutatedValue-TAU_OFFSET] += randVar;
+                recordLog.push_back(2);
+                recordLog.push_back(randVar);
             }
             else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
-                newInd.coeff.coast[mutatedValue-COAST_OFFSET] += getRand(cConstants->coast_mutate_scale * annealing, rng);
+                double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
+                newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
+                recordLog.push_back(3);
+                recordLog.push_back(randVar);
             }
         }
         else if (mutatedValue == TRIPTIME_OFFSET) { // Time final
-            newInd.tripTime += SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
+            double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
+            newInd.tripTime+= randVar;
+            recordLog.push_back(4);
+            recordLog.push_back(randVar);
         }
         else if (mutatedValue == ZETA_OFFSET) { // Zeta
-            newInd.zeta += getRand(cConstants->zeta_mutate_scale * annealing, rng);
+            double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
+            newInd.zeta += randVar;
+            recordLog.push_back(5);
+            recordLog.push_back(randVar);
         }
         else if (mutatedValue == BETA_OFFSET) { // Beta
-            newInd.beta += getRand(cConstants->beta_mutate_scale * annealing, rng);
+            double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
+            newInd.beta = randVar;
             // A check to ensure beta remains in value range 0 to pi
+
             if (newInd.beta < 0) {
                 newInd.beta = 0;
+                recordLog.push_back(6);
+                recordLog.push_back(0);
             }
             else if (newInd.beta > M_PI) {
                 newInd.beta = M_PI;
+                recordLog.push_back(6);
+                recordLog.push_back(M_PI);
+            } else {
+                recordLog.push_back(6);
+                recordLog.push_back(randVar);
             }
         }
         else if (mutatedValue == ALPHA_OFFSET) { // Alpha
-            newInd.alpha += getRand(cConstants->alpha_mutate_scale * annealing, rng);
+            double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
+            newInd.alpha += randVar;
+            recordLog.push_back(7);
+            recordLog.push_back(randVar);
         }
     }
+
+    
+    if(cConstants->record_mode == true) {
+        std::ofstream mutateFile;
+        mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+
+        //reads the data from recordLog
+        //has identifier at even numbers, and amount at odd numbers
+        //indentifiers:
+        //1 == gamma
+        //2 == tau
+        //3 == coast
+        //4 == triptime
+        //5 == zeta
+        //6 == beta
+        //7 == alpha
+        double changes [7] = {0,0,0,0,0,0,0};
+        for(int i = 0; i<recordLog.size() ; i+=2) {
+            if(recordLog[i] == 1) {
+                changes[0] += recordLog[i+1];
+            } else if(recordLog[i] == 2) {
+                changes[1] += recordLog[i+1];
+            } else if(recordLog[i] == 3) {
+                changes[2] += recordLog[i+1];
+            } else if(recordLog[i] == 4) {
+                changes[3] += recordLog[i+1];
+            } else if(recordLog[i] == 5) {
+                changes[4] += recordLog[i+1];
+            } else if(recordLog[i] == 6) {
+                changes[5] += recordLog[i+1];
+            } else if(recordLog[i] == 7) {
+                changes[6] += recordLog[i+1];
+            } else {
+                std::cout << "mutate range over" << std::endl;
+            }
+        }
+        mutateFile << changes[0] << "," << changes[1] << "," << changes[2] << "," << changes[3] << "," << changes[4] << "," << changes[5] << "," << changes[6] << "," << "\n";
+        mutateFile.close();
+    }
+    
     return newInd;
 }
 
@@ -413,6 +486,13 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
 void setMutateFile(const cudaConstants* cConstants) { 
     std::ofstream mutateFile;
     mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    mutateFile << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime, \n";
+    //1 == gamma
+        //2 == tau
+        //3 == coast
+        //4 == triptime
+        //5 == zeta
+        //6 == beta
+        //7 == alpha
+    mutateFile << "gen,anneal,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime,gamma change, tau change, coast change, triptime change, zeta change, beta change, alpha change \n";
     mutateFile.close();
 }

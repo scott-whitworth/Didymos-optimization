@@ -343,7 +343,7 @@ int main () {
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
-    // double timeStamp = startTime;
+    double timeStamp = startTime;
     
     // // File stream for outputting values that were calculated in EarthInfo constructor
     if (cConstants->record_mode) {
