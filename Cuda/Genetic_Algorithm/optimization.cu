@@ -1,5 +1,4 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
-
 #include "../Earth_calculations/earthInfo.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 #include "../Config_Constants/config.h"
@@ -151,13 +150,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
     }
 
-
     Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
-
     double generation = 0;    // A counter for number of generations calculated
-    
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
@@ -195,18 +191,15 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                 }
             
                 rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-        
                 inputParameters[k].startParams = example;
 
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
              }
-
             // calculate its new cost function
             inputParameters[k].getCost(cConstants);
         }
-
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + numThreads, rng); // shuffle the Individiuals to use random members for the competition
         selectSurvivors(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
@@ -238,23 +231,18 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
             recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, numThreads, thrust);
         }
-
         // Only call terminalDisplay every DISP_FREQ, not every single generation
         if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
-
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust, rng, generation);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) );
-
     
-    // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
-
     // Write the final best and worst performing individuals to their respective files    
     recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
     finalRecord(cConstants, inputParameters, generation, thrust);
@@ -277,32 +265,19 @@ int main () {
     // Display contents of cConstants resulting from reading the file onto the terminal
     std::cout << *cConstants << std::endl;
 
-    // pre-calculate a table of Earth's position within possible mission time range
-    //----------------------------------------------------------------
     // Define variables to be passed into EarthInfo that determines the range of time to be calculated, accessed from cConstants
     double startTime = cConstants->startTime;
     double endTime = cConstants->endTime; 
     double timeRes = cConstants->timeRes;
 
+    // pre-calculate a table of Earth's position within possible mission time range
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
     // // File stream for outputting values that were calculated in EarthInfo constructor
     if (cConstants->record_mode) {
-        double timeStamp = startTime;
-
-        std::ofstream earthValues;
-        earthValues.open("EarthCheckValues.csv");
-        // Set header row for the table to record values, with timeStamp
-        earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
-        while (timeStamp < endTime) {
-            earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
-            timeStamp += timeRes*24; // Increment to next day as timeRes is set to every hour
-        }
-        // Done recording earth calculations, close file and move on
-        earthValues.close();
+        recordEarthData(cConstants);
     }
-    
-    //----------------------------------------------------------------
+
     // Define the number of threads/individuals that will be used in optimize
     int blockThreads = cConstants->thread_block_size;
     int numThreads = cConstants->num_individuals;

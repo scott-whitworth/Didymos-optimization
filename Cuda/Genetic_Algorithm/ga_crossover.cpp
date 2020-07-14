@@ -220,8 +220,6 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
-
-
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
@@ -312,7 +310,6 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     }
     return newInd;
 }
-
 
 // Create a new individual, using two parents with a mask and also possible mutation occurring
 // Input: pool - pointer array to Individuals that is where the new individual is stored

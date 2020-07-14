@@ -84,6 +84,11 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, double gene
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
 void setMutateFile(const cudaConstants* cConstants);
 
+// method that stores information of launchCon of timeRes*24 resolution
+// input: cConstants - access time range and resolution info on launchCon
+//        launchCon - access elements of earth 
+// output: EarthCheckValues.csv is created and holds rows of element info on earth with timeStamp on each row
+void recordEarthData(const cudaConstants * cConstants);
 
 #include "output.cpp"
 
