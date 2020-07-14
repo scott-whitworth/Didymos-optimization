@@ -7,10 +7,23 @@
 // input: cConstants - access time_seed to derive file name
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
 void setMutateFile(const cudaConstants* cConstants) { 
-    std::ofstream mutateFile;
-    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    mutateFile << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime, \n";
-    mutateFile.close();
+  std::ofstream mutateFile;
+  mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+
+  mutateFile << "gen,";
+  for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+    mutateFile << "gamma" << i << ",";
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    mutateFile << "tau" << i << ",";
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    mutateFile << "coast" << i << ",";
+  }
+  mutateFile << "alpha,beta,zeta,tripTime,\n";
+
+  mutateFile.close();
+
 }
 
 // Output final results of genetic algorithm
@@ -240,10 +253,32 @@ void initializeRecord(const cudaConstants * cConstants) {
         std::ofstream thrustBestExcel, thrustWorstExcel;
 
         thrustBestExcel.open("BestThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
-        thrustBestExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+        thrustBestExcel << "gen,";
+        for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+          thrustBestExcel << "gamma" << i << ",";
+        }
+        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+          thrustBestExcel << "tau" << i << ",";
+        }
+        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+          thrustBestExcel << "coast" << i << ",";
+        }
+        thrustBestExcel << "\n";
+        thrustBestExcel.close();
 
         thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(cConstants->time_seed)+".csv");
-        thrustWorstExcel << "gen,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4";
+        thrustWorstExcel << "gen,";
+        for (int i = 0; i < GAMMA_ARRAY_SIZE) {
+          thrustWorstExcel << "gamma" << i << ",";
+        }
+        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+          thrustWorstExcel << "tau" << i << ",";
+        }
+        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+          thrustWorstExcel << "coast" << i << ",";
+        }
+        thrustWorstExcel << "\n";
+        thrustBestExcel.close();
     }
     // call setMutateFile to set it up
     setMutateFile(cConstants);
