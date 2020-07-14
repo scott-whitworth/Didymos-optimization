@@ -5,6 +5,11 @@
 #include "Config_Constants/config.h"
 #include "Genetic_Algorithm/individuals.h"
 
+// Utility function to display the currently best individual onto the terminal while the algorithm is still running
+// input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
+// output: onto the console termina, generation is displayed and best individual's posDiff, velDiff, and cost values
+void terminalDisplay(Individual& individual, unsigned int currentGeneration);
+
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
 //        lastStep - Used to store number of total steps as output

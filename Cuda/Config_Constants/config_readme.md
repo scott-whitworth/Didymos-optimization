@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-Last Updated: July 13th, 2020
+<i>Last Updated: July 14th, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -10,9 +10,9 @@ Last Updated: July 13th, 2020
 <h2>The cudaConstants struct</h2>
 
 - In the code, the structure that uses the config file is called <b>cudaConstants</b> and is only accessed when being constructed (therefore changing the config file during a run would have no impact).
-- An overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility to outputt onto terminal screen in the main optimization program.
-- Function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, used in the genetic algorithm as means of verifying that the values are not changing during runtime.
-- For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu.
+- An overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility to output onto terminal screen in the main function.
+- Function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, can be used to verify no change in cudaConstants values.
+- For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu. Requires re-compiling the code.
 - Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
 - If config file address is invalid, will output to terminal that is the case.
 
@@ -27,7 +27,7 @@ Table 1. Setup & General Values
 | initial_start_file_address 	| string     	| None  	| If random_start is false, the program uses this address to get parameter values for the initial individuals with the assumption that the file hold 14 sets 	                    |   	|
 | pos_threshold              	| double     	| AU      	| Sets the maximum positional difference of the spacecraft to the target at end of its trajectory path                                                    	                        |   	|
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
-| record_mode                 	| boolean       | None  	| If "true", sets program to output various files that describe the performance, meant to be used in helping verify/debug behavior.  Currently some file output does not properly support non-default parameter sizes |   	|
+| record_mode                 	| boolean       | None  	| If "true", sets program to output various files that describe the performance, meant to be used in helping verify/debug behavior.  Currently some file output methods do not properly support non-default parameter sizes.  Files outputted if true includes (but not limited to) BestInGenerations.csv, WorstThrusGens.csv, and ProgessiveAnalaysis.csv |   	|
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
 | change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced by multiplying with anneal_factor                    |   	|
 | rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|

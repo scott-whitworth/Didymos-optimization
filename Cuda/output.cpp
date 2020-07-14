@@ -4,6 +4,17 @@
 #include <string>
 #include <iomanip>
 
+// Utility function to display the currently best individual onto the terminal while the algorithm is still running
+// input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
+// output: onto the console termina, generation is displayed and best individual's posDiff, velDiff, and cost values
+void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
+    std::cout << "\nGeneration: " << currentGeneration << std::endl;
+    std::cout << "Best individual:" << std::endl;
+    std::cout << "\tposDiff: " << individual.posDiff << std::endl;
+    std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
+    std::cout << "\tcost: "    << individual.cost << std::endl;
+}
+
 // input: cConstants - access time_seed to derive file name
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
 void setMutateFile(const cudaConstants* cConstants) { 

@@ -10,8 +10,6 @@
 #include <random>
 #include <chrono>
 
-#define SECONDS_IN_YEAR 365.25*24*3600
-
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
 bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double dRate) {
@@ -24,16 +22,6 @@ bool changeInBest(double previousBestPos, double previousBestVel, Individual cur
         }
         else return false;
     }
-}
-
-// Utility function to display the currently best individual onto the terminal while the algorithm is still running
-// Input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
-void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
-    std::cout << "\nGeneration: " << currentGeneration << std::endl;
-    std::cout << "Best individual:" << std::endl;
-    std::cout << "\tposDiff: " << individual.posDiff << std::endl;
-    std::cout << "\tvelDiff: " << individual.velDiff << std::endl;
-    std::cout << "\tcost: "    << individual.cost << std::endl;
 }
 
 // Assumes pool is sorted array of Individuals, used in determining if the loop continues
@@ -77,33 +65,13 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         for (int i = 0; i < numThreads; i++) { 
-            double tripTime = SECONDS_IN_YEAR*(rng() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
-            double alpha = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
-            double beta  = M_PI * ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
-            double zeta  = M_PI * ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
-
-            coefficients<double> testcoeff;
-            for (int j = 0; j < testcoeff.gammaSize; j++) {
-                testcoeff.gamma[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
-            }
-            for (int j = 0; j < testcoeff.tauSize; j++) {
-                testcoeff.tau[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
-            }
-            for (int j = 0; j < testcoeff.coastSize; j++) {
-                testcoeff.coast[j] = rng() % 201/10.0 - 10.0; // -10.0 <-> 10.0
-            }
-        
-            rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-        
-            inputParameters[i].startParams = example;
+            inputParameters[i].startParams = randomParameters(rng);
         }
     }
     // If not a random start, read from file using cConstants initial_start_file_address to get path
     else {
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
-
         const int numStarts = 14; // the number of different sets of starting parameters in the input file
-
         std::ifstream starts;
         starts.open(cConstants->initial_start_file_address, std::ifstream::in|std::ios::binary); // a file containing the final parameters of converged results from CPU calculations        
 
@@ -111,7 +79,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         // one row is one set of starting parameters
         // each column is a specific variable:
         double startDoubles;
-        // arrayCPU needs to be updated to handle the fact that OPTIM_VARS now is defined from cConstants
+        // arrayCPU needs to be updated to handle the fact that OPTIM_VARS may be flexible
         double arrayCPU[numStarts][OPTIM_VARS];
         
         for (int i = 0; i < OPTIM_VARS; i++) { // rows
@@ -171,28 +139,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                  || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
-
-                double tripTime = SECONDS_IN_YEAR*(std::rand() % 10001 / 10000.0 + 1.0);
-                double alpha = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
-                double beta  = M_PI *   ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
-                double zeta  = M_PI *   ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
-
-                coefficients<double> testcoeff;
-                if (thrust.type) {
-                    for (int j = 0; j < testcoeff.gammaSize; j++) {
-                        testcoeff.gamma[j] = rng() % 201/10.0 - 10.0;
-                    }
-                    for (int j = 0; j < testcoeff.tauSize; j++) {
-                        testcoeff.tau[j] = rng() % 201/10.0 - 10.0;
-                    }
-                    for (int j = 0; j < testcoeff.coastSize; j++) {
-                        testcoeff.coast[j] = rng() % 201/10.0 - 10.0;
-                    }
-                }
-            
-                rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
-                inputParameters[k].startParams = example;
-
+                inputParameters[k].startParams = randomParameters(rng);
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
