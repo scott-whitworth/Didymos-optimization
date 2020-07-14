@@ -253,7 +253,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
         if (thrust.type != thruster<double>::NO_THRUST) {
             //check coeff
             if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
-                newInd.coeff.gamma[mutatedValue] += getRand(cConstants->gamma_mutate_scale * annealing, rng);
+                newInd.coeff.gamma[mutatedValue-GAMMA_OFFSET] += getRand(cConstants->gamma_mutate_scale * annealing, rng);
             }
             else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value
                 newInd.coeff.tau[mutatedValue-TAU_OFFSET] += getRand(cConstants->tau_mutate_scale * annealing, rng);
