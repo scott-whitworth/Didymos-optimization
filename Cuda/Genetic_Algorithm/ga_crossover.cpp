@@ -257,7 +257,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             mutatedGenes[2] = rng() % OPTIM_VARS;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
-    // If in recording mode, append the mutate mask onto the appropriate file
+    // If in recording mode, append the mutate mask onto the appropriate file in a row
     if (cConstants->record_mode == true) {
         std::ofstream mutateFile;
         mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
@@ -274,6 +274,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
         mutateFile << "\n";
         mutateFile.close();
     }
+
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
         // alter thrust coefficients only when using a thruster

@@ -18,7 +18,6 @@
 
 // Starting location and sizes in the optimization array for navigation to access specific values
 // WARNING: As of July 6th, the file used in non-random start is based on previous definition of values and so if these are changed from old sizes then it may cause issues for it
-
 #define GAMMA_ARRAY_SIZE 7  // Number of coefficients for gamma
 #define   TAU_ARRAY_SIZE 3  // Number of coefficients for tau
 #define COAST_ARRAY_SIZE 5  // Number of coefficients for coasting

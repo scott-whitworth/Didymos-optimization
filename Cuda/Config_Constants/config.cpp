@@ -248,6 +248,10 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
         std::cout << "pos_threshold not equal!\n";
         return false;
     }
+    else if (a.record_mode != b.record_mode) {
+        std::cout << "record_mode not equal\n";
+        return false;
+    }
     else if (a.coast_threshold != b.coast_threshold) {
         std::cout << "coast_threshold not equal!\n";
         return false;
@@ -441,7 +445,8 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps << "\n";
     os << "startTime: "     << object.startTime     << "\tendTime: "          << object.endTime         << "\tdurationTime: "    << object.durationTime << "\ttimeRes: " << object.timeRes << "\n";
     os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
-    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n\n";
+    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n";
+    os << "record_mode: "   << object.record_mode   << "\n\n";
     
     os << "mutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
     os << "gamma_m_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";

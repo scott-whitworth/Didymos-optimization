@@ -160,14 +160,13 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
     double generation = 0;    // A counter for number of generations calculated
     
-    // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                   // This could eventually take into account velocity too and become a more complex calculation
     double dRate = 1.0e-8;
-
-    do { // Set as a do while loop so that the algorithm is set to run atleast once
+    // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
+    do {
         // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
         initializePosition(inputParameters + (numThreads - newInd), newInd, cConstants);
         callRK(newInd, blockThreads, inputParameters + (numThreads - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, cConstants); // calculate trajectories for new individuals
@@ -175,7 +174,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < numThreads; k++) {
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
-                 || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)){
+                 || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
                 
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
 
@@ -239,7 +238,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // If in recording mode and write_freq reached, call the record method
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
-            recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, numThreads);
+            recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, numThreads, thrust);
         }
 
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -257,67 +256,13 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     
     // output the best Individuals of the final generation, using writeTrajectoryToFile()
     // Files outputted allows plotting of solutions in matlab
-    double *start = new double[OPTIM_VARS];
 
     // Write the final best and worst performing individuals to their respective files    
-    recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads);
-    
-    // std::ofstream progressiveOutput;
-    // progressiveOutput.open("progressiveAnalysis.csv", std::ios::app);
-    // progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
-    // progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
-    // if (thrust.type) {
-    //     progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
-    //     progressiveOutput << "tau_a0,tau_a1,tau_b1,";
-    //     progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
-    // }
-    // progressiveOutput << std::endl;
-    // // Write the best individuals with best_count in total outputted in seperate binary files
-    // for (int i = 0; i < cConstants->best_count; i++) {
-    //     for (int j = 0; j < inputParameters[i].startParams.coeff.gammaSize; j++) {
-    //         start[GAMMA_OFFSET + j] = inputParameters[i].startParams.coeff.gamma[j];
-    //     }
-    //     for (int j = 0; j < inputParameters[i].startParams.coeff.tauSize; j++) {
-    //         start[TAU_OFFSET + j] = inputParameters[i].startParams.coeff.tau[j];
-    //     }
-    //     for (int j = 0; j < inputParameters[i].startParams.coeff.coastSize; j++) {
-    //         start[COAST_OFFSET + j] = inputParameters[i].startParams.coeff.coast[j];
-    //     }
-
-    //     start[TRIPTIME_OFFSET] = inputParameters[i].startParams.tripTime;
-    //     start[ALPHA_OFFSET] = inputParameters[i].startParams.alpha;
-    //     start[BETA_OFFSET] = inputParameters[i].startParams.beta;
-    //     start[ZETA_OFFSET] = inputParameters[i].startParams.zeta;
-
-    //     // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    //     writeTrajectoryToFile(start, i+1, thrust, cConstants);
-    //     progressiveAnalysis(progressiveOutput,i+1,inputParameters[i],cConstants);
-    // }
-    // progressiveOutput << std::endl;
-    // progressiveOutput.close();
-
-    // Only output the final best individual
-    for (int j = 0; j < inputParameters[0].startParams.coeff.gammaSize; j++) {
-        start[GAMMA_OFFSET + j] = inputParameters[0].startParams.coeff.gamma[j];
-    }
-    for (int j = 0; j < inputParameters[0].startParams.coeff.tauSize; j++) {
-        start[TAU_OFFSET + j] = inputParameters[0].startParams.coeff.tau[j];
-    }
-    for (int j = 0; j < inputParameters[0].startParams.coeff.coastSize; j++) {
-        start[COAST_OFFSET + j] = inputParameters[0].startParams.coeff.coast[j];
-    }
-
-    start[TRIPTIME_OFFSET] = inputParameters[0].startParams.tripTime;
-    start[ALPHA_OFFSET] = inputParameters[0].startParams.alpha;
-    start[BETA_OFFSET] = inputParameters[0].startParams.beta;
-    start[ZETA_OFFSET] = inputParameters[0].startParams.zeta;
-
-    // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    writeTrajectoryToFile(start, 1, thrust, cConstants);
+    recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
+    finalRecord(cConstants, inputParameters, generation, thrust);
 
     delete [] inputParameters;
     delete [] survivors;
-    delete start;
 
     return calcPerS;
 }
@@ -343,10 +288,10 @@ int main () {
 
     launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
 
-    // double timeStamp = startTime;
-    
     // // File stream for outputting values that were calculated in EarthInfo constructor
     if (cConstants->record_mode) {
+        double timeStamp = startTime;
+
         std::ofstream earthValues;
         earthValues.open("EarthCheckValues.csv");
         // Set header row for the table to record values, with timeStamp
