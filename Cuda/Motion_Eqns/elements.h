@@ -36,11 +36,11 @@ template <class T> struct elements {
     __host__ __device__ elements<T> operator*(const T& i) const;
     __host__ __device__ elements<T> operator/(const T& i) const;
 
-    //Comparison function
-    // Param: other - another element to be compared to
-    // Param: comp_Thresh - comparison threshold
-    // Returns true all elements of other are the same as *this, within the threshold comp_Thresh
-    // Not perfect as elements have wildly different magnitudes
+
+    // Comparison method to compare this elements to another, returning true (equivalent) within a threshold
+    // input: other - another elements object to compare to
+    //        comp_Thresh - a threshold for comparison, so when elements are considered equivalent it is a not necessarrily 100% (when not equal to 0)
+    // output: returns true if for all properties (pos & vel) the difference between them is less than or equal to comp_Thresh
     bool compare(const elements<T> & other, T comp_Thresh);
 
     // Overload the stream output for elements used for writing to a file

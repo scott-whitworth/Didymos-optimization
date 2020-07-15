@@ -48,14 +48,12 @@ void copyMask(int * maskIn, int * maskOut);
 // Output: A double value that is between -max and +max
 double getRand(double max, std::mt19937_64 & rng);
 
-
 // Creates a new rkParameters individual by combining properties of two parent Individuals using a mask to determine which
 // Input: two rkParameter individuals (p1 and p2) - used in creating the new individual
 //        mask - Contains maskValue values and length of OPTIM_VARS, determines how the two parent properties are merged into creating the new individual
 //        thrust - Determine if the thruster properties must be carried over
 // Output: Returns rkParameter object that is new individual
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust, double generation);
-
 
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property

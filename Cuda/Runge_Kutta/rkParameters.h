@@ -94,5 +94,10 @@ template <class T> struct rkParameters {
     template <class U> friend std::ostream & operator<<(std::ostream & Str, const rkParameters<T> & e); 
 };
 
+// Method for creating random parameters
+// input: rng - random number object generator to be used to generate random values
+// output: an rkParameters object that contains randomized properties within a valid ranges
+rkParameters<double> randomParameters(std::mt19937_64 & rng);
+
 #include "rkParameters.cpp"
 #endif

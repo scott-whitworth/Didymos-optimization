@@ -52,7 +52,7 @@ void crossOver_randHalf(int * mask, std::mt19937_64 & rng) {
     return;
 }
 
-// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs
+// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs, currently not in use
 // Input: mask - pointer integer array of length OPTIM_VARS
 // Output: mask is set to contain all PARTNER1 values
 void crossOver_oneParent(int * mask) {
@@ -221,8 +221,6 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
-
-
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
@@ -258,7 +256,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             mutatedGenes[2] = rng() % OPTIM_VARS;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
-    // If in recording mode, append the mutate mask onto the appropriate file
+    // If in recording mode, append the mutate mask onto the appropriate file in a row
     if (cConstants->record_mode == true) {
         std::ofstream mutateFile;
         mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
@@ -385,7 +383,6 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     return newInd;
 }
 
-
 // Create a new individual, using two parents with a mask and also possible mutation occurring
 // Input: pool - pointer array to Individuals that is where the new individual is stored
 //        survivors - pointer array to Individuals to access the two parents from
@@ -481,18 +478,4 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
 
     delete [] mask;
     return newIndCount;
-}
-
-void setMutateFile(const cudaConstants* cConstants) { 
-    std::ofstream mutateFile;
-    mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-    //1 == gamma
-        //2 == tau
-        //3 == coast
-        //4 == triptime
-        //5 == zeta
-        //6 == beta
-        //7 == alpha
-    mutateFile << "gen,anneal,gamma0,gamma1,gamma2,gamma3,gamma4,gamma5,gamma6,tau0,tau1,tau2,coast0,coast1,coast2,coast3,coast4,alpha,beta,zeta,tripTime,gamma change, tau change, coast change, triptime change, zeta change, beta change, alpha change \n";
-    mutateFile.close();
 }
