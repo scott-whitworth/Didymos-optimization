@@ -95,7 +95,7 @@ template <class T> rkParameters<T>::rkParameters() {
 // input: rng - random number object generator to be used to generate random values
 // output: an rkParameters object that contains randomized properties within a valid ranges
 rkParameters<double> randomParameters(std::mt19937_64 & rng) {
-    double tripTime = SECONDS_IN_YEAR*(rng() % 10001 / 10000.0 + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+    double tripTime = SECONDS_IN_YEAR*((static_cast<double>(rng()) / rng.max()) + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
     double alpha = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
     double beta  = M_PI * ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
     double zeta  = M_PI * ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
