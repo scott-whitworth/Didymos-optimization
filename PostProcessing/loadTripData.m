@@ -14,7 +14,7 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast] = loadTrip
         
         GAMMA_OFFSET = 17; % x(17:16+gamma_size) third order fourier for in-plane angle
         TAU_OFFSET = GAMMA_OFFSET + gamma_size; % x(17+gamma_size:16+gamma_size+tau_size) first order fourier for out-of-plane angle
-        TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; % x(17+gamma_size+tau_size) total duration of the trip (tau coeffs + alpha, beta, zeta)
+        TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; % x(17+gamma_size+tau_size+3) total duration of the trip (after tau coeffs + alpha, beta, zeta)
         COAST_OFFSET = TRIPTIME_OFFSET + 1; % x(18+gamma_size+tau_size) second order fourier for coasting determination
         
         %% Constants
