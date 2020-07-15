@@ -269,7 +269,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
         
         if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
             double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
-            newInd.coeff.gamma[mutatedValue] += randVar;
+            newInd.coeff.gamma[mutatedValue-GAMMA_OFFSET] += randVar;
             recordLog[mutatedValue] = randVar;
         }
         else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 

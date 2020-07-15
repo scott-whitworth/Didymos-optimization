@@ -189,7 +189,7 @@ xlabel('t')
 ylabel('sin(\tau)')
 
 
-[co,~]=angles(cR(7,1:sizeC),tripTime1,coast1,coast1);
+co = angles(cR(7,1:sizeC),tripTime1,coast1);
 subplot(2,3,2:3)
 plot(cR(7,1:sizeC),sin(co).^2)
 title('Coasting function and threshold')
@@ -237,7 +237,7 @@ xlabel('t')
 ylabel('sin(\tau)')
 
 
-[do,~]=angles(dR(7,1:sizeD),tripTime2,coast2,coast2);
+do = angles(dR(7,1:sizeD),tripTime2,coast2);
 subplot(2,3,2:3)
 plot(dR(7,1:sizeD),sin(do).^2)
 title('Coasting function and threshold')
@@ -250,13 +250,48 @@ xlim([0 tripTime2]), ylim([0,1])
 legend({'spacecraft 2','threshold 2'})
 hold off
 
+% Thrust angle plots
+figure(4)
+
+% Gamma plots
+subplot(3,1,1)
+plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
+hold on
+plot(dR(7,1:sizeD),mod(dR(8,1:sizeD),2*pi))
+xlabel('t'), ylabel('\gamma')
+xlim([0 maxTripTime])
+legend('spacecraft 1', 'spacecraft 2')
+title('In-plane thrust angle')
+hold off
+
+% Tau plots
+subplot(3,1,2)
+plot(cR(7,1:sizeC),cR(9,1:sizeC))
+hold on
+plot(dR(7,1:sizeD),dR(9,1:sizeD))
+xlabel('t'), ylabel('\tau')
+xlim([0 maxTripTime])
+legend('spacecraft 1', 'spacecraft 2')
+title('Out-of-plane thrust angle')
+hold off
+
+% Psi plots
+subplot(3,1,3)
+plot(cR(7,1:sizeC),co)
+hold on
+plot(dR(7,1:sizeD),do)
+xlabel('t'), ylabel('\psi')
+xlim([0 maxTripTime])
+legend('spacecraft 1', 'spacecraft 2')
+title('Coast series')
+hold off
 
 %% full orbital plots (vectors and no vectors)
 
 radStep1=1:15:length(cX)*1.0;
 radStep2=1:15:length(dX)*1.0;
 %a=figure(3); % plot with vectors
-figure(4) % plot with vectors
+figure(5) % plot with vectors
 plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
 hold on
 plot3(dX,dY,dZ,'LineWidth', 3,'Color',[0, 0, 1]	)

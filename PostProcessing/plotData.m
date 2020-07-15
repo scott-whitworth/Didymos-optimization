@@ -146,7 +146,7 @@ ylabel('sin(\tau)')
 % xlabel('Time')
 % ylabel('coast value')
 
-[co,~]=angles(cR(7,1:sizeC),tripTime,coast,coast);
+co = angles(cR(7,1:sizeC),tripTime,coast);
 subplot(2,3,2:3)
 plot(cR(7,1:sizeC),sin(co).^2)
 xlim([0 tripTime]), ylim([0,1])
@@ -159,11 +159,35 @@ plot(cR(7,1:sizeC),coast_thresholdPlot,'--','color','r')
 xlim([0 tripTime])
 hold off
 
+% Thrust angle plots
+figure(3)
+
+% Test Fourier calculation for start
+% vpa(cR(8,1)), vpa(cR(9,1))
+
+subplot(3,1,1)
+plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
+xlabel('t'), ylabel('\gamma')
+xlim([0 tripTime])
+title('In-plane thrust angle')
+
+subplot(3,1,2)
+plot(cR(7,1:sizeC),cR(9,1:sizeC))
+xlabel('t'), ylabel('\tau')
+xlim([0 tripTime])
+title('Out-of-plane thrust angle')
+
+subplot(3,1,3)
+plot(cR(7,1:sizeC),co)
+xlabel('t'), ylabel('\psi')
+xlim([0 tripTime])
+title('Coast series')
+
 %% full orbital plots (vectors and no vectors)
 
 radStep=1:15:length(cX)*1.0;
 %a=figure(3); % plot with vectors
-figure(3) % plot with vectors
+figure(4) % plot with vectors
 plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
 %plot3(cX(1),cY(1),cZ(1),'*','LineWidth', 5,'Color',[0.9290, 0.6940, 0.1250])
 %hold on

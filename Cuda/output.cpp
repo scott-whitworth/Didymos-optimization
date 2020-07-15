@@ -34,6 +34,47 @@ void setMutateFile(const cudaConstants* cConstants) {
   mutateFile << "alpha,beta,zeta,tripTime\n";
 
   mutateFile.close();
+
+void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
+  double *mass, *work, *dE, *Etot, *Etot_avg;
+  mass = new double[lastStep];
+  work = new double[lastStep];
+  dE = new double[lastStep];
+  Etot = new double[lastStep];
+  Etot_avg = new double[lastStep];
+  
+  for (int i = 0; i < lastStep; i++) {
+    mass[i] = wetMass - fuelSpent[i];
+    // W = (F.v)dt (less accurate; implementation uses old index format without averages)
+    // work[i] = mass[i] * accel[i] * time[i] * sqrt(pow(sin(gamma[i])*cos(tau[i])*yp[i+1].vr, 2) + pow(cos(gamma[i])*cos(tau[i])*yp[i].vtheta, 2) + pow(sin(tau[i])*yp[i].vz, 2)) / pow(AU,2);
+    Etot[i] = mass[i] * ((pow(yp[i].vr,2) + pow(yp[i].vtheta,2) + pow(yp[i].vz,2))/ 2 - constG * massSun / yp[i].r) / pow(AU,2);
+    if (i) {
+      // W = F.dL (more accurate)
+      work[i] = (mass[i] + mass[i-1])/2 * (accel[i] + accel[i-1])/2 * ((sin((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r - yp[i-1].r)) + (cos((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r + yp[i-1].r)/2*(yp[i].theta - yp[i-1].theta)) + (sin((tau[i] + tau[i-1])/2)*(yp[i].z - yp[i-1].z))) / pow(AU,2);
+      dE[i] = Etot[i] - Etot[i-1];
+      Etot_avg[i] = (Etot[i] + Etot[i-1])/2;
+    }
+  }
+  work[0] = dE[0] = 0;
+  Etot_avg[0] = Etot[0];
+
+  std::ofstream output;
+  int seed = config->time_seed;
+  output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
+
+  for (int i = 0; i < lastStep; i++) {
+    output.write((char*)&time[i], sizeof(double));
+    output.write((char*)&work[i], sizeof(double));
+    output.write((char*)&dE[i], sizeof(double));
+    output.write((char*)&Etot_avg[i], sizeof(double));
+  }
+
+  output.close();
+  delete [] mass;
+  delete [] work;
+  delete [] dE;
+  delete [] Etot;
+  delete [] Etot_avg;
 }
 
 // Output final results of genetic algorithm
@@ -101,16 +142,20 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
+  // Creates a bin file to analyze the error in thrust calculations
+  // Used with errorCheck.m
+  // errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+
   lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
-  yOut = yp[(int)lastStep];
+  yOut = yp[lastStepInt];
 
   std::ofstream output;
-  double seed = cConstants->time_seed;
-  output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  int seed = cConstants->time_seed;
+  output.open("orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
   // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
-  for(int i = 0; i <= lastStep; i++) {
+  for(int i = 0; i <= lastStepInt; i++) {
     //output << yp[i];
     output.write((char*)&yp[i], sizeof (elements<double>));
     output.write((char*)&times[i], sizeof (double));
@@ -126,6 +171,8 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
   delete [] times;
   delete [] gamma;
   delete [] tau;
+  delete [] accel_output;
+  delete [] fuelSpent;
 }
 
 // Output trajectory information to finalOptimization-[time_seed].bin
@@ -141,6 +188,7 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 
     //writes final optimization values to a seperate file
     std::ofstream output;
+    // type double for consistency in binary output
     double seed = cConstants->time_seed;
     output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
@@ -224,17 +272,6 @@ void progressiveRecord(const cudaConstants * cConstants, double generation, Indi
 void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config) {
     output << rank << ',' << ind.posDiff << ',' << ind.velDiff << ',' << ind.startParams.tripTime << ',';
     output << ind.startParams.alpha << ',' << ind.startParams.beta << ',' << ind.startParams.zeta << ',';
-    if (config->thruster_type) {
-      for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.gamma[i] << ',';
-      }
-      for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.tau[i] << ',';
-      }
-      for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        output << ind.startParams.coeff.coast[i] << ',';
-      }
-    }
     output << std::endl;
 }
 
