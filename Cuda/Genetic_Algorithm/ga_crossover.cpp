@@ -233,8 +233,8 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     rkParameters<double> newInd = p1;
 
     int genesToMutate = 1; // number of genes to mutate
-    double mutateChance = (static_cast<double>(rng()) / rng.max());
-    
+    int mutateChance = (static_cast<double>(rng()) / rng.max());
+    std::cout << mutateChance << " ";
     if (mutateChance < cConstants->triple_mutation_rate) {
         genesToMutate = 3;
     }
