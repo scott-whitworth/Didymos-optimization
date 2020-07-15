@@ -283,7 +283,7 @@ plot(dR(7,1:sizeD),do)
 xlabel('t'), ylabel('\psi')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
-title('Coast function')
+title('Coast series')
 hold off
 
 %% full orbital plots (vectors and no vectors)

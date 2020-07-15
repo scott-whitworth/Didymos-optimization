@@ -181,7 +181,7 @@ subplot(3,1,3)
 plot(cR(7,1:sizeC),co)
 xlabel('t'), ylabel('\psi')
 xlim([0 tripTime])
-title('Coast function')
+title('Coast series')
 
 %% full orbital plots (vectors and no vectors)
 
