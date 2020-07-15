@@ -118,6 +118,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
     }
 
+    if (cConstants->record_mode == true) {
+        recordAllIndividuals(cConstants, inputParameters, numThreads, 0);
+    }
+
     Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = numThreads; // the whole population is new the first time through the loop
 
@@ -156,6 +160,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
 
+
         // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
         currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
 
@@ -193,6 +198,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     // Write the final best and worst performing individuals to their respective files
     if (cConstants->record_mode == true) {
         recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
+        recordAllIndividuals(cConstants, inputParameters, numThreads, generation);
     }
     finalRecord(cConstants, inputParameters, generation, thrust);
 

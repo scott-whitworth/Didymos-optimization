@@ -297,7 +297,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             newInd.beta = randVar;
             recordLog[mutatedValue] = randVar; // Due to the bounds check following this line, this record log may be technically inaccurrate 
 
-            // A check to ensure beta remains in value range 0 to pi
+            // A check to ensure beta remains in value range 0 to pi, doesn't update recordLog
             if (newInd.beta < 0) {
                 newInd.beta = 0;
             }

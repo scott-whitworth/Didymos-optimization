@@ -346,6 +346,51 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
 
 }
 
+// Takes in a pool and records the parameter info on all individuals
+// input: cConstants - to access time_seed in deriving file name
+//        pool - holds all the individuals to be stored
+//        poolSize - to use in iterating through the pool
+//        generation - used in deriving file name
+// output: file generation#[generation]-[time_seed].csv is created with each row holding parameter values of individuals
+void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, int poolSize, int generation) {
+  std::ofstream entirePool;
+  entirePool.open("generation#" + std::to_string(generation) + "-" + std::to_string(cConstants->time_seed) + ".csv");
+  // Setup the header row
+  entirePool << "position,alpha,beta,zeta,tripTime,";
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    entirePool << "gamma" << i << ",";
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    entirePool << "tau" << i << ",";
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    entirePool << "coast" << i << ",";
+  }
+  entirePool << '\n';
+
+  // Record all individuals in the pool
+  for (int i = 0; i < poolSize; i++) {
+    entirePool << i << ",";
+    entirePool << pool[i].startParams.alpha << ",";
+    entirePool << pool[i].startParams.beta << ",";
+    entirePool << pool[i].startParams.zeta << ",";
+    entirePool << pool[i].startParams.tripTime << ",";
+
+    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+      entirePool << pool[i].startParams.coeff.gamma[i] << ",";
+    }
+    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+      entirePool << pool[i].startParams.coeff.tau[i] << ",";
+    }
+    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+      entirePool << pool[i].startParams.coeff.coast[i] << ",";
+    }
+    entirePool << "\n";
+  }
+  entirePool.close();
+}
+
+
 // Method for doing recording information at the end of the optimization process
 // input: cConstants - access record_mode, if record_mode == true then call progressiveRecord method, also passed into writeTrajectoryToFile method as well as progressiveRecord
 //        pool - To access the best individual (pool[0])
