@@ -13,6 +13,8 @@ cudaConstants::cudaConstants() {
     this->wet_mass = this->dry_mass + this->fuel_mass;
     // Now that startTime and durationTime have been acquired, derive endTime
     this->endTime = this->startTime + this->durationTime;
+    // Now that time_seed has been acquired, derive rng object
+    this->rng = std::mt19937_64(this->time_seed);
 }
 // Operates same as default, however uses configFile as address for where the config file to be used is located
 cudaConstants::cudaConstants(std::string configFile) {
@@ -21,6 +23,8 @@ cudaConstants::cudaConstants(std::string configFile) {
     this->wet_mass = this->dry_mass + this->fuel_mass;
     // Now that startTime and durationTime have been acquired, derive endTime
     this->endTime = this->startTime + this->durationTime;
+    // Now that time_seed has been acquired, derive rng object
+    this->rng = std::mt19937_64(this->time_seed);
 }
 
 // http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
@@ -60,6 +64,15 @@ void cudaConstants::FileRead(std::string fileName) {
                     else {
                         // If not set to false, then it is assumed the value is for true
                         this->random_start = true;
+                    }
+                }
+                else if (variableName == "record_mode") {
+                    if (variableValue == "true") {
+                        this->record_mode = true;
+                    }
+                    else {
+                        // If not set to true, then it is assumed the value is false
+                        this->record_mode = false;
                     }
                 }
                 else if (variableName == "initial_start_file_address") {
@@ -233,6 +246,10 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
     }
     else if (a.pos_threshold != b.pos_threshold) {
         std::cout << "pos_threshold not equal!\n";
+        return false;
+    }
+    else if (a.record_mode != b.record_mode) {
+        std::cout << "record_mode not equal\n";
         return false;
     }
     else if (a.coast_threshold != b.coast_threshold) {
@@ -428,7 +445,8 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps << "\n";
     os << "startTime: "     << object.startTime     << "\tendTime: "          << object.endTime         << "\tdurationTime: "    << object.durationTime << "\ttimeRes: " << object.timeRes << "\n";
     os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
-    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n\n";
+    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n";
+    os << "record_mode: "   << object.record_mode   << "\n\n";
     
     os << "mutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
     os << "gamma_m_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";

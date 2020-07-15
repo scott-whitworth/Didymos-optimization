@@ -1,13 +1,9 @@
 //Didymos-Optimization_Project:
-//Last Editor: Mateo
-//Tasks Completed: 
-    //No recent changes
-
 #include "elements.h"
 #include <iomanip> // setprecision(int)
 
 
-// constrctors
+// constructors
 
 // sets starting values as given
 template <class T>
@@ -59,6 +55,10 @@ template <class T> elements<T> elements<T>::operator/(const T & i) const {
     return elements<T>( this->r / i, this->theta / i, this->z / i, this->vr / i, this->vtheta / i, this->vz / i);
 }
 
+// Comparison method to compare this elements to another, returning true (equivalent) within a threshold
+// input: other - another elements object to compare to
+//        comp_Thresh - a threshold for comparison, so when elements are considered equivalent it is a not necessarrily 100% (when not equal to 0)
+// output: returns true if for all properties (pos & vel) the difference between them is less than or equal to comp_Thresh
 template <class T> bool elements<T>::compare(const elements<T> & other, T comp_Thresh) {
     //Check values
     if (abs(this->r - other.r) > comp_Thresh) {
@@ -89,4 +89,3 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const elements<
     Str << e.r << "," << e.theta << "," << e.z << "," << e.vr << "," << e.vtheta << "," << e.vz << "\n";
     return Str;
 }
-

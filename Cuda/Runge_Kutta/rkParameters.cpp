@@ -1,4 +1,5 @@
 #include "rkParameters.h"
+#define SECONDS_IN_YEAR 365.25*24*3600
 
 template <class T> rkParameters<T>::rkParameters(T tripTime0,T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
                                                  T *gamma0, T *tau0, T *coast0) {  // coefficients<T>
@@ -89,6 +90,30 @@ template <class T> rkParameters<T>::rkParameters() {
     //coeff.tau = NULL;
     //coeff.coast = NULL;
 }
+
+// Method for creating random parameters
+// input: rng - random number object generator to be used to generate random values
+// output: an rkParameters object that contains randomized properties within a valid ranges
+rkParameters<double> randomParameters(std::mt19937_64 & rng) {
+    double tripTime = SECONDS_IN_YEAR*((static_cast<double>(rng()) / rng.max()) + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+    double alpha = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
+    double beta  = M_PI * ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
+    double zeta  = M_PI * ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
+
+    coefficients<double> testcoeff;
+    for (int j = 0; j < testcoeff.gammaSize; j++) {
+        testcoeff.gamma[j] = 10.0 * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -10.0 <-> 10.0
+    }
+    for (int j = 0; j < testcoeff.tauSize; j++) {
+        testcoeff.tau[j] = 10.0 * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -10.0 <-> 10.0
+    }
+    for (int j = 0; j < testcoeff.coastSize; j++) {
+        testcoeff.coast[j] = 10.0 * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -10.0 <-> 10.0
+    }
+
+    return rkParameters<double>(tripTime, alpha, beta, zeta, testcoeff); 
+}
+
 
 template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, T comp_Thresh) {
     //First Check Coefficient element
