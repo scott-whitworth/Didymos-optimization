@@ -95,6 +95,14 @@ void setMutateFile(const cudaConstants* cConstants);
 // output: EarthCheckValues.csv is created and holds rows of element info on earth with timeStamp on each row
 void recordEarthData(const cudaConstants * cConstants);
 
+// Takes in a pool and records the parameter info on all individuals
+// input: cConstants - to access time_seed in deriving file name
+//        pool - holds all the individuals to be stored
+//        poolSize - to use in iterating through the pool
+//        generation - used in deriving file name
+// output: file generation#[generation]-[time_seed].csv is created with each row holding parameter values of individuals
+void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, int poolSize, int generation);
+
 #include "output.cpp"
 
 #endif

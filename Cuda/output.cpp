@@ -376,14 +376,14 @@ void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, i
     entirePool << pool[i].startParams.zeta << ",";
     entirePool << pool[i].startParams.tripTime << ",";
 
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-      entirePool << pool[i].startParams.coeff.gamma[i] << ",";
+    for (int j = 0; j < GAMMA_ARRAY_SIZE; j++) {
+      entirePool << pool[i].startParams.coeff.gamma[j] << ",";
     }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-      entirePool << pool[i].startParams.coeff.tau[i] << ",";
+    for (int j = 0; j < TAU_ARRAY_SIZE; j++) {
+      entirePool << pool[i].startParams.coeff.tau[j] << ",";
     }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-      entirePool << pool[i].startParams.coeff.coast[i] << ",";
+    for (int j = 0; j < COAST_ARRAY_SIZE; j++) {
+      entirePool << pool[i].startParams.coeff.coast[j] << ",";
     }
     entirePool << "\n";
   }
