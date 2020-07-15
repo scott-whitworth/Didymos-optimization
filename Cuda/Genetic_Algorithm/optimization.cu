@@ -190,8 +190,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) );
     
     // Files outputted allows plotting of solutions in matlab
-    // Write the final best and worst performing individuals to their respective files    
-    recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
+    // Write the final best and worst performing individuals to their respective files
+    if (cConstants->record_mode == true) {
+        recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
+    }
     finalRecord(cConstants, inputParameters, generation, thrust);
 
     delete [] inputParameters;

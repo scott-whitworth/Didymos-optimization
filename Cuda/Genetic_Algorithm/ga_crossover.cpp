@@ -256,127 +256,84 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             mutatedGenes[2] = rng() % OPTIM_VARS;
         } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
     }
-    // If in recording mode, append the mutate mask onto the appropriate file in a row
-    if (cConstants->record_mode == true) {
-        std::ofstream mutateFile;
-        mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-        mutateFile << generation << ",";
-        mutateFile << annealing << ",";
-        for (int i = 0; i < OPTIM_VARS; i++) {
-            if (mutatedGenes[0] == i || mutatedGenes[1] == i || mutatedGenes[2] == i) {
-                mutateFile << "1";
-                
-            }
-            else {
-                mutateFile << "0";
-            }
-            mutateFile << ",";
-        }
-        //mutateFile << "\n";
-        mutateFile.close();
-    }
 
-    std::vector<double> recordLog;
+    // Declare a record that is a "mutation mask" to describe what genes are being changed and by how much
+    double recordLog[OPTIM_VARS];
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        // Initialized to be 0's for all values and then the indexs are updated when mutations are applied
+        recordLog[i] = 0;
+    }
 
     for (int i = 0; i < genesToMutate; i++) {
         int mutatedValue = mutatedGenes[i]; // the gene to mutate
-        // alter thrust coefficients only when using a thruster
-        if (thrust.type != thruster<double>::NO_THRUST) {
-            //check coeff
-            if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
-                double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
-                newInd.coeff.gamma[mutatedValue] += randVar;
-                recordLog.push_back(1);
-                recordLog.push_back(randVar);
-            }
-            else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
-                double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
-                newInd.coeff.tau[mutatedValue-TAU_OFFSET] += randVar;
-                recordLog.push_back(2);
-                recordLog.push_back(randVar);
-            }
-            else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
-                double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
-                newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
-                recordLog.push_back(3);
-                recordLog.push_back(randVar);
-            }
+        
+        if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
+            double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
+            newInd.coeff.gamma[mutatedValue] += randVar;
+            recordLog[mutatedValue] = randVar;
+        }
+        else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
+            double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
+            newInd.coeff.tau[mutatedValue-TAU_OFFSET] += randVar;
+            recordLog[mutatedValue] = randVar;
+        }
+        else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
+            double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
+            newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
+            recordLog[mutatedValue] = randVar;
         }
         else if (mutatedValue == TRIPTIME_OFFSET) { // Time final
             double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
             newInd.tripTime+= randVar;
-            recordLog.push_back(4);
-            recordLog.push_back(randVar);
+            recordLog[mutatedValue] = randVar;
         }
         else if (mutatedValue == ZETA_OFFSET) { // Zeta
             double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
             newInd.zeta += randVar;
-            recordLog.push_back(5);
-            recordLog.push_back(randVar);
+            recordLog[mutatedValue] = randVar;
         }
         else if (mutatedValue == BETA_OFFSET) { // Beta
             double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
             newInd.beta = randVar;
-            // A check to ensure beta remains in value range 0 to pi
+            recordLog[mutatedValue] = randVar; // Due to the bounds check following this line, this record log may be technically inaccurrate 
 
+            // A check to ensure beta remains in value range 0 to pi
             if (newInd.beta < 0) {
                 newInd.beta = 0;
-                recordLog.push_back(6);
-                recordLog.push_back(0);
             }
             else if (newInd.beta > M_PI) {
-                newInd.beta = M_PI;
-                recordLog.push_back(6);
-                recordLog.push_back(M_PI);
-            } else {
-                recordLog.push_back(6);
-                recordLog.push_back(randVar);
+                newInd.beta = M_PI;              
             }
         }
         else if (mutatedValue == ALPHA_OFFSET) { // Alpha
             double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
-            newInd.alpha += randVar;
-            recordLog.push_back(7);
-            recordLog.push_back(randVar);
+            newInd.alpha += randVar;                
+            recordLog[mutatedValue] = randVar;
         }
     }
 
-    
-    if(cConstants->record_mode == true) {
+    // If in record mode, append the recordLog into the .csv file
+    if (cConstants->record_mode == true) {
         std::ofstream mutateFile;
-        mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-
-        //reads the data from recordLog
-        //has identifier at even numbers, and amount at odd numbers
-        //indentifiers:
-        //1 == gamma
-        //2 == tau
-        //3 == coast
-        //4 == triptime
-        //5 == zeta
-        //6 == beta
-        //7 == alpha
-        double changes [7] = {0,0,0,0,0,0,0};
-        for(int i = 0; i<recordLog.size() ; i+=2) {
-            if(recordLog[i] == 1) {
-                changes[0] += recordLog[i+1];
-            } else if(recordLog[i] == 2) {
-                changes[1] += recordLog[i+1];
-            } else if(recordLog[i] == 3) {
-                changes[2] += recordLog[i+1];
-            } else if(recordLog[i] == 4) {
-                changes[3] += recordLog[i+1];
-            } else if(recordLog[i] == 5) {
-                changes[4] += recordLog[i+1];
-            } else if(recordLog[i] == 6) {
-                changes[5] += recordLog[i+1];
-            } else if(recordLog[i] == 7) {
-                changes[6] += recordLog[i+1];
-            } else {
-                std::cout << "mutate range over" << std::endl;
-            }
+        mutateFile.open("mutateFile-" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+        // Record generation and annealing values
+        mutateFile << generation << "," << annealing << ",";
+        // Record gamma mutation values
+        for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
+            mutateFile << recordLog[i] << ",";
         }
-        mutateFile << changes[0] << "," << changes[1] << "," << changes[2] << "," << changes[3] << "," << changes[4] << "," << changes[5] << "," << changes[6] << "," << "\n";
+        // Record tau mutation values
+        for (int i = TAU_OFFSET; i < (TAU_OFFSET + TAU_ARRAY_SIZE); i++) {
+            mutateFile << recordLog[i] << ",";
+        }
+        // Record coast mutation values
+        for (int i = COAST_OFFSET; i < (COAST_OFFSET + COAST_ARRAY_SIZE); i++) {
+            mutateFile << recordLog[i] << ",";
+        }
+        // Record alpha, beta, zeta, tripTime
+        mutateFile << recordLog[ALPHA_OFFSET] << "," << recordLog[BETA_OFFSET] << "," << recordLog[ZETA_OFFSET] << "," << recordLog[TRIPTIME_OFFSET] << ",";
+        mutateFile << "\n";
+        
         mutateFile.close();
     }
     

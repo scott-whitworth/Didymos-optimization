@@ -19,9 +19,9 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
 void setMutateFile(const cudaConstants* cConstants) { 
   std::ofstream mutateFile;
-  mutateFile.open("mutateFile" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+  mutateFile.open("mutateFile-" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
 
-  mutateFile << "gen,anneal";
+  mutateFile << "gen, anneal,";
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     mutateFile << "gamma" << i << ",";
   }
@@ -31,10 +31,9 @@ void setMutateFile(const cudaConstants* cConstants) {
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
     mutateFile << "coast" << i << ",";
   }
-  mutateFile << "alpha,beta,zeta,tripTime, gamma change, tau change, coast change, triptime change, zeta change, beta change, alpha change\n";
+  mutateFile << "alpha,beta,zeta,tripTime\n";
 
   mutateFile.close();
-
 }
 
 // Output final results of genetic algorithm
