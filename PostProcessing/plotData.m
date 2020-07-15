@@ -146,7 +146,7 @@ ylabel('sin(\tau)')
 % xlabel('Time')
 % ylabel('coast value')
 
-[co,~]=angles(cR(7,1:sizeC),tripTime,coast,coast);
+co = angles(cR(7,1:sizeC),tripTime,coast);
 subplot(2,3,2:3)
 plot(cR(7,1:sizeC),sin(co).^2)
 xlim([0 tripTime]), ylim([0,1])

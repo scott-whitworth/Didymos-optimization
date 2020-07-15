@@ -1,5 +1,6 @@
 function [accelX,accelY,accelZ] = getAccel(cR,tripTime,gammaCoeff,tauCoeff,sizeC)
-    [gamma,tau]=angles(cR(7,1:sizeC),tripTime,gammaCoeff,tauCoeff);
+    gamma = angles(cR(7,1:sizeC),tripTime,gammaCoeff);
+    tau = angles(cR(7,1:sizeC),tripTime,tauCoeff);
     accelR = cR(10,1:sizeC).*cos(tau).*sin(gamma);
     accelTheta = cR(10,1:sizeC).*cos(tau).*cos(gamma);
     accelZ = cR(10,1:sizeC).*sin(tau);

@@ -189,7 +189,7 @@ xlabel('t')
 ylabel('sin(\tau)')
 
 
-[co,~]=angles(cR(7,1:sizeC),tripTime1,coast1,coast1);
+co = angles(cR(7,1:sizeC),tripTime1,coast1);
 subplot(2,3,2:3)
 plot(cR(7,1:sizeC),sin(co).^2)
 title('Coasting function and threshold')
@@ -237,7 +237,7 @@ xlabel('t')
 ylabel('sin(\tau)')
 
 
-[do,~]=angles(dR(7,1:sizeD),tripTime2,coast2,coast2);
+do = angles(dR(7,1:sizeD),tripTime2,coast2);
 subplot(2,3,2:3)
 plot(dR(7,1:sizeD),sin(do).^2)
 title('Coasting function and threshold')
