@@ -439,7 +439,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 // Output: The two streams are appended the individual's information and anneal value
 void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
     // Output the information to excel spreadsheet
-    ExcelOutput << currentGeneration << ','
+    ExcelOutput << static_cast<int>(currentGeneration) << ','
                 << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
                 << individual.finalPos.r << ',' << individual.finalPos.theta << ',' << individual.finalPos.z << ',' // Final position
                 << individual.finalPos.vr << ',' << individual.finalPos.vtheta << ',' << individual.finalPos.vz << ',' // Final velocity
@@ -478,7 +478,7 @@ void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's thruster information and anneal value
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
-    ExcelOutput << currentGeneration << ',';
+    ExcelOutput << static_cast<int>(currentGeneration) << ',';
     for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
         ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
     }
