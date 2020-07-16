@@ -1,5 +1,6 @@
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Config_Constants/config.h"
+#include "../output.h"
 #include "ga_crossover.h"
 #include <iostream>
 #include <chrono>
@@ -238,7 +239,8 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     if (mutateChance < cConstants->triple_mutation_rate) {
         genesToMutate = 3;
     }
-    else if (mutateChance < cConstants->double_mutation_rate) {
+    // sum of double and triple rates produces a band that is greater than triple_mutate_rate
+    else if (mutateChance < (cConstants->double_mutation_rate + cConstants->triple_mutation_rate)) {
         genesToMutate = 2;
     }
 
@@ -314,27 +316,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
     // If in record mode, append the recordLog into the .csv file
     if (cConstants->record_mode == true) {
-        std::ofstream mutateFile;
-        mutateFile.open("mutateFile-" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
-        // Record generation and annealing values
-        mutateFile << generation << "," << annealing << ",";
-        // Record gamma mutation values
-        for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
-            mutateFile << recordLog[i] << ",";
-        }
-        // Record tau mutation values
-        for (int i = TAU_OFFSET; i < (TAU_OFFSET + TAU_ARRAY_SIZE); i++) {
-            mutateFile << recordLog[i] << ",";
-        }
-        // Record coast mutation values
-        for (int i = COAST_OFFSET; i < (COAST_OFFSET + COAST_ARRAY_SIZE); i++) {
-            mutateFile << recordLog[i] << ",";
-        }
-        // Record alpha, beta, zeta, tripTime
-        mutateFile << recordLog[ALPHA_OFFSET] << "," << recordLog[BETA_OFFSET] << "," << recordLog[ZETA_OFFSET] << "," << recordLog[TRIPTIME_OFFSET] << ",";
-        mutateFile << "\n";
-        
-        mutateFile.close();
+        recordMutateFile(cConstants, generation, annealing, genesToMutate, recordLog);
     }
     
     return newInd;
@@ -358,6 +340,14 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
     // With percent chance of occurring, perform a mutation on the new individual's starting params
     if (rng() % 100 < cConstants->mutation_rate * 100) {
         pool[newIndividualIndex].startParams = mutate(pool[newIndividualIndex].startParams, rng, annealing, cConstants, thrust, generation);
+    }
+    // Still make sure to record in mutateFile, difference would be that the result is that all the genes have 0
+    else if (cConstants->record_mode == true) {
+        double recordLog[OPTIM_VARS];
+        for (int i = 0; i < OPTIM_VARS; i++) {
+            recordLog[i] = 0;
+        }
+        recordMutateFile(cConstants, generation, annealing, 0, recordLog);
     }
 }
 

@@ -96,6 +96,14 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
 void setMutateFile(const cudaConstants* cConstants);
 
+// input: cConstants - access time_seed to derive file name
+//        generation - for storing into the file, the generation that the mutation is occuring
+//        annealing - for storing into the file, the anneal value being used
+//        numGenes - the number of genes that are to be mutated
+//        recordLog[OPTIM_VARS] - a "mutate mask" that is an array corresponding to the optimization array that contains the random mutate values being applied
+// output: file mutateFile-[time_seed].csv is appended a new row containing mutate information
+void recordMutateFile(const cudaConstants * cConstants, double generation, double annealing, int numGenes, double recordLog[OPTIM_VARS]);
+
 // method that stores information of launchCon of timeRes*24 resolution
 // input: cConstants - access time range and resolution info on launchCon
 //        launchCon - access elements of earth 

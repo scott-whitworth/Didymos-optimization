@@ -23,7 +23,7 @@ void setMutateFile(const cudaConstants* cConstants) {
   int seed = cConstants->time_seed;
   mutateFile.open("mutateFile-" + std::to_string(seed) + ".csv", std::ios_base::app);
 
-  mutateFile << "gen, anneal,";
+  mutateFile << "gen, anneal, genesToMutate,";
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     mutateFile << "gamma" << i << ",";
   }
@@ -78,6 +78,38 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
   delete [] dE;
   delete [] Etot;
   delete [] Etot_avg;
+}
+
+// input: cConstants - access time_seed to derive file name
+//        generation - for storing into the file, the generation that the mutation is occuring
+//        annealing - for storing into the file, the anneal value being used
+//        numGenes - the number of genes that are to be mutated
+//        recordLog[OPTIM_VARS] - a "mutate mask" that is an array corresponding to the optimization array that contains the random mutate values being applied
+// output: file mutateFile-[time_seed].csv is appended a new row containing mutate information
+void recordMutateFile(const cudaConstants * cConstants, double generation, double annealing, int numGenes, double recordLog[OPTIM_VARS]) {
+  std::ofstream mutateFile;
+  mutateFile.open("mutateFile-" + std::to_string(cConstants->time_seed) + ".csv", std::ios_base::app);
+
+  // Record generation, annealing, and number of genes that should be impacted
+  mutateFile << generation << "," << annealing << "," << numGenes << ",";
+
+  // Record gamma mutation values
+  for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
+      mutateFile << recordLog[i] << ",";
+  }
+  // Record tau mutation values
+  for (int i = TAU_OFFSET; i < (TAU_OFFSET + TAU_ARRAY_SIZE); i++) {
+      mutateFile << recordLog[i] << ",";
+  }
+  // Record coast mutation values
+  for (int i = COAST_OFFSET; i < (COAST_OFFSET + COAST_ARRAY_SIZE); i++) {
+      mutateFile << recordLog[i] << ",";
+  }
+  // Record alpha, beta, zeta, tripTime
+  mutateFile << recordLog[ALPHA_OFFSET] << "," << recordLog[BETA_OFFSET] << "," << recordLog[ZETA_OFFSET] << "," << recordLog[TRIPTIME_OFFSET] << ",";
+  mutateFile << "\n";
+  
+  mutateFile.close();
 }
 
 // Output final results of genetic algorithm
