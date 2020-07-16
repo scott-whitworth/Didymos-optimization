@@ -188,7 +188,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
                 newInd.coeff.coast[i - COAST_OFFSET] = p2.coeff.coast[i - COAST_OFFSET];
             }
             else if (mask[i] == AVG) {
-                newInd.coeff.coast[i - COAST_OFFSET] = p2.coeff.coast[i - COAST_OFFSET]/2.0 + p1.coeff.coast[i - COAST_ARRAY_SIZE]/2.0;
+                newInd.coeff.coast[i - COAST_OFFSET] = p2.coeff.coast[i - COAST_OFFSET]/2.0 + p1.coeff.coast[i - COAST_OFFSET]/2.0;
             }
         }
     }

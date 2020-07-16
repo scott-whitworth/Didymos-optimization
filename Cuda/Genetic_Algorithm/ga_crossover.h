@@ -75,7 +75,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 //        rng - Random number generator that is used to determine if mutation occurs and is passed into mutate function if it is occurring
 //        cConstants - holds properties that is passed into mutate, also contains mutation_rate value that is used to determine if mutation will occur
 // Output: pool[newIndiviudalIndex] contains a newly generated individual that is combination of survivor[parent1Index] and survivor[parent2Index] with possibly slight value changes in 1,2,3 variables
-void mutateNewIndividual(Individual *pool, Individual *survivors, int mask[], int index, int i, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation);
+void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, int parent1Index, int parent2Index, int newIndividualIndex, double annealing, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation);
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
 // Input: pool - pointer array to Individuals that is where the new pair of individuals are stored
