@@ -5,10 +5,6 @@
 #include <iomanip>
 #include "math.h"
 
-// NOTE: Each of the filenames created with these functions currently starts with "Output/"
-// This organizes all the output files into Genetic_Algorithm/Output, but
-// the Output folder must already be allocated within the Genetic_Algorithm working directory
-
 // Utility function to display the currently best individual onto the terminal while the algorithm is still running
 // input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
 // output: onto the console termina, generation is displayed and best individual's posDiff, velDiff, and cost values
