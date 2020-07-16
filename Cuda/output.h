@@ -50,9 +50,10 @@ void initializeRecord(const cudaConstants * cConstants);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
-// input: output - the output file stream being used
-//        rank - the positional performance of the individual
-//        ind - the individual object being recorded
+// input: generation - the positional performance of the individual
+//        numStep - the number of steps taken in the RK method
+//        start - the array of optimized intiial parameters
+//        yp - the final RK solution at numStep
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
