@@ -3,6 +3,7 @@
 #include "Thrust_files/thruster.h"
 #include <string>
 #include <iomanip>
+#include "math.h"
 
 // Utility function to display the currently best individual onto the terminal while the algorithm is still running
 // input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated
@@ -86,7 +87,7 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -142,14 +143,18 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
-  // Creates a bin file to analyze the error in thrust calculations
-  // Used with errorCheck.m
-  // errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
   lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[lastStepInt];
+
+  // Creates a bin file to analyze the error in thrust calculations
+  // Used with errorCheck.m
+  if (cConstants->record_mode == true) {
+    errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+  }
 
   std::ofstream output;
   int seed = cConstants->time_seed;
@@ -220,59 +225,21 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
   output.close();
 }
 
-// Called if record_mode is true at end of optimize process
-// input: cConstants - access thruster_type info, best_count, and for recording the seed
-//        generation - record the value
-//        pool - accessing Individuals (top best_count ones)
-//        start - passed to writeTrajectoryToFile method
-//        thrust - 
-// output: progressiveAnalysis.csv file is appended header information, followed by writeTrajectoryToFile and progressiveAnalysis called for best_count individuals
-void progressiveRecord(const cudaConstants * cConstants, double generation, Individual * pool, double * start, thruster<double>& thrust) {
-  std::ofstream progressiveOutput;
-  progressiveOutput.open("progressiveAnalysis-"+std::to_string(cConstants->time_seed)+".csv", std::ios::app);
-  progressiveOutput << std::endl << "seed:," << cConstants->time_seed << ",  ,generations:," << static_cast<int>(generation) << std::endl;
-  progressiveOutput << "rank,posDiff (au),velDiff (au/s),tripTime (s),alpha (rad),beta (rad),zeta (rad),";
-
-  if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
-      progressiveOutput << "gamma_a0,gamma_a1,gamma_b1,gamme_a2,gamme_b2,gamma_a3,gamma_b3,";
-      progressiveOutput << "tau_a0,tau_a1,tau_b1,";
-      progressiveOutput << "coast_a0,coast_a1,coast_b1,coast_a2,coast_b2,";
-  }
-
-  progressiveOutput << std::endl;
-  // Write the best individuals with best_count in total outputted in seperate binary files
-  for (int i = 0; i < cConstants->best_count; i++) {
-      for (int j = 0; j < pool[i].startParams.coeff.gammaSize; j++) {
-          start[GAMMA_OFFSET + j] = pool[i].startParams.coeff.gamma[j];
-      }
-      for (int j = 0; j < pool[i].startParams.coeff.tauSize; j++) {
-          start[TAU_OFFSET + j] = pool[i].startParams.coeff.tau[j];
-      }
-      for (int j = 0; j < pool[i].startParams.coeff.coastSize; j++) {
-          start[COAST_OFFSET + j] = pool[i].startParams.coeff.coast[j];
-      }
-      start[TRIPTIME_OFFSET] = pool[i].startParams.tripTime;
-      start[ALPHA_OFFSET] = pool[i].startParams.alpha;
-      start[BETA_OFFSET] = pool[i].startParams.beta;
-      start[ZETA_OFFSET] = pool[i].startParams.zeta;
-      // could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-      writeTrajectoryToFile(start, i+1, thrust, cConstants);
-      progressiveAnalysis(progressiveOutput, i+1, pool[i], cConstants);
-  }
-  progressiveOutput << std::endl;
-  progressiveOutput.close();
-}
-
 // Record progress of individual
 // input: output - the output file stream being used
 //        rank - the positional performance of the individual
 //        ind - the individual object being recorded
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config) {
-    output << rank << ',' << ind.posDiff << ',' << ind.velDiff << ',' << ind.startParams.tripTime << ',';
-    output << ind.startParams.alpha << ',' << ind.startParams.beta << ',' << ind.startParams.zeta << ',';
+void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+    std::ofstream output;
+    output.open("progressiveAnalysis.csv", std::ios::app);
+    output << config->time_seed << ',' << generation << ',' << numStep << ','; 
+    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
+    output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
+    output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
     output << std::endl;
+    output.close();
 }
 
 // Initialize the .csv files
@@ -434,14 +401,9 @@ void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, i
 //        generation - to record the generation value 
 //        thrust - passed into progressiveRecord and writeTrajectoryToFile
 // output: writeTrajectoryToFile is called, if in record_mode then progressiveRecord is called as well
-void finalRecord(const cudaConstants* cConstants, Individual * pool, double generation, thruster<double>& thrust) {
+void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation, thruster<double>& thrust) {
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
-
-  // If in record mode, call progressiveRecord to store things in progressive analaysis file
-  if (cConstants->record_mode == true) {
-    progressiveRecord(cConstants, generation, pool, start, thrust);
-  }
 
   // Only output the final best individual
   for (int j = 0; j < pool[0].startParams.coeff.gammaSize; j++) {
@@ -460,9 +422,9 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, double gene
   start[ZETA_OFFSET] = pool[0].startParams.zeta;
 
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-  writeTrajectoryToFile(start, 1, thrust, cConstants);
+  writeTrajectoryToFile(start, generation, thrust, cConstants);
 
-  delete start;
+  delete [] start;
 }
 
 // Utility function to observe the trend of best individual in the algorithm through the generations

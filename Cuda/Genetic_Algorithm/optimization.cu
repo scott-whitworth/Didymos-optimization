@@ -205,7 +205,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         recordGenerationPerformance(cConstants, inputParameters, generation, 0, numThreads, thrust);
         recordAllIndividuals(cConstants, inputParameters, numThreads, generation);
     }
-    finalRecord(cConstants, inputParameters, generation, thrust);
+    finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
 
     delete [] inputParameters;
     delete [] survivors;

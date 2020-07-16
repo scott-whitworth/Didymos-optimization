@@ -10,6 +10,20 @@
 // output: onto the console termina, generation is displayed and best individual's posDiff, velDiff, and cost values
 void terminalDisplay(Individual& individual, unsigned int currentGeneration);
 
+// Records error in energy conservation due to thrust calculations
+// Called if record_mode is true at end of optimize process
+// input: time - array of times
+//        yp - array of RK solutions (pos and vel components)
+//        gamma - array of in-plane thrust angles
+//        tau - array of out-of-plane thrust angles
+//        lastStep - number of steps taken in RK
+//        accel - array of magnitudes of acceleration due to thrust
+//        fuelSpent - array of aggregate amounts of fuel spent
+//        wetMass - initial mass of spacecraft and fuel
+//        config - cudaConstants object for accessing genetic.config information
+// output: errorCheck-(seed).bin recording arrays of time, work, changes in total mechanical energy, and average energy between time steps
+void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config);
+
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
 //        lastStep - Used to store number of total steps as output
@@ -19,7 +33,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration);
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants);
+void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Output trajectory information to finalOptimization-[time_seed].bin
 // input: start - passed to trajectoryPrint, information also outputted to finalOptimization[-time_seed].bin file
@@ -27,16 +41,7 @@ void trajectoryPrint( double x[], double & lastStep, int threadRank, elements<do
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrust, const cudaConstants* cConstants);
-
-// Called if record_mode is true at end of optimize process
-// input: cConstants - access thruster_type info, best_count, and for recording the seed
-//        generation - record the value
-//        pool - accessing Individuals (top best_count ones)
-//        start - passed to writeTrajectoryToFile method
-//        thrust - 
-// output: progressiveAnalysis.csv file is appended header information, followed by writeTrajectoryToFile and progressiveAnalysis called for best_count individuals
-void progressiveRecord(const cudaConstants * cConstants, double generation, Individual * pool, double * start, thruster<double>& thrust);
+void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Initialize the .csv files
 // input: cConstants - to access time_seed for deriving file name conventions and also thruster type
@@ -44,12 +49,13 @@ void progressiveRecord(const cudaConstants * cConstants, double generation, Indi
 void initializeRecord(const cudaConstants * cConstants);
 
 // Record progress of individual
+// Called if record_mode is true at end of optimize process
 // input: output - the output file stream being used
 //        rank - the positional performance of the individual
 //        ind - the individual object being recorded
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(std::ofstream & output, int rank, Individual & ind, const cudaConstants* config);
+void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
 
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
@@ -83,7 +89,7 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
 //        generation - to record the generation value 
 //        thrust - passed into progressiveRecord and writeTrajectoryToFile
 // output: writeTrajectoryToFile is called, if in record_mode then progressiveRecord is called as well
-void finalRecord(const cudaConstants* cConstants, Individual * pool, double generation, thruster<double>& thrust);
+void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation, thruster<double>& thrust);
 
 // input: cConstants - access time_seed to derive file name
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
