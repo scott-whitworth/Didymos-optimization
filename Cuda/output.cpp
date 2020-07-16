@@ -35,6 +35,7 @@ void setMutateFile(const cudaConstants* cConstants) {
   mutateFile << "alpha,beta,zeta,tripTime\n";
 
   mutateFile.close();
+}
 
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
   double *mass, *work, *dE, *Etot, *Etot_avg;
