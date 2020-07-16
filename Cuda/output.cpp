@@ -25,7 +25,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
 void setMutateFile(const cudaConstants* cConstants) { 
   std::ofstream mutateFile;
   int seed = cConstants->time_seed;
-re  mutateFile.open("mutateFile-" + std::to_string(seed) + ".csv", std::ios_base::app);
+  mutateFile.open("mutateFile-" + std::to_string(seed) + ".csv", std::ios_base::app);
 
   mutateFile << "gen, anneal, genesToMutate,";
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
