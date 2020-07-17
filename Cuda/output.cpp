@@ -266,7 +266,7 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
 //        ind - the individual object being recorded
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(std::ofstream output, int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
     std::ofstream output;
     output.open("progressiveAnalysis.csv", std::ios_base::app);
     output << rank << ',' << numStep << ','; 
