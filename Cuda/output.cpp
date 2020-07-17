@@ -219,45 +219,45 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(std::ofstream output, double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants) {
+void writeTrajectoryToFile(double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants) {
     elements<double> yp;
     double numStep = 0;
     
     trajectoryPrint(start, numStep, generation, rank, yp, thrust, cConstants);
 
-    progressiveAnalysis(output, generation, rank, static_cast<int>(numStep), start, yp, cConstants);
+    progressiveAnalysis(generation, rank, static_cast<int>(numStep), start, yp, cConstants);
 
     //writes final optimization values to a seperate file
-    std::ofstream bin;
+    std::ofstream output;
     // type double for consistency in binary output
     double seed = cConstants->time_seed, gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
-    bin.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(rank)+'-'+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    output.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(rank)+'-'+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
-    bin.write((char*)&cConstants->r_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->theta_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->z_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->vr_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->vz_fin_ast, sizeof(double));
-    bin.write((char*)&cConstants->r_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->theta_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->z_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->vr_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->vz_fin_earth, sizeof(double));
-    bin.write((char*)&cConstants->coast_threshold, sizeof(double));
-    bin.write((char*)&gsize, sizeof(double));
-    bin.write((char*)&tsize, sizeof(double));
-    bin.write((char*)&csize, sizeof(double));
+    output.write((char*)&cConstants->r_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->z_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+    output.write((char*)&cConstants->r_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->z_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+    output.write((char*)&cConstants->coast_threshold, sizeof(double));
+    output.write((char*)&gsize, sizeof(double));
+    output.write((char*)&tsize, sizeof(double));
+    output.write((char*)&csize, sizeof(double));
 
     for (int j = 0; j < OPTIM_VARS; j++) {
-      bin.write((char*)&start[j], sizeof (double));
+      output.write((char*)&start[j], sizeof (double));
     }
     
-    bin.write((char*)&numStep, sizeof (double));
+    output.write((char*)&numStep, sizeof (double));
 
-  bin.close();
+  output.close();
 }
 
 // Record progress of individual
@@ -267,11 +267,14 @@ void writeTrajectoryToFile(std::ofstream output, double *start, int generation, 
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(std::ofstream output, int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+    std::ofstream output;
+    output.open("progressiveAnalysis.csv", std::ios_base::app);
     output << rank << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
     output << std::endl;
+    output.close();
 }
 
 // Initialize the .csv files
@@ -447,6 +450,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   output << "\nTime Seed: ," << seed << ",Generation: ," << generation << ",Coast Threshold: ," << coastThresh << ",\n"; 
   output << "Gamma Size: ," << gammaSize << ",Tau Size ," << tauSize << ",Coast Size: ," << coastSize << ",\n";
   output << "rank,numStep,posDiff,velDiff,tripTime,alpha,beta,zeta,\n";
+  output.close();
 
   // Output the top best_count Individuals
   for (int i = 0; i < cConstants->best_count; i++) {
@@ -467,11 +471,10 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
     start[ZETA_OFFSET] = pool[i].startParams.zeta;
 
     // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    writeTrajectoryToFile(output, start, generation, i+1, thrust, cConstants);
+    writeTrajectoryToFile(start, generation, i+1, thrust, cConstants);
 
   }
 
-  output.close();
 
   delete [] start;
 }
