@@ -30,7 +30,7 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
     cudaMalloc((void**) &devAbsTol, sizeof(double));
     cudaMalloc((void**) &devCConstant, sizeof(cudaConstants));
 
-    // copy values of parameters passed to device onto device
+    // copy values of parameters passed from host onto device
     cudaMemcpy(devGeneration, generation, numThreads * sizeof(Individual), cudaMemcpyHostToDevice);
     cudaMemcpy(devTimeInitial, &timeInitial, sizeof(double), cudaMemcpyHostToDevice);
     cudaMemcpy(devStepSize, &stepSize, sizeof(double), cudaMemcpyHostToDevice);
