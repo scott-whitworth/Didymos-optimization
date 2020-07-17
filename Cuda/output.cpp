@@ -121,7 +121,7 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], double & lastStep, int generation, int rank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -188,11 +188,11 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   if (cConstants->record_mode == true) {
     errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
   }
-    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+    progressiveAnalysis(generation, rank, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
-  output.open("../../PostProcessing/orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
+  output.open("../../PostProcessing/bin/orbitalMotion-"+std::to_string(rank)+'-'+std::to_string(seed)+".bin", std::ios::binary);
   // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
   for(int i = 0; i <= lastStepInt; i++) {
     //output << yp[i];
@@ -220,16 +220,16 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants) {
+void writeTrajectoryToFile(double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants) {
     elements<double> yp;
     double numStep = 0;
-    trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
+    trajectoryPrint(start, numStep, generation, rank, yp, thrust, cConstants);
 
     //writes final optimization values to a seperate file
     std::ofstream output;
     // type double for consistency in binary output
     double seed = cConstants->time_seed;
-    output.open("../../PostProcessing/finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    output.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(rank)+'-'+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
@@ -265,11 +265,11 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
 //        ind - the individual object being recorded
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
     int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
     std::ofstream output;
     output.open("progressiveAnalysis.csv", std::ios::app);
-    output << seed << ',' << generation << ',' << numStep << ','; 
+    output << seed << ',' << generation << ',' << rank << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
@@ -444,24 +444,28 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
 
-  // Only output the final best individual
-  for (int j = 0; j < pool[0].startParams.coeff.gammaSize; j++) {
-      start[GAMMA_OFFSET + j] = pool[0].startParams.coeff.gamma[j];
-  }
-  for (int j = 0; j < pool[0].startParams.coeff.tauSize; j++) {
-      start[TAU_OFFSET + j] = pool[0].startParams.coeff.tau[j];
-  }
-  for (int j = 0; j < pool[0].startParams.coeff.coastSize; j++) {
-      start[COAST_OFFSET + j] = pool[0].startParams.coeff.coast[j];
-  }
+  // Output the top best_count Individuals
+  for (int i = 0; i < cConstants->best_count; i++) {
+    
+    for (int j = 0; j < pool[i].startParams.coeff.gammaSize; j++) {
+        start[GAMMA_OFFSET + j] = pool[i].startParams.coeff.gamma[j];
+    }
+    for (int j = 0; j < pool[i].startParams.coeff.tauSize; j++) {
+        start[TAU_OFFSET + j] = pool[i].startParams.coeff.tau[j];
+    }
+    for (int j = 0; j < pool[i].startParams.coeff.coastSize; j++) {
+        start[COAST_OFFSET + j] = pool[i].startParams.coeff.coast[j];
+    }
 
-  start[TRIPTIME_OFFSET] = pool[0].startParams.tripTime;
-  start[ALPHA_OFFSET] = pool[0].startParams.alpha;
-  start[BETA_OFFSET] = pool[0].startParams.beta;
-  start[ZETA_OFFSET] = pool[0].startParams.zeta;
+    start[TRIPTIME_OFFSET] = pool[i].startParams.tripTime;
+    start[ALPHA_OFFSET] = pool[i].startParams.alpha;
+    start[BETA_OFFSET] = pool[i].startParams.beta;
+    start[ZETA_OFFSET] = pool[i].startParams.zeta;
 
-  // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-  writeTrajectoryToFile(start, generation, thrust, cConstants);
+    // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+    writeTrajectoryToFile(start, generation, i+1, thrust, cConstants);
+
+  }
 
   delete [] start;
 }
