@@ -51,7 +51,7 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
 //        yp - the final RK solution at numStep
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
+void progressiveAnalysis(std::ofstream output, int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
 
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation

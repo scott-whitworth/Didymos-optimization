@@ -265,17 +265,12 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
 //        ind - the individual object being recorded
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
-    int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
-    std::ofstream output;
-    output.open("progressiveAnalysis.csv", std::ios::app);
-    output << seed << ',' << generation << ',' << rank << ',' << numStep << ','; 
+void progressiveAnalysis(std::ofstream output, int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+    output << rank << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
-    output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << config->coast_threshold << ',';
     output << std::endl;
-    output.close();
 }
 
 // Initialize the .csv files
@@ -443,6 +438,14 @@ void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, i
 void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation, thruster<double>& thrust) {
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
+
+  int seed = cConstants->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
+  double coastThresh = cConstants->coast_threshold;
+  std::ofstream output;
+  output.open("progressiveAnalysis.csv", std::ios_base::app);
+  output << "\nTime Seed: ," << seed << ",Generation: ," << generation << ",Coast Threshold: ," << coastThresh << ",\n"; 
+  output << "Gamma Size: ," << gammaSize << ",Tau Size ," << tauSize << ",Coast Size: ," << coastSize << ",\n";
+  output << "rank,numStep,posDiff,velDiff,tripTime,alpha,beta,zeta,\n";
 
   // Output the top best_count Individuals
   for (int i = 0; i < cConstants->best_count; i++) {
