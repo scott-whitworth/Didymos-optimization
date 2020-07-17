@@ -188,7 +188,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
   if (cConstants->record_mode == true) {
     errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
   }
-    progressiveAnalysis(generation, rank, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
@@ -220,43 +219,45 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants) {
+void writeTrajectoryToFile(std::ofstream output, double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants) {
     elements<double> yp;
     double numStep = 0;
+    
     trajectoryPrint(start, numStep, generation, rank, yp, thrust, cConstants);
 
+    progressiveAnalysis(output, generation, rank, static_cast<int>(numStep), start, yp, cConstants);
+
     //writes final optimization values to a seperate file
-    std::ofstream output;
+    std::ofstream bin;
     // type double for consistency in binary output
-    double seed = cConstants->time_seed;
-    output.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(rank)+'-'+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    double seed = cConstants->time_seed, gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+    bin.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(rank)+'-'+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
-    output.write((char*)&cConstants->r_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->z_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->r_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->z_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
-    output.write((char*)&gsize, sizeof(double));
-    output.write((char*)&tsize, sizeof(double));
-    output.write((char*)&csize, sizeof(double));
+    bin.write((char*)&cConstants->r_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->theta_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->z_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->vr_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+    bin.write((char*)&cConstants->r_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->theta_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->z_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->vr_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+    bin.write((char*)&cConstants->coast_threshold, sizeof(double));
+    bin.write((char*)&gsize, sizeof(double));
+    bin.write((char*)&tsize, sizeof(double));
+    bin.write((char*)&csize, sizeof(double));
 
     for (int j = 0; j < OPTIM_VARS; j++) {
-      output.write((char*)&start[j], sizeof (double));
+      bin.write((char*)&start[j], sizeof (double));
     }
     
-    output.write((char*)&numStep, sizeof (double));
+    bin.write((char*)&numStep, sizeof (double));
 
-  output.close();
+  bin.close();
 }
 
 // Record progress of individual
@@ -466,7 +467,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
     start[ZETA_OFFSET] = pool[i].startParams.zeta;
 
     // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-    writeTrajectoryToFile(start, generation, i+1, thrust, cConstants);
+    writeTrajectoryToFile(output, start, generation, i+1, thrust, cConstants);
 
   }
 

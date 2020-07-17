@@ -41,7 +41,7 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants);
+void writeTrajectoryToFile(std::ofstream output, double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
