@@ -44,7 +44,7 @@ On WU System & Personal Computers:
 1. To Compile:
    1. Open VSCode and open the Didymos Optimization project folder
    2. Open command prompt in the VScode terminal.
-   3. Navigate to the Genetic_Algorithm folder (input and enter "cd Cuda" then "cd Genetic_Algorithm").
+   3. Navigate to the Optimization folder (input and enter "cd Cuda" then "cd Optimization").
    4. Enter the following
       `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\bin\Hostx64\x64\cl.exe" -o <OutputFileNameHere>.exe optimization.cu`   
     - Make sure that <OutputFileNameHere> has a specific name (it will create a .exe file with whatever you named it), a file path could also be made so that the files created from the compiler are not in the same folder
@@ -57,7 +57,7 @@ On WU System & Personal Computers:
 		
 2. To Run:
     1. Open command prompt in the VScode terminal.
-    2. Navigate to the Genetic_Algorithm folder (input and enter "cd Cuda" then "cd Genetic_Algorithm").
+    2. Navigate to the Optimization folder (input and enter "cd Cuda" then "cd Optimization").
     3. Type the .exe file name from above (don't forget to add .exe) and enter
     4. The program will begin and should show the following in order on the terminal;
        1. Outputs the GPU device name and intial values read from genetic.config that is in Config_Constants folder.
@@ -83,8 +83,8 @@ On WU System & Personal Computers:
 1. Copy the binary files outputted by the Cuda application generated when it finished into same folder as the matlab code being used.
 2. Open Matlab client with directory to where the matlab code files and binary files are placed.
 3. Run the matlab script in the command window:
-   - To view an individual's path, enter "filePlot(#)" with # as the number referring to the individual being plotted (1 would be the best individual, 2 would be 2nd best, etc.).
-   - To compare different paths, replace "filePlot(#)" with "filePlotCompare(#,#)" with the # being two different numbers for the individuals being compared.
+   - To view an individual's path, enter "filePlot(#)" with # as the UTC time seed for the run.
+   - To compare different paths, replace "filePlot(#)" with "filePlotCompare(#,#)" with the # being two different time seeds.
 4. Graphs will be generated that show the path in a three dimensional graph, coast behavior, etc. that could be exported into png format.
 
 <h2>NASA JPL Data for Impact Date Position & Velocity</h2>
