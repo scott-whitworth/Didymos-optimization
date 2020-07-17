@@ -19,8 +19,8 @@
 // Starting location and sizes in the optimization array for navigation to access specific values
 // Note: array sizes must be odd, coinciding with their use in computing Fourier series
 // WARNING: As of July 6th, the file used in non-random start is based on previous definition of values and so if these are changed from old sizes then it may cause issues for it
-#define GAMMA_ARRAY_SIZE 1  // Number of coefficients for gamma
-#define   TAU_ARRAY_SIZE 13  // Number of coefficients for tau
+#define GAMMA_ARRAY_SIZE 11  // Number of coefficients for gamma
+#define   TAU_ARRAY_SIZE 11  // Number of coefficients for tau
 #define COAST_ARRAY_SIZE 1  // Number of coefficients for coasting
 
 // Offset values and total length are based on the array sizes defined above
