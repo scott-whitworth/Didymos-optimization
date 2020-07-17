@@ -470,6 +470,8 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 
   }
 
+  output.close();
+
   delete [] start;
 }
 
