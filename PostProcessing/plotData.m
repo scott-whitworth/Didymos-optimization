@@ -108,6 +108,14 @@ xlim([0 tripTime])
 title('Acceleration due to thrust')
 ylabel('a_{thrust}')
 xlabel('t')
+
+for i = 1:sizeC
+    if cR(10,i)
+        ylim([5.0,5.8])
+        i = sizeC;
+    end
+end
+
 hold off
 
 subplot(2,3,4)

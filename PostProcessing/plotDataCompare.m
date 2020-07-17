@@ -162,6 +162,14 @@ legend({'spacecraft 1'})
 title('Acceleration due to thrust')
 ylabel('a_{thrust}')
 xlabel('t')
+
+for i = 1:sizeC
+    if cR(10,i)
+        ylim([5.0,5.8])
+        i = sizeC;
+    end
+end
+
 hold off
 
 subplot(2,3,4)
@@ -210,6 +218,14 @@ legend({'spacecraft 2'})
 title('Acceleration due to thrust')
 ylabel('a_{thrust}')
 xlabel('t')
+
+for i = 1:sizeD
+    if dR(10,i)
+        ylim([5.0,5.8])
+        i = sizeD;
+    end
+end
+
 hold off
 
 subplot(2,3,4)
