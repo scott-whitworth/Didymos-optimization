@@ -33,7 +33,7 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int generation, int rank, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants);
+void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Output trajectory information to finalOptimization-[time_seed].bin
 // input: start - passed to trajectoryPrint, information also outputted to finalOptimization[-time_seed].bin file
@@ -41,7 +41,7 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, int rank, thruster<double> thrust, const cudaConstants* cConstants);
+void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
@@ -51,7 +51,7 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
 //        yp - the final RK solution at numStep
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
-void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
+void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
 
 // Utility function to observe the trend of best individual in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation

@@ -1,7 +1,7 @@
-function [] = filePlot(rank,seed)
+function [] = filePlot(seed)
 
-filenameO=join(['bin/finalOptimization-',num2str(rank),'-',num2str(seed),'.bin']);
-filenameT=join(['bin/orbitalMotion-',num2str(rank),'-',num2str(seed),'.bin']);
+filenameO=join(['bin/finalOptimization-',num2str(seed),'.bin']);
+filenameT=join(['bin/orbitalMotion-',num2str(seed),'.bin']);
 fileC = fopen(filenameO);
 cVector = fread(fileC,Inf,'double');
 fileY = fopen(filenameT);

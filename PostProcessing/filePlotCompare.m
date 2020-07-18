@@ -1,12 +1,12 @@
-function [] = filePlotCompare(rank1,seed1,rank2,seed2)
+function [] = filePlotCompare(seed1,seed2)
 
-fileC = fopen(join(['bin/finalOptimization-',num2str(rank1),'-',num2str(seed1),'.bin']));
+fileC = fopen(join(['bin/finalOptimization-',num2str(seed1),'.bin']));
 cVector = fread(fileC,Inf,'double');
-fileY = fopen(join(['bin/orbitalMotion-',num2str(rank1),'-',num2str(seed1),'.bin']));
+fileY = fopen(join(['bin/orbitalMotion-',num2str(seed1),'.bin']));
 sizeC=cVector(end)+1;
-fileD = fopen(join(['bin/finalOptimization-',num2str(rank2),'-',num2str(seed2),'.bin']));
+fileD = fopen(join(['bin/finalOptimization-',num2str(seed2),'.bin']));
 dVector = fread(fileD,Inf,'double');
-fileZ = fopen(join(['bin/orbitalMotion-',num2str(rank2),'-',num2str(seed2),'.bin']));
+fileZ = fopen(join(['bin/orbitalMotion-',num2str(seed2),'.bin']));
 sizeD = dVector(end)+1;
 cR = fread(fileY,[11, sizeC],'double');
 dR = fread(fileZ,[11, sizeD],'double');
