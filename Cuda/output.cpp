@@ -188,6 +188,7 @@ void trajectoryPrint( double x[], double & lastStep, int generation, int rank, e
   if (cConstants->record_mode == true) {
     errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
   }
+    progressiveAnalysis(generation, rank, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
@@ -224,8 +225,6 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
     double numStep = 0;
     
     trajectoryPrint(start, numStep, generation, rank, yp, thrust, cConstants);
-
-    progressiveAnalysis(generation, rank, static_cast<int>(numStep), start, yp, cConstants);
 
     //writes final optimization values to a seperate file
     std::ofstream output;
@@ -267,12 +266,15 @@ void writeTrajectoryToFile(double *start, int generation, int rank, thruster<dou
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int rank, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
+    int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
+    double coastThreshold = config->coast_threshold;
     std::ofstream output;
     output.open("progressiveAnalysis.csv", std::ios_base::app);
-    output << rank << ',' << numStep << ','; 
+    output << seed << ',' << rank << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
+    output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
     output << std::endl;
     output.close();
 }
@@ -443,15 +445,6 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
 
-  int seed = cConstants->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
-  double coastThresh = cConstants->coast_threshold;
-  std::ofstream output;
-  output.open("progressiveAnalysis.csv", std::ios_base::app);
-  output << "\nTime Seed: ," << seed << ",Generation: ," << generation << ",Coast Threshold: ," << coastThresh << ",\n"; 
-  output << "Gamma Size: ," << gammaSize << ",Tau Size ," << tauSize << ",Coast Size: ," << coastSize << ",\n";
-  output << "rank,numStep,posDiff,velDiff,tripTime,alpha,beta,zeta,\n";
-  output.close();
-
   // Output the top best_count Individuals
   for (int i = 0; i < cConstants->best_count; i++) {
     
@@ -474,7 +467,6 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
     writeTrajectoryToFile(start, generation, i+1, thrust, cConstants);
 
   }
-
 
   delete [] start;
 }
