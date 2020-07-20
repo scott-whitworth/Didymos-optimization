@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 14th, 2020</i>
+<i>Last Updated: July 20th, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -53,9 +53,10 @@ Table 2. Genetic Algorithm Values
 | gamma_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for gamma values 	                                                                                                                            |   	|
 | tau_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for tau values 	                                                                                                                            |   	|
 | coast_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for coast values 	                                                                                                                            |   	|
-| triptime_mutate_scale 	    | double     	| None  	| Affects the maximum mutation range for triptime values 	                                                                                                                        |   	|
-| zeta_mutate_scale          	| double     	| None  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
-| alpha_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for alpha values 	                                                                                                                            |   	|
+| triptime_mutate_scale 	    | double     	| Years  	| Affects the maximum mutation range for triptime values 	                                                                                                                        |   	|
+| zeta_mutate_scale          	| double     	| Radians  	| Affects the maximum mutation range for zeta values 	                                                                                                                            |   	|
+| alpha_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for alpha values                                                                                                                            |   	|
+| beta_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for beta values                                                                                                                            |   	|
 
 
 Table 3. Mission Values
