@@ -14,7 +14,7 @@ template <class T> struct elements {
 
     // Velocities
     T vr; // Radial velocity (in plane) - AU/s
-    T vtheta; // tangental velocity (in plane) - AU/s
+    T vtheta; // tangential velocity (in plane) - AU/s
     T vz; // axial velocity (out-of-plane) - AU/s
 
     // Constructor which sets all the components
