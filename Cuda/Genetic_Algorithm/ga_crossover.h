@@ -55,6 +55,8 @@ double getRand(double max, std::mt19937_64 & rng);
 // Output: Returns rkParameter object that is new individual
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust, double generation);
 
+void addMutationToArrays(int genesToMutate, int arrayPlace);
+
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
@@ -105,8 +107,11 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //         Returns number of new individuals created (newIndCount)
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation );
 
-//sets up the mutate file
-void setMutateFile(const cudaConstants* cConstants);
+void setUpArrays();
+
+double* getsingleMutationArray();
+double* getdoubleMutationArray(); 
+double* gettripleMutationArray();
 
 #include "ga_crossover.cpp"
 #endif

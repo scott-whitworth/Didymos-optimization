@@ -248,8 +248,10 @@ int main () {
 
     thruster<double> thrust(cConstants);
 
+    setUpArrays();
     // Perform the optimization with optimize function
     optimize(numThreads, blockThreads, cConstants, thrust);
+    recordMutationChanges(cConstants, getsingleMutationArray(), getdoubleMutationArray(), gettripleMutationArray());
 
     // Now that the optimize function is done (assumed taht optimize() also records it), deallocate memory of the earth calculations and cudaConstants
     delete launchCon;

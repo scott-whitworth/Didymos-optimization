@@ -8,6 +8,10 @@
 
 #define SECONDS_IN_YEAR 365.25*24*3600 // Used with getRand for triptime mutation scale
 
+double mutationCalled[OPTIM_VARS];
+double doubleMutationCalled[OPTIM_VARS];
+double tripleMutationCalled[OPTIM_VARS];
+
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility and clarity of value meaning
 enum maskValue {
     PARTNER1 = 1,
@@ -222,6 +226,26 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
+void addMutationToArrays(int genesToMutate, int arrayPlace) {
+    if(genesToMutate == 1) {
+        mutationCalled[arrayPlace]++;
+    } else if(genesToMutate == 2) {
+        doubleMutationCalled[arrayPlace]++;
+    } else if(genesToMutate == 3) {
+        tripleMutationCalled[arrayPlace]++;
+    } else if(genesToMutate != 0){
+        std::cout << "houston, we have a problem." << genesToMutate << std::endl;
+    }
+}
+
+void setUpArrays() {
+    for(int i=0; i<OPTIM_VARS; i++) {
+        mutationCalled[i] = 0;
+        doubleMutationCalled[i] = 0;
+        tripleMutationCalled[i] = 0;
+    }
+}
+
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
@@ -273,32 +297,37 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
             newInd.coeff.gamma[mutatedValue-GAMMA_OFFSET] += randVar;
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
         else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
             double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
             newInd.coeff.tau[mutatedValue-TAU_OFFSET] += randVar;
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
         else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
             double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
             newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
         else if (mutatedValue == TRIPTIME_OFFSET) { // Time final
             double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
             newInd.tripTime+= randVar;
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
         else if (mutatedValue == ZETA_OFFSET) { // Zeta
             double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
             newInd.zeta += randVar;
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
         else if (mutatedValue == BETA_OFFSET) { // Beta
             double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
             newInd.beta = randVar;
             recordLog[mutatedValue] = randVar; // Due to the bounds check following this line, this record log may be technically inaccurrate 
-
+            addMutationToArrays(i, mutatedValue);
             // A check to ensure beta remains in value range 0 to pi, doesn't update recordLog
             if (newInd.beta < 0) {
                 newInd.beta = 0;
@@ -311,12 +340,14 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
             newInd.alpha += randVar;                
             recordLog[mutatedValue] = randVar;
+            addMutationToArrays(i, mutatedValue);
         }
     }
 
     // If in record mode, append the recordLog into the .csv file
     if (cConstants->record_mode == true) {
         recordMutateFile(cConstants, generation, annealing, genesToMutate, recordLog);
+
     }
     
     return newInd;
@@ -426,3 +457,7 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     delete [] mask;
     return newIndCount;
 }
+
+double* getsingleMutationArray() { return mutationCalled; }
+double* getdoubleMutationArray() { return doubleMutationCalled; }
+double* gettripleMutationArray() { return tripleMutationCalled; }

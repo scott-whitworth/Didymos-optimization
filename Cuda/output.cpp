@@ -95,18 +95,18 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
 
   // Record gamma mutation values
   for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
-      mutateFile << recordLog[i] << ",";
+      mutateFile << recordLog[i]/annealing << ",";
   }
   // Record tau mutation values
   for (int i = TAU_OFFSET; i < (TAU_OFFSET + TAU_ARRAY_SIZE); i++) {
-      mutateFile << recordLog[i] << ",";
+      mutateFile << recordLog[i]/annealing << ",";
   }
   // Record coast mutation values
   for (int i = COAST_OFFSET; i < (COAST_OFFSET + COAST_ARRAY_SIZE); i++) {
-      mutateFile << recordLog[i] << ",";
+      mutateFile << recordLog[i]/annealing << ",";
   }
   // Record alpha, beta, zeta, tripTime
-  mutateFile << recordLog[ALPHA_OFFSET] << "," << recordLog[BETA_OFFSET] << "," << recordLog[ZETA_OFFSET] << "," << recordLog[TRIPTIME_OFFSET] << ",";
+  mutateFile << recordLog[ALPHA_OFFSET]/annealing << "," << recordLog[BETA_OFFSET]/annealing << "," << recordLog[ZETA_OFFSET]/annealing << "," << recordLog[TRIPTIME_OFFSET]/annealing << ",";
   mutateFile << "\n";
   
   mutateFile.close();
@@ -551,4 +551,42 @@ void recordEarthData(const cudaConstants * cConstants) {
   }
   // Done recording earth calculations, close file
   earthValues.close();
+}
+
+void recordMutationChanges(const cudaConstants * cConstants, double mutationCalled[], double doubleMutationCalled[], double tripleMutationCalled[]) {
+  std::ofstream mutationChange;
+  mutationChange.open("mutationRateChanges-" + std::to_string(cConstants->time_seed) + ".csv");
+
+  // Setup the header row
+  mutationChange << "mutation,";
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    mutationChange << "gamma" << i << ",";
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    mutationChange << "tau" << i << ",";
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    mutationChange << "coast" << i << ",";
+  }
+  mutationChange << "alpha,beta,zeta,tripTime,\n";
+
+  mutationChange << "single,";
+  for(int i = 0; i<OPTIM_VARS; i++) {
+    mutationChange << mutationCalled[i] << ",";
+  }
+  mutationChange << "\n";
+
+  mutationChange << "double,";
+  for(int i = 0; i<OPTIM_VARS; i++) {
+    mutationChange << doubleMutationCalled[i] << ",";
+  }
+  mutationChange << "\n";
+
+  mutationChange << "triple,";
+  for(int i = 0; i<OPTIM_VARS; i++) {
+    mutationChange << tripleMutationCalled[i] << ",";
+  }
+  mutationChange << "\n";
+
+  mutationChange.close();
 }
