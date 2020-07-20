@@ -43,11 +43,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
 void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants);
 
-// Initialize the .csv files
-// input: cConstants - to access time_seed for deriving file name conventions and also thruster type
-// output: files BestInGenerations-[time_seed].csv, WorstInGenerations-[time_seed].csv, if thruster type is not NO_THRUST also BestThrustGens-[time_seed].csv & WorstThrustGens-[time_seed].csv, are given initial header row info
-void initializeRecord(const cudaConstants * cConstants);
-
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
 // input: generation - the positional performance of the individual

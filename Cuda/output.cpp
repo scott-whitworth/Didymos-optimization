@@ -369,7 +369,7 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
   if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
     std::ofstream bestThrusterExcel, bestThrusterBin;
     bestThrusterExcel.open("BestThrustGens-"+ std::to_string(seed)+".csv", std::ios_base::app);
-    bestThrusterBin.open("BestThurstGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
+    bestThrusterBin.open("BestThrustGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
     
     writeThrustToFiles(bestThrusterExcel, bestThrusterBin, generation, pool[0], cConstants);
     
