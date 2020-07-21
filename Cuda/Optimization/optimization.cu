@@ -10,6 +10,10 @@
 #include <random>
 #include <chrono>
 
+double smutationCalled[OPTIM_VARS];
+double dMutationCalled[OPTIM_VARS];
+double tMutationCalled[OPTIM_VARS];
+
 // Used to see if the best individual is changing
 // Returns true if the currentBest is not equal to previousBest
 bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double dRate) {
@@ -21,6 +25,15 @@ bool changeInBest(double previousBestPos, double previousBestVel, Individual cur
             return true;
         }
         else return false;
+    }
+}
+
+void saveMutationsCalled(double singleM[], double doubleM[], double tripleM[]) {
+    for(int i = 0; i <OPTIM_VARS; i++) {
+       smutationCalled[i] += singleM[i];
+       dMutationCalled[i] += doubleM[i];
+       tMutationCalled[i] += tripleM[i];
+       
     }
 }
 
@@ -147,7 +160,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
-             }
+            }
             // calculate its new cost function
             inputParameters[k].getCost(cConstants);
         }
@@ -194,6 +207,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         }
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust, rng, generation);
+        saveMutationsCalled(getsingleMutationArray(), getdoubleMutationArray(), gettripleMutationArray());
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
@@ -210,7 +224,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     delete [] inputParameters;
     delete [] survivors;
 
-    return calcPerS;
+    //return calcPerS;
+    return generation;
 }
 
 int main () {
@@ -221,6 +236,12 @@ int main () {
     std::cout << "- Device name: " << prop.name << std::endl << std::endl;
     cudaSetDevice(0);
     
+    for(int i=0; i<OPTIM_VARS; i++) {
+        smutationCalled[i] = 0;
+        dMutationCalled[i] = 0;
+        tMutationCalled[i] = 0;
+    }
+
     cudaConstants const * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used
     // Display contents of cConstants resulting from reading the file
     std::cout << *cConstants << std::endl;
@@ -250,8 +271,8 @@ int main () {
 
     setUpArrays();
     // Perform the optimization with optimize function
-    optimize(numThreads, blockThreads, cConstants, thrust);
-    recordMutationChanges(cConstants, getsingleMutationArray(), getdoubleMutationArray(), gettripleMutationArray());
+    int generation = optimize(numThreads, blockThreads, cConstants, thrust);
+    recordMutationChanges(cConstants, generation, smutationCalled, dMutationCalled, tMutationCalled);
 
     // Now that the optimize function is done (assumed taht optimize() also records it), deallocate memory of the earth calculations and cudaConstants
     delete launchCon;

@@ -553,7 +553,7 @@ void recordEarthData(const cudaConstants * cConstants) {
   earthValues.close();
 }
 
-void recordMutationChanges(const cudaConstants * cConstants, double mutationCalled[], double doubleMutationCalled[], double tripleMutationCalled[]) {
+void recordMutationChanges(const cudaConstants * cConstants, double genNum, double mutationCalled[], double doubleMutationCalled[], double tripleMutationCalled[]) {
   std::ofstream mutationChange;
   mutationChange.open("mutationRateChanges-" + std::to_string(cConstants->time_seed) + ".csv");
 
@@ -587,6 +587,7 @@ void recordMutationChanges(const cudaConstants * cConstants, double mutationCall
     mutationChange << tripleMutationCalled[i] << ",";
   }
   mutationChange << "\n";
-
+  mutationChange << "\n";
+  mutationChange << "gen:," << genNum << "\n";
   mutationChange.close();
 }
