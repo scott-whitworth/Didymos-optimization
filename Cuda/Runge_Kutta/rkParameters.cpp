@@ -93,22 +93,23 @@ template <class T> rkParameters<T>::rkParameters() {
 
 // Method for creating random parameters
 // input: rng - random number object generator to be used to generate random values
+//        cConstants - to access the random range values
 // output: an rkParameters object that contains randomized properties within a valid ranges
-rkParameters<double> randomParameters(std::mt19937_64 & rng) {
-    double tripTime = SECONDS_IN_YEAR*((static_cast<double>(rng()) / rng.max()) + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
-    double alpha = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI <-> PI
-    double beta  = M_PI * ((static_cast<double>(rng()) / rng.max())); // 0 <-> PI
-    double zeta  = M_PI * ((static_cast<double>(rng()) / rng.max()) - 0.5); // -PI/2 <-> PI/2
+rkParameters<double> randomParameters(std::mt19937_64 & rng, const cudaConstants * cConstants) {
+    double tripTime = SECONDS_IN_YEAR * cConstants->triptime_random_start_range * ((static_cast<double>(rng()) / rng.max()) + 1.0); // (1 <-> 2 years) * SECONDS_IN_YEAR
+    double alpha = cConstants->alpha_random_start_range * 2 * ((static_cast<double>(rng()) / rng.max()) - 0.5);
+    double  beta = cConstants-> beta_random_start_range * ((static_cast<double>(rng()) / rng.max()));
+    double  zeta = cConstants-> zeta_random_start_range * ((static_cast<double>(rng()) / rng.max()) - 0.5); 
 
     coefficients<double> testcoeff;
     for (int j = 0; j < testcoeff.gammaSize; j++) {
-        testcoeff.gamma[j] = 0; // -10.0 <-> 10.0
+        testcoeff.gamma[j] = cConstants->gamma_random_start_range * 2*((static_cast<double>(rng()) / rng.max()) - 0.5);
     }
     for (int j = 0; j < testcoeff.tauSize; j++) {
-        testcoeff.tau[j] = 0; // -10.0 <-> 10.0
+        testcoeff.tau[j] = cConstants->tau_random_start_range * 2*((static_cast<double>(rng()) / rng.max()) - 0.5);
     }
     for (int j = 0; j < testcoeff.coastSize; j++) {
-        testcoeff.coast[j] = 10.0 * 2*((static_cast<double>(rng()) / rng.max()) - 0.5); // -10.0 <-> 10.0
+        testcoeff.coast[j] = cConstants->coast_random_start_range * 2*((static_cast<double>(rng()) / rng.max()) - 0.5);
     }
 
     return rkParameters<double>(tripTime, alpha, beta, zeta, testcoeff); 

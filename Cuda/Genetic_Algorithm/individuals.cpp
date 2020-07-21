@@ -27,7 +27,7 @@ double Individual::getCost(const cudaConstants* cConstants) {
         this->cost = (cConstants->v_impact - this->velDiff)/cConstants->c3energy;
     }
     else {
-        this->cost = posDiff * cConstants->c3energy;
+        this->cost = this->posDiff * cConstants->c3energy;
     }
     return this->cost;
 }
