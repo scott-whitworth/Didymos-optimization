@@ -102,10 +102,10 @@ rkParameters<double> randomParameters(std::mt19937_64 & rng) {
 
     coefficients<double> testcoeff;
     for (int j = 0; j < testcoeff.gammaSize; j++) {
-        testcoeff.gamma[j] = 0;
+        testcoeff.gamma[j] = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5);;
     }
     for (int j = 0; j < testcoeff.tauSize; j++) {
-        testcoeff.tau[j] = 0;
+        testcoeff.tau[j] = M_PI * 2*((static_cast<double>(rng()) / rng.max()) - 0.5);;
     }
     for (int j = 0; j < testcoeff.coastSize; j++) {
         if (j) {
