@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 20th, 2020</i>
+<i>Last Updated: July 21st, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -23,7 +23,7 @@ Table 1. Setup & General Values
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
 | time_seed                  	| int/string 	| None  	| Sets the seed used in random generation, either specify a seed to use or place "NONE" for the seed to be time(0)                                           	                    |   	|
 | rng                     	    | mt19937_64    | None  	| Random number generator that uses time_seed as initialization value                                                          	                                                    |   	|
-| random_start               	| boolean    	| None  	| If "true", sets initial generation's individuals to hold parameters with random values, if "false" it initializes the individuals from a provided file                  	        |   	|
+| random_start               	| boolean    	| None  	| If "true", sets initial generation's individuals to hold parameters with random values of set range (refer to Table 4), if "false" it initializes the individuals from a provided file    |   	|
 | initial_start_file_address 	| string     	| None  	| If random_start is false, the program uses this address to get parameter values for the initial individuals with the assumption that the file hold 14 sets 	                    |   	|
 | pos_threshold              	| double     	| AU      	| Sets the maximum positional difference of the spacecraft to the target at end of its trajectory path                                                    	                        |   	|
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
@@ -87,3 +87,14 @@ Table 3a. Impact Position & Velocity Values
 | vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date 	    |   	|
 | vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date 	|   	|
 | vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to Sun bodycenter and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
+
+Table 4. Random Starting Initializing Values when (random_start == true)
+| Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                |   	|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+| gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
+| tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
+| coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|
+| triptime_random_start_range   | double     	| Years     | Used in determining the triptime initial guesss range in the form of (1<->2) * triptime_random_start_range, likely should be kept at value of 1 	                            |   	|
+| alpha_random_start_range      | double     	| Radians   | The magnitude of the +/- value range for alpha random initial values 	                                                                                                        |   	|
+| beta_random_start_range       | double     	| Radians   | The magnitude of the positive only value range for beta random initial values 	                                                                                            |   	|
+| zeta_random_start_range       | double     	| Radians   | The magnitude of the +/- value range for zeta random initial values 	                                                                                                        |   	|

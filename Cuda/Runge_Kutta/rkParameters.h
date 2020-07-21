@@ -96,8 +96,9 @@ template <class T> struct rkParameters {
 
 // Method for creating random parameters
 // input: rng - random number object generator to be used to generate random values
+//        cConstants - to access the random range values
 // output: an rkParameters object that contains randomized properties within a valid ranges
-rkParameters<double> randomParameters(std::mt19937_64 & rng);
+rkParameters<double> randomParameters(std::mt19937_64 & rng, const cudaConstants * cConstants);
 
 #include "rkParameters.cpp"
 #endif

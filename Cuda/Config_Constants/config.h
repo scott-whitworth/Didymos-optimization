@@ -36,6 +36,15 @@ struct cudaConstants {
     double beta_mutate_scale;
     double alpha_mutate_scale;
 
+    // Used when random_start==true, is the max magnitude of the random parameter initial values (ranges from -value to +value)
+    double gamma_random_start_range;
+    double tau_random_start_range;
+    double coast_random_start_range;
+    double triptime_random_start_range;
+    double alpha_random_start_range;
+    double beta_random_start_range;
+    double zeta_random_start_range;
+
     // Used in thruster construction and corresponding calculations
     int thruster_type; // 0 is for no thruster, 1 is for NEXT ion thruster
     double dry_mass;   // Mass of the spacecraft with no fuel (kg)

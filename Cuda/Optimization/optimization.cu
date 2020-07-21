@@ -65,7 +65,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         for (int i = 0; i < numThreads; i++) { 
-            inputParameters[i].startParams = randomParameters(rng);
+            inputParameters[i].startParams = randomParameters(rng, cConstants);
         }
     }
     // If not a random start, read from file using cConstants initial_start_file_address to get path
@@ -139,11 +139,9 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < numThreads; k++) {
-            if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) 
-                 || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
-                
+            if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
-                inputParameters[k].startParams = randomParameters(rng);
+                inputParameters[k].startParams = randomParameters(rng, cConstants);
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;

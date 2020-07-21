@@ -66,6 +66,27 @@ void cudaConstants::FileRead(std::string fileName) {
                         this->random_start = true;
                     }
                 }
+                else if (variableName == "alpha_random_start_range") {
+                    this->alpha_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "beta_random_start_range") {
+                    this->beta_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "zeta_random_start_range") {
+                    this->zeta_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "triptime_random_start_range") {
+                    this->triptime_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "gamma_random_start_range") {
+                    this->gamma_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "tau_random_start_range") {
+                    this->tau_random_start_range = std::stod(variableValue);
+                }
+                else if (variableName == "coast_random_start_range") {
+                    this->coast_random_start_range = std::stod(variableValue);
+                }
                 else if (variableName == "record_mode") {
                     if (variableValue == "true") {
                         this->record_mode = true;
@@ -228,7 +249,7 @@ void cudaConstants::FileRead(std::string fileName) {
     }
 }
 
-// Compare a and b cudaConstants and return true if all variables are equivalent
+// Compare a and b cudaConstants and return true if all variables are equivalent, has not been recently updated for all newer properties added!
 // Input: two cudaConstants objects to compare
 // Output: true if all properties are equivalent and cout output that states that they are equivalent, false if atleast one is not equivalent with cout output on one of the properties that was not (if more than one is inequivalent, will not check/show what the other ones are)
 bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
@@ -447,10 +468,16 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
     os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n";
     os << "record_mode: "   << object.record_mode   << "\n\n";
+
+    os << "Random Start Range Values\n";
+    os << "\tgamma: " << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
+    os << "\ttriptime: " << object.triptime_random_start_range << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n";
     
-    os << "mutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
-    os << "gamma_m_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
-    os << "triptime_m_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
+
+    os << "Mutation Rates\n";
+    os << "\tmutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
+    os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
+    os << "\ttriptime_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
     os << "thruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n\n";
     os << "c3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\tv_impact: " << object.v_impact << "\n\n";
