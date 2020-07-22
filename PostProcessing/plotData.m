@@ -55,7 +55,7 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC).*cR(5,1:sizeC))
-ylabel('L/m')
+ylabel('h')
 xlabel('t')
 xlim([0 tripTime])
 title('Specific angular momentum')
