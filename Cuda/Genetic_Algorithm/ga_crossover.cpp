@@ -289,7 +289,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             }
             else if (index == TRIPTIME_OFFSET) { // Time final
                 double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
-                newInd.tripTime+= randVar;
+                newInd.tripTime += randVar;
                 recordLog[index] = randVar;
             }
             else if (index == ZETA_OFFSET) { // Zeta
@@ -323,7 +323,13 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
     // If in record mode, append the recordLog into the .csv file
     if (cConstants->record_mode == true) {
-        recordMutateFile(cConstants, generation, annealing, genesToMutate, recordLog);
+        int genesMutated = 0;
+        for (int i = 0; i < OPTIM_VARS; i++) {
+            if (mutation_mask[i] == true) {
+                genesMutated++;
+            }
+        }
+        recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
     }
     delete [] mutation_mask;
     return newInd;
