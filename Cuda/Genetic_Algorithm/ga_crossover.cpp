@@ -359,17 +359,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
     pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust);
 
     // With percent chance of occurring, perform a mutation on the new individual's starting params
-    if ( (static_cast<double>(rng()) / rng.max()) < cConstants->mutation_rate ) {
-        pool[newIndividualIndex].startParams = mutate(pool[newIndividualIndex].startParams, rng, annealing, cConstants, thrust, generation);
-    }
-    // Still make sure to record in mutateFile, difference would be that the result is that all the genes have 0
-    /*else if (cConstants->record_mode == true) {
-        double recordLog[OPTIM_VARS];
-        for (int i = 0; i < OPTIM_VARS; i++) {
-            recordLog[i] = 0;
-        }
-        recordMutateFile(cConstants, generation, annealing, 0, recordLog);
-    }*/
+    pool[newIndividualIndex].startParams = mutate(pool[newIndividualIndex].startParams, rng, annealing, cConstants, thrust, generation);    
 }
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
