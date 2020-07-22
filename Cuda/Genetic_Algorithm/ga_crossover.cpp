@@ -290,6 +290,14 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             else if (index == TRIPTIME_OFFSET) { // Time final
                 double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
                 newInd.tripTime += randVar;
+                // bound checking to make sure the tripTime is set within the valid range of trip times
+                if (newInd.tripTime < cConstants->triptime_r_start_min * SECONDS_IN_YEAR) {
+                    newInd.tripTime = cConstants->triptime_r_start_min;
+                }
+                else if (newInd.tripTime > cConstants->triptime_r_start_max * SECONDS_IN_YEAR) {
+                    newInd.tripTime = cConstants->triptime_r_start_max;
+                }
+
                 recordLog[index] = randVar;
             }
             else if (index == ZETA_OFFSET) { // Zeta
