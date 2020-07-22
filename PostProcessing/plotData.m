@@ -55,7 +55,7 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC).*cR(5,1:sizeC))
-ylabel('L/m')
+ylabel('h')
 xlabel('t')
 xlim([0 tripTime])
 title('Specific angular momentum')
@@ -108,6 +108,14 @@ xlim([0 tripTime])
 title('Acceleration due to thrust')
 ylabel('a_{thrust}')
 xlabel('t')
+
+for i = 1:sizeC
+    if cR(10,i)
+        ylim([5.0,5.8])
+        i = sizeC;
+    end
+end
+
 hold off
 
 subplot(2,3,4)

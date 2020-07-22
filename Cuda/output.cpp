@@ -187,8 +187,8 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   // Used with errorCheck.m
   if (cConstants->record_mode == true) {
     errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
-    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
   }
+    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
@@ -220,15 +220,16 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 //        thrust - passed to trajectoryPrint
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrust, const cudaConstants* cConstants) {
+void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants) {
     elements<double> yp;
     double numStep = 0;
-    trajectoryPrint(start, numStep, threadRank, yp, thrust, cConstants);
+  
+    trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
 
     //writes final optimization values to a seperate file
     std::ofstream output;
     // type double for consistency in binary output
-    double seed = cConstants->time_seed;
+    double seed = cConstants->time_seed, gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
     output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
@@ -245,7 +246,6 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
     output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
     output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
     output.write((char*)&gsize, sizeof(double));
     output.write((char*)&tsize, sizeof(double));
     output.write((char*)&csize, sizeof(double));
@@ -267,13 +267,14 @@ void writeTrajectoryToFile(double *start, int threadRank, thruster<double> thrus
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
     int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
+    double coastThreshold = config->coast_threshold;
     std::ofstream output;
-    output.open("progressiveAnalysis.csv", std::ios::app);
-    output << seed << ',' << generation << ',' << numStep << ','; 
+    output.open("progressiveAnalysis.csv", std::ios_base::app);
+    output << seed << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
-    output << gammaSize << ',' << tauSize << ',' << coastSize << ',';
+    output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
     output << std::endl;
     output.close();
 }
@@ -444,7 +445,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
 
-  // Only output the final best individual
+  // Output the final best individual
   for (int j = 0; j < pool[0].startParams.coeff.gammaSize; j++) {
       start[GAMMA_OFFSET + j] = pool[0].startParams.coeff.gamma[j];
   }
