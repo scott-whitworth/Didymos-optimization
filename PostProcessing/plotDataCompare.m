@@ -82,7 +82,7 @@ if tripTime2 < tripTime1
 else
     plot(dR(7,1:sizeD),dR(1,1:sizeD).*dR(5,1:sizeD))
 end
-ylabel('L')
+ylabel('h')
 xlabel('t')
 xlim([0 maxTripTime])
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
