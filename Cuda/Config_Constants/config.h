@@ -40,7 +40,8 @@ struct cudaConstants {
     double gamma_random_start_range;
     double tau_random_start_range;
     double coast_random_start_range;
-    double triptime_random_start_range;
+    double triptime_r_start_max;
+    double triptime_r_start_min;
     double alpha_random_start_range;
     double beta_random_start_range;
     double zeta_random_start_range;
