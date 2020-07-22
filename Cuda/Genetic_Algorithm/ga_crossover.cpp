@@ -222,6 +222,34 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     return newInd;    
 }
 
+
+// Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
+// input: rng - random number generating object used to randomly generate index values
+//        mutateMask - pointer to a boolean array that is assumed length of OPTIM_VARS, sets genes being mutated to true and others to false
+//        mutation_rate - a double value  less than 1 that is the chance a gene will be mutated, called iteratively to mutate more genes
+// output: mutateMask contains false for genes that are not mutating, true for genes that are to be mutated
+void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate) {
+    for (int i = 0; i < OPTIM_VARS; i++) {
+        mutateMask[i] = false;
+    }
+    int geneCount = 0; // counter to make sure in the unlikely event that all genes are being mutated the code doesn't get stuck in infinite loop looking for a false spot in the array
+    // Set a gene to mutate if a randomized values is less than mutation_rate, repeating everytime this is true
+    while ((static_cast<double>(rng()) / rng.max()) < mutation_rate && geneCount < OPTIM_VARS) {
+        bool geneSet = false; // boolean to flag if a gene was successfully selected to be set as true
+        int index; // index value that will be assigned randomly to select a gene
+        while (geneSet != true) {
+            index = rng() % OPTIM_VARS;
+            // If the randomly selected gene hasn't been already set to mutate, set it and flag the geneSet to true to break out of the loop
+            if (mutateMask[index] == false) {
+                mutateMask[index] = true;
+                geneSet = true;
+                geneCount++;
+            }
+        }
+
+    }
+}
+
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
@@ -231,86 +259,65 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
 rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {    
-    rkParameters<double> newInd = p1;
+    rkParameters<double> newInd = p1; // initially set new individual to have all parameter values from parent 1
 
-    int genesToMutate = 1; // number of genes to mutate
-    double mutateChance = (static_cast<double>(rng()) / rng.max());
+    // Declare and set a mutation_mask for which gene is being mutated
+    bool * mutation_mask = new bool[OPTIM_VARS];
+    mutateMask(rng, mutation_mask, cConstants->mutation_rate);
 
-    if (mutateChance < cConstants->triple_mutation_rate) {
-        genesToMutate = 3;
-    }
-    // sum of double and triple rates produces a band that is greater than triple_mutate_rate
-    else if (mutateChance < (cConstants->double_mutation_rate + cConstants->triple_mutation_rate)) {
-        genesToMutate = 2;
-    }
-
-    int mutatedGenes[3]; // index of genes to mutate
-    mutatedGenes[0] = rng() % OPTIM_VARS;
-
-    if (genesToMutate > 1) {
-        do {
-            mutatedGenes[1] = rng() % OPTIM_VARS;
-        } while (mutatedGenes[1] == mutatedGenes[0]); // make sure that each mutated gene is unique
-    }
-
-    if (genesToMutate > 2) {
-        do {
-            mutatedGenes[2] = rng() % OPTIM_VARS;
-        } while (mutatedGenes[2] == mutatedGenes[0] || mutatedGenes[2] == mutatedGenes[1]); // make sure that each mutated gene is unique
-    }
-
-    // Declare a record that is a "mutation mask" to describe what genes are being changed and by how much
+    // Declare a record that is to describe what genes are being changed and by how much to record into mutateFile
     double recordLog[OPTIM_VARS];
-    for (int i = 0; i < OPTIM_VARS; i++) {
-        // Initialized to be 0's for all values and then the indexs are updated when mutations are applied
-        recordLog[i] = 0;
-    }
 
-    for (int i = 0; i < genesToMutate; i++) {
-        int mutatedValue = mutatedGenes[i]; // the gene to mutate
-        
-        if ( (mutatedValue >= GAMMA_OFFSET) && (mutatedValue <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
-            double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
-            newInd.coeff.gamma[mutatedValue-GAMMA_OFFSET] += randVar;
-            recordLog[mutatedValue] = randVar;
-        }
-        else if ( (mutatedValue >= TAU_OFFSET) && (mutatedValue <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
-            double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
-            newInd.coeff.tau[mutatedValue-TAU_OFFSET] += randVar;
-            recordLog[mutatedValue] = randVar;
-        }
-        else if (mutatedValue >= COAST_OFFSET && mutatedValue <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
-            double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
-            newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
-            recordLog[mutatedValue] = randVar;
-        }
-        else if (mutatedValue == TRIPTIME_OFFSET) { // Time final
-            double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
-            newInd.tripTime+= randVar;
-            recordLog[mutatedValue] = randVar;
-        }
-        else if (mutatedValue == ZETA_OFFSET) { // Zeta
-            double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
-            newInd.zeta += randVar;
-            recordLog[mutatedValue] = randVar;
-        }
-        else if (mutatedValue == BETA_OFFSET) { // Beta
-            double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
-            newInd.beta = randVar;
-            recordLog[mutatedValue] = randVar; // Due to the bounds check following this line, this record log may be technically inaccurrate 
-
-            // A check to ensure beta remains in value range 0 to pi, doesn't update recordLog
-            if (newInd.beta < 0) {
-                newInd.beta = 0;
+    // Iterate through the mutation_mask, mutating the corresponding gene if set to true
+    for (int index = 0; index < OPTIM_VARS; index++) {
+        if (mutation_mask[index] == true) {
+            
+            if ( (index >= GAMMA_OFFSET) && (index <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
+                double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
+                newInd.coeff.gamma[index-GAMMA_OFFSET] += randVar;
+                recordLog[index] = randVar;
             }
-            else if (newInd.beta > M_PI) {
-                newInd.beta = M_PI;              
+            else if ( (index >= TAU_OFFSET) && (index <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
+                double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
+                newInd.coeff.tau[index-TAU_OFFSET] += randVar;
+                recordLog[index] = randVar;
+            }
+            else if (index >= COAST_OFFSET && index <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
+                double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
+                newInd.coeff.coast[index-COAST_OFFSET] += randVar;
+                recordLog[index] = randVar;
+            }
+            else if (index == TRIPTIME_OFFSET) { // Time final
+                double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
+                newInd.tripTime+= randVar;
+                recordLog[index] = randVar;
+            }
+            else if (index == ZETA_OFFSET) { // Zeta
+                double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
+                newInd.zeta += randVar;
+                recordLog[index] = randVar;
+            }
+            else if (index == BETA_OFFSET) { // Beta
+                double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
+                newInd.beta = randVar;
+                recordLog[index] = randVar;
+    
+                // A check to ensure beta remains in value range 0 to pi, doesn't update recordLog
+                if (newInd.beta < 0) {
+                    newInd.beta = 0;
+                }
+                else if (newInd.beta > M_PI) {
+                    newInd.beta = M_PI;              
+                }
+            }
+            else if (index == ALPHA_OFFSET) { // Alpha
+                double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
+                newInd.alpha += randVar;                
+                recordLog[index] = randVar;
             }
         }
-        else if (mutatedValue == ALPHA_OFFSET) { // Alpha
-            double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
-            newInd.alpha += randVar;                
-            recordLog[mutatedValue] = randVar;
+        else { // Record if the gene is not being mutated
+            recordLog[index] = 0;
         }
     }
 
@@ -318,7 +325,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     if (cConstants->record_mode == true) {
         recordMutateFile(cConstants, generation, annealing, genesToMutate, recordLog);
     }
-    
+    delete [] mutation_mask;
     return newInd;
 }
 
@@ -342,13 +349,13 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
         pool[newIndividualIndex].startParams = mutate(pool[newIndividualIndex].startParams, rng, annealing, cConstants, thrust, generation);
     }
     // Still make sure to record in mutateFile, difference would be that the result is that all the genes have 0
-    else if (cConstants->record_mode == true) {
+    /*else if (cConstants->record_mode == true) {
         double recordLog[OPTIM_VARS];
         for (int i = 0; i < OPTIM_VARS; i++) {
             recordLog[i] = 0;
         }
         recordMutateFile(cConstants, generation, annealing, 0, recordLog);
-    }
+    }*/
 }
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask

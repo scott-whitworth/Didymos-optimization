@@ -55,6 +55,13 @@ double getRand(double max, std::mt19937_64 & rng);
 // Output: Returns rkParameter object that is new individual
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust, double generation);
 
+// Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
+// input: rng - random number generating object used to randomly generate index values
+//        mutateMask - pointer to a boolean array that is assumed length of OPTIM_VARS, sets genes being mutated to true and others to false
+//        mutation_rate - a double value  less than 1 that is the chance a gene will be mutated, called iteratively to mutate more genes
+// output: mutateMask contains false for genes that are not mutating, true for genes that are to be mutated
+void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate);
+
 // In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base

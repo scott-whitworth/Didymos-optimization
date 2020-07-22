@@ -24,8 +24,6 @@ struct cudaConstants {
     double anneal_initial; // initial value for annealing, meant to replace the previously used calculation involving ANNEAL_MIN and ANNEAL_MAX with something more simple
 
     double mutation_rate; // fraction of new offspring to mutate
-    double double_mutation_rate; // fraction of mutations to mutate two genes instead of just one
-    double triple_mutation_rate; // fraction of mutations to mutate three genes instead of just one or two
     
     // Used in mutate(), affects the size of change for the respective paramater values (old code had hard-coded values)
     double gamma_mutate_scale; 

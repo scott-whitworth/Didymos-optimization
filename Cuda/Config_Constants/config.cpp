@@ -124,12 +124,6 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "mutation_rate") {
                     this->mutation_rate = std::stod(variableValue);
                 }
-                else if (variableName == "double_mutate_rate") {
-                    this->double_mutation_rate = std::stod(variableValue);
-                }
-                else if (variableName == "triple_mutate_rate") {
-                    this->triple_mutation_rate = std::stod(variableValue);
-                }
                 else if (variableName == "gamma_mutate_scale") {
                     this->gamma_mutate_scale = std::stod(variableValue);
                 }
@@ -316,14 +310,6 @@ bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
         std::cout << "mutation_rate not equal!\n";
         return false;
     }
-    else if (a.double_mutation_rate != b.double_mutation_rate) {
-        std::cout << "double_m_rate not equal!\n";
-        return false;
-    }
-    else if (a.triple_mutation_rate != b.triple_mutation_rate) {
-        std::cout << "triple_m_rate not equal!\n";
-        return false;
-    }
     else if (a.gamma_mutate_scale != b.gamma_mutate_scale) {
         std::cout << "gamma_m_scale not equal!\n";
         return false;
@@ -474,10 +460,9 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
 
     os << "Random Start Range Values\n";
     os << "\tgamma: " << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
-    os << "\ttriptime_max-min: " << object.triptime_r_start_max << " - "  << object.triptime_r_start_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n";
+    os << "\ttriptime_max-min: " << object.triptime_r_start_max << " - "  << object.triptime_r_start_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
     
-    os << "Mutation Rates & Scales\n";
-    os << "\tmutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
+    os << "Mutation & Scales\t (mutation_rate: " << object.mutation_rate << ")\n";
     os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
     os << "\ttriptime_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
