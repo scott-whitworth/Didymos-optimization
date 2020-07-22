@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 21st, 2020</i>
+<i>Last Updated: July 22nd, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -50,13 +50,13 @@ Table 2. Genetic Algorithm Values
 | mutation_rate              	| double     	| None  	| The probability of a mutation occurring when generating a new individual, gurantees at least one gene is changed                                           	                    |   	|
 | double_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects two genes 	                                                                                                        |   	|
 | triple_mutation_rate       	| double     	| None  	| Probability that if a mutation is occurring that it affects 3 genes 	                                                                                                            |   	|
-| gamma_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for gamma values (maximum mutation for the corresponding parameter is annealing * [this scale])	                                                                                                                            |   	|
-| tau_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for tau values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                                                                                                            |   	|
-| coast_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for coast values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                                                                                                            |   	|
-| triptime_mutate_scale 	    | double     	| Years  	| Affects the maximum mutation range for triptime values (maximum mutation for the corresponding parameter is annealing * [this scale] * SECONDS_IN_A_YEAR) 	                                                                                                                        |   	|
-| zeta_mutate_scale          	| double     	| Radians  	| Affects the maximum mutation range for zeta values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                                                                                                            |   	|
-| alpha_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for alpha values (maximum mutation for the corresponding parameter is annealing * [this scale])                                                                                                                            |   	|
-| beta_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for beta values (maximum mutation for the corresponding parameter is annealing * [this scale])                                                                                                                            |   	|
+| gamma_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for gamma values (maximum mutation for the corresponding parameter is annealing * [this scale])	                                            |   	|
+| tau_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for tau values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                                |   	|
+| coast_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for coast values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                            |   	|
+| triptime_mutate_scale 	    | double     	| Years  	| Affects the maximum mutation range for triptime values (maximum mutation for the corresponding parameter is annealing * [this scale] * SECONDS_IN_A_YEAR) 	                    |   	|
+| zeta_mutate_scale          	| double     	| Radians  	| Affects the maximum mutation range for zeta values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                            |   	|
+| alpha_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for alpha values (maximum mutation for the corresponding parameter is annealing * [this scale])                                                |   	|
+| beta_mutate_scale           	| double     	| Radians  	| Affects the maximum mutation range for beta values (maximum mutation for the corresponding parameter is annealing * [this scale])                                                 |   	|
 
 
 Table 3. Mission Values
@@ -78,15 +78,15 @@ Table 3a. Impact Position & Velocity Values
 | r_fin_ast           	        | double     	| AU      	| The radius position of the target at impact date, relative to the Sun bodycenter 	                                                                                                        |   	|
 | theta_fin_ast        	        | double     	| Radians  	| The theta angle position of the target at impact date, relative to the Sun bodycenter	                                                                                                    |   	|
 | z_fin_ast           	        | double     	| AU      	| The z (off-plane offset) position of the target at impact date, relative to the Sun bodycenter	                                                                                        |   	|
-| vr_fin_ast           	        | double     	| AU/s  	| The velocity of the radius component of the target at impact date, relative to Sun bodycenter	                                                                                        |   	|
-| vtheta_fin_ast      	        | double     	| AU/s  	| The tangental velocity of the target at impact date	                                                                                |   	|
+| vr_fin_ast           	        | double     	| AU/s  	| The velocity of the radius component of the target at impact date, relative to Sun bodycenter	                                                                                            |   	|
+| vtheta_fin_ast      	        | double     	| AU/s  	| The tangental velocity of the target at impact date	                                                                                                                                    |   	|
 | vz_fin_ast           	        | double     	| AU/s  	| The velocity of the z component of the target at impact date, relative to the Sun bodycenter	                                                                                            |   	|
-| r_fin_earth           	    | double     	| AU     	| The radius position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                                            |   	|
-| theta_fin_earth          	    | double     	| Radians  	| The theta angle position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                                    |   	|
-| z_fin_earth           	    | double     	| AU      	| The z (off-plane offset) position of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft 	        |   	|
-| vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date 	    |   	|
-| vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date 	|   	|
-| vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to Sun bodycenter and used to plot it's path backwards in time for launch positions of the spacecraft 	            |   	|
+| r_fin_earth           	    | double     	| AU     	| The radius position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                    |   	|
+| theta_fin_earth          	    | double     	| Radians  	| The theta angle position of the earth-moon center of mass at impact date, relative to the Sun bodycenter	                                                                                |   	|
+| z_fin_earth           	    | double     	| AU      	| The z (off-plane offset) position of the earth-moon center of mass at impact date, relative to the Sun and used to plot it's path backwards in time for launch positions of the spacecraft|   	|
+| vr_fin_earth           	    | double     	| AU/s  	| The velocity of the radius component of the earth at impact date 	                                                                                                                        |   	|
+| vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date 	                                                                                                                |   	|
+| vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to Sun bodycenter and used to plot it's path backwards in time for launch positions of the spacecraft|   	|
 
 Table 4. Random Starting Initializing Values when (random_start == true)
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                |   	|
@@ -94,7 +94,8 @@ Table 4. Random Starting Initializing Values when (random_start == true)
 | gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
 | tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
 | coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|
-| triptime_random_start_range   | double     	| Years     | Used in determining the triptime initial guesss range in the form of (1<->2) * triptime_random_start_range, likely should be kept at value of 1 	                            |   	|
+| triptime_r_start_max          | double     	| Years     | The maximum triptime initial guesss value, not coupled with the range that launchCon uses to calculate the data so if set to large could get out of bounds in runtime         |   	|
+| triptime_r_start_min          | double     	| Years     | The minimum triptime initial guess value, not coupled with the range that launchCon uses to calculate the data so if set to large could get out of bounds in runtime          |   	|
 | alpha_random_start_range      | double     	| Radians   | The magnitude of the +/- value range for alpha random initial values 	                                                                                                        |   	|
 | beta_random_start_range       | double     	| Radians   | The magnitude of the positive only value range for beta random initial values 	                                                                                            |   	|
 | zeta_random_start_range       | double     	| Radians   | The magnitude of the +/- value range for zeta random initial values 	                                                                                                        |   	|

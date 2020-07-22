@@ -75,8 +75,11 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "zeta_random_start_range") {
                     this->zeta_random_start_range = std::stod(variableValue);
                 }
-                else if (variableName == "triptime_random_start_range") {
-                    this->triptime_random_start_range = std::stod(variableValue);
+                else if (variableName == "triptime_r_start_max") {
+                    this->triptime_r_start_max = std::stod(variableValue);
+                }
+                else if (variableName == "triptime_r_start_min") {
+                    this->triptime_r_start_min = std::stod(variableValue);
                 }
                 else if (variableName == "gamma_random_start_range") {
                     this->gamma_random_start_range = std::stod(variableValue);
@@ -471,10 +474,9 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
 
     os << "Random Start Range Values\n";
     os << "\tgamma: " << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
-    os << "\ttriptime: " << object.triptime_random_start_range << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n";
+    os << "\ttriptime_max-min: " << object.triptime_r_start_max << " - "  << object.triptime_r_start_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n";
     
-
-    os << "Mutation Rates\n";
+    os << "Mutation Rates & Scales\n";
     os << "\tmutation_rate: " << object.mutation_rate            << "\tdouble_m_rate: " << object.double_mutation_rate << "\ttriple_m_rate: "   << object.triple_mutation_rate << "\n";
     os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
     os << "\ttriptime_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
