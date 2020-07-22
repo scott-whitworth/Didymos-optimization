@@ -283,6 +283,9 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
             newInd.coeff.coast[mutatedValue-COAST_OFFSET] += randVar;
             recordLog[mutatedValue] = randVar;
+
+            // reset a_0
+            newInd.coeff.coast[COAST_OFFSET] = p1.coeff.coast[COAST_OFFSET];
         }
         else if (mutatedValue == TRIPTIME_OFFSET) { // Time final
             double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
