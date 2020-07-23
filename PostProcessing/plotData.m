@@ -166,6 +166,7 @@ fuelSpent = (fuelMass - cR(11,1:sizeC))/fuelMass;
 subplot(2,3,2)
 plot(cR(7,1:sizeC),fuelSpent*100)
 xlim([0 tripTime])
+ylim([0,100])
 title('Fuel spent')
 ylabel('% fuel (kg)')
 xlabel('t (s)')
