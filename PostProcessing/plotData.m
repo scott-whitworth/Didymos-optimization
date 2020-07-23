@@ -1,6 +1,8 @@
-function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoeff,tauCoeff)
+function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoeff,tauCoeff,fuelMass)
 
 %% Data that is required
+
+au=1.49597870691E11; % conversion of m/au
 
 % Solving differential motions
 timeFinal=(6.653820100923719e+07); % orbital period
@@ -42,8 +44,8 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,1),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC))
-ylabel('r')
-xlabel('t')
+ylabel('r (a.u.)')
+xlabel('t (s)')
 xlim([0 tripTime])
 title('Orbital radius')
 hold off
@@ -55,8 +57,8 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
 hold on
 plot(cR(7,1:sizeC),cR(1,1:sizeC).*cR(5,1:sizeC))
-ylabel('h')
-xlabel('t')
+ylabel('h (a.u.^{2}/s)')
+xlabel('t (s)')
 xlim([0 tripTime])
 title('Specific angular momentum')
 hold off
@@ -68,8 +70,8 @@ hold on
 plot(yA(:,1).*cos(yA(:,2)),yA(:,3),'.')
 hold on
 plot(cR(1,1:sizeC).*cos(cR(2,1:sizeC)), cR(3,1:sizeC),'LineWidth', 2)
-xlabel('x')
-ylabel('z')
+xlabel('x (a.u.)')
+ylabel('z (a.u.)')
 title('x-z plane')
 hold off
 
@@ -80,9 +82,9 @@ hold on
 plot(tA-(timeFinal-tripTime),yA(:,3),'.')
 hold on
 plot(cR(7,1:sizeC),cR(3,1:sizeC))
-ylabel('z')
+ylabel('z (a.u.)')
 xlim([0 tripTime])
-xlabel('t')
+xlabel('t (s)')
 title('Orbital elevation')
 hold off
 
@@ -93,9 +95,9 @@ hold on
 plot(tA-(timeFinal-tripTime),mod(yA(:,2), 2*pi),'.')
 hold on
 plot(cR(7,1:sizeC),mod(cR(2,1:sizeC), 2*pi))
-ylabel('\theta')
+ylabel('\theta (rad.)')
 xlim([0 tripTime])
-xlabel('t')
+xlabel('t (s)')
 title('Orbital angle')
 hold off
 
@@ -103,11 +105,11 @@ hold off
 
 figure(2) % acceleration vs. time
 subplot(2,3,1)
-plot(cR(7,1:sizeC),cR(10,1:sizeC))
+plot(cR(7,1:sizeC),au*cR(10,1:sizeC))
 xlim([0 tripTime])
 title('Acceleration due to thrust')
-ylabel('a_{thrust}')
-xlabel('t')
+ylabel('a_{thrust} (m/s^{2})')
+xlabel('t (s)')
 
 hold off
 
@@ -116,7 +118,7 @@ plot(cR(7,1:sizeC),sin(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime]), ylim([-1,1])
 %legend('matlab','c')
 title('Radial thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
@@ -124,7 +126,7 @@ plot(cR(7,1:sizeC),cos(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime]), ylim([-1,1])
 %legend('matlab','c')
 title('Tangential thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
@@ -132,7 +134,7 @@ plot(cR(7,1:sizeC),sin(cR(9,1:sizeC)))
 xlim([0 tripTime]), ylim([-1,1])
 %legend('matlab','c')
 title('Off-plane thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\tau)')
 
 %% coasting plots
@@ -148,17 +150,26 @@ ylabel('sin(\tau)')
 % ylabel('coast value')
 
 co = angles(cR(7,1:sizeC),tripTime,coast);
-subplot(2,3,2:3)
+subplot(2,3,3)
 plot(cR(7,1:sizeC),sin(co).^2)
 xlim([0 tripTime]), ylim([0,1])
 title('Coasting function and threshold')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin^2(\psi)')
 hold on
 coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
 plot(cR(7,1:sizeC),coast_thresholdPlot,'--','color','r')
 xlim([0 tripTime])
 hold off
+
+fuelSpent = (fuelMass - cR(11,1:sizeC))/fuelMass;
+subplot(2,3,2)
+plot(cR(7,1:sizeC),fuelSpent*100)
+xlim([0 tripTime])
+ylim([0,100])
+title('Fuel spent')
+ylabel('% fuel (kg)')
+xlabel('t (s)')
 
 % Thrust angle plots
 figure(3)
@@ -168,19 +179,19 @@ figure(3)
 
 subplot(3,1,1)
 plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
-xlabel('t'), ylabel('\gamma')
+xlabel('t (s)'), ylabel('\gamma (rad.)')
 xlim([0 tripTime])
 title('In-plane thrust angle')
 
 subplot(3,1,2)
 plot(cR(7,1:sizeC),cR(9,1:sizeC))
-xlabel('t'), ylabel('\tau')
+xlabel('t (s)'), ylabel('\tau (rad.)')
 xlim([0 tripTime])
 title('Out-of-plane thrust angle')
 
 subplot(3,1,3)
 plot(cR(7,1:sizeC),co)
-xlabel('t'), ylabel('\psi')
+xlabel('t (s)'), ylabel('\psi')
 xlim([0 tripTime])
 title('Coast series')
 
@@ -196,9 +207,9 @@ plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
 xlim([-2.5 1.5])
 ylim([-2.0 2.0])
 zlim([-0.2 0.2])
-xlabel('x')
-ylabel('y')
-zlabel('z')
+xlabel('x (a.u.)')
+ylabel('y (a.u.)')
+zlabel('z (a.u.)')
 
 hold on
 plot3(aX,aY,aZ,'LineWidth', 1, 'Color',	[0.6350, 0.0780, 0.1840])

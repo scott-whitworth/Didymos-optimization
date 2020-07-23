@@ -229,7 +229,8 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
     //writes final optimization values to a seperate file
     std::ofstream output;
     // type double for consistency in binary output
-    double seed = cConstants->time_seed, gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+    int seed = cConstants->time_seed;
+    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE, fuelMass = cConstants->wet_mass - cConstants->dry_mass;
     output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
@@ -245,6 +246,7 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
     output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
     output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+    output.write((char*)&fuelMass, sizeof(double));
     output.write((char*)&cConstants->coast_threshold, sizeof(double));
     output.write((char*)&gsize, sizeof(double));
     output.write((char*)&tsize, sizeof(double));

@@ -1,5 +1,7 @@
-function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1,gammaCoeff1,tauCoeff1,dR,sizeD,tripTime2,coast2,coast_threshold2,gammaCoeff2,tauCoeff2)
+function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1,gammaCoeff1,tauCoeff1,fuelMass1,dR,sizeD,tripTime2,coast2,coast_threshold2,gammaCoeff2,tauCoeff2,fuelMass2)
 %% Data that is required
+
+au=1.49597870691E11; % conversion of m/au
 
 % Solving differential motions
 timeFinal=(6.653820100923719e+07);
@@ -58,8 +60,8 @@ if tripTime2 < tripTime1
 else
     plot(dR(7,1:sizeD),dR(1,1:sizeD))
 end
-ylabel('r')
-xlabel('t')
+ylabel('r (a.u.)')
+xlabel('t (s)')
 xlim([0 maxTripTime])
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
 title('Orbital radius')
@@ -82,8 +84,8 @@ if tripTime2 < tripTime1
 else
     plot(dR(7,1:sizeD),dR(1,1:sizeD).*dR(5,1:sizeD))
 end
-ylabel('h')
-xlabel('t')
+ylabel('h (a.u.^{2}/s)')
+xlabel('t (s)')
 xlim([0 maxTripTime])
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
 title('Specific Angular Momentum')
@@ -98,8 +100,8 @@ hold on
 plot(cR(1,1:sizeC).*cos(cR(2,1:sizeC)), cR(3,1:sizeC),'LineWidth', 2)
 hold on
 plot(dR(1,1:sizeD).*cos(dR(2,1:sizeD)), dR(3,1:sizeD),'LineWidth', 2)
-xlabel('x')
-ylabel('z')
+xlabel('x (a.u.)')
+ylabel('z (a.u.)')
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
 title('x-z plane')
 hold off
@@ -121,9 +123,9 @@ if tripTime2 < tripTime1
 else
     plot(dR(7,1:sizeD),dR(3,1:sizeD))
 end
-ylabel('z')
+ylabel('z (a.u.)')
 xlim([0 maxTripTime])
-xlabel('t')
+xlabel('t (s)')
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
 title('Orbital elevation')
 hold off
@@ -145,9 +147,9 @@ if tripTime2 < tripTime1
 else
     plot(dR(7,1:sizeD),mod(dR(2,1:sizeD), 2*pi))
 end
-ylabel('\theta')
+ylabel('\theta (rad.)')
 xlim([0 maxTripTime])
-xlabel('t')
+xlabel('t (s)')
 legend({'earth','asteroid','spacecraft 1','spacecraft 2'})
 title('Orbital angle')
 hold off
@@ -156,12 +158,12 @@ hold off
 
 figure(2) % only spacecraft 1
 subplot(2,3,1)
-plot(cR(7,1:sizeC),cR(10,1:sizeC))
+plot(cR(7,1:sizeC),au*cR(10,1:sizeC))
 xlim([0 tripTime1])
 legend({'spacecraft 1'})
 title('Acceleration due to thrust')
-ylabel('a_{thrust}')
-xlabel('t')
+ylabel('a_{thrust} (m/s^{2}')
+xlabel('t (s)')
 
 hold off
 
@@ -170,7 +172,7 @@ plot(cR(7,1:sizeC),sin(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Radial thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
@@ -178,7 +180,7 @@ plot(cR(7,1:sizeC),cos(cR(8,1:sizeC)).*cos(cR(9,1:sizeC)))
 xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Tangential thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
@@ -186,15 +188,15 @@ plot(cR(7,1:sizeC),sin(cR(9,1:sizeC)))
 xlim([0 tripTime1]), ylim([-1,1])
 legend({'spacecraft 1'})
 title('Off-plane thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\tau)')
 
 
 co = angles(cR(7,1:sizeC),tripTime1,coast1);
-subplot(2,3,2:3)
+subplot(2,3,3)
 plot(cR(7,1:sizeC),sin(co).^2)
 title('Coasting function and threshold')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin^2(\psi)')
 hold on
 coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
@@ -203,21 +205,24 @@ xlim([0 tripTime1]), ylim([0,1])
 legend({'spacecraft 1','threshold 1'})
 hold off
 
+fuelSpent1 = (fuelMass1 - cR(11,1:sizeC))/fuelMass1;
+subplot(2,3,2)
+plot(cR(7,1:sizeC),fuelSpent1*100)
+xlim([0 tripTime1])
+ylim([0,100])
+title('Fuel spent')
+legend({'spacecraft 1'})
+ylabel('% fuel (kg)')
+xlabel('t (s)')
+
 figure(3) % only spacecraft 2
 subplot(2,3,1)
-plot(dR(7,1:sizeD),dR(10,1:sizeD))
+plot(dR(7,1:sizeD),au*dR(10,1:sizeD))
 xlim([0 tripTime2])
 legend({'spacecraft 2'})
 title('Acceleration due to thrust')
-ylabel('a_{thrust}')
-xlabel('t')
-
-for i = 1:sizeD
-    if dR(10,i)
-        ylim([5.0,5.8])
-        i = sizeD;
-    end
-end
+ylabel('a_{thrust} (m/s^{2})')
+xlabel('t (s)')
 
 hold off
 
@@ -226,7 +231,7 @@ plot(dR(7,1:sizeD),sin(dR(8,1:sizeD)).*cos(dR(9,1:sizeD)))
 xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Radial thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\gamma)cos(\tau)')
 
 subplot(2,3,5)
@@ -234,7 +239,7 @@ plot(dR(7,1:sizeD),cos(dR(8,1:sizeD)).*cos(dR(9,1:sizeD)))
 xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Tangential thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('cos(\gamma)cos(\tau)')
 
 subplot(2,3,6)
@@ -242,15 +247,15 @@ plot(dR(7,1:sizeD),sin(dR(9,1:sizeD)))
 xlim([0 tripTime2]), ylim([-1,1])
 legend({'spacecraft 2'})
 title('Off-plane thrust fraction')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin(\tau)')
 
 
 do = angles(dR(7,1:sizeD),tripTime2,coast2);
-subplot(2,3,2:3)
+subplot(2,3,3)
 plot(dR(7,1:sizeD),sin(do).^2)
 title('Coasting function and threshold')
-xlabel('t')
+xlabel('t (s)')
 ylabel('sin^2(\psi)')
 hold on
 coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
@@ -258,6 +263,16 @@ plot(dR(7,1:sizeD),coast_threshold2Plot,'--','color','r')
 xlim([0 tripTime2]), ylim([0,1])
 legend({'spacecraft 2','threshold 2'})
 hold off
+
+fuelSpent2 = (fuelMass2 - dR(11,1:sizeD))/fuelMass2;
+subplot(2,3,2)
+plot(dR(7,1:sizeC),fuelSpent2*100)
+xlim([0 tripTime2])
+ylim([0,100])
+title('Fuel spent')
+legend({'spacecraft 2'})
+ylabel('% fuel (kg)')
+xlabel('t (s)')
 
 % Thrust angle plots
 figure(4)
@@ -267,7 +282,7 @@ subplot(3,1,1)
 plot(cR(7,1:sizeC),mod(cR(8,1:sizeC),2*pi))
 hold on
 plot(dR(7,1:sizeD),mod(dR(8,1:sizeD),2*pi))
-xlabel('t'), ylabel('\gamma')
+xlabel('t (s)'), ylabel('\gamma (rad.)')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
 title('In-plane thrust angle')
@@ -278,7 +293,7 @@ subplot(3,1,2)
 plot(cR(7,1:sizeC),cR(9,1:sizeC))
 hold on
 plot(dR(7,1:sizeD),dR(9,1:sizeD))
-xlabel('t'), ylabel('\tau')
+xlabel('t (s)'), ylabel('\tau (rad.)')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
 title('Out-of-plane thrust angle')
@@ -289,7 +304,7 @@ subplot(3,1,3)
 plot(cR(7,1:sizeC),co)
 hold on
 plot(dR(7,1:sizeD),do)
-xlabel('t'), ylabel('\psi')
+xlabel('t (s)'), ylabel('\psi')
 xlim([0 maxTripTime])
 legend('spacecraft 1', 'spacecraft 2')
 title('Coast series')
@@ -307,9 +322,9 @@ plot3(dX,dY,dZ,'LineWidth', 3,'Color',[0, 0, 1]	)
 xlim([-2.5 1.5])
 ylim([-2.0 2.0])
 zlim([-0.2 0.2])
-xlabel('x')
-ylabel('y')
-zlabel('z')
+xlabel('x (a.u.)')
+ylabel('y (a.u.)')
+zlabel('z (a.u.)')
 
 hold on
 plot3(aX,aY,aZ,'LineWidth', 1, 'Color',	[0.6350, 0.0780, 0.1840])

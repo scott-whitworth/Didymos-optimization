@@ -1,26 +1,28 @@
-function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast] = loadTripData(cVector)
+function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast,fuelMass] = loadTripData(cVector)
 
 %% Array offsets
 
         %% config offsets
         asteroid_offset = 1; % x(1:6) y0A
         earth_offset = 7; % x(7:12) y0E
-        threshold_offset = 13; % x(13) coast threshold
+        fuel_offset = 13; % x(13) fuelMass = wetMass - dryMass
+        threshold_offset = 14; % x(14) coast threshold
 
         % array sizes
-        gamma_size = cVector(14);
-        tau_size = cVector(15);
-        coast_size = cVector(16);
+        gamma_size = cVector(15);
+        tau_size = cVector(16);
+        coast_size = cVector(17);
         
-        GAMMA_OFFSET = 17; % x(17:16+gamma_size) third order fourier for in-plane angle
-        TAU_OFFSET = GAMMA_OFFSET + gamma_size; % x(17+gamma_size:16+gamma_size+tau_size) first order fourier for out-of-plane angle
-        TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; % x(20+gamma_size+tau_size) total duration of the trip (after tau coeffs + alpha, beta, zeta)
-        COAST_OFFSET = TRIPTIME_OFFSET + 1; % x(21+gamma_size+tau_size) second order fourier for coasting determination
+        GAMMA_OFFSET = 18; % x(18:17+gamma_size) third order fourier for in-plane angle
+        TAU_OFFSET = GAMMA_OFFSET + gamma_size; % x(18+gamma_size:17+gamma_size+tau_size) first order fourier for out-of-plane angle
+        TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; % x(21+gamma_size+tau_size) total duration of the trip (after tau coeffs + alpha, beta, zeta)
+        COAST_OFFSET = TRIPTIME_OFFSET + 1; % x(22+gamma_size+tau_size) second order fourier for coasting determination
         
         %% Constants
         
         tripTime=cVector(TRIPTIME_OFFSET);
         coast_threshold = cVector(threshold_offset);
+        fuelMass = cVector(fuel_offset);
         
          %% Initial conditions of Earth and Asteroid
         
@@ -32,7 +34,7 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast] = loadTrip
         % Earth
         % y0E = [1.00140803662733E+00, 1.2786132931868E-01, -1.195365359889E-05,...
         % -3.30528017791942E-09, 1.98791889005860E-07, -9.89458740916469E-12];
-        y0E = cVector(earth_offset:threshold_offset-1);
+        y0E = cVector(earth_offset:fuel_offset-1);
         
         %% Initial Fourier components
         
