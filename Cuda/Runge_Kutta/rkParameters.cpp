@@ -1,5 +1,4 @@
 #include "rkParameters.h"
-#define SECONDS_IN_YEAR 365.25*24*3600
 
 template <class T> rkParameters<T>::rkParameters(T tripTime0,T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
                                                  T *gamma0, T *tau0, T *coast0) {  // coefficients<T>
@@ -96,7 +95,7 @@ template <class T> rkParameters<T>::rkParameters() {
 //        cConstants - to access the random range values
 // output: an rkParameters object that contains randomized properties within a valid ranges
 rkParameters<double> randomParameters(std::mt19937_64 & rng, const cudaConstants * cConstants) {
-    double tripTime = SECONDS_IN_YEAR *  ( ((cConstants->triptime_r_start_max - cConstants->triptime_r_start_min) * (static_cast<double>(rng()) / rng.max())) + cConstants->triptime_r_start_min);
+    double tripTime = SECONDS_IN_YEAR *  ( ((cConstants->triptime_max - cConstants->triptime_min) * (static_cast<double>(rng()) / rng.max())) + cConstants->triptime_min);
 
     double alpha = cConstants->alpha_random_start_range * 2 * ((static_cast<double>(rng()) / rng.max()) - 0.5);
     double  beta = cConstants-> beta_random_start_range * ((static_cast<double>(rng()) / rng.max()));

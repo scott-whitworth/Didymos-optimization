@@ -38,8 +38,8 @@ struct cudaConstants {
     double gamma_random_start_range;
     double tau_random_start_range;
     double coast_random_start_range;
-    double triptime_r_start_max;
-    double triptime_r_start_min;
+    double triptime_max;
+    double triptime_min;
     double alpha_random_start_range;
     double beta_random_start_range;
     double zeta_random_start_range;
@@ -73,7 +73,6 @@ struct cudaConstants {
     double v_impact; // AU/s, the official DART mission data
 
     double rk_tol;       // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
-    double f_min;        // The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead
     double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
 
     int num_individuals; // Number of individuals in the pool, each individual contains its own thread
@@ -81,9 +80,6 @@ struct cudaConstants {
     int thread_block_size;
 
     // Used in generating time range for Earth calculations (units in seconds)
-    int startTime;
-    int endTime;
-    int durationTime;
     int timeRes;
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
@@ -97,11 +93,6 @@ struct cudaConstants {
     // Output: Properties explicitly set in the config file are set to values following equal sign, ignores comments or empty lines in files 
     void FileRead(std::string fileName);
 };
-
-// Comparison operator to check if to sets of cudaCosntants are the same, used to verify that one has not changed
-// Input: Two const cudaConstants a and b that are to be compared
-// Output: Returns true if all values contained in a and b are equivalent, returns false if at least one variable is not equivalent, also outputs to terminal result (such as a variable found not equivalent)
-bool sameConstants(const cudaConstants& a,const cudaConstants& b);
 
 // Output function to stream, with some formatting to help be more readible on terminal
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object);

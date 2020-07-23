@@ -4,7 +4,7 @@
 //structs
 #include "../Thrust_Files/coefficients.h"
 #include "../Motion_Eqns/elements.h"
-
+#include "../constants.h" // for SECONDS_IN_YEAR
 #include "runge_kutta.h"//used for rk4Simple()
 
 //struct to hold all the values required for the runge-kutta functions

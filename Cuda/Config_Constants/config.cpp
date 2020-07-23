@@ -11,18 +11,15 @@ cudaConstants::cudaConstants() {
     FileRead("genetic.config");
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
-    // Now that startTime and durationTime have been acquired, derive endTime
-    this->endTime = this->startTime + this->durationTime;
     // Now that time_seed has been acquired, derive rng object
     this->rng = std::mt19937_64(this->time_seed);
 }
+
 // Operates same as default, however uses configFile as address for where the config file to be used is located
 cudaConstants::cudaConstants(std::string configFile) {
     FileRead(configFile);
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
-    // Now that startTime and durationTime have been acquired, derive endTime
-    this->endTime = this->startTime + this->durationTime;
     // Now that time_seed has been acquired, derive rng object
     this->rng = std::mt19937_64(this->time_seed);
 }
@@ -75,11 +72,11 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "zeta_random_start_range") {
                     this->zeta_random_start_range = std::stod(variableValue);
                 }
-                else if (variableName == "triptime_r_start_max") {
-                    this->triptime_r_start_max = std::stod(variableValue);
+                else if (variableName == "triptime_max") {
+                    this->triptime_max = std::stod(variableValue);
                 }
-                else if (variableName == "triptime_r_start_min") {
-                    this->triptime_r_start_min = std::stod(variableValue);
+                else if (variableName == "triptime_min") {
+                    this->triptime_min = std::stod(variableValue);
                 }
                 else if (variableName == "gamma_random_start_range") {
                     this->gamma_random_start_range = std::stod(variableValue);
@@ -200,9 +197,6 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "rk_tol") {
                     this->rk_tol = std::stod(variableValue);
                 }
-                else if (variableName == "f_min") {
-                    this->f_min = std::stod(variableValue);
-                }
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stod(variableValue);
                 }
@@ -214,12 +208,6 @@ void cudaConstants::FileRead(std::string fileName) {
                 }
                 else if (variableName == "thread_block_size") {
                     this->thread_block_size = std::stoi(variableValue);
-                }
-                else if (variableName == "startTime") {
-                    this->startTime = std::stoi(variableValue);
-                }
-                else if (variableName == "durationTime") {
-                    this->durationTime = std::stoi(variableValue);
                 }
                 else if (variableName == "timeRes") {
                     this->timeRes = std::stoi(variableValue);
@@ -246,228 +234,32 @@ void cudaConstants::FileRead(std::string fileName) {
     }
 }
 
-// Compare a and b cudaConstants and return true if all variables are equivalent, has not been recently updated for all newer properties added!
-// Input: two cudaConstants objects to compare
-// Output: true if all properties are equivalent and cout output that states that they are equivalent, false if atleast one is not equivalent with cout output on one of the properties that was not (if more than one is inequivalent, will not check/show what the other ones are)
-bool sameConstants(const cudaConstants& a, const cudaConstants& b) {
-    if (a.time_seed != b.time_seed) {
-        std::cout << "time_seed not equal!\n";
-        return false;
-    }
-    else if (a.random_start != b.random_start) {
-        std::cout << "random_start not equal!\n";
-        return false;
-    }
-    else if (a.initial_start_file_address != b.initial_start_file_address) {
-        std::cout << "initial file address not equal!\n";
-        return false;
-    }
-    else if (a.pos_threshold != b.pos_threshold) {
-        std::cout << "pos_threshold not equal!\n";
-        return false;
-    }
-    else if (a.record_mode != b.record_mode) {
-        std::cout << "record_mode not equal\n";
-        return false;
-    }
-    else if (a.coast_threshold != b.coast_threshold) {
-        std::cout << "coast_threshold not equal!\n";
-        return false;
-    }
-    else if (a.rk_tol != b.rk_tol) {
-        std::cout << "rk_tol not equal!\n";
-        return false;
-    }
-    else if (a.f_min != b.f_min) {
-        std::cout << "f_min not equal!\n";
-        return false;
-    }
-    else if (a.max_numsteps != b.max_numsteps) {
-        std::cout << "max_numsteps not equal!\n";
-        return false;
-    }
-    else if (a.anneal_factor != b.anneal_factor) {
-        std::cout << "anneal_factor not equal!\n";
-        return false;
-    }
-    else if (a.anneal_initial != b.anneal_initial) {
-        std::cout << "anneal_initial not equal!\n";
-        return false;
-    }
-    else if (a.change_check != b.change_check) {
-        std::cout << "change_check not equal!\n";
-        return false;
-    }
-    else if (a.v_impact != b.v_impact) {
-        std::cout << "v_impact not equal!\n";
-        return false;
-    }
-    else if (a.write_freq != b.write_freq) {
-        std::cout << "write_freq not equal!\n";
-        return false;
-    }
-    else if (a.mutation_rate != b.mutation_rate) {
-        std::cout << "mutation_rate not equal!\n";
-        return false;
-    }
-    else if (a.gamma_mutate_scale != b.gamma_mutate_scale) {
-        std::cout << "gamma_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.tau_mutate_scale != b.tau_mutate_scale) {
-        std::cout << "tau_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.zeta_mutate_scale != b.zeta_mutate_scale) {
-        std::cout << "zeta_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.coast_mutate_scale != b.coast_mutate_scale) {
-        std::cout << "coast_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.triptime_mutate_scale != b.triptime_mutate_scale) {
-        std::cout << "triptime_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.alpha_mutate_scale != b.alpha_mutate_scale) {
-        std::cout << "alpha_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.beta_mutate_scale != b.beta_mutate_scale) {
-        std::cout << "beta_m_scale not equal!\n";
-        return false;
-    }
-    else if (a.thruster_type != b.thruster_type) {
-        std::cout << "thruster_type not equal!\n";
-        return false;
-    }
-    else if (a.dry_mass != b.dry_mass) {
-        std::cout << "dry_mass not equal!\n";
-        return false;
-    }
-    else if (a.fuel_mass != b.fuel_mass) {
-        std::cout << "fuel_mass not equal!\n";
-        return false;
-    }
-    else if (a.wet_mass != b.wet_mass) {
-        std::cout << "wet_mass not equal!\n";
-        return false;
-    }
-    else if (a.c3energy != b.c3energy) {
-        std::cout << "c3energy not equal!\n";
-        return false;
-    }
-    else if (a.v_escape != b.v_escape) {
-        std::cout << "v_escape not equal!\n";
-        return false;
-    }
-    else if (a.r_fin_ast != b.r_fin_ast) {
-        std::cout << "r_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.theta_fin_ast != b.theta_fin_ast) {
-        std::cout << "theta_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.z_fin_ast != b.z_fin_ast) {
-        std::cout << "z_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.vr_fin_ast != b.vr_fin_ast) {
-        std::cout << "vr_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.vtheta_fin_ast != b.vtheta_fin_ast) {
-        std::cout << "vtheta_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.vz_fin_ast != b.vz_fin_ast) {
-        std::cout << "vz_fin_ast not equal!\n";
-        return false;
-    }
-    else if (a.r_fin_earth != b.r_fin_earth) {
-        std::cout << "r_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.theta_fin_earth != b.theta_fin_earth) {
-        std::cout << "theta_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.z_fin_earth != b.z_fin_earth) {
-        std::cout << "z_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.vr_fin_earth != b.vr_fin_earth) {
-        std::cout << "vr_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.vtheta_fin_earth != b.vtheta_fin_earth) {
-        std::cout << "vtheta_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.vz_fin_earth != b.vz_fin_earth) {
-        std::cout << "vz_fin_earth not equal!\n";
-        return false;
-    }
-    else if (a.survivor_count != b.survivor_count) {
-        std::cout << "survivor_count not equal!\n";
-        return false;
-    }
-    else if (a.num_individuals != b.num_individuals) {
-        std::cout << "num_individuals not equal!\n";
-        return false;
-    }
-    else if (a.thread_block_size != b.thread_block_size) {
-        std::cout << "thread_block_size not equal!\n";
-        return false;
-    }
-    else if (a.startTime != b.startTime) {
-        std::cout << "startTime not equal!\n";
-        return false;
-    }
-    else if (a.endTime != b.endTime) {
-        std::cout << "endTime not equal!\n";
-        return false;
-    }
-    else if (a.durationTime != b.durationTime) {
-        std::cout << "durationTime not equal!\n";
-        return false;
-    }
-    else if (a.timeRes != b.timeRes) {
-        std::cout << "timeRes not equal!\n";
-        return false;
-    }
-    else {
-        std::cout << "\nThe two cudaConstants are equivalent!\n";
-        return true;
-    }
-}
-
 // Output cudaConstant contents with formatting for better readibility
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "==========CONFIG=DATA===============================================================================\n";
-    os << "time_seed: "     << object.time_seed     << "\trandom_start: "   << object.random_start      << "\t\taddress: "     << object.initial_start_file_address << "\n";
-    os << "pos_threshold: " << object.pos_threshold << "\tcoast_threshold: " << object.coast_threshold  << "\n";
-    os << "num_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: " << object.thread_block_size << "\n\n";
+    os << "General Genetic Algorithm & Runge-Kutta Related Values\n";
+    os << "\ttime_seed: "       << object.time_seed       << "\trandom_start: "   << object.random_start   << "\t\tnon_r_start_address: " << object.initial_start_file_address << "\n";
+    os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "      << object.change_check << "\n";
+    os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: " << object.thread_block_size << "\n";
+    os << "\trk_tol: "          << object.rk_tol          << "\t\ttimeRes: "      << object.timeRes        << "\t\tmax_numsteps: "      << object.max_numsteps << "\n";
+    os << "\tbest_count: "    << object.best_count   << "\n\n";
 
-    os << "rk_tol: "        << object.rk_tol        << "\t\tf_min: "          << object.f_min           << "\t\tmax_numsteps: "  << object.max_numsteps << "\n";
-    os << "startTime: "     << object.startTime     << "\tendTime: "          << object.endTime         << "\tdurationTime: "    << object.durationTime << "\ttimeRes: " << object.timeRes << "\n";
-    os << "anneal_factor: " << object.anneal_factor << "\tanneal_initial: "   << object.anneal_initial  << "\tchange_check: "    << object.change_check << "\n";
-    os << "write_freq: "    << object.write_freq    << "\t\tdisp_freq: "      << object.disp_freq       << "\t\tbest_count: "    << object.best_count   << "\n";
-    os << "record_mode: "   << object.record_mode   << "\n\n";
+    os << "Output Variables\n";
+    os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";
 
     os << "Random Start Range Values\n";
     os << "\tgamma: " << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
-    os << "\ttriptime_max-min: " << object.triptime_r_start_max << " - "  << object.triptime_r_start_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
+    os << "\ttriptime max - min: " << object.triptime_max << " - "  << object.triptime_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
     
     os << "Mutation & Scales\t (mutation_rate: " << object.mutation_rate << ")\n";
-    os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\t\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
+    os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
     os << "\ttriptime_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
-    os << "thruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n\n";
-    os << "c3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\tv_impact: " << object.v_impact << "\n\n";
+    os << "Spacecraft Info\n";
+    os << "\tthruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n";
+    os << "\tc3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\tv_impact: " << object.v_impact << "\n";
+    os << "\tpos_threshold: " << object.pos_threshold << "\tcoast_threshold: "<< object.coast_threshold<< "\n\n";
 
     os << "Asteriod Info:\n";
     os << "\t R: " << object.r_fin_ast << "\t 0: " << object.theta_fin_ast << "\t Z: " << object.z_fin_ast << "\n";

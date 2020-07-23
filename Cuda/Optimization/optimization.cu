@@ -223,16 +223,10 @@ int main () {
     // Display contents of cConstants resulting from reading the file
     std::cout << *cConstants << std::endl;
 
-    // Define variables to be passed into EarthInfo that determines the range of time to be calculated, accessed from cConstants
-    double startTime = cConstants->startTime;
-    double endTime = cConstants->endTime; 
-    double timeRes = cConstants->timeRes;
-
     // pre-calculate a table of Earth's position within possible mission time range
-    launchCon = new EarthInfo(startTime, endTime, timeRes, cConstants); // a global variable to hold Earth's position over time
+    launchCon = new EarthInfo(cConstants); // a global variable to hold Earth's position over time
     
-    //CURRENTLY NOT IN USE
-    // // File stream for outputting values that were calculated in EarthInfo constructor
+    // File stream for outputting values that were calculated in EarthInfo constructor
     if (cConstants->record_mode) {
         recordEarthData(cConstants);
     }

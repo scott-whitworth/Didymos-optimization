@@ -540,15 +540,15 @@ void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, do
 //        launchCon - access elements of earth 
 // output: EarthCheckValues.csv is created and holds rows of element info on earth with timeStamp on each row
 void recordEarthData(const cudaConstants * cConstants) {
-  double timeStamp = cConstants->startTime;
+  double timeStamp = cConstants->triptime_min*SECONDS_IN_YEAR;
 
   std::ofstream earthValues;
   earthValues.open("EarthCheckValues.csv");
   // Set header row for the table to record values, with timeStamp
   earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
-  while (timeStamp < cConstants->endTime) {
+  while (timeStamp < cConstants->triptime_max*SECONDS_IN_YEAR) {
       earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
-      timeStamp += cConstants->timeRes*24; // Increment to next day as timeRes is set to every hour
+      timeStamp += cConstants->timeRes*24; // Increment to next day as timeRes is assumed to be set to every hour in this output
   }
   // Done recording earth calculations, close file
   earthValues.close();

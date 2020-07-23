@@ -3,6 +3,7 @@
 #include <math.h>
 
 #define _USE_MATH_DEFINES // for use of M_PI
+#define SECONDS_IN_YEAR 365.25*24*3600 // Used for converting units from years to seconds or vice-versa
 
 // Planetary properties and constants
 #define earthRadius 1.49598261e11/AU // radial distance of Earth from Sun (au)

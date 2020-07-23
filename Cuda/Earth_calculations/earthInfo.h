@@ -9,9 +9,9 @@ class EarthInfo {
     private:
         // Elements pointer array that holds all of the earth conditions for a given time range
         elements<double> *earthCon;
-        // First time point for a given time span offseted from impact date
+        // First time point for a given time span offseted from impact date, units of seconds
         double startTime;
-        // Last time point for a given time span offseted from impact date
+        // Last time point for a given time span offseted from impact date, units of seconds
         double endTime;
         // The resolution of data points (ex: 3600 = hours, 60 = minutes, 1 = seconds)
         double timeRes;
@@ -30,11 +30,8 @@ class EarthInfo {
 
     public:
         // Constructor used to initialize the earth calculation data
-        // Input: beginTime - assigned to startTime
-        //         stopTime - assigned to endTime
-        //          timeAcc - assigned to timeRes
-        //       cConstants - Used to access impact date element data, passed into earthInitial_incremental()
-        EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, const cudaConstants* cConstants);
+        // Input: cConstants - Used to access impact date element data and the time range needed to be calculated (triptime max and min), passed into earthInitial_incremental()
+        EarthInfo(const cudaConstants* cConstants);
         
         // Returns the interpolated conditions of earth for a given time input, using interpolate if currentTime does not directly corelate to an explicit derived element in earthCon
         // Output: Returns an element that is to earth's position/velocity at currentTime away from impact (backwards)
@@ -60,4 +57,4 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime,co
 // Global variable for launchCon (assigned content in optimization.cu)
 EarthInfo *launchCon;
 
-#endif 
+#endif

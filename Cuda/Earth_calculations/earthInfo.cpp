@@ -1,22 +1,18 @@
 #ifndef earthInfo_cpp
 #define earthInfo_cpp
 
-#include "earthInfo.h"
-    
 #include <iostream>  // cout
 #include <iomanip> // setprecision(int)  
 
+#include "earthInfo.h"
 
 // Constructor used to initialize the earth calculation data
-// Input: beginTime - assigned to startTime
-//         stopTime - assigned to endTime
-//          timeAcc - assigned to timeRes
-//       cConstants - Used to access impact date element data, passed into earthInitial_incremental()
-EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const double & timeAcc, const cudaConstants* cConstants) {
+// Input: cConstants - Used to access impact date element data and the time range needed to be calculated (triptime max and min), passed into earthInitial_incremental()
+EarthInfo::EarthInfo(const cudaConstants* cConstants) {
     // Setting up initial information
-    startTime = beginTime; // Starting time (s)
-    endTime = stopTime;    // Ending time (s)
-    timeRes = timeAcc;     // Time resolution (s)
+    startTime = cConstants->triptime_min * SECONDS_IN_YEAR; // Starting time (s)
+    endTime = cConstants->triptime_max * SECONDS_IN_YEAR;    // Ending time (s)
+    timeRes = cConstants->timeRes;     // Time resolution (s)
     tolData = ((endTime-startTime)/timeRes) + 1; // Total Number of Data points in earthCon based on duration in seconds divided by resolution, plus one for the last 'section'
 
     // Alocate memory for earthCon, one entry for every data point
@@ -54,28 +50,39 @@ EarthInfo::EarthInfo(const double & beginTime, const double & stopTime, const do
 }
 
 // Returns conditions of earth for a given time input
-// Input: currentTime - time offset from impact backwards in time (larger value refers further back) 
+// Input: currentTime - time offset from impact backwards in time (larger value refers further back) in units of seconds
 // Output: Returns an element that is to earth's position/velocity at currentTime away from impact using interpolate
 //         as currentTime very likely does not directly corelate to an explicit derived element in earthCon
 elements<double> EarthInfo::getCondition(const double & currentTime) {
     // Defining variables to use
     elements<double> lower;
     elements<double> upper;
+    elements<double> result;
+    
     int index;
-
     // Setting index equal to the nearest index of data based on time
     index = calcIndex(currentTime); 
+        
+    if (index < 0) {
+        std::cout << "Earth condition index being accessed is less than 0! Returning nearest index\n";
+        index = 0;
+    }
+    else if (index > calcIndex(endTime)) {
+        std::cout << "Earth condition index being accessed is greater than or equal to endTime! Returning nearest valid index\n";
+        index = calcIndex(endTime) - 1;
+    }
+
     // The lower index weight is equal to the index
     lower = earthCon[index];
     // The upper index weight is equal to the index plus 1
     upper = earthCon[index + 1];
-    
+
     // Weights are used for interpolation
     double lowerWeight = 1 - ((currentTime-calc_time(index)) / timeRes);
     double upperWeight = 1 - ((calc_time(index+1)-currentTime) / timeRes);
 
     // Derive the element of Earth at this time using interpolate
-    elements<double> result = interpolate(lower,upper,lowerWeight,upperWeight);
+    result = interpolate(lower,upper,lowerWeight,upperWeight);
 
     return result;
 }

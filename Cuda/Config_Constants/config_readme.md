@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 22nd, 2020</i>
+<i>Last Updated: July 23rd, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -33,9 +33,6 @@ Table 1. Setup & General Values
 | rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
 | f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	                                            |   	|
 | max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	                                                                                                                                    |   	|
-| startTime                 	| int        	| seconds   | The time offset backwards from impact date values of Earth-Moon Barycenter to start reverse runge-kutta calculating positiona and velocity	                                    |   	|
-| durationTime                 	| int        	| seconds   | The time duration backwards from the offset of Earth-Moon Barycenter to start reverse runge-kutta calculating positiona and velocity, used in deriving endTime	                |   	|
-| endTime                    	| int        	| seconds   | The time offset backwards from the impact date of Earth-Moon Barycenter to end reverse runge-kutta calculating positiona and velocity, derived from (startTime + durationTime)    |   	|
 | timeRes                    	| int        	| seconds   | The "gap" between each calculation for Earth's backward runge-kutta, for example 3600 sets every calculation to be 1 hour apart                                                   |   	|
 
 Table 2. Genetic Algorithm Values
@@ -86,14 +83,14 @@ Table 3a. Impact Position & Velocity Values
 | vtheta_fin_earth         	    | double     	| AU/s  	| The tangental velocity of the earth-moon center of mass at impact date 	                                                                                                                |   	|
 | vz_fin_earth           	    | double     	| AU/s  	| The velocity of the z component of the earth-moon center of mass at impact date, relative to Sun bodycenter and used to plot it's path backwards in time for launch positions of the spacecraft|   	|
 
-Table 4. Random Starting Initializing Values when (random_start == true)
+Table 4. Random Starting Initializing Values when (random_start == true) & Triptime Range
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                |   	|
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
 | gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
 | tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
 | coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|
-| triptime_r_start_max          | double     	| Years     | The maximum triptime initial guesss value, not coupled with the range that launchCon uses to calculate the data so if set to large could get out of bounds in runtime         |   	|
-| triptime_r_start_min          | double     	| Years     | The minimum triptime initial guess value, not coupled with the range that launchCon uses to calculate the data so if set too small could get out of bounds in runtime, this value is also assumed to be smaller than triptime_r_start_max |   	|
+| triptime_max                  | double     	| Years     | The maximum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumed to be larger than triptime_min |   	|
+| triptime_min                  | double     	| Years     | The minimum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumes that it is less than triptime_max |   	|
 | alpha_random_start_range      | double     	| Radians   | The magnitude of the +/- value range for alpha random initial values 	                                                                                                        |   	|
 | beta_random_start_range       | double     	| Radians   | The magnitude of the positive only value range for beta random initial values 	                                                                                            |   	|
 | zeta_random_start_range       | double     	| Radians   | The magnitude of the +/- value range for zeta random initial values 	                                                                                                        |   	|

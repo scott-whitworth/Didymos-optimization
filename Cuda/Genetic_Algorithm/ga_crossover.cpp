@@ -6,8 +6,6 @@
 #include <chrono>
 #include <vector>
 
-#define SECONDS_IN_YEAR 365.25*24*3600 // Used with getRand for triptime mutation scale
-
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility and clarity of value meaning
 enum maskValue {
     PARTNER1 = 1,
@@ -288,14 +286,14 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
                 recordLog[index] = randVar;
             }
             else if (index == TRIPTIME_OFFSET) { // Time final
-                double randVar = SECONDS_IN_YEAR*getRand(cConstants->triptime_mutate_scale * annealing, rng);
+                double randVar = SECONDS_IN_YEAR * getRand(cConstants->triptime_mutate_scale * annealing, rng);
                 newInd.tripTime += randVar;
                 // bound checking to make sure the tripTime is set within the valid range of trip times
-                if (newInd.tripTime < cConstants->triptime_r_start_min * SECONDS_IN_YEAR) {
-                    newInd.tripTime = cConstants->triptime_r_start_min;
+                if (newInd.tripTime < cConstants->triptime_min * SECONDS_IN_YEAR) {
+                    newInd.tripTime = cConstants->triptime_min * SECONDS_IN_YEAR;
                 }
-                else if (newInd.tripTime > cConstants->triptime_r_start_max * SECONDS_IN_YEAR) {
-                    newInd.tripTime = cConstants->triptime_r_start_max;
+                else if (newInd.tripTime > (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR) {
+                    newInd.tripTime = (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR;
                 }
 
                 recordLog[index] = randVar;
@@ -407,7 +405,6 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation) {
 
     int * mask = new int[OPTIM_VARS];
-
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
     int numPairs = survivorSize / 2; // Value for how many pairs to use and produce in each loop (as one iteration through a loop produces a new pair)
 
