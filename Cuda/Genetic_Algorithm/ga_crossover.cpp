@@ -297,7 +297,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
                 if (newInd.tripTime < cConstants->triptime_min * SECONDS_IN_YEAR) {
                     newInd.tripTime = cConstants->triptime_min * SECONDS_IN_YEAR;
                 }
-                else if (newInd.tripTime > (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR) {
+                else if (newInd.tripTime > (cConstants->triptime_max) * SECONDS_IN_YEAR) {
                     newInd.tripTime = (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR;
                 }
 
