@@ -34,7 +34,7 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast,fuelMass] =
         % Earth
         % y0E = [1.00140803662733E+00, 1.2786132931868E-01, -1.195365359889E-05,...
         % -3.30528017791942E-09, 1.98791889005860E-07, -9.89458740916469E-12];
-        y0E = cVector(earth_offset:threshold_offset-1);
+        y0E = cVector(earth_offset:fuel_offset-1);
         
         %% Initial Fourier components
         
