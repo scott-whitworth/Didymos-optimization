@@ -52,8 +52,12 @@ double getRand(double max, std::mt19937_64 & rng);
 // Input: two rkParameter individuals (p1 and p2) - used in creating the new individual
 //        mask - Contains maskValue values and length of OPTIM_VARS, determines how the two parent properties are merged into creating the new individual
 //        thrust - Determine if the thruster properties must be carried over
+//        cConstants - passed to mutate()
+//        annealing - passed to mutate()
+//        rng - passed to mutate()
+//        generation - passed to mutate()
 // Output: Returns rkParameter object that is new individual
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int mask[], thruster<double>& thrust, double generation);
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation);
 
 // Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
 // input: rng - random number generating object used to randomly generate index values
@@ -70,7 +74,7 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate);
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, cudaConstants& gConstant, thruster<double>& thrust, double generation);
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants * gConstant, thruster<double>& thrust, double generation);
 
 // Create a new individual, using two parents with a mask and also possible mutation occurring
 // Input: pool - pointer array to Individuals that is where the new individual is stored
