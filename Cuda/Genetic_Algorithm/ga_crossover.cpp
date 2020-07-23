@@ -250,7 +250,7 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate) 
     }
 }
 
-// In a given Individual's parameters, mutate one gene gauranteed. Randomly decide to mutate a second gene or third gene some times
+// In a given Individual's parameters, generate a mutate mask using mutateMask() and then adjust parameters based on the mask, mutation of at least one gene is not guranteed
 // mutate a gene by adding or subtracting a small, random value on a parameter property
 // Input: p1 - rkParameter that is taken to be the mutation base
 //        rng - random number generator to use
