@@ -11,8 +11,6 @@ cudaConstants::cudaConstants() {
     FileRead("genetic.config");
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
-    // Now that time_seed has been acquired, derive rng object
-    this->rng = std::mt19937_64(this->time_seed);
 }
 
 // Operates same as default, however uses configFile as address for where the config file to be used is located
@@ -20,8 +18,6 @@ cudaConstants::cudaConstants(std::string configFile) {
     FileRead(configFile);
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
-    // Now that time_seed has been acquired, derive rng object
-    this->rng = std::mt19937_64(this->time_seed);
 }
 
 // http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line

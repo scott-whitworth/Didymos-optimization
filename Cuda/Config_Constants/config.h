@@ -7,7 +7,6 @@
 // Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
 struct cudaConstants {
     double time_seed; // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0) for genuine randomness
-    std::mt19937_64 rng; // Random object generator that uses time_seed to be initialized
 
     bool random_start; // If set to false, the initial generation has individuals initialized from a file instead of randomly generated
     bool record_mode; // If set to true, functions that record information onto files such as BestInGenerations.csv and MutateMask 

@@ -156,8 +156,12 @@ double getRand(double max, std::mt19937_64 & rng) {
 // Input: two rkParameter individuals (p1 and p2) - used in creating the new individual
 //        mask - Contains maskValue values and length of OPTIM_VARS, determines how the two parent properties are merged into creating the new individual
 //        thrust - Determine if the thruster properties must be carried over
+//        cConstants - passed to mutate()
+//        annealing - passed to mutate()
+//        rng - passed to mutate()
+//        generation - passed to mutate()
 // Output: Returns rkParameter object that is new individual
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation) {
     // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
     rkParameters<double> newInd = p1;
 
@@ -216,10 +220,11 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     else if (mask[ALPHA_OFFSET] == AVG) {
         newInd.alpha = p1.alpha/2.0 + p2.alpha/2.0;
     }
+    // Now that newInd contains crossovered parameter values, call mutate onto it
+    newInd = mutate(newInd, rng, annealing, cConstants, thrust, generation);
 
     return newInd;    
 }
-
 
 // Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
 // input: rng - random number generating object used to randomly generate index values
@@ -292,8 +297,8 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
                 if (newInd.tripTime < cConstants->triptime_min * SECONDS_IN_YEAR) {
                     newInd.tripTime = cConstants->triptime_min * SECONDS_IN_YEAR;
                 }
-                else if (newInd.tripTime > (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR) {
-                    newInd.tripTime = (cConstants->triptime_min +cConstants->triptime_max) * SECONDS_IN_YEAR;
+                else if (newInd.tripTime > (cConstants->triptime_max) * SECONDS_IN_YEAR) {
+                    newInd.tripTime = cConstants->triptime_max * SECONDS_IN_YEAR;
                 }
 
                 recordLog[index] = randVar;
@@ -328,7 +333,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     }
 
     // If in record mode, append the recordLog into the .csv file
-    if (cConstants->record_mode == true) {
+    /*if (cConstants->record_mode == true) {
         int genesMutated = 0;
         for (int i = 0; i < OPTIM_VARS; i++) {
             if (mutation_mask[i] == true) {
@@ -336,29 +341,11 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             }
         }
         recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
-    }
+    }*/
     delete [] mutation_mask;
     return newInd;
 }
 
-// Create a new individual, using two parents with a mask and also possible mutation occurring
-// Input: pool - pointer array to Individuals that is where the new individual is stored
-//        survivors - pointer array to Individuals to access the two parents from
-//        mask - pointer array of maskValues used to decide on which property from which parent is acquired (or average of the two)
-//        parent1Index, parent2Index - integer values for where in the survivor array to get the parents from
-//        newIndiviudalIndex - integer value for where in the pool to store the new individual
-//        annealing - If mutation is occurring, passed into mutate function
-//        rng - Random number generator that is used to determine if mutation occurs and is passed into mutate function if it is occurring
-//        cConstants - holds properties that is passed into mutate, also contains mutation_rate value that is used to determine if mutation will occur
-// Output: pool[newIndiviudalIndex] contains a newly generated individual that is combination of survivor[parent1Index] and survivor[parent2Index] with possibly slight value changes in 1,2,3 variables
-void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, int parent1Index, int parent2Index, int newIndividualIndex, double annealing, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {
-    // Generate a new individual, using the parents and mask
-    pool[newIndividualIndex] = Individual();
-    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust);
-
-    // With percent chance of occurring, perform a mutation on the new individual's starting params
-    pool[newIndividualIndex].startParams = mutate(pool[newIndividualIndex].startParams, rng, annealing, cConstants, thrust, generation);    
-}
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
 // Input: pool - pointer array to Individuals that is where the new pair of individuals are stored
@@ -366,10 +353,10 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
 //        mask - pointer array of maskValues used to decide on which property from which parent is acquired (or average of the two)
 //        newIndCount - value that tracks number of newly created indiviudals in the pool so far in the newGeneration process, also impacts where to put the new individuals in the pool
 //        int parentsIndex - value for determing where the pair of parent survivors are selected (parent 1 is at parentsIndex, parent 2 is offset by +1)
-//        annealing - double variable passed onto mutateNewIndividual
+//        annealing - double variable passed onto generateNewIndividual
 //        poolSize - length of the pool array
-//        rng - random number generator passed on to mutateNewIndividual
-//        cConstants - passed on to mutateNewIndividual
+//        rng - random number generator passed on to generateNewIndividual
+//        cConstants - passed on to generateNewIndividual
 // Output: pool contains two newly created individuals at (poolSize - 1 - newIndCount) and (poolSize - 2 - newIndCount)
 //         mask is flipped in polarity (refer to flipMask method)
 //         newIndCount is incremented by +2
@@ -380,13 +367,15 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 
     int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
     // Generate new offspring with mask
-    mutateNewIndividual(pool, survivors, mask, parent1Index, parent2Index, newIndividualIndex, annealing, rng, cConstants, thrust, generation);
+    pool[newIndividualIndex] = Individual();
+    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
     newIndCount++;
 
     // Get the opposite offspring from the mask by flipping the mask
     newIndividualIndex--; // Decrement newIndividualIndex value to access where the next individual must be as newIndCount has increased
     flipMask(mask);
-    mutateNewIndividual(pool, survivors, mask, parent1Index, parent2Index, newIndividualIndex, annealing, rng, cConstants, thrust, generation);
+    pool[newIndividualIndex] = Individual();
+    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
     newIndCount++;
 
     return;
