@@ -31,7 +31,6 @@ Table 1. Setup & General Values
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
 | change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced by multiplying with anneal_factor                    |   	|
 | rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
-| f_min                 	    | double     	| None  	| The expected precision for the optimization cost convergance. This number is meant to avoid unnecesary iteration whitin neder _ mead	                                            |   	|
 | max_numsteps                 	| double     	| None  	| Used for time stepping in runge_kuttaCuda.cu	                                                                                                                                    |   	|
 | timeRes                    	| int        	| seconds   | The "gap" between each calculation for Earth's backward runge-kutta, for example 3600 sets every calculation to be 1 hour apart                                                   |   	|
 
