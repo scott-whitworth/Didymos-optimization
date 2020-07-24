@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 23rd, 2020</i>
+<i>Last Updated: July 24th, 2020</i>
 
 <h2>File format for config file</h2>
 
@@ -36,6 +36,8 @@ Table 1. Setup & General Values
 Table 2. Genetic Algorithm Values
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
+| max_generations           	| int        	| None  	| Sets the maximum number of generation iterations to evaluate in the optimization loop before exiting regardless of if a valid solution was reached or not 	                    |   	|
+| run_count                    	| int        	| None  	| Set how many runs of optimize with slightly altered randomization seeds to perform with current cudaConstants                                              	                    |   	|
 | num_individuals           	| int        	| None  	| Sets the size of the population pool and number of threads used as an individual is given a thread, recommended to not change 	                                                |   	|
 | survivor_count               	| int        	| None  	| Number of individuals selected as "survivors" to produce new individuals in the next generation in the genetic algorithm, every pair produces 8 new individuals, value must be even|   	|
 | thread_block_size           	| int        	| None  	| Number of threads per block on the GPU being used, recommended to not change 	                                                                                                    |   	|

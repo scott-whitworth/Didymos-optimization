@@ -47,6 +47,12 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "coast_threshold") {
                     this->coast_threshold = std::stod(variableValue);
                 }
+                else if (variableName == "max_generations") {
+                    this->max_generations = std::stoi(variableValue);
+                }
+                else if (variableName == "run_count") {
+                    this->run_count = std::stoi(variableValue);
+                }
                 else if (variableName == "thruster_type") {
                     this->thruster_type = std::stoi(variableValue);
                 }
@@ -239,7 +245,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "      << object.change_check << "\n";
     os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: " << object.thread_block_size << "\n";
     os << "\trk_tol: "          << object.rk_tol          << "\t\ttimeRes: "      << object.timeRes        << "\t\tmax_numsteps: "      << object.max_numsteps << "\n";
-    os << "\tbest_count: "    << object.best_count   << "\n\n";
+    os << "\tbest_count: "    << object.best_count        << "\tmax_generations: "<< object.max_generations<< "\trun_count: " << object.run_count << "\n\n";
 
     os << "Output Variables\n";
     os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";
