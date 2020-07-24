@@ -367,15 +367,13 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 
     int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
     // Generate new offspring with mask
-    pool[newIndividualIndex] = Individual();
-    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation));
     newIndCount++;
 
     // Get the opposite offspring from the mask by flipping the mask
     newIndividualIndex--; // Decrement newIndividualIndex value to access where the next individual must be as newIndCount has increased
     flipMask(mask);
-    pool[newIndividualIndex] = Individual();
-    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation));
     newIndCount++;
 
     return;

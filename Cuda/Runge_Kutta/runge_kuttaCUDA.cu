@@ -127,17 +127,18 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
          // output to this thread's index
         individuals[threadId].finalPos = curPos;
 
-        individuals[threadId].posDiff = sqrt(pow( cConstant->r_fin_ast - curPos.r, 2) + pow(cConstant->theta_fin_ast - fmod(curPos.theta, 2 * M_PI), 2) + pow(cConstant->z_fin_ast - curPos.z, 2));
-        individuals[threadId].velDiff = sqrt(pow(cConstant->vr_fin_ast - curPos.vr, 2) + pow(cConstant->vtheta_fin_ast - curPos.vtheta, 2) + pow(cConstant->vz_fin_ast - curPos.vz, 2));
+        individuals[threadId].getPosDiff(cConstant);
+        individuals[threadId].getVelDiff(cConstant);
 
         return;
     }
     return;
 }
 
+// CURRENTLY NOT IN USE DUE TO NEW INDIVIDUAL CONSTRUCTORS
 __host__ void initializePosition(Individual *individuals, int size, const cudaConstants* cConstant) {
     for (int i = 0; i < size; i++) {
-        individuals[i].initialize(cConstant);
+        individuals[i] = Individual(cConstant);
     }
 }
     
