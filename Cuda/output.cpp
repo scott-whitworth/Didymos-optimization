@@ -205,7 +205,7 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   }
   output.close();
 
-  std::endl << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
+  std::cout << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
   
   // cleaning up dynamic yp, time, gamma, and tau.
   delete [] yp;
