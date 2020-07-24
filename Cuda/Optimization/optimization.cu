@@ -10,17 +10,21 @@
 #include <random>
 #include <chrono>
 
-// Used to see if the best individual is changing
-// Returns true if the currentBest is not equal to previousBest
-bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double dRate) {
-    if (trunc(previousBestPos/dRate) != trunc(currentBest.posDiff/dRate)) {
+// Used to see if the best individual is changing when compared to a previous individual. 
+// Returns true if the currentBest is not equal to previousBest within a distinguishable difference
+bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double distinguishRate) {
+    //truncate is used here to compare floats via the distinguguishRate, to ensure that there has been relatively no change.
+    if (trunc(previousBestPos/distinguishRate) != trunc(currentBest.posDiff/distinguishRate)) {
         return true;
     }
     else {
-        if (trunc(previousBestVel/dRate) != trunc(currentBest.velDiff/dRate)) {
+        /*
+        if (trunc(previousBestVel/distinguishRate) != trunc(currentBest.velDiff/distinguishRate)) {
             return true;
         }
         else return false;
+        */
+        return false;
     }
 }
 
@@ -35,6 +39,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     }
     // If iterated through and all were within tolerance, success
     return true;
+    std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
@@ -128,6 +133,7 @@ double optimize(const cudaConstants* cConstants) {
     double currentDistance; // Contains value for how far away the best individual is from the tolerance value
     double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
                                                   // This could eventually take into account velocity too and become a more complex calculation
+    //dRate is used to help check for a change in anneal
     double dRate = 1.0e-8;
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     do {
@@ -154,7 +160,8 @@ double optimize(const cudaConstants* cConstants) {
 
         // Display a '.' to the terminal to show that a generation has been performed
         // This also serves to visually seperate the generation display on the terminal screen
-        std::cout << '.';
+        // std::cout << '.';
+        std::cout << "\nGeneration " << static_cast<int>(generation) << " returned a best posDiff of " << inputParameters[0].posDiff << std::endl;
 
 
         // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
@@ -165,16 +172,17 @@ double optimize(const cudaConstants* cConstants) {
         Individual currentBest;
         if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
             currentBest = inputParameters[0];
-          
+            //checks for Anneal to change
             if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * cConstants->anneal_factor;
-                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
+                //this ensures that changeInBest never compares two zeros, thus keeping dRate in relevance as the posDiff lowers.   
                 if (trunc(currentBest.posDiff/dRate) == 0) { 
                     while (trunc(currentBest.posDiff/dRate) == 0) {
                         dRate = dRate/10; 
                     }
                     std::cout << "\nnew dRate: " << dRate << std::endl;
                 }
+                currentAnneal = currentAnneal * cConstants->anneal_factor;
+                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
             }
             previousBestPos = currentBest.posDiff;
             previousBestVel = currentBest.velDiff;
@@ -184,10 +192,11 @@ double optimize(const cudaConstants* cConstants) {
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
             recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, cConstants->num_individuals, thrust);
         }
-        // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
-            terminalDisplay(inputParameters[0], generation);
-        }
+        // // Only call terminalDisplay every DISP_FREQ, not every single generation
+        // if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
+        //     terminalDisplay(inputParameters[0], generation);
+        // }
+
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, thrust, rng, generation);
         ++generation;
