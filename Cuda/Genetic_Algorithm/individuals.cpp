@@ -47,7 +47,7 @@ Individual::Individual(rkParameters<double> & newInd, const cudaConstants* cCons
 // Calculates a posDiff value
 // Input: cConstants in accessing properties such as r_fin_ast, theta_fin_ast, and z_fin_ast
 // Output: Assigns and returns this individual's posDiff value
-double Individual::getPosDiff(const cudaConstants* cConstants) {
+double __host__ __device__ Individual::getPosDiff(const cudaConstants* cConstants) {
     this->posDiff = sqrt(pow(cConstants->r_fin_ast - this->finalPos.r, 2) + pow(cConstants->theta_fin_ast - fmod(this->finalPos.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - this->finalPos.z, 2));
     return this->posDiff;
 }
@@ -55,7 +55,7 @@ double Individual::getPosDiff(const cudaConstants* cConstants) {
 // Calculates a velDiff value
 // Input: cConstants in accessing properties such as vr_fin_ast, vtheta_fin_ast, and vz_fin_ast
 // Output: Assigns and returns this individual's velDiff value
-double Individual::getVelDiff(const cudaConstants* cConstants) {
+double __host__ __device__ Individual::getVelDiff(const cudaConstants* cConstants) {
     this->velDiff = sqrt(pow(cConstants->vr_fin_ast - this->finalPos.vr, 2) + pow(cConstants->vtheta_fin_ast - this->finalPos.vtheta, 2) + pow(cConstants->z_fin_ast - this->finalPos.vz, 2));
     return this->velDiff;
 }
