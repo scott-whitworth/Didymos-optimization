@@ -176,8 +176,6 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
             currentBest = inputParameters[0];
             //checks for Anneal to change
             if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                currentAnneal = currentAnneal * cConstants->anneal_factor;
-                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
                 //this ensures that changeInBest never compares two zeros, thus keeping dRate in relevance as the posDiff lowers.   
                 if (trunc(currentBest.posDiff/dRate) == 0) { 
                     while (trunc(currentBest.posDiff/dRate) == 0) {
@@ -185,6 +183,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
                     }
                     std::cout << "\nnew dRate: " << dRate << std::endl;
                 }
+                currentAnneal = currentAnneal * cConstants->anneal_factor;
+                std::cout << "\nnew anneal: " << currentAnneal << std::endl;
             }
             previousBestPos = currentBest.posDiff;
             previousBestVel = currentBest.velDiff;
