@@ -35,6 +35,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     }
     // If iterated through and all were within tolerance, success
     return true;
+    std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
@@ -156,7 +157,8 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
 
         // Display a '.' to the terminal to show that a generation has been performed
         // This also serves to visually seperate the generation display on the terminal screen
-        std::cout << '.';
+        // std::cout << '.';
+        std::cout << "\nGeneration " << static_cast<int>(generation) << " returned a best posDiff of " << inputParameters[0].posDiff << std::endl;
 
 
         // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
@@ -190,6 +192,7 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
+
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust, rng, generation);
         ++generation;

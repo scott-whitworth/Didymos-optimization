@@ -204,6 +204,8 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
     output.write((char*)&fuelSpent[i], sizeof (double));
   }
   output.close();
+
+  std::endl << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
   
   // cleaning up dynamic yp, time, gamma, and tau.
   delete [] yp;
@@ -465,6 +467,8 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
   writeTrajectoryToFile(start, generation, thrust, cConstants);
+
+  std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
   delete [] start;
 }
