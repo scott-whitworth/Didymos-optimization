@@ -134,13 +134,6 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     }
     return;
 }
-
-// CURRENTLY NOT IN USE DUE TO NEW INDIVIDUAL CONSTRUCTORS
-__host__ void initializePosition(Individual *individuals, int size, const cudaConstants* cConstant) {
-    for (int i = 0; i < size; i++) {
-        individuals[i] = Individual(cConstant);
-    }
-}
     
 bool distinguishableDifference(double p1, double p2, double distinguishRate) {
 

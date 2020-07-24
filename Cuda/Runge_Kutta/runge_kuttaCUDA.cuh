@@ -14,10 +14,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 // the simple version of the runge_kutta algorithm, on GPU
 __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, const cudaConstants* cConstant);
 
-// CURRENTLY NOT IN USE DUE TO NEW INDIVIDUAL CONSTRUCTORS
-// gets the y0 for size number of Individuals
-__host__ void initializePosition(Individual *individuals, int size, const cudaConstants* cConstants);
-
 //this is used to find distinguishable difference between two positions
 //Parameters:
 //      p1, p2: positions that will be compared to each other
