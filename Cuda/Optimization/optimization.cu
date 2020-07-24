@@ -188,10 +188,10 @@ double optimize(const int numThreads, const int blockThreads, const cudaConstant
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
             recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, numThreads, thrust);
         }
-        // Only call terminalDisplay every DISP_FREQ, not every single generation
-        if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
-            terminalDisplay(inputParameters[0], generation);
-        }
+        // // Only call terminalDisplay every DISP_FREQ, not every single generation
+        // if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
+        //     terminalDisplay(inputParameters[0], generation);
+        // }
 
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, numThreads, new_anneal, cConstants, thrust, rng, generation);
