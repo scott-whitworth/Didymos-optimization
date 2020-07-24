@@ -16,6 +16,9 @@ struct Individual {
     double velDiff; // difference in velocity between spacecraft and asteroid at end of run
     double cost;    // cost value of the individual, something that the genetic algorithm is attempting to minimize
 
+    // Default constructor
+    Individual();
+
     // Set the initial position of the spacecraft according to this Individual's launch time
     // Input: cConstants - to access v_escape value that determines component velocities
     //        launchCon - access earth element at this individuals tripTime offset in determining position and velocity

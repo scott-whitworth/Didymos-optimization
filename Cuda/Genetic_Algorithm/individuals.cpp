@@ -3,6 +3,12 @@
 
 #include "individuals.h"
 
+// Default constructor
+Individual::Individual() {
+    this->posDiff = 1.0;
+    this->velDiff = 0.0;
+}
+
 // Set the initial position of the spacecraft according to this Individual's launch time
 // Input: cConstants - to access v_escape value that determines component velocities
 //        launchCon - access earth element at this individuals tripTime offset in determining position and velocity
@@ -26,7 +32,7 @@ Individual::Individual(const cudaConstants* cConstants) {
 // Output: this individual's startParams.y0 is set to the initial position and velocity of the spacecraft
 Individual::Individual(rkParameters<double> & newInd, const cudaConstants* cConstants) {
     elements<double> earth = launchCon->getCondition(this->startParams.tripTime); //get Earth's position and velocity at launch
-    
+
     this->startParams = newInd;
 
     this->startParams.y0 = elements<double>( // calculate the starting position and velocity of the spacecraft from Earth's position and velocity and spacecraft launch angles
