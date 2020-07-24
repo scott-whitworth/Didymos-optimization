@@ -19,12 +19,6 @@ struct Individual {
     // Default constructor
     Individual();
 
-    // Set the initial position of the spacecraft according to this Individual's launch time
-    // Input: cConstants - to access v_escape value that determines component velocities
-    //        launchCon - access earth element at this individuals tripTime offset in determining position and velocity
-    // Output: this individual's startParams.y0 is set to the initial position and velocity of the spacecraft
-    Individual(const cudaConstants* cConstants);
-
     // Set the initial position of the spacecraft according to the newly generated parameters
     // Input: cConstants - to access c3energy value used in getCost()
     //        newInd - struct returned by generateNewIndividual()
