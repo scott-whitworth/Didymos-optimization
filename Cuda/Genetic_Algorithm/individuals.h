@@ -34,12 +34,12 @@ struct Individual {
     // Calculates a posDiff value
     // Input: cConstants in accessing properties such as r_fin_ast, theta_fin_ast, and z_fin_ast
     // Output: Assigns and returns this individual's posDiff value
-    double getPosDiff(const cudaConstants* cConstants);
+    __host__ __device__ double getPosDiff(const cudaConstants* cConstants);
 
     // Calculates a velDiff value
     // Input: cConstants in accessing properties such as vr_fin_ast, vtheta_fin_ast, and vz_fin_ast
     // Output: Assigns and returns this individual's velDiff value
-    double getVelDiff(const cudaConstants* cConstants);
+    __host__ __device__ double getVelDiff(const cudaConstants* cConstants);
 
     // Calculates a cost value to quantitatively evaluate this Individual
     // Input: cConstants in accessing properties such as pos_threshold, c3energy, and v_impact
