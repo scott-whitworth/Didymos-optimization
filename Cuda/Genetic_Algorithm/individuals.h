@@ -26,7 +26,7 @@ struct Individual {
     // Input: cConstants - to access c3energy value used in getCost()
     //        newInd - struct returned by generateNewIndividual()
     // Output: this individual's startParams.y0 is set to the initial position and velocity of the spacecraft
-    Individual(rkParameters<double> newInd, const cudaConstants* cConstants);
+    Individual(rkParameters<double> & newInd, const cudaConstants* cConstants);
 
     // Calculates a posDiff value
     // Input: cConstants in accessing properties such as r_fin_ast, theta_fin_ast, and z_fin_ast
