@@ -418,7 +418,7 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
         generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
     }
 
-    std::cout << "\nnewGeneration() returned a best posDiff of " << pool[0].posDiff << std::endl;
+    // std::cout << "\nnewGeneration() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
     delete [] mask;
     return newIndCount;
