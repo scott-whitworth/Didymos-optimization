@@ -283,62 +283,181 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
     output.close();
 }
 
-// Initialize the .csv files
+// Returns the percentage difference of two values
+// Input: two double values to compare
+// Output: the percentage difference between them, multiplied by 100
+double percentageDifference(double value1, double value2) {
+  return abs(value1-value2)/((value1+value2)/2)*100.0;
+}
+
+// Initialize the .csv file with header row
 // input: cConstants - to access time_seed for deriving file name conventions and also thruster type
-// output: files BestInGenerations-[time_seed].csv, WorstInGenerations-[time_seed].csv, if thruster type is not NO_THRUST also BestThrustGens-[time_seed].csv & WorstThrustGens-[time_seed].csv, are given initial header row info
+// output: file genPerfmanceT-[time_seed].csv, is appended with initial header row info
 void initializeRecord(const cudaConstants * cConstants) {
-    // setup output of generation results over time onto a .csv file
-    std::ofstream bestExcel;
-    int seed = cConstants->time_seed;
-    bestExcel.open("BestInGenerations-"+ std::to_string(seed)+".csv");
-    // Set first row in the file be a header for the columns
-    bestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal"
-              << "," << "vthetaFinal" << "," << "vzFinal" << "," << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial"
-              << "," << "vthetaInitial" << "," << "vzInitial" << "," << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
-    bestExcel.close();
+  std::ofstream excelFile;
+  // setting the numeric id tag as the randomization seed (when doing runs of various properties, suggested to add other values to differentiate)
+  std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
+  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-    std::ofstream worstExcel;
-    worstExcel.open("WorstInGenerations-"+ std::to_string(seed)+".csv");
-    // Set first row in the file be a header for the columns
-    worstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" 
-               << "," << "vthetaFinal" << "," << "vzFinal" << "," << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" 
-               << "," << "vthetaInitial" << "," << "vzInitial" << "," << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
-    worstExcel.close();
+  excelFile << "Gen,bestPosDiff,";
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    excelFile << "gamma" << i << " deviation,";
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    excelFile << "tau" << i << " deviation,";
+  }
+  excelFile << "alpha deviation, beta deviation, zeta deviation, triptime deviation,";
+  
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    excelFile << "coast" << i << " deviation,";
+  }
 
-    // If this run is having a thruster, setup the thruster output excel files
-    if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
-        std::ofstream thrustBestExcel, thrustWorstExcel;
-
-        thrustBestExcel.open("BestThrustGens-"+ std::to_string(seed)+".csv");
-        thrustBestExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-          thrustBestExcel << "gamma" << i << ",";
-        }
-        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-          thrustBestExcel << "tau" << i << ",";
-        }
-        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-          thrustBestExcel << "coast" << i << ",";
-        }
-        thrustBestExcel << "\n";
-        thrustBestExcel.close();
-
-        thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(seed)+".csv");
-        thrustWorstExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "gamma" << i << ",";
-        }
-        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "tau" << i << ",";
-        }
-        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "coast" << i << ",";
-        }
-        thrustWorstExcel << "\n";
-        thrustBestExcel.close();
-    }
+  excelFile << ",\n";
+  excelFile.close();
     // call setMutateFile to set it up
-    setMutateFile(cConstants);
+    // setMutateFile(cConstants);
+}
+
+// Generate and output an optim_vars length array that contains the average value for every gene in the pool
+// input: pool - array of individuals
+//        poolSize - length of the pool
+//        average_array - inputted pointer array of length OPTIM_VARS that will be assigned values as output
+// output: average_array holds the average value for every gene
+void getAverageGenes(Individual * pool, int const poolSize, double * average_array) {
+  // set all index values to 0 first
+  for (int i = 0; i < OPTIM_VARS; i++) {
+    average_array[i] = 0;
+  }
+  // get average values of each gamma coefficient
+  for (int index = GAMMA_OFFSET; index < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; index++ ) {
+    for (int position = 0; position < poolSize; position++) {
+      average_array[index] += pool[position].startParams.coeff.gamma[index-GAMMA_OFFSET] / poolSize;
+    }
+  }
+  // get average tau values
+  for (int index = TAU_OFFSET; index < TAU_ARRAY_SIZE + TAU_OFFSET; index++ ) {
+    for (int position = 0; position < poolSize; position++) {
+      average_array[index] += pool[position].startParams.coeff.tau[index-TAU_OFFSET] / poolSize;
+    }
+  }
+  // get average coast values
+  for (int index = COAST_OFFSET; index < COAST_ARRAY_SIZE + COAST_OFFSET; index++ ) {
+    for (int position = 0; position < poolSize; position++) {
+      average_array[index] += pool[position].startParams.coeff.coast[index-COAST_OFFSET] / poolSize;
+    }
+  }
+  // Get average alpha
+  for (int position = 0; position < poolSize; position++) {
+    average_array[ALPHA_OFFSET] += pool[position].startParams.alpha / poolSize;
+  }
+
+  // Get average beta
+  for (int position = 0; position < poolSize; position++) {
+    average_array[BETA_OFFSET] += pool[position].startParams.beta / poolSize;
+  }
+
+  // Get average zeta
+  for (int position = 0; position < poolSize; position++) {
+    average_array[ZETA_OFFSET] += pool[position].startParams.zeta / poolSize;
+  }
+  
+  // Get average triptime
+  for (int position = 0; position < poolSize; position++) {
+    average_array[TRIPTIME_OFFSET] += pool[position].startParams.tripTime / poolSize;
+  }
+
+}
+
+// Generate and output an optim_vars length array that contains the average value for every gene in the pool
+// input: pool - array of individuals
+//        poolSize - length of the pool
+//        average_array - array of length OPTIM_VARS containing average value for all genes
+//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that will serve as output
+// output: percDiff_pool arrays of length OPTIM_VARS that contain the percentage difference that every individual's gene has to the average_array's
+void getPercentDifferenceAllIndividuals(Individual * pool, int const poolSize, double * average_array, double ** percDiff_pool) {
+  for (int individual = 0; individual < poolSize; individual++) {
+
+    percDiff_pool[individual] = new double[OPTIM_VARS];
+
+    for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
+      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.gamma[i - GAMMA_OFFSET], average_array[i] );
+    }
+    for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
+      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.tau[i - TAU_OFFSET], average_array[i] );
+    }
+    for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
+      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.coast[i - COAST_OFFSET], average_array[i] );
+    }
+
+    percDiff_pool[individual][ALPHA_OFFSET]    = percentageDifference(pool[individual].startParams.alpha,    average_array[ALPHA_OFFSET] );
+    percDiff_pool[individual][BETA_OFFSET]     = percentageDifference(pool[individual].startParams.beta,     average_array[BETA_OFFSET] );
+    percDiff_pool[individual][ZETA_OFFSET]     = percentageDifference(pool[individual].startParams.zeta,     average_array[ZETA_OFFSET] );
+    percDiff_pool[individual][TRIPTIME_OFFSET] = percentageDifference(pool[individual].startParams.tripTime, average_array[TRIPTIME_OFFSET] );
+  }
+}
+
+// Generate and output an optim_vars length array that contains the average value for every gene in the pool
+// input: poolSize - length of the pool
+//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that contains the percentage difference that every individual's gene has to the average
+//        average_percDiff - pointer array that serves as output
+// output: average_percDiff arrays of length OPTIM_VARS contains the average percent difference for each gene
+void getAveragePercentDifference(int const poolSize, double ** percDiff_pool, double * average_percDiff) {
+  for (int i = 0; i < OPTIM_VARS; i++) {
+    // set index value to 0 first
+    average_percDiff[i] = 0;  
+  
+    for (int individual = 0; individual < poolSize; individual++) {
+      average_percDiff[i] += percDiff_pool[individual][i] / poolSize;
+    }
+  }
+}
+
+// Generate and output an optim_vars length array that contains the standard deviation of all the genes
+// input: poolSize - length of the pool
+//        average_percDiff - array OPTIM_VARS in length containing the average percent difference for each gene
+//        percDiff_pool - 2D pointer array containing the percent difference of each gene in each individual
+//        deviation_array - pointer array of length OPTIM_VARS that serves as output;
+// output: deviation_array contains the population standard deviation of every gene
+void getDeviationAllGenes(int const poolSize, double * average_percDiff, double ** percDiff_pool, double * deviation_array) {
+  for (int gene = 0; gene < OPTIM_VARS; gene++) {
+    // index value to 0 first
+    deviation_array[gene] = 0;
+  
+    for (int individual = 0; individual < poolSize; individual++) {
+      deviation_array[gene] += pow( ( percDiff_pool[individual][gene] - average_percDiff[gene] ), 2 ) / poolSize;
+
+    }
+    deviation_array[gene] = sqrt(deviation_array[gene]);
+  }
+}
+
+// Generate and output an optim_var length array that describes the standard deviation for each gene in a pool's population
+// input: pool - pointer array to individuals that makes up the generation's pool
+//        poolSize - length of pool
+//        deviation_array - a pointer array of length OPTIM_VARS that is set to contain the deviaton for each corresponding gene 
+// output: deviation_array contains the population deviation of corresponding genes
+void generationDiversity(Individual * pool, int const poolSize, double * deviation_array) {
+  // Array to hold average parameter values from entire pool
+  double * average_array = new double[OPTIM_VARS];
+  getAverageGenes(pool, poolSize, average_array);
+
+  // A 2D array to hold percentage difference of each parameter for each individual in the pool
+  double ** percDiff_pool = new double*[poolSize];
+
+  // go through each individual and calculate the percent difference for each of its parameters
+  getPercentDifferenceAllIndividuals(pool, poolSize, average_array, percDiff_pool);
+  
+  // Array to hold the standard deviation values for different parameters
+  double * average_percDiff = new double[OPTIM_VARS];
+  getAveragePercentDifference(poolSize, percDiff_pool, average_percDiff);
+
+  getDeviationAllGenes(poolSize, average_percDiff, percDiff_pool, deviation_array);
+
+  for (int index = 0; index < poolSize; index++) {
+    delete [] percDiff_pool[index];
+  }
+  delete [] average_array;
+  delete [] average_percDiff;
 }
 
 // Take in the current state of the generation and appends to files
@@ -351,47 +470,25 @@ void initializeRecord(const cudaConstants * cConstants) {
 // output: files BestInGenerations/WorstInGenerations have appended information using writeIndividualToFiles method
 //         files BestThrustGens/WorstThurstGens have appended information using writeThrustFiles method
 void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize, thruster<double>& thrust) {
-  // Record
-  std::ofstream bestExcel, bestBin;
-  int seed = cConstants->time_seed;
-  bestExcel.open("BestInGenerations-"+ std::to_string(seed)+".csv", std::ios_base::app);
-  bestBin.open("BestInGenerations-"+ std::to_string(seed)+".bin", std::ios_base::app);
+  std::ofstream excelFile;
+  std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
+  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-  writeIndividualToFiles(bestExcel, bestBin, generation, pool[0], new_anneal);
+  excelFile << generation << "," << pool[0].posDiff << ",";
 
-  bestExcel.close();
-  bestBin.close();
-
-  std::ofstream worstExcel, worstBin;
-  worstExcel.open("WorstInGenerations-"+ std::to_string(seed)+".csv", std::ios_base::app);
-  worstBin.open("WorstInGenerations-"+ std::to_string(seed)+".bin", std::ios_base::app);
-
-  writeIndividualToFiles(worstExcel, worstBin, generation, pool[poolSize-1], new_anneal);
-
-  worstExcel.close();
-  worstBin.close();
-
-  if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
-    std::ofstream bestThrusterExcel, bestThrusterBin;
-    bestThrusterExcel.open("BestThrustGens-"+ std::to_string(seed)+".csv", std::ios_base::app);
-    bestThrusterBin.open("BestThrustGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
-    
-    writeThrustToFiles(bestThrusterExcel, bestThrusterBin, generation, pool[0], cConstants);
-    
-    bestExcel.close();
-    bestBin.close();
-
-    std::ofstream worstThrusterExcel, worstThrusterBin;
-    worstExcel.open("WorstThrustGens-"+ std::to_string(seed)+".csv", std::ios_base::app);
-    worstBin.open("WorstThrustGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
-
-    writeThrustToFiles(worstThrusterExcel, worstThrusterBin, generation, pool[poolSize-1], cConstants);
-    
-    worstThrusterExcel.close();
-    worstThrusterBin.close();
+  double * deviation_array = new double[OPTIM_VARS];
+  generationDiversity(pool, poolSize, deviation_array);
+  
+  for (int gene = 0; gene < OPTIM_VARS; gene++) {
+    excelFile << deviation_array[gene] << ",";
   }
-
+  excelFile << "\n"; // End of row
+  excelFile.close();
+  delete [] deviation_array;
 }
+
+
+
 
 // Takes in a pool and records the parameter info on all individuals
 // input: cConstants - to access time_seed in deriving file name
