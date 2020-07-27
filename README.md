@@ -99,7 +99,7 @@ Here is how the impact data was obtained to be used in the config value.
 4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.
 
 <h2>Flowchart Overview of CUDA Code</h2>
-<i>Last updated on July 10th, 2020</i>
+<i>Last updated on July 27th, 2020</i>
 
 Note: Large arrows point to flowchart portion that describes that block's process
 <img src="flowchart.jpg">
