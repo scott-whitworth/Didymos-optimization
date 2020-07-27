@@ -39,7 +39,7 @@ __host__ __device__ double Individual::getPosDiff(const cudaConstants* cConstant
 // Input: cConstants in accessing properties such as vr_fin_ast, vtheta_fin_ast, and vz_fin_ast
 // Output: Assigns and returns this individual's velDiff value
 __host__ __device__ double Individual::getVelDiff(const cudaConstants* cConstants) {
-    this->velDiff = sqrt(pow(cConstants->vr_fin_ast - this->finalPos.vr, 2) + pow(cConstants->vtheta_fin_ast - this->finalPos.vtheta, 2) + pow(cConstants->z_fin_ast - this->finalPos.vz, 2));
+    this->velDiff = sqrt(pow(cConstants->vr_fin_ast - this->finalPos.vr, 2) + pow(cConstants->vtheta_fin_ast - this->finalPos.vtheta, 2) + pow(cConstants->vz_fin_ast - this->finalPos.vz, 2));
     return this->velDiff;
 }
 
