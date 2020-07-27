@@ -85,9 +85,9 @@ bool Individual::operator==(Individual &other) {
 
 // Compare two individuals by their positional difference values
 // input: two individuals
-// output: returns true if personB has a lower positional difference than personA
+// output: returns true if personB has a higher positional difference than personA
 bool BetterPosDiff(Individual personA, Individual personB) {
-    if (personA.posDiff > personB.posDiff) {
+    if (personA.posDiff < personB.posDiff) {
         return true;
     }
     else {
@@ -98,9 +98,9 @@ bool BetterPosDiff(Individual personA, Individual personB) {
 
 // Compare two individuals by their velocity difference values
 // input: two individuals
-// output: returns true if personB has a higher velocity difference than personA
+// output: returns true if personB has a lower velocity difference than personA
 bool BetterVelDiff(Individual personA, Individual personB) {
-    if (personA.velDiff > personB.velDiff) {
+    if (personA.velDiff < personB.velDiff) {
         return true;
     }
     else {

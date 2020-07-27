@@ -25,7 +25,7 @@ void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individ
     for (int i = 0; i < selectionSize / 2; i++) {
         survivors[i] = pool[i];
     }
-
+    
     // Sort the pool by positional difference
     std::sort(pool, pool+poolSize, BetterVelDiff);
 
@@ -134,7 +134,6 @@ void crossOver_average(int * mask) {
     }
     return;
 }
-
 
 // Utility to flip the polarity of a mask
 // Input:  mask is an array of size OPTIM_VARS, input based on maskValue enumerations as a mask
@@ -349,7 +348,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     }
 
     // If in record mode, append the recordLog into the .csv file
-    if (cConstants->record_mode == true) {
+/*    if (cConstants->record_mode == true) {
         int genesMutated = 0;
         for (int i = 0; i < OPTIM_VARS; i++) {
             if (mutation_mask[i] == true) {
@@ -357,7 +356,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             }
         }
         recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
-    }
+    }*/
     delete [] mutation_mask;
     return newInd;
 }
