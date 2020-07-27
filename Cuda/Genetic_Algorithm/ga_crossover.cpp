@@ -5,6 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
+#include <algorithm>
 
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility and clarity of value meaning
 enum maskValue {
@@ -17,17 +18,22 @@ enum maskValue {
 // Input: pool - a shuffled pointer array of individuals to choose from
 //        selectionSize - integer number of how many survivors to choose out of the pool
 //        survivors - pointer array of individuals to copy the selected individuals and store
-// Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that were quasi-randomly chosen
-void selectSurvivors(Individual* pool, int selectionSize, Individual* survivors) {
-    for(int i = 0; i < selectionSize; i++) {
-        // While the array is a shuffled, when selecting a survivor make a neighbor comparison to choose the one with a lower cost (at least somewhat better choice)
-        if ( pool[2*i] < pool[(2*i)+1] ) {
-            survivors[i] = pool[2*i];
-        }
-        else {
-            survivors[i] = pool[(2*i)+1];
-        }
+// Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that contains survivors that are 
+void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors) {
+    // Sort the pool by positional difference and make half the selctions the best posDiff
+    std::sort(pool, pool+poolSize, BetterPosDiff);
+    for (int i = 0; i < selectionSize / 2; i++) {
+        survivors[i] = pool[i];
     }
+
+    // Sort the pool by positional difference
+    std::sort(pool, pool+poolSize, BetterVelDiff);
+
+    for (int i = 0; i < selectionSize / 2; i++) {
+        survivors[i] = pool[i];
+    }
+
+
     return;
 }
 
@@ -333,7 +339,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     }
 
     // If in record mode, append the recordLog into the .csv file
-    /*if (cConstants->record_mode == true) {
+    if (cConstants->record_mode == true) {
         int genesMutated = 0;
         for (int i = 0; i < OPTIM_VARS; i++) {
             if (mutation_mask[i] == true) {
@@ -341,7 +347,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             }
         }
         recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
-    }*/
+    }
     delete [] mutation_mask;
     return newInd;
 }
@@ -367,15 +373,13 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 
     int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
     // Generate new offspring with mask
-    pool[newIndividualIndex] = Individual();
-    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation), cConstants);
     newIndCount++;
 
     // Get the opposite offspring from the mask by flipping the mask
     newIndividualIndex--; // Decrement newIndividualIndex value to access where the next individual must be as newIndCount has increased
     flipMask(mask);
-    pool[newIndividualIndex] = Individual();
-    pool[newIndividualIndex].startParams = generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation), cConstants);
     newIndCount++;
 
     return;
@@ -419,7 +423,6 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
         crossOver_bundleVars(mask, rng);
         generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
     }
-
     delete [] mask;
     return newIndCount;
 }

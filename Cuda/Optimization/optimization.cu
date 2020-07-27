@@ -71,7 +71,7 @@ double optimize(const cudaConstants* cConstants) {
     if (cConstants->random_start) {
         // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
         for (int i = 0; i < cConstants->num_individuals; i++) { 
-            inputParameters[i].startParams = randomParameters(rng, cConstants);
+            inputParameters[i] = Individual(randomParameters(rng, cConstants), cConstants);
         }
     }
     // If not a random start, read from file using cConstants initial_start_file_address to get path
@@ -120,7 +120,7 @@ double optimize(const cudaConstants* cConstants) {
 
             rkParameters<double> example(tripTime, alpha, beta, zeta, testcoeff); 
 
-            inputParameters[i].startParams = example;
+            inputParameters[i] = Individual(example, cConstants);
         }
     }
 
@@ -137,15 +137,13 @@ double optimize(const cudaConstants* cConstants) {
     double dRate = 1.0e-8;
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     do {
-        // initialize positions for the new individuals starting at the index of the first new one and going to the end of the array
-        initializePosition(inputParameters + (cConstants->num_individuals - newInd), newInd, cConstants);
         callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, cConstants); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < cConstants->num_individuals; k++) {
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
-                inputParameters[k].startParams = randomParameters(rng, cConstants);
+                inputParameters[k] = Individual(randomParameters(rng, cConstants), cConstants);
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
@@ -155,7 +153,7 @@ double optimize(const cudaConstants* cConstants) {
         }
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + cConstants->num_individuals, rng); // shuffle the Individiuals to use random members for the competition
-        selectSurvivors(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
+        selectSurvivors(inputParameters, cConstants->num_individuals, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + cConstants->num_individuals); // put the individuals in order so we can replace the worst ones
 
         // Display a '.' to the terminal to show that a generation has been performed
