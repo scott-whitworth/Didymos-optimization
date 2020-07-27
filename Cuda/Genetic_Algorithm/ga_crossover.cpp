@@ -5,6 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
+#include <algorithm>
 
 // Global enumeration for the different mask values instead of 1,2,3 for better readibility and clarity of value meaning
 enum maskValue {
@@ -17,17 +18,22 @@ enum maskValue {
 // Input: pool - a shuffled pointer array of individuals to choose from
 //        selectionSize - integer number of how many survivors to choose out of the pool
 //        survivors - pointer array of individuals to copy the selected individuals and store
-// Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that were quasi-randomly chosen
-void selectSurvivors(Individual* pool, int selectionSize, Individual* survivors) {
-    for(int i = 0; i < selectionSize; i++) {
-        // While the array is a shuffled, when selecting a survivor make a neighbor comparison to choose the one with a lower cost (at least somewhat better choice)
-        if ( pool[2*i] < pool[(2*i)+1] ) {
-            survivors[i] = pool[2*i];
-        }
-        else {
-            survivors[i] = pool[(2*i)+1];
-        }
+// Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that contains survivors that are 
+void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors) {
+    // Sort the pool by positional difference and make half the selctions the best posDiff
+    std::sort(pool, pool+poolSize, BetterPosDiff);
+    for (int i = 0; i < selectionSize / 2; i++) {
+        survivors[i] = pool[i];
     }
+
+    // Sort the pool by positional difference
+    std::sort(pool, pool+poolSize, BetterVelDiff);
+
+    for (int i = 0; i < selectionSize / 2; i++) {
+        survivors[i] = pool[i];
+    }
+
+
     return;
 }
 

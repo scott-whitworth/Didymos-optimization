@@ -153,7 +153,7 @@ double optimize(const cudaConstants* cConstants) {
         }
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + cConstants->num_individuals, rng); // shuffle the Individiuals to use random members for the competition
-        selectSurvivors(inputParameters, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
+        selectSurvivors(inputParameters, cConstants->num_individuals, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
         std::sort(inputParameters, inputParameters + cConstants->num_individuals); // put the individuals in order so we can replace the worst ones
 
         // Display a '.' to the terminal to show that a generation has been performed
