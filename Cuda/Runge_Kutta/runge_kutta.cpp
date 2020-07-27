@@ -71,8 +71,8 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial)/10) {
-            stepSize = (timeFinal-timeInitial)/10;
+        if (stepSize > (timeFinal-timeInitial)/100) {
+            stepSize = (timeFinal-timeInitial)/100;
             maxStep++;
         }
         else if (stepSize < ((timeFinal-timeInitial)/1000)) {
