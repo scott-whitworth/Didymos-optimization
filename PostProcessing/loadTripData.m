@@ -5,7 +5,7 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast,fuelMass] =
         %% config offsets
         asteroid_offset = 1; % x(1:6) y0A
         earth_offset = 7; % x(7:12) y0E
-        fuel_offset = 13; % x(13) fuelMass = wetMass - dryMass
+        fuel_offset = 13; % x(13) fuel mass
         threshold_offset = 14; % x(14) coast threshold
 
         % array sizes
