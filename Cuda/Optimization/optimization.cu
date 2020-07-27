@@ -203,10 +203,9 @@ double optimize(const cudaConstants* cConstants) {
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) && generation < cConstants->max_generations);
 
-    // Only call finalRecord if the results actually have reached the threshold
-    if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
-        finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
-    }
+    
+    finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
+    
 
     delete [] inputParameters;
     delete [] survivors;

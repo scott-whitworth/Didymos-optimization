@@ -100,7 +100,7 @@ bool BetterPosDiff(Individual personA, Individual personB) {
 // input: two individuals
 // output: returns true if personB has a lower velocity difference than personA
 bool BetterVelDiff(Individual personA, Individual personB) {
-    if (personA.velDiff < personB.velDiff) {
+    if (personA.velDiff > personB.velDiff) {
         return true;
     }
     else {

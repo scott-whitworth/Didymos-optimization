@@ -299,7 +299,8 @@ void initializeRecord(const cudaConstants * cConstants) {
   std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
   excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-  excelFile << "Gen,bestPosDiff,";
+  excelFile << "Gen,bestPosDiff,bestVelDiff";
+  /*
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     excelFile << "gamma" << i << " deviation,";
   }
@@ -310,7 +311,7 @@ void initializeRecord(const cudaConstants * cConstants) {
   
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
     excelFile << "coast" << i << " deviation,";
-  }
+  }*/
 
   excelFile << ",\n";
   excelFile.close();
@@ -475,16 +476,17 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
   excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
   excelFile << generation << "," << pool[0].posDiff << ",";
-
+  excelFile << pool[0].velDiff << ",";
+/*
   double * deviation_array = new double[OPTIM_VARS];
   generationDiversity(pool, poolSize, deviation_array);
   
   for (int gene = 0; gene < OPTIM_VARS; gene++) {
     excelFile << deviation_array[gene] << ",";
   }
+  delete [] deviation_array;*/
   excelFile << "\n"; // End of row
   excelFile.close();
-  delete [] deviation_array;
 }
 
 
