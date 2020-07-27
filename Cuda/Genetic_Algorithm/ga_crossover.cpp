@@ -23,17 +23,17 @@ void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individ
     // Sort the pool by positional difference and make half the selctions the best posDiff
     std::sort(pool, pool+poolSize, BetterPosDiff);
     for (int i = 0; i < selectionSize / 2; i++) {
-        survivors[i] = pool[i];
+        survivors[i*2] = pool[i];
     }
     
     // Sort the pool by positional difference
     std::sort(pool, pool+poolSize, BetterVelDiff);
 
     for (int i = 0; i < selectionSize / 2; i++) {
-        survivors[i + selectionSize / 2] = pool[i];
+        survivors[(i)*2 + 1] = pool[i];
     }
 
-    /*for (int i = 0; i < selectionSize; i++) {
+    /* for (int i = 0; i < selectionSize; i++) {
         // While the array is a shuffled, when selecting a survivor make a neighbor comparison to choose the one with a lower cost (at least somewhat better choice)
         if ( pool[2*i] < pool[(2*i)+1] ) {
             survivors[i] = pool[2*i];
@@ -41,8 +41,7 @@ void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individ
         else {
             survivors[i] = pool[(2*i)+1];
         }
-
-    }*/
+    } */
 
     return;
 }
