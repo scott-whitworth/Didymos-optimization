@@ -190,7 +190,8 @@ double optimize(const cudaConstants* cConstants) {
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
             recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, cConstants->num_individuals, thrust);
         }
-        // // Only call terminalDisplay every DISP_FREQ, not every single generation
+        
+        // Only call terminalDisplay every DISP_FREQ, not every single generation
         if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
             terminalDisplay(inputParameters[0], generation);
         }
