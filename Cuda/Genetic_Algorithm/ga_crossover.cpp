@@ -30,9 +30,19 @@ void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individ
     std::sort(pool, pool+poolSize, BetterVelDiff);
 
     for (int i = 0; i < selectionSize / 2; i++) {
-        survivors[i] = pool[i];
+        survivors[i + selectionSize / 2] = pool[i];
     }
 
+    /*for (int i = 0; i < selectionSize; i++) {
+        // While the array is a shuffled, when selecting a survivor make a neighbor comparison to choose the one with a lower cost (at least somewhat better choice)
+        if ( pool[2*i] < pool[(2*i)+1] ) {
+            survivors[i] = pool[2*i];
+        }
+        else {
+            survivors[i] = pool[(2*i)+1];
+        }
+
+    }*/
 
     return;
 }
