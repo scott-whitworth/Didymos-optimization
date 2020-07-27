@@ -242,21 +242,22 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "==========CONFIG=DATA===============================================================================\n";
     os << "General Genetic Algorithm & Runge-Kutta Related Values\n";
     os << "\ttime_seed: "       << object.time_seed       << "\trandom_start: "   << object.random_start   << "\t\tnon_r_start_address: " << object.initial_start_file_address << "\n";
-    os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "      << object.change_check << "\n";
-    os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: " << object.thread_block_size << "\n";
-    os << "\trk_tol: "          << object.rk_tol          << "\t\ttimeRes: "      << object.timeRes        << "\t\tmax_numsteps: "      << object.max_numsteps << "\n";
-    os << "\tbest_count: "    << object.best_count        << "\tmax_generations: "<< object.max_generations<< "\trun_count: " << object.run_count << "\n\n";
+    os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "          << object.change_check << "\n";
+    os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: "     << object.thread_block_size << "\n";
+    os << "\trk_tol: "          << object.rk_tol          << "\t\ttimeRes: "      << object.timeRes        << "\t\tmax_numsteps: "        << object.max_numsteps << "\n";
+    os << "\tbest_count: "      << object.best_count      << "\tmax_generations: "<< object.max_generations<< "\trun_count: "             << object.run_count << "\n\n";
 
-    os << "Output Variables\n";
+    os << "Output Variables:\n";
     os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";
 
-    os << "Random Start Range Values\n";
-    os << "\tgamma: " << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
+    os << "Random Start Range Values:\n";
+    os << "\tgamma: "  << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
     os << "\ttriptime max - min: " << object.triptime_max << " - "  << object.triptime_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
     
-    os << "Mutation & Scales\t (mutation_rate: " << object.mutation_rate << ")\n";
-    os << "\tgamma_scale: " << object.gamma_mutate_scale       << "\ttau_m_scale: "   << object.tau_mutate_scale     << "\tcoast_m_scale: " << object.coast_mutate_scale   << "\n";
-    os << "\ttriptime_scale: " << object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale   << "\tbeta_m_scale: "    << object.beta_mutate_scale    << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
+    os << "Mutation & Scales:\n";
+    os << "\tmutation_rate: " << object.mutation_rate << ")\n";
+    os << "\tgamma_scale: "   << object.gamma_mutate_scale    << "\ttau_m_scale: "   << object.tau_mutate_scale   << "\tcoast_m_scale: " << object.coast_mutate_scale << "\n";
+    os << "\ttriptime_scale: "<< object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale << "\tbeta_m_scale: "  << object.beta_mutate_scale  << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
     os << "Spacecraft Info\n";
     os << "\tthruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n";
@@ -268,8 +269,8 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "\tvR: " << object.vr_fin_ast << "\tv0: " << object.vtheta_fin_ast << "\tvZ: " << object.vz_fin_ast << "\n\n";
 
     os << "Earth Info:\n";
-    os << "\t R: " << object.r_fin_earth  << "\t 0: " << object.theta_fin_earth  << "\t Z: " << object.z_fin_earth << "\n";
-    os << "\tvR: " << object.vr_fin_earth << "\tv0: " << object.vtheta_fin_earth << "\tvZ: " << object.vz_fin_earth << "\n\n";
+    os << "\t R: " << object.r_fin_earth  << "\t 0: " << object.theta_fin_earth  << "\t Z: " << object.z_fin_earth  << "\n";
+    os << "\tvR: " << object.vr_fin_earth << "\tv0: " << object.vtheta_fin_earth << "\tvZ: " << object.vz_fin_earth << "\n";
     os << "====================================================================================================\n";
     
     return os;
