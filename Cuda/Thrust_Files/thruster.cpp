@@ -54,7 +54,7 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const thruster<
 template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass, const cudaConstants* cConstants) {
 
     // If all of the fuel has been expelled, then no more thrust can be applied
-    if (wetMass - massExpelled <= cConstants->dry_mass) {
+    if (massExpelled >= cConstants->fuel_mass) {
         return 0;
     }
 
