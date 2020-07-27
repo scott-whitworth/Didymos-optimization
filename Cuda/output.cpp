@@ -192,7 +192,7 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 
   std::ofstream output;
   int seed = cConstants->time_seed;
-  output.open("orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
+  output.open("../../PostProcessing/bin/orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
   // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
   for(int i = 0; i <= lastStepInt; i++) {
     //output << yp[i];
@@ -233,7 +233,7 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
     // type double for consistency in binary output
     int seed = cConstants->time_seed;
     double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
-    output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+    output.open("../../PostProcessing/bin/finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
     // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
     output.write((char*)&cConstants->r_fin_ast, sizeof(double));
