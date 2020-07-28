@@ -271,7 +271,7 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
     std::ofstream output;
     output.open("progressiveAnalysis.csv", std::ios_base::app);
     output << seed << ',' << numStep << ','; 
-    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
+    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
     output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
