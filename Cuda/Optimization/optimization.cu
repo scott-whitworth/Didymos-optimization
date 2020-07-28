@@ -135,6 +135,9 @@ double optimize(const cudaConstants* cConstants) {
                                                   // This could eventually take into account velocity too and become a more complex calculation
     //dRate is used to help check for a change in anneal
     double dRate = 1.0e-8;
+
+    bool convergence = false;
+
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     do {
         callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, cConstants); // calculate trajectories for new individuals
@@ -196,7 +199,7 @@ double optimize(const cudaConstants* cConstants) {
         }
 
         // Before replacing new individuals, determine whether all are within tolerance
-        bool convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
+        convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
 
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, thrust, rng, generation);
