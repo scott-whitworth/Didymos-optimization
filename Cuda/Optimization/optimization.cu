@@ -150,9 +150,9 @@ double optimize(const cudaConstants* cConstants) {
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
+                // calculate its new cost function
+                inputParameters[k].getCost(cConstants);
              }
-            // calculate its new cost function
-            inputParameters[k].getCost(cConstants);
         }
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + cConstants->num_individuals, rng); // shuffle the Individiuals to use random members for the competition
@@ -209,7 +209,8 @@ double optimize(const cudaConstants* cConstants) {
     } while ( !convergence && generation < cConstants->max_generations);
 
     // Only call finalRecord if the results actually have reached the threshold
-    if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
+    if (convergence) {
+        terminalDisplay(inputParameters[0], generation);
         finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
     }
 

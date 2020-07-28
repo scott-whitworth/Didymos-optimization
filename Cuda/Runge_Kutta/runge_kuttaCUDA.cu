@@ -129,6 +129,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         individuals[threadId].getPosDiff(cConstant);
         individuals[threadId].getVelDiff(cConstant);
+        individuals[threadId].getCost(cConstant);
 
         return;
     }
