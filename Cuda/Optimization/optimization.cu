@@ -195,12 +195,15 @@ double optimize(const cudaConstants* cConstants) {
             terminalDisplay(inputParameters[0], generation);
         }
 
+        // Before replacing new individuals, determine whether all are within tolerance
+        bool convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
+
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, thrust, rng, generation);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
-    } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) && generation < cConstants->max_generations);
+    } while ( !convergence && generation < cConstants->max_generations);
 
     // Only call finalRecord if the results actually have reached the threshold
     if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
