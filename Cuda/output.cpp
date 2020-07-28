@@ -269,7 +269,8 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
     int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
     double coastThreshold = config->coast_threshold;
     std::ofstream output;
-    output.open("progressiveAnalysis.csv", std::ios_base::app);
+    output.open("progressiveAnalysis-" + std::to_string(config->time_seed) + ".csv", std::ios_base::app);
+    output << "time_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,gammaSize,tauSize,coastSize,coastThreshold,\n"; // header row
     output << seed << ',' << numStep << ','; 
     output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
