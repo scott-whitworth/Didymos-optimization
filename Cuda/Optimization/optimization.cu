@@ -39,7 +39,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     }
     // If iterated through and all were within tolerance, success
     return true;
-    std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
+    // std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
