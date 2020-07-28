@@ -33,13 +33,13 @@ bool changeInBest(double previousBestPos, double previousBestVel, Individual cur
 bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, const cudaConstants* cConstants) {
     // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
     for (int i = 0; i < cConstants->best_count; i++) {
-        if(pool[i].posDiff >= tolerance) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
+        if(pool[i].getPosDiff(cConstants) >= tolerance) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
             return false;
         }
     }
     // If iterated through and all were within tolerance, success
     return true;
-    std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
+    // std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
@@ -135,6 +135,9 @@ double optimize(const cudaConstants* cConstants) {
                                                   // This could eventually take into account velocity too and become a more complex calculation
     //dRate is used to help check for a change in anneal
     double dRate = 1.0e-8;
+
+    bool convergence = false;
+
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     do {
         callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, cConstants); // calculate trajectories for new individuals
@@ -147,9 +150,9 @@ double optimize(const cudaConstants* cConstants) {
                 // Set to be a bad individual
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
+                // calculate its new cost function
+                inputParameters[k].getCost(cConstants);
              }
-            // calculate its new cost function
-            inputParameters[k].getCost(cConstants);
         }
         // Note to future development, should shuffle and sort be within selectWinners method?
         std::shuffle(inputParameters, inputParameters + cConstants->num_individuals, rng); // shuffle the Individiuals to use random members for the competition
@@ -196,18 +199,19 @@ double optimize(const cudaConstants* cConstants) {
             terminalDisplay(inputParameters[0], generation);
         }
 
+        // Before replacing new individuals, determine whether all are within tolerance
+        convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
+
         // Create a new generation and increment the generation counter
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, thrust, rng, generation);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
-    } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) && generation < cConstants->max_generations);
-    
-    if (cConstants->record_mode == true ) {
-        recordGenerationPerformance(cConstants, inputParameters, generation, 0, cConstants->num_individuals, thrust);
-    }
+    } while ( !convergence && generation < cConstants->max_generations);
 
-    if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
+    // Only call finalRecord if the results actually have reached the threshold
+    if (convergence) {
+        terminalDisplay(inputParameters[0], generation);
         finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
     }
     

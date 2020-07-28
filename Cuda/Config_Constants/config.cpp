@@ -255,7 +255,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "\ttriptime max - min: " << object.triptime_max << " - "  << object.triptime_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
     
     os << "Mutation & Scales:\n";
-    os << "\tmutation_rate: " << object.mutation_rate << ")\n";
+    os << "\tmutation_rate: " << object.mutation_rate << "\n";
     os << "\tgamma_scale: "   << object.gamma_mutate_scale    << "\ttau_m_scale: "   << object.tau_mutate_scale   << "\tcoast_m_scale: " << object.coast_mutate_scale << "\n";
     os << "\ttriptime_scale: "<< object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale << "\tbeta_m_scale: "  << object.beta_mutate_scale  << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 

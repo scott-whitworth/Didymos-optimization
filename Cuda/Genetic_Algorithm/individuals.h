@@ -38,7 +38,7 @@ struct Individual {
     // Calculates a cost value to quantitatively evaluate this Individual
     // Input: cConstants in accessing properties such as pos_threshold, c3energy, and v_impact
     // Output: Assigns and returns this individual's cost value
-    double getCost(const cudaConstants* cConstants);
+    __host__ __device__ double getCost(const cudaConstants* cConstants);
 
     // Comparison operators overloaded to compare individuals by their cost values (determined in getCost())
     bool operator>(Individual &other);

@@ -183,12 +183,8 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[lastStepInt];
 
-  // Creates a bin file to analyze the error in thrust calculations
-  // Used with errorCheck.m
-  if (cConstants->record_mode == true) {
-    errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
-  }
-    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
@@ -275,7 +271,7 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
     std::ofstream output;
     output.open("progressiveAnalysis.csv", std::ios_base::app);
     output << seed << ',' << numStep << ','; 
-    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->theta_fin_ast - fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
+    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
     output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
     output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
     output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
