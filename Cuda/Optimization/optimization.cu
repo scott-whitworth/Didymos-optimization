@@ -202,8 +202,10 @@ double optimize(const cudaConstants* cConstants) {
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) && generation < cConstants->max_generations);
-
-    recordGenerationPerformance(cConstants, inputParameters, generation, 0, cConstants->num_individuals, thrust);
+    
+    if (cConstants->record_mode == true ) {
+        recordGenerationPerformance(cConstants, inputParameters, generation, 0, cConstants->num_individuals, thrust);
+    }
 
     if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
         finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
