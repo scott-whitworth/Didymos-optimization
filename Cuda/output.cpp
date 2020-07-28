@@ -183,12 +183,8 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[lastStepInt];
 
-  // Creates a bin file to analyze the error in thrust calculations
-  // Used with errorCheck.m
-  if (cConstants->record_mode == true) {
-    errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
-  }
-    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
   int seed = cConstants->time_seed;
