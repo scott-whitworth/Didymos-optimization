@@ -19,14 +19,14 @@ enum maskValue {
 //        poolSize - integer number of length of the pool
 //        selectionSize - integer number of how many survivors to choose out of the pool
 //        survivors - pointer array of individuals to copy the selected individuals and store
-// Output: pool is left sorted by individuals with higher velocity difference, survivors contains an array of size selectionSize of individuals to be used for crossover 
+// Output: pool is left sorted by individuals with higher velocity difference, survivors contains an array of size selectionSize of individuals to be used in generating new individuals
 void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors) {
     // Sort the pool by velocity difference and assign every even index of survivor to hold the individuals with best positional difference
     std::sort(pool, pool+poolSize, BetterPosDiff);
     for (int i = 0; i < selectionSize / 2; i++) {
         survivors[i*2] = pool[i];
     }
-        // Sort the pool by velocity difference and assign every odd index of survivor to hold the individuals with best velocity difference
+    // Sort the pool by velocity difference and assign every odd index of survivor to hold the individuals with best velocity difference
     std::sort(pool, pool+poolSize, BetterVelDiff);
     for (int i = 0; i < selectionSize / 2; i++) {
         survivors[(i)*2 + 1] = pool[i];
@@ -396,6 +396,8 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     int * mask = new int[OPTIM_VARS];
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
     int numPairs = survivorSize / 2; // Value for how many pairs to use and produce in each loop (as one iteration through a loop produces a new pair)
+    // Shuffle the survivors to ensure diverse crossover
+    std::shuffle(survivors, survivors+survivorSize, rng);
 
     // Generate two offspring through each crossover method, total is 4 * survivorSize offspring in pool
     // Every loop needs to reset the mask as it is flipped from generateChildrenPair, for ones that use randomization it also keeps from having same mask for all new pairs

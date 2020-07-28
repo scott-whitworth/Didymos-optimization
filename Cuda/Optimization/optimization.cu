@@ -203,8 +203,11 @@ double optimize(const cudaConstants* cConstants) {
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !allWithinTolerance(tolerance, inputParameters, generation, cConstants) && generation < cConstants->max_generations);
 
-    
-    finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
+    recordGenerationPerformance(cConstants, inputParameters, generation, 0, cConstants->num_individuals, thrust);
+
+    if (allWithinTolerance(tolerance, inputParameters, generation, cConstants)) {
+        finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
+    }
     
 
     delete [] inputParameters;
@@ -226,25 +229,25 @@ int main () {
     double zero_seed = cConstants->time_seed;
     // Perform the optimization with optimize function
     for (int run = 0; run < cConstants->run_count; run++) {
-            // Adjust the time_seed so it is unique based on each run
-            cConstants->time_seed = zero_seed + run*100;
+        // Adjust the time_seed so it is unique based on each run
+        cConstants->time_seed = zero_seed + run*100;
 
-            // Display contents of cConstants being used for this run and how many runs
-            std::cout << *cConstants << std::endl;
-            std::cout << "Performing run #" << run << " with current parameters\n";
+        // Display contents of cConstants being used for this run and how many runs
+        std::cout << *cConstants << std::endl;
+        std::cout << "Performing run #" << run << " with current parameters\n";
 
-            // pre-calculate a table of Earth's position within possible mission time range
-            launchCon = new EarthInfo(cConstants); // a global variable to hold Earth's position over time, assigned new info for this run of parameters
-        
-            // File stream for outputting values that were calculated in EarthInfo constructor
-            /*if (cConstants->record_mode == true) {
-                recordEarthData(cConstants, run);
-            }*/
+        // pre-calculate a table of Earth's position within possible mission time range
+        launchCon = new EarthInfo(cConstants); // a global variable to hold Earth's position over time, assigned new info for this run of parameters
+
+        // File stream for outputting values that were calculated in EarthInfo constructor
+        /*if (cConstants->record_mode == true) {
+            recordEarthData(cConstants, run);
+        }*/
             optimize(cConstants);
 
-            delete launchCon; // Deallocate launchCon info for this run as it may be needing a different time range in the next run
+        delete launchCon; // Deallocate launchCon info for this run as it may be needing a different time range in the next run
     }
-
+    
     // Now that the optimize function is done (assumed that optimize() also records it), deallocate memory of the cudaConstants
     delete cConstants;
     
