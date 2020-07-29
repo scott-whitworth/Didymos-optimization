@@ -162,9 +162,9 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   tau = new double[numSteps]; // Initialize memory for tau array
   accel_output = new double[numSteps]; // Initialize memory for acceleration array
   fuelSpent = new double[numSteps];  // Initialize memory for fuelSpent array
-  work = new double[lastStep];
-  dE = new double[lastStep];
-  Etot_avg = new double[lastStep];
+  work = new double[numSteps];
+  dE = new double[numSteps];
+  Etot_avg = new double[numSteps];
 
   double accel; // Initialize memory for  acceleration
 
@@ -223,7 +223,7 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   output.write((char*)&csize, sizeof(double));
 
   for (int j = 0; j < OPTIM_VARS; j++) {
-    output.write((char*)&start[j], sizeof (double));
+    output.write((char*)&x[j], sizeof (double));
   }
   
   output.write((char*)&lastStep, sizeof (double));
