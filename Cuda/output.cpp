@@ -57,18 +57,18 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
   work[0] = dE[0] = 0;
   Etot_avg[0] = Etot[0];
 
-  std::ofstream output;
-  int seed = config->time_seed;
-  output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
+  // std::ofstream output;
+  // int seed = config->time_seed;
+  // output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
 
-  for (int i = 0; i < lastStep; i++) {
-    output.write((char*)&time[i], sizeof(double));
-    output.write((char*)&work[i], sizeof(double));
-    output.write((char*)&dE[i], sizeof(double));
-    output.write((char*)&Etot_avg[i], sizeof(double));
-  }
+  // for (int i = 0; i < lastStep; i++) {
+  //   output.write((char*)&time[i], sizeof(double));
+  //   output.write((char*)&work[i], sizeof(double));
+  //   output.write((char*)&dE[i], sizeof(double));
+  //   output.write((char*)&Etot_avg[i], sizeof(double));
+  // }
+  // output.close();
 
-  output.close();
   delete [] mass;
   delete [] Etot;
 }
