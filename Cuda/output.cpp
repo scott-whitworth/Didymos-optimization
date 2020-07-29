@@ -156,12 +156,15 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   elements<double>* yp;
   yp = new elements<double>[numSteps];
   
-  double *times, *gamma, *tau, *accel_output, *fuelSpent;
+  double *times, *gamma, *tau, *accel_output, *fuelSpent, *work, *dE, *Etot_avg;
   times = new double[numSteps]; // Initialize memory for time array
   gamma = new double[numSteps]; // Initialize memory for gamma array
   tau = new double[numSteps]; // Initialize memory for tau array
   accel_output = new double[numSteps]; // Initialize memory for acceleration array
   fuelSpent = new double[numSteps];  // Initialize memory for fuelSpent array
+  work = new double[lastStep];
+  dE = new double[lastStep];
+  Etot_avg = new double[lastStep];
 
   double accel; // Initialize memory for  acceleration
 
@@ -176,9 +179,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[lastStepInt];
 
-  double work = new double[lastStep];
-  double dE = new double[lastStep];
-  double Etot_avg = new double[lastStep];
   errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
   progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
@@ -212,7 +212,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   delete [] work;
   delete [] dE;
   delete [] Etot_avg;
-}
 }
 
 // Output trajectory information to finalOptimization-[time_seed].bin
