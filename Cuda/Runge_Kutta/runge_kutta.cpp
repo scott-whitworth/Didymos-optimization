@@ -165,7 +165,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
         //Alter the step size for the next iteration
         //Expected to be negative
-        stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize)/2;
+        stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize);
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
         if (-stepSize > (timeFinal-timeInitial)/100) {
@@ -186,13 +186,13 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
 
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
-    k1 = calc_k(stepSize, y_new,coeff, accel, curTime,timeFinal, thrust); 
-    k2 = calc_k(stepSize, y_new+k1*1./5,coeff, accel, curTime+1./5*stepSize, timeFinal, thrust); 
-    k3 = calc_k(stepSize, y_new+k1*3./40+k2*9./40,coeff, accel, curTime+3./10*stepSize,timeFinal, thrust);   
-    k4 = calc_k(stepSize, y_new+k1*44./45+k2*-56./15+k3*32./9,coeff, accel, curTime+4./5*stepSize, timeFinal, thrust); 
-    k5 = calc_k(stepSize, y_new+k1*19372./6561+k2*-25360./2187+k3*64448./6561+k4*-212./729,coeff, accel, curTime+8./9*stepSize, timeFinal, thrust); 
-    k6 = calc_k(stepSize, y_new+k1*9017./3168 +k2*-355./33+k3*46732./5247+k4*49./176+k5*-5103./18656,coeff, accel, curTime+stepSize,timeFinal, thrust);  
-    k7 = calc_k(stepSize, y_new+k1*35./384+k3*500./1113+k4*125./192+k5*-2187./6784+k6*11./84,coeff, accel, curTime+stepSize,timeFinal, thrust);  
+    k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal, thrust); 
+    k2 = calc_k(stepSize, y_new+k1*static_cast <double> (1)/static_cast <double> (5), coeff, accel, curTime+static_cast <double> (1)/static_cast <double> (5)*stepSize, timeFinal, thrust); 
+    k3 = calc_k(stepSize, y_new+k1*static_cast <double> (3)/static_cast <double> (40)+k2*static_cast <double> (9)/static_cast <double> (40), coeff, accel, curTime+static_cast <double> (3)/static_cast <double> (10)*stepSize, timeFinal, thrust);   
+    k4 = calc_k(stepSize, y_new+k1*static_cast <double> (44)/static_cast <double> (45)+k2*static_cast <double> (-56)/static_cast <double> (15)+k3*static_cast <double> (32)/static_cast <double> (9), coeff, accel, curTime+static_cast <double> (4)/static_cast <double> (5)*stepSize, timeFinal, thrust); 
+    k5 = calc_k(stepSize, y_new+k1*static_cast <double> (19372)/static_cast <double> (6561)+k2*static_cast <double> (-25360)/static_cast <double> (2187)+k3*static_cast <double> (64448)/static_cast <double> (6561)+k4*static_cast <double> (-212)/static_cast <double> (729), coeff, accel, curTime+static_cast <double> (8)/static_cast <double> (9)*stepSize, timeFinal, thrust); 
+    k6 = calc_k(stepSize, y_new+k1*static_cast <double> (9017)/static_cast <double> (3168)+k2*static_cast <double> (-355)/static_cast <double> (33)+k3*static_cast <double> (46732)/static_cast <double> (5247)+k4*static_cast <double> (49)/static_cast <double> (176)+k5*static_cast <double> (-5103)/static_cast <double> (18656), coeff, accel, curTime+stepSize, timeFinal, thrust);  
+    k7 = calc_k(stepSize, y_new+k1*static_cast <double> (35)/static_cast <double> (384)+k3*static_cast <double> (500)/static_cast <double> (1113)+k4*static_cast <double> (125)/static_cast <double> (192)+k5*static_cast <double> (-2187)/static_cast <double> (6784)+k6*static_cast <double> (11)/static_cast <double> (84), coeff, accel, curTime+stepSize, timeFinal, thrust);  
 
     // New value
     y_new = y_new + k1*static_cast <double> (35)/static_cast <double> (384) + k3*static_cast <double> (500)/static_cast <double> (1113) + k4*static_cast <double> (125)/static_cast <double> (192) - k5*static_cast <double> (2187)/static_cast <double> (6784) + k6*static_cast <double> (11)/static_cast <double> (84);  
