@@ -38,8 +38,6 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     bool coast;
 
     while (curTime < timeFinal) { // iterate until time is equal to the stop time
-        // defining deltaT for calc_accel as the stepsize
-        T deltaT = stepSize;
 
         u = y_new[n];
 
@@ -47,7 +45,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         coast = calc_coast(coeff, curTime, timeFinal, thrust);
         
         // defining acceleration using calc_accel()
-        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass, cConstant);
+        accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, stepSize, coast, wetMass, cConstant);
         
         // Record the updated massFuelSpent to the output array
         fuelSpent[n+1]=massFuelSpent;
