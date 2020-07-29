@@ -12,8 +12,9 @@
 // Input: pool - a shuffled pointer array of individuals to choose from
 //        selectionSize - integer number of how many survivors to choose out of the pool
 //        survivors - pointer array of individuals to copy the selected individuals and store
+//        cConstants - for accessing values such as number of individuals
 // Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that were quasi-randomly chosen
-void selectSurvivors(Individual* pool, int selectionSize, Individual* survivors);
+void selectSurvivors(Individual * pool, int selectionSize, Individual* survivors, const cudaConstants * cConstants);
 
 // Creates a random bifurcation mask, currently not in use
 // Randomly picks one index to be the start of the '2's from mask

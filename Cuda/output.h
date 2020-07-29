@@ -24,6 +24,13 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration);
 // output: errorCheck-(seed).bin recording arrays of time, work, changes in total mechanical energy, and average energy between time steps
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, double *work, double *dE, double *Etot_avg, const cudaConstants* config);
 
+// Generate and output an optim_vars length array that contains the average value for every gene in the pool
+// input: pool - array of individuals
+//        poolSize - length of the pool
+//        average_array - inputted pointer array of length OPTIM_VARS that will be assigned values as output
+// output: average_array holds the average value for every gene
+void getAverageGenes(Individual * pool, int const poolSize, double * average_array);
+
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
 //        threadRank - Rank of the individual element being recorded, currently (July )
