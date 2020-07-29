@@ -114,7 +114,7 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], int generation, thruster<double> thrust, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -174,10 +174,10 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
 
-  lastStep = lastStepInt;
+  double lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
-  yOut = yp[lastStepInt];
+  elements<double> yOut = yp[lastStepInt];
 
   errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
   progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
@@ -200,6 +200,36 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   }
   output.close();
 
+  double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+  output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+
+  output.write((char*)&cConstants->r_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->z_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->r_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->z_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->fuel_mass, sizeof(double));
+  output.write((char*)&cConstants->coast_threshold, sizeof(double));
+  output.write((char*)&gsize, sizeof(double));
+  output.write((char*)&tsize, sizeof(double));
+  output.write((char*)&csize, sizeof(double));
+
+  for (int j = 0; j < OPTIM_VARS; j++) {
+    output.write((char*)&start[j], sizeof (double));
+  }
+  
+  output.write((char*)&lastStep, sizeof (double));
+
+  output.close();
+
   // std::cout << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
   
   // cleaning up dynamic yp, time, gamma, and tau.
@@ -212,53 +242,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   delete [] work;
   delete [] dE;
   delete [] Etot_avg;
-}
-
-// Output trajectory information to finalOptimization-[time_seed].bin
-// input: start - passed to trajectoryPrint, information also outputted to finalOptimization[-time_seed].bin file
-//        threadRank - passed to trajectoryPrint, also 
-//        thrust - passed to trajectoryPrint
-//        cConstants - access time_seed for deriving file name
-// output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants) {
-    elements<double> yp;
-    double numStep = 0;
-  
-    trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
-
-    //writes final optimization values to a seperate file
-    std::ofstream output;
-    // type double for consistency in binary output
-    int seed = cConstants->time_seed;
-    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
-    output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
-    // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
-
-    output.write((char*)&cConstants->r_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->z_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->r_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->z_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->fuel_mass, sizeof(double));
-    output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    output.write((char*)&gsize, sizeof(double));
-    output.write((char*)&tsize, sizeof(double));
-    output.write((char*)&csize, sizeof(double));
-
-    for (int j = 0; j < OPTIM_VARS; j++) {
-      output.write((char*)&start[j], sizeof (double));
-    }
-    
-    output.write((char*)&numStep, sizeof (double));
-
-  output.close();
 }
 
 // Record progress of individual
@@ -464,7 +447,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   start[ZETA_OFFSET] = pool[0].startParams.zeta;
 
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-  writeTrajectoryToFile(start, generation, thrust, cConstants);
+  trajectoryPrint(start, generation, thrust, cConstants);
 
   // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 

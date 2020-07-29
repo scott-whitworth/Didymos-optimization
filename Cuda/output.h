@@ -26,22 +26,14 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
-//        lastStep - Used to store number of total steps as output
 //        threadRank - Rank of the individual element being recorded, currently (July )
-//        yOut - Used to store element informatio as output
 //        thrust - Passed into rk4sys
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], double & lastStep, int generation, elements<double> & yOut, thruster<double> thrust, const cudaConstants* cConstants);
-
-// Output trajectory information to finalOptimization-[time_seed].bin
-// input: start - passed to trajectoryPrint, information also outputted to finalOptimization[-time_seed].bin file
-//        threadRank - passed to trajectoryPrint, also 
-//        thrust - passed to trajectoryPrint
-//        cConstants - access time_seed for deriving file name
-// output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants);
+//         file orbitalMotion-[time_seed].bin is created that holds spacecraft RK steps and error
+//         file finalOptimization-[time_seed].bin is created that holds earth/ast/ and trajectory parameter values
+void trajectoryPrint( double x[], int generation, thruster<double> thrust, const cudaConstants* cConstants);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
