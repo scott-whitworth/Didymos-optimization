@@ -142,7 +142,6 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     subplot(2,2,3)
     plot(cR(7,:),fuelSpent*100)
     xlim([0 tripTime])
-    ylim([0,100])
     title('Fuel consumption')
     ylabel('% fuel')
     xlabel('t (s)')
