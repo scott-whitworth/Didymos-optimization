@@ -24,7 +24,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     figure(1) %orbitals
     subplot(2,3,1)
-    polarplot(yE(:,2),yE(:,1))
+    polarplot(yE(:,2),yE(:,1),'.')
     hold on
     polarplot(yA(:,2),yA(:,1),'.')
     hold on
