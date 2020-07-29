@@ -39,8 +39,8 @@ void setMutateFile(const cudaConstants* cConstants) {
 }
 
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, double *work, double *dE, double *Etot_avg, const cudaConstants* config) {
-  double mass = new double[lastStep];
-  double Etot = new double[lastStep];
+  double *mass = new double[lastStep];
+  double *Etot = new double[lastStep];
   
   for (int i = 0; i < lastStep; i++) {
     mass[i] = wetMass - fuelSpent[i];
