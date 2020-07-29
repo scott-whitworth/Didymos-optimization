@@ -25,7 +25,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     figure(1) %orbitals
     subplot(2,3,1)
-    polarplot(yE(:,2),yE(:,1))
+    polarplot(yE(:,2),yE(:,1),'.')
     hold on
     polarplot(yA(:,2),yA(:,1),'.')
     hold on
@@ -45,7 +45,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     maxTripTime = max(tripTime1,tripTime2);
     tripTimeDiff = maxTripTime - minTripTime;
     subplot(2,3,4)
-    plot(tE-(timeFinal-maxTripTime),yE(:,1))
+    plot(tE-(timeFinal-maxTripTime),yE(:,1),'.')
     hold on
     plot(tA-(timeFinal-maxTripTime),yA(:,1),'.')
     hold on
@@ -69,7 +69,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     %angular momentum vs. time
     subplot(2,3,2)
-    plot(tE-(timeFinal-maxTripTime),yE(:,1).*yE(:,5))
+    plot(tE-(timeFinal-maxTripTime),yE(:,1).*yE(:,5),'.')
     hold on
     plot(tA-(timeFinal-maxTripTime),yA(:,1).*yA(:,5),'.')
     hold on
@@ -93,7 +93,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     %plot z
     subplot(2,3,3)
-    plot(yE(:,1).*cos(yE(:,2)),yE(:,3))
+    plot(yE(:,1).*cos(yE(:,2)),yE(:,3),'.')
     hold on
     plot(yA(:,1).*cos(yA(:,2)),yA(:,3),'.')
     hold on
@@ -108,7 +108,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     %Z vs. time
     subplot(2,3,6)
-    plot(tE-(timeFinal-maxTripTime),yE(:,3))
+    plot(tE-(timeFinal-maxTripTime),yE(:,3),'.')
     hold on
     plot(tA-(timeFinal-maxTripTime),yA(:,3),'.')
     hold on
@@ -132,7 +132,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     %theta vs. time
     subplot(2,3,5)
-    plot(tE-(timeFinal-maxTripTime),mod(yE(:,2),2*pi))
+    plot(tE-(timeFinal-maxTripTime),mod(yE(:,2),2*pi),'.')
     hold on
     plot(tA-(timeFinal-maxTripTime),mod(yA(:,2), 2*pi),'.')
     hold on

@@ -39,7 +39,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     %radius vs. time
     subplot(2,3,4)
-    plot(tE-(timeFinal-tripTime),yE(:,1))
+    plot(tE-(timeFinal-tripTime),yE(:,1),'.')
     hold on
     plot(tA-(timeFinal-tripTime),yA(:,1),'.')
     hold on
@@ -52,7 +52,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     %specific angular momentum vs. time
     subplot(2,3,2)
-    plot(tE-(timeFinal-tripTime),yE(:,1).*yE(:,5))
+    plot(tE-(timeFinal-tripTime),yE(:,1).*yE(:,5),'.')
     hold on
     plot(tA-(timeFinal-tripTime),yA(:,1).*yA(:,5),'.')
     hold on
@@ -65,7 +65,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     %plot z
     subplot(2,3,3)
-    plot(yE(:,1).*cos(yE(:,2)),yE(:,3))
+    plot(yE(:,1).*cos(yE(:,2)),yE(:,3),'.')
     hold on
     plot(yA(:,1).*cos(yA(:,2)),yA(:,3),'.')
     hold on
@@ -77,7 +77,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     %Z vs. time
     subplot(2,3,6)
-    plot(tE-(timeFinal-tripTime),yE(:,3))
+    plot(tE-(timeFinal-tripTime),yE(:,3),'.')
     hold on
     plot(tA-(timeFinal-tripTime),yA(:,3),'.')
     hold on
@@ -90,7 +90,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     %theta vs. time
     subplot(2,3,5)
-    plot(tE-(timeFinal-tripTime),mod(yE(:,2),2*pi))
+    plot(tE-(timeFinal-tripTime),mod(yE(:,2),2*pi),'.')
     hold on
     plot(tA-(timeFinal-tripTime),mod(yA(:,2), 2*pi),'.')
     hold on
