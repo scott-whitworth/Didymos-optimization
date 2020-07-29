@@ -31,12 +31,14 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     hold on
     polarplot(cR(2,1),cR(1,1),'r*')
     hold on
+    polarplot(dR(2,1),dR(1,1),'g*')
+    hold on
     polarplot(y0A(2),y0A(1),'*b')
     hold on
     polarplot(cR(2,:),cR(1,:))
     hold on
     polarplot(dR(2,:),dR(1,:))
-    legend({'earth','asteroid','launch','impact','spacecraft 1','spacecraft 2'})
+    legend({'earth','asteroid','launch 1','launch 2','impact','spacecraft 1','spacecraft 2'})
     title('r-\theta plane')
     hold off
     
