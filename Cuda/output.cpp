@@ -177,7 +177,6 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
 
-
   lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
@@ -219,42 +218,42 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
 //        cConstants - access time_seed for deriving file name
 // output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
 void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants) {
-    elements<double> yp;
-    double numStep = 0;
+  elements<double> yp;
+  double numStep = 0;
   
-    trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
+  trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
 
-    //writes final optimization values to a seperate file
-    std::ofstream output;
-    // type double for consistency in binary output
-    int seed = cConstants->time_seed;
-    double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
-    output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
-    // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+  // type double for consistency in binary output
+  int seed = cConstants->time_seed;
+  double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+  output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
-    output.write((char*)&cConstants->r_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->z_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
-    output.write((char*)&cConstants->r_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->z_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
-    output.write((char*)&cConstants->fuel_mass, sizeof(double));
-    output.write((char*)&cConstants->coast_threshold, sizeof(double));
-    output.write((char*)&gsize, sizeof(double));
-    output.write((char*)&tsize, sizeof(double));
-    output.write((char*)&csize, sizeof(double));
+  output.write((char*)&cConstants->r_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->z_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->r_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->z_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->fuel_mass, sizeof(double));
+  output.write((char*)&cConstants->coast_threshold, sizeof(double));
+  output.write((char*)&gsize, sizeof(double));
+  output.write((char*)&tsize, sizeof(double));
+  output.write((char*)&csize, sizeof(double));
 
-    for (int j = 0; j < OPTIM_VARS; j++) {
-      output.write((char*)&start[j], sizeof (double));
-    }
-    
-    output.write((char*)&numStep, sizeof (double));
+  for (int j = 0; j < OPTIM_VARS; j++) {
+    output.write((char*)&start[j], sizeof (double));
+  }
+  
+  output.write((char*)&numStep, sizeof (double));
 
   output.close();
 }
@@ -266,25 +265,39 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
-    int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
-    double coastThreshold = config->coast_threshold;
-    std::ofstream output;
-    output.open("progressiveAnalysis-" + std::to_string(config->time_seed) + ".csv", std::ios_base::app);
-    output << "time_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,gammaSize,tauSize,coastSize,coastThreshold,\n"; // header row
-    output << seed << ',' << numStep << ','; 
-    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
-    output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
-    output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
-    output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
-    output << std::endl;
-    output.close();
-}
+  int seed = config->time_seed;
+  std::ofstream output;
+  output.open("progressiveAnalysis-" + std::to_string(config->time_seed) + ".csv", std::ios_base::app);
+  output << "time_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
 
-// Returns the percentage difference of two values
-// Input: two double values to compare
-// Output: the percentage difference between them, multiplied by 100
-double percentageDifference(double value1, double value2) {
-  return abs(value1-value2)/((value1+value2)/2)*100.0;
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    output << "gamma" << i << ","; 
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    output << "tau" << i << ","; 
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    output << "coast" << i << ","; 
+  }
+  output << "\n";  
+
+  output << seed << ',' << numStep << ','; 
+  output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
+  output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
+  output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
+
+  for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+  for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+  for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+
+  output << std::endl;
+  output.close();
 }
 
 // Initialize the .csv file with header row
@@ -296,7 +309,19 @@ void initializeRecord(const cudaConstants * cConstants) {
   std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
   excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-  excelFile << "Gen,bestPosDiff,bestVelDiff";
+  excelFile << "Gen,bestPosDiff,bestVelDiff,alpha,beta,zeta,triptime,";
+  
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    excelFile << "gamma" << i << ","; 
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    excelFile << "tau" << i << ","; 
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    excelFile << "coast" << i << ","; 
+  }
+  
+  
   /*
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     excelFile << "gamma" << i << " deviation,";
@@ -316,148 +341,6 @@ void initializeRecord(const cudaConstants * cConstants) {
     // setMutateFile(cConstants);
 }
 
-// Generate and output an optim_vars length array that contains the average value for every gene in the pool
-// input: pool - array of individuals
-//        poolSize - length of the pool
-//        average_array - inputted pointer array of length OPTIM_VARS that will be assigned values as output
-// output: average_array holds the average value for every gene
-void getAverageGenes(Individual * pool, int const poolSize, double * average_array) {
-  // set all index values to 0 first
-  for (int i = 0; i < OPTIM_VARS; i++) {
-    average_array[i] = 0;
-  }
-  // get average values of each gamma coefficient
-  for (int index = GAMMA_OFFSET; index < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; index++ ) {
-    for (int position = 0; position < poolSize; position++) {
-      average_array[index] += pool[position].startParams.coeff.gamma[index-GAMMA_OFFSET] / poolSize;
-    }
-  }
-  // get average tau values
-  for (int index = TAU_OFFSET; index < TAU_ARRAY_SIZE + TAU_OFFSET; index++ ) {
-    for (int position = 0; position < poolSize; position++) {
-      average_array[index] += pool[position].startParams.coeff.tau[index-TAU_OFFSET] / poolSize;
-    }
-  }
-  // get average coast values
-  for (int index = COAST_OFFSET; index < COAST_ARRAY_SIZE + COAST_OFFSET; index++ ) {
-    for (int position = 0; position < poolSize; position++) {
-      average_array[index] += pool[position].startParams.coeff.coast[index-COAST_OFFSET] / poolSize;
-    }
-  }
-  // Get average alpha
-  for (int position = 0; position < poolSize; position++) {
-    average_array[ALPHA_OFFSET] += pool[position].startParams.alpha / poolSize;
-  }
-
-  // Get average beta
-  for (int position = 0; position < poolSize; position++) {
-    average_array[BETA_OFFSET] += pool[position].startParams.beta / poolSize;
-  }
-
-  // Get average zeta
-  for (int position = 0; position < poolSize; position++) {
-    average_array[ZETA_OFFSET] += pool[position].startParams.zeta / poolSize;
-  }
-  
-  // Get average triptime
-  for (int position = 0; position < poolSize; position++) {
-    average_array[TRIPTIME_OFFSET] += pool[position].startParams.tripTime / poolSize;
-  }
-
-}
-
-// Generate and output an optim_vars length array that contains the average value for every gene in the pool
-// input: pool - array of individuals
-//        poolSize - length of the pool
-//        average_array - array of length OPTIM_VARS containing average value for all genes
-//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that will serve as output
-// output: percDiff_pool arrays of length OPTIM_VARS that contain the percentage difference that every individual's gene has to the average_array's
-void getPercentDifferenceAllIndividuals(Individual * pool, int const poolSize, double * average_array, double ** percDiff_pool) {
-  for (int individual = 0; individual < poolSize; individual++) {
-
-    percDiff_pool[individual] = new double[OPTIM_VARS];
-
-    for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
-      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.gamma[i - GAMMA_OFFSET], average_array[i] );
-    }
-    for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
-      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.tau[i - TAU_OFFSET], average_array[i] );
-    }
-    for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
-      percDiff_pool[individual][i] = percentageDifference(pool[individual].startParams.coeff.coast[i - COAST_OFFSET], average_array[i] );
-    }
-
-    percDiff_pool[individual][ALPHA_OFFSET]    = percentageDifference(pool[individual].startParams.alpha,    average_array[ALPHA_OFFSET] );
-    percDiff_pool[individual][BETA_OFFSET]     = percentageDifference(pool[individual].startParams.beta,     average_array[BETA_OFFSET] );
-    percDiff_pool[individual][ZETA_OFFSET]     = percentageDifference(pool[individual].startParams.zeta,     average_array[ZETA_OFFSET] );
-    percDiff_pool[individual][TRIPTIME_OFFSET] = percentageDifference(pool[individual].startParams.tripTime, average_array[TRIPTIME_OFFSET] );
-  }
-}
-
-// Generate and output an optim_vars length array that contains the average value for every gene in the pool
-// input: poolSize - length of the pool
-//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that contains the percentage difference that every individual's gene has to the average
-//        average_percDiff - pointer array that serves as output
-// output: average_percDiff arrays of length OPTIM_VARS contains the average percent difference for each gene
-void getAveragePercentDifference(int const poolSize, double ** percDiff_pool, double * average_percDiff) {
-  for (int i = 0; i < OPTIM_VARS; i++) {
-    // set index value to 0 first
-    average_percDiff[i] = 0;  
-  
-    for (int individual = 0; individual < poolSize; individual++) {
-      average_percDiff[i] += percDiff_pool[individual][i] / poolSize;
-    }
-  }
-}
-
-// Generate and output an optim_vars length array that contains the standard deviation of all the genes
-// input: poolSize - length of the pool
-//        average_percDiff - array OPTIM_VARS in length containing the average percent difference for each gene
-//        percDiff_pool - 2D pointer array containing the percent difference of each gene in each individual
-//        deviation_array - pointer array of length OPTIM_VARS that serves as output;
-// output: deviation_array contains the population standard deviation of every gene
-void getDeviationAllGenes(int const poolSize, double * average_percDiff, double ** percDiff_pool, double * deviation_array) {
-  for (int gene = 0; gene < OPTIM_VARS; gene++) {
-    // index value to 0 first
-    deviation_array[gene] = 0;
-  
-    for (int individual = 0; individual < poolSize; individual++) {
-      deviation_array[gene] += pow( ( percDiff_pool[individual][gene] - average_percDiff[gene] ), 2 ) / poolSize;
-
-    }
-    deviation_array[gene] = sqrt(deviation_array[gene]);
-  }
-}
-
-// Generate and output an optim_var length array that describes the standard deviation for each gene in a pool's population
-// input: pool - pointer array to individuals that makes up the generation's pool
-//        poolSize - length of pool
-//        deviation_array - a pointer array of length OPTIM_VARS that is set to contain the deviaton for each corresponding gene 
-// output: deviation_array contains the population deviation of corresponding genes
-void generationDiversity(Individual * pool, int const poolSize, double * deviation_array) {
-  // Array to hold average parameter values from entire pool
-  double * average_array = new double[OPTIM_VARS];
-  getAverageGenes(pool, poolSize, average_array);
-
-  // A 2D array to hold percentage difference of each parameter for each individual in the pool
-  double ** percDiff_pool = new double*[poolSize];
-
-  // go through each individual and calculate the percent difference for each of its parameters
-  getPercentDifferenceAllIndividuals(pool, poolSize, average_array, percDiff_pool);
-  
-  // Array to hold the standard deviation values for different parameters
-  double * average_percDiff = new double[OPTIM_VARS];
-  getAveragePercentDifference(poolSize, percDiff_pool, average_percDiff);
-
-  getDeviationAllGenes(poolSize, average_percDiff, percDiff_pool, deviation_array);
-
-  for (int index = 0; index < poolSize; index++) {
-    delete [] percDiff_pool[index];
-  }
-  delete [] average_array;
-  delete [] average_percDiff;
-}
-
 // Take in the current state of the generation and appends to files
 // input: cConstants - access time_seed to derive file name
 //        pool - passes pool[0] to writeIndividualToFiles & writeThrustToFiles
@@ -474,6 +357,22 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
 
   excelFile << generation << "," << pool[0].posDiff << ",";
   excelFile << pool[0].velDiff << ",";
+
+  excelFile << pool[0].startParams.alpha << ",";
+  excelFile << pool[0].startParams.beta << ",";
+  excelFile << pool[0].startParams.zeta << ",";
+  excelFile << pool[0].startParams.tripTime << ",";
+
+  for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.gamma[i-GAMMA_OFFSET] << ","; 
+  }
+  for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.tau[i-TAU_OFFSET] << ","; 
+  }
+  for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.coast[i-COAST_OFFSET] << ","; 
+  }
+
 /*
   double * deviation_array = new double[OPTIM_VARS];
   generationDiversity(pool, poolSize, deviation_array);
@@ -485,8 +384,6 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
   excelFile << "\n"; // End of row
   excelFile.close();
 }
-
-
 
 
 // Takes in a pool and records the parameter info on all individuals
@@ -561,80 +458,16 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   start[BETA_OFFSET] = pool[0].startParams.beta;
   start[ZETA_OFFSET] = pool[0].startParams.zeta;
 
+  std::cout << "Comparison\n";
+  std::cout << "CUDA posDiff: " << pool[0].posDiff << std::endl;
+  std::cout << "CUDA velDiff: " << pool[0].velDiff << std::endl;
+
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
   writeTrajectoryToFile(start, generation, thrust, cConstants);
 
   // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
   delete [] start;
-}
-
-// Utility function to observe the trend of best individual in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
-    // Output the information to excel spreadsheet
-    ExcelOutput << static_cast<int>(currentGeneration) << ','
-                << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
-                << individual.finalPos.r << ',' << individual.finalPos.theta << ',' << individual.finalPos.z << ',' // Final position
-                << individual.finalPos.vr << ',' << individual.finalPos.vtheta << ',' << individual.finalPos.vz << ',' // Final velocity
-                << individual.startParams.y0.r << ',' << individual.startParams.y0.theta << ',' << individual.startParams.y0.z << ',' // Starting position
-                << individual.startParams.y0.vr << ',' << individual.startParams.y0.vtheta << ',' << individual.startParams.y0.vz << ',' // Starting velocity
-                << individual.startParams.alpha << ',' << individual.startParams.beta << ',' << individual.startParams.zeta << ',' // alpha, beta, zeta
-                << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
- 
-    // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(double));
-    // posDiff and velDiff
-    BinOutput.write( (char*)& individual.posDiff, sizeof(double));
-    BinOutput.write( (char*)& individual.velDiff, sizeof(double));
-    // Position and velocity information
-    BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vr,           sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vtheta,       sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vz,           sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.r,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.theta,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.z,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
-    // Alpha, Beta, Zeta, Annealing, Triptime
-    BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
-    BinOutput.write((char*)& annealing, sizeof(double));
-    BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
-}
-
-// Utility function to observe the trend of best individual's thruster information in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's thruster information and anneal value
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
-    ExcelOutput << static_cast<int>(currentGeneration) << ',';
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
-    }
-    ExcelOutput << std::endl;
-
-    BinOutput.write((char*)&currentGeneration, sizeof(double));
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
-    }
 }
 
 // method that stores information of launchCon of timeRes*24 resolution
@@ -645,7 +478,7 @@ void recordEarthData(const cudaConstants * cConstants) {
   double timeStamp = cConstants->triptime_min*SECONDS_IN_YEAR;
 
   std::ofstream earthValues;
-  earthValues.open("EarthCheckValues.csv");
+  earthValues.open("EarthCheckValues-"+ std::to_string(cConstants->time_seed) +".csv");
   // Set header row for the table to record values, with timeStamp
   earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
   while (timeStamp < cConstants->triptime_max*SECONDS_IN_YEAR) {

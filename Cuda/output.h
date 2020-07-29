@@ -31,41 +31,6 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 // output: average_array holds the average value for every gene
 void getAverageGenes(Individual * pool, int const poolSize, double * average_array);
 
-// Generate and output an optim_vars length array that contains the average value for every gene in the pool
-// input: pool - array of individuals
-//        poolSize - length of the pool
-//        average_array - array of length OPTIM_VARS containing average value for all genes
-//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that will serve as output
-// output: percDiff_pool arrays of length OPTIM_VARS that contain the percentage difference that every individual's gene has to the average_array's
-void getPercentDifferenceAllIndividuals(Individual * pool, int const poolSize, double * average_array, double ** percDiff_pool);
-
-// Generate and output an optim_vars length array that contains the average value for every gene in the pool
-// input: poolSize - length of the pool
-//        percDiff_pool - inputted double pointer array of length poolSize by OPTIM_VARS that contains the percentage difference that every individual's gene has to the average
-//        average_percDiff - pointer array that serves as output
-// output: average_percDiff arrays of length OPTIM_VARS contains the average percent difference for each gene
-void getAveragePercentDifference(int const poolSize, double ** percDiff_pool, double * average_percDiff);
-
-// Generate and output an optim_vars length array that contains the standard deviation of all the genes
-// input: poolSize - length of the pool
-//        average_percDiff - array OPTIM_VARS in length containing the average percent difference for each gene
-//        percDiff_pool - 2D pointer array containing the percent difference of each gene in each individual
-//        deviation_array - pointer array of length OPTIM_VARS that serves as output;
-// output: deviation_array contains the population standard deviation of every gene
-void getDeviationAllGenes(int const poolSize, double * average_percDiff, double ** percDiff_pool, double * deviation_array);
-
-// Returns the percentage difference of two values
-// Input: two double values to compare
-// Output: the percentage difference between them, multiplied by 100
-double percentageDifference(double value1, double value2);
-
-// Generate and output an optim_var length array that describes the standard deviation for each gene in a pool's population
-// input: pool - pointer array to individuals that makes up the generation's pool
-//        poolSize - length of pool
-//        deviation_array - a pointer array of length OPTIM_VARS that is set to contain the deviaton for each corresponding gene 
-// output: deviation_array contains the population deviation of corresponding genes
-void generationDiversity(Individual * pool, int const poolSize, double * deviation_array);
-
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
 //        lastStep - Used to store number of total steps as output

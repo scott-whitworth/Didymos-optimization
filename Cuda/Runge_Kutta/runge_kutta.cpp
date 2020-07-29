@@ -89,6 +89,10 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         n++;
     } //end of while 
     lastStep = n;
+    
+    std::cout << "rk4sys posDiff: " << sqrt(pow(cConstant->r_fin_ast - y_new[lastStep].r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - y_new[lastStep].r * fmod(y_new[lastStep].theta, 2 * M_PI), 2) + pow(cConstant->z_fin_ast - y_new[lastStep].z, 2)) << std::endl;
+    std::cout << "rk4sys velDiff: " << sqrt(pow(cConstant->vr_fin_ast - y_new[lastStep].vr, 2) + pow(cConstant->vtheta_fin_ast - y_new[lastStep].vtheta, 2) + pow(cConstant->vz_fin_ast - y_new[lastStep].vz, 2));
+
     //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 }
 
@@ -193,7 +197,7 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     k7 = calc_k(stepSize, y_new+k1*35./384+k3*500./1113+k4*125./192+k5*-2187./6784+k6*11./84,coeff, accel, curTime+stepSize,timeFinal, thrust);  
 
     // New value
-    y_new = y_new + k1*35./384 + k3*500./1113 + k4*125./192 - k5*2187./6784 + k6*11./84;  
+    y_new = y_new + k1*static_cast <double> (35)/static_cast <double> (384) + k3*static_cast <double> (500)/static_cast <double> (1113) + k4*static_cast <double> (125)/static_cast <double> (192) - k5*static_cast <double> (2187)/static_cast <double> (6784) + k6*static_cast <double> (11)/static_cast <double> (84);  
 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
