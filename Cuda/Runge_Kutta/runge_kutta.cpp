@@ -208,7 +208,7 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     //- k5*(17253)/(339200) + k6*(22)/(525) + k7*(-1)/(40);
 
     // Without k7 : no error between GPU and CPU
-    error = k1*71./57600 + k3*-71./16695 + k4*71./1920 - k5*17253./339200 + k6*22./525 + k7*-1./40;    
+    error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);
 }
 
 template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
