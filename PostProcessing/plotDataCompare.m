@@ -157,7 +157,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     %% Subplot 2
     
     figure(2) % only spacecraft 1
-    subplot(2,3,1)
+    subplot(2,2,1)
     plot(cR(7,:),au*cR(10,:))
     xlim([0 tripTime1])
     legend({'spacecraft 1'})
@@ -166,6 +166,110 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlabel('t (s)')
     
     hold off
+    
+    
+    co = angles(cR(7,:),tripTime1,coast1);
+    subplot(2,2,2)
+    plot(cR(7,:),sin(co).^2)
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
+    hold on
+    coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
+    plot(cR(7,:),coast_threshold1Plot,'--','color','r')
+    xlim([0 tripTime1]), ylim([0,1])
+    legend({'spacecraft 1','threshold 1'})
+    hold off
+    
+    fuelSpent1 = (fuelMass1 - cR(11,:))/fuelMass1;
+    subplot(2,2,3)
+    plot(cR(7,:),fuelSpent1*100)
+    xlim([0 tripTime1])
+    ylim([0,100])
+    title('Fuel consumption')
+    legend({'spacecraft 1'})
+    ylabel('% fuel')
+    xlabel('t (s)')
+
+    err1 = (cR(12,:)-cR(13,:))./cR(14,:);
+    subplot(2,2,4)
+    plot(cR(7,:),err1*100)
+    xlim([0 tripTime1])
+    title('Conservation of mechanical energy')
+    legend({'spacecraft 1'})
+    ylabel('% error')
+    xlabel('t (s)')
+    
+    figure(3) % only spacecraft 2
+    subplot(2,2,1)
+    plot(dR(7,:),au*dR(10,:))
+    xlim([0 tripTime2])
+    legend({'spacecraft 2'})
+    title('Acceleration due to thrust')
+    ylabel('a_{thrust} (m/s^{2})')
+    xlabel('t (s)')
+    
+    hold off
+    
+    
+    do = angles(dR(7,:),tripTime2,coast2);
+    subplot(2,2,2)
+    plot(dR(7,:),sin(do).^2)
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
+    hold on
+    coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
+    plot(dR(7,:),coast_threshold2Plot,'--','color','r')
+    xlim([0 tripTime2]), ylim([0,1])
+    legend({'spacecraft 2','threshold 2'})
+    hold off
+    
+    fuelSpent2 = (fuelMass2 - dR(11,:))/fuelMass2;
+    subplot(2,2,3)
+    plot(dR(7,:),fuelSpent2*100)
+    xlim([0 tripTime2])
+    ylim([0,100])
+    title('Fuel consumption')
+    legend({'spacecraft 2'})
+    ylabel('% fuel')
+    xlabel('t (s)')
+
+    err2 = (dR(12,:)-dR(13,:))./dR(14,:);
+    subplot(2,2,4)
+    plot(dR(7,:),err2*100)
+    xlim([0 tripTime2])
+    title('Conservation of mechanical energy')
+    legend({'spacecraft 2'})
+    ylabel('% error')
+    xlabel('t (s)')
+
+    % only spacecraft 1
+    figure(4)
+
+    subplot(2,3,1)
+    plot(cR(7,:), au*cR(4,:))
+    xlim([0 tripTime1])
+    title('Radial velocity')
+    legend({'spacecraft 1'})
+    xlabel('t (s)')
+    ylabel('v_{r} (m/s)')
+
+    subplot(2,3,2)
+    plot(cR(7,:), au*cR(5,:))
+    xlim([0 tripTime1])
+    title('Tangential velocity')
+    legend({'spacecraft 1'})
+    xlabel('t (s)')
+    ylabel('v_{\theta} (m/s)')
+
+    subplot(2,3,3)
+    plot(cR(7,:), au*cR(6,:))
+    xlim([0 tripTime1])
+    title('Axial velocity')
+    legend({'spacecraft 1'})
+    xlabel('t (s)')
+    ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
     plot(cR(7,:),sin(cR(8,:)).*cos(cR(9,:)))
@@ -191,40 +295,32 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlabel('t (s)')
     ylabel('sin(\tau)')
     
-    
-    co = angles(cR(7,:),tripTime1,coast1);
-    subplot(2,3,3)
-    plot(cR(7,:),sin(co).^2)
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
-    hold on
-    coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
-    plot(cR(7,:),coast_threshold1Plot,'--','color','r')
-    xlim([0 tripTime1]), ylim([0,1])
-    legend({'spacecraft 1','threshold 1'})
-    hold off
-    
-    fuelSpent1 = (fuelMass1 - cR(11,:))/fuelMass1;
-    subplot(2,3,2)
-    plot(cR(7,:),fuelSpent1*100)
-    xlim([0 tripTime1])
-    ylim([0,100])
-    title('Fuel consumption')
-    legend({'spacecraft 1'})
-    ylabel('% fuel')
-    xlabel('t (s)')
-    
-    figure(3) % only spacecraft 2
+    % only spacecraft 2
+    figure(5)
+
     subplot(2,3,1)
-    plot(dR(7,:),au*dR(10,:))
+    plot(dR(7,:), au*dR(4,:))
     xlim([0 tripTime2])
+    title('Radial velocity')
     legend({'spacecraft 2'})
-    title('Acceleration due to thrust')
-    ylabel('a_{thrust} (m/s^{2})')
     xlabel('t (s)')
-    
-    hold off
+    ylabel('v_{r} (m/s)')
+
+    subplot(2,3,2)
+    plot(dR(7,:), au*dR(5,:))
+    xlim([0 tripTime2])
+    title('Tangential velocity')
+    legend({'spacecraft 2'})
+    xlabel('t (s)')
+    ylabel('v_{\theta} (m/s)')
+
+    subplot(2,3,3)
+    plot(dR(7,:), au*dR(6,:))
+    xlim([0 tripTime2])
+    title('Axial velocity')
+    legend({'spacecraft 2'})
+    xlabel('t (s)')
+    ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
     plot(dR(7,:),sin(dR(8,:)).*cos(dR(9,:)))
@@ -249,33 +345,9 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     title('Off-plane thrust fraction')
     xlabel('t (s)')
     ylabel('sin(\tau)')
-    
-    
-    do = angles(dR(7,:),tripTime2,coast2);
-    subplot(2,3,3)
-    plot(dR(7,:),sin(do).^2)
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
-    hold on
-    coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
-    plot(dR(7,:),coast_threshold2Plot,'--','color','r')
-    xlim([0 tripTime2]), ylim([0,1])
-    legend({'spacecraft 2','threshold 2'})
-    hold off
-    
-    fuelSpent2 = (fuelMass2 - dR(11,:))/fuelMass2;
-    subplot(2,3,2)
-    plot(dR(7,:),fuelSpent2*100)
-    xlim([0 tripTime2])
-    ylim([0,100])
-    title('Fuel consumption')
-    legend({'spacecraft 2'})
-    ylabel('% fuel')
-    xlabel('t (s)')
-    
+
     % Thrust angle plots
-    figure(4)
+    figure(6)
     
     % Gamma plots
     subplot(3,1,1)
@@ -315,7 +387,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     radStep1=1:15:length(cX)*1.0;
     radStep2=1:15:length(dX)*1.0;
     %a=figure(3); % plot with vectors
-    figure(5) % plot with vectors
+    figure(7) % plot with vectors
     plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
     hold on
     plot3(dX,dY,dZ,'LineWidth', 3,'Color',[0, 0, 1]	)

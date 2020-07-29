@@ -38,13 +38,9 @@ void setMutateFile(const cudaConstants* cConstants) {
   mutateFile.close();
 }
 
-void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config) {
-  double *mass, *work, *dE, *Etot, *Etot_avg;
-  mass = new double[lastStep];
-  work = new double[lastStep];
-  dE = new double[lastStep];
-  Etot = new double[lastStep];
-  Etot_avg = new double[lastStep];
+void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, double *work, double *dE, double *Etot_avg, const cudaConstants* config) {
+  double mass = new double[lastStep];
+  double Etot = new double[lastStep];
   
   for (int i = 0; i < lastStep; i++) {
     mass[i] = wetMass - fuelSpent[i];
@@ -74,10 +70,7 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 
   output.close();
   delete [] mass;
-  delete [] work;
-  delete [] dE;
   delete [] Etot;
-  delete [] Etot_avg;
 }
 
 // input: cConstants - access time_seed to derive file name
@@ -183,7 +176,10 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   // gets the final y values of the spacecrafts for the cost function.
   yOut = yp[lastStepInt];
 
-  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  double work = new double[lastStep];
+  double dE = new double[lastStep];
+  double Etot_avg = new double[lastStep];
+  errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
   progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
   std::ofstream output;
@@ -198,6 +194,9 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
     output.write((char*)&tau[i], sizeof (double));
     output.write((char*)&accel_output[i], sizeof (double));
     output.write((char*)&fuelSpent[i], sizeof (double));
+    output.write((char*)&work[i], sizeof(double));
+    output.write((char*)&dE[i], sizeof(double));
+    output.write((char*)&Etot_avg[i], sizeof(double));
   }
   output.close();
 
@@ -210,6 +209,10 @@ void trajectoryPrint( double x[], double & lastStep, int generation, elements<do
   delete [] tau;
   delete [] accel_output;
   delete [] fuelSpent;
+  delete [] work;
+  delete [] dE;
+  delete [] Etot_avg;
+}
 }
 
 // Output trajectory information to finalOptimization-[time_seed].bin

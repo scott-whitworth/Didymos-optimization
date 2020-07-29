@@ -104,7 +104,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     %% Subplot 2
     
     figure(2) % acceleration vs. time
-    subplot(2,3,1)
+    subplot(2,2,1)
     plot(cR(7,:),au*cR(10,:))
     xlim([0 tripTime])
     title('Acceleration due to thrust')
@@ -112,6 +112,72 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     xlabel('t (s)')
     
     hold off
+    
+    %% coasting plots
+    
+    % figure
+    % %plot(cR(7,1:sizeC),cR(11,1:sizeC))
+    % xlabel('Time')
+    % ylabel('coast')
+    
+    % figure
+    % %5plot(cR(7,1:sizeC),cR(12,1:sizeC))
+    % xlabel('Time')
+    % ylabel('coast value')
+    
+    co = angles(cR(7,1:sizeC),tripTime,coast);
+    subplot(2,2,2)
+    plot(cR(7,:),sin(co).^2)
+    xlim([0 tripTime]), ylim([0,1])
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
+    hold on
+    coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
+    plot(cR(7,:),coast_thresholdPlot,'--','color','r')
+    xlim([0 tripTime])
+    hold off
+    
+    fuelSpent = (fuelMass - cR(11,:))/fuelMass;
+    subplot(2,2,3)
+    plot(cR(7,:),fuelSpent*100)
+    xlim([0 tripTime])
+    ylim([0,100])
+    title('Fuel consumption')
+    ylabel('% fuel')
+    xlabel('t (s)')
+
+    err = (cR(12,:)-cR(13,:))./cR(14,:);
+    subplot(2,2,4)
+    plot(cR(7,:),err*100)
+    xlim([0 tripTime])
+    title('Conservation of mechanical energy')
+    ylabel('% error')
+    xlabel('t (s)')
+
+    % Thrust fractions and velocity components
+    figure(3)
+
+    subplot(2,3,1)
+    plot(cR(7,:), au*cR(4,:))
+    xlim([0 tripTime])
+    title('Radial velocity')
+    xlabel('t (s)')
+    ylabel('v_{r} (m/s)')
+
+    subplot(2,3,2)
+    plot(cR(7,:), au*cR(5,:))
+    xlim([0 tripTime])
+    title('Tangential velocity')
+    xlabel('t (s)')
+    ylabel('v_{\theta} (m/s)')
+
+    subplot(2,3,3)
+    plot(cR(7,:), au*cR(6,:))
+    xlim([0 tripTime])
+    title('Axial velocity')
+    xlabel('t (s)')
+    ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
     plot(cR(7,:),sin(cR(8,:)).*cos(cR(9,:)))
@@ -137,42 +203,8 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     xlabel('t (s)')
     ylabel('sin(\tau)')
     
-    %% coasting plots
-    
-    % figure
-    % %plot(cR(7,1:sizeC),cR(11,1:sizeC))
-    % xlabel('Time')
-    % ylabel('coast')
-    
-    % figure
-    % %5plot(cR(7,1:sizeC),cR(12,1:sizeC))
-    % xlabel('Time')
-    % ylabel('coast value')
-    
-    co = angles(cR(7,1:sizeC),tripTime,coast);
-    subplot(2,3,3)
-    plot(cR(7,:),sin(co).^2)
-    xlim([0 tripTime]), ylim([0,1])
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
-    hold on
-    coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
-    plot(cR(7,:),coast_thresholdPlot,'--','color','r')
-    xlim([0 tripTime])
-    hold off
-    
-    fuelSpent = (fuelMass - cR(11,:))/fuelMass;
-    subplot(2,3,2)
-    plot(cR(7,:),fuelSpent*100)
-    xlim([0 tripTime])
-    ylim([0,100])
-    title('Fuel consumption')
-    ylabel('% fuel')
-    xlabel('t (s)')
-    
     % Thrust angle plots
-    figure(3)
+    figure(4)
     
     % Test Fourier calculation for start
     % vpa(cR(8,1)), vpa(cR(9,1))
@@ -199,7 +231,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     radStep=1:15:length(cX)*1.0;
     %a=figure(3); % plot with vectors
-    figure(4) % plot with vectors
+    figure(5) % plot with vectors
     plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
     %plot3(cX(1),cY(1),cZ(1),'*','LineWidth', 5,'Color',[0.9290, 0.6940, 0.1250])
     %hold on

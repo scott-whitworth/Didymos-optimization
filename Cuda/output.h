@@ -22,7 +22,7 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration);
 //        wetMass - initial mass of spacecraft and fuel
 //        config - cudaConstants object for accessing genetic.config information
 // output: errorCheck-(seed).bin recording arrays of time, work, changes in total mechanical energy, and average energy between time steps
-void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, const cudaConstants* config);
+void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, double *work, double *dE, double *Etot_avg, const cudaConstants* config);
 
 // Output final results of genetic algorithm
 // input: x[] - array that holds parameter values of OPTIM_VARS length
