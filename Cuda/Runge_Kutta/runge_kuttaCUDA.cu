@@ -100,11 +100,11 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             stepSize *= calc_scalingFactor(curPos-error,error,absTol,stepSize); // Alter the step size for the next iteration
 
             // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-            if (stepSize > (threadRKParameters.tripTime - startTime) / 100) {
-                stepSize = (threadRKParameters.tripTime - startTime) / 100;
+            if (stepSize > (threadRKParameters.tripTime - startTime) / cConstant->min_numsteps) {
+                stepSize = (threadRKParameters.tripTime - startTime) / cConstant->min_numsteps;
             }
-            else if (stepSize < (threadRKParameters.tripTime - startTime) / 1000) {
-                stepSize = (threadRKParameters.tripTime - startTime) / 1000;
+            else if (stepSize < (threadRKParameters.tripTime - startTime) / cConstant->max_numsteps) {
+                stepSize = (threadRKParameters.tripTime - startTime) / cConstant->max_numsteps;
             }
             
             if ( (curTime + stepSize) > threadRKParameters.tripTime) {

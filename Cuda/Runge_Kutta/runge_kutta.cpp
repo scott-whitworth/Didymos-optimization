@@ -69,12 +69,12 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial)/100) {
-            stepSize = (timeFinal-timeInitial)/100;
+        if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+            stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
             maxStep++;
         }
-        else if (stepSize < ((timeFinal-timeInitial)/1000)) {
-            stepSize = (timeFinal-timeInitial)/1000;
+        else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+            stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
             minStep++;
         }
         
@@ -97,7 +97,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster <T> thrust) {
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster <T> thrust, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y_new = y0;
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
@@ -129,11 +129,11 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial)/100 ) {
-            stepSize = (timeFinal-timeInitial)/100;
+        if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps ) {
+            stepSize = (timeFinal-timeInitial) / cConstants->min_numsteps;
         }
-        else if (stepSize < ((timeFinal-timeInitial)/1000) ) {
-            stepSize = (timeFinal-timeInitial)/1000;
+        else if (stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps) ) {
+            stepSize = (timeFinal-timeInitial) / cConstants->max_numsteps;
         }
         // shorten the last step to end exactly at time final
         if ((curTime+stepSize) > timeFinal) {
@@ -150,7 +150,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
 }
 
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-                                   T stepSize, elements<T> & y_new, const T & absTol) {
+                                   T stepSize, elements<T> & y_new, const T & absTol, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y_new = y0;
     // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
@@ -170,11 +170,11 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize);
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize > (timeFinal-timeInitial)/100) {
-            stepSize = -(timeFinal-timeInitial)/100;
+        if (-stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
+            stepSize = -(timeFinal-timeInitial) / cConstants->min_numsteps;
         }
-        else if (-stepSize < ((timeFinal-timeInitial)/1000)) {
-            stepSize = -(timeFinal-timeInitial)/1000;
+        else if (-stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps)) {
+            stepSize = -(timeFinal-timeInitial) / cConstants->max_numsteps;
         }
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {

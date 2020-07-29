@@ -59,7 +59,7 @@ double optimize(const cudaConstants* cConstants) {
     // input parameters for rk4Simple which are the same for each thread
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
     double absTol = cConstants->rk_tol; // the tolerance is a constant number that is shared amongst all runs
-    double stepSize = (orbitalPeriod - timeInitial) / cConstants->max_numsteps; // the starting step size- same for each run- note that the current step size varies throughout each run
+    double stepSize = (orbitalPeriod - timeInitial) / cConstants->GuessMaxPossibleSteps; // the starting step size- same for each run- note that the current step size varies throughout each run
 
     double currentAnneal = cConstants->anneal_initial;
 

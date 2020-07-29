@@ -199,8 +199,14 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "rk_tol") {
                     this->rk_tol = std::stod(variableValue);
                 }
+                else if (variableName == "GuessMaxPossibleSteps") {
+                    this->GuessMaxPossibleSteps = std::stod(variableValue);
+                }
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stod(variableValue);
+                }
+                else if (variableName == "min_numsteps") {
+                    this->min_numsteps = std::stod(variableValue);
                 }
                 else if (variableName == "num_individuals") {
                     this->num_individuals = std::stoi(variableValue);
@@ -240,12 +246,15 @@ void cudaConstants::FileRead(std::string fileName) {
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "==========CONFIG=DATA===============================================================================\n";
-    os << "General Genetic Algorithm & Runge-Kutta Related Values\n";
+    os << "Genetic Algorithm Related Values:\n";
     os << "\ttime_seed: "       << object.time_seed       << "\trandom_start: "   << object.random_start   << "\t\tnon_r_start_address: " << object.initial_start_file_address << "\n";
     os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "          << object.change_check << "\n";
     os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: "     << object.thread_block_size << "\n";
-    os << "\trk_tol: "          << object.rk_tol          << "\t\ttimeRes: "      << object.timeRes        << "\t\tmax_numsteps: "        << object.max_numsteps << "\n";
     os << "\tbest_count: "      << object.best_count      << "\tmax_generations: "<< object.max_generations<< "\trun_count: "             << object.run_count << "\n\n";
+
+    os << "Runge-Kutta Related Values:\n";
+    os << "\trk_tol: " << object.rk_tol << "\ttimeRes: " << object.timeRes << "\tGuessMaxPossibleSteps: " << object.GuessMaxPossibleSteps << "\n";
+    os << "\tmax_numsteps: " << object.max_numsteps << "\tmin_numsteps: " << object.min_numsteps << "\n\n";
 
     os << "Output Variables:\n";
     os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";

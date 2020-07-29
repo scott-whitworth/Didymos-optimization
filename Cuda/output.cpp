@@ -138,7 +138,7 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
-  deltaT = (timeFinal-timeInitial) / cConstants->max_numsteps; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial) / cConstants->GuessMaxPossibleSteps; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   coefficients<double> coeff;
@@ -253,7 +253,7 @@ void writeTrajectoryToFile(double *start, int generation, thruster<double> thrus
   elements<double> yp;
   double numStep = 0;
   
-  trajectoryPrint(start, numStep, generation, yp, thrust, cConstants);
+  trajectoryPrint(start, generation, thrust, cConstants);
 
   //writes final optimization values to a seperate file
   std::ofstream output;

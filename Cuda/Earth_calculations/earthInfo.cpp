@@ -130,7 +130,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime, c
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol);
+  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol, cConstants);
  
   return yp;
 }
