@@ -50,7 +50,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         accel = calc_accel(y_new[n].r,y_new[n].z, thrust, massFuelSpent, deltaT, coast, wetMass, cConstant);
         
         // Record the updated massFuelSpent to the output array
-        fuelSpent[n]=massFuelSpent;
+        fuelSpent[n+1]=massFuelSpent;
         
         //calculate k values
         rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7, thrust);
