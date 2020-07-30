@@ -7,8 +7,8 @@
 
 // sets starting values as given in the 2017 data excel sheet
 template <class T> struct thruster {
-    T P0;       // inital power in
-    T m_Dot0;   // initial m_Dot
+    const T P0;       // inital power in
+    const int type;
 
     // Constructor - takes cudaConstants to determine thruster type
     __host__ __device__ thruster<T>(const cudaConstants* gConfig);
