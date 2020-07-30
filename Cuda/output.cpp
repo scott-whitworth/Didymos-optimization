@@ -257,8 +257,8 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
   int seed = config->time_seed;
   std::ofstream output;
-  output.open("progressiveAnalysis-" + std::to_string(seed) + ".csv", std::ios_base::app);
-  output << "time_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
+  output.open("progressiveAnalysis.csv", std::ios_base::app);
+  output << "\ntime_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
 
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     output << "gamma" << i << ","; 

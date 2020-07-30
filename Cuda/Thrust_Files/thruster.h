@@ -7,14 +7,14 @@
 
 // sets starting values as given in the 2017 data excel sheet
 template <class T> struct thruster {
-    T P0;       // inital power in
-    T m_Dot0;   // initial m_Dot
+    const T P0;       // inital power in
+    const int type;
 
     // Constructor - takes cudaConstants to determine thruster type
     __host__ __device__ thruster<T>(const cudaConstants* gConfig);
 
-    //overload the stream output for elements used for writing to a file
-    template <class T> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
+    // //overload the stream output for elements used for writing to a file
+    // template <class T> friend std::ostream & operator<<(std::ostream & Str, const thruster<T> & e); 
 
     // Evaluates the spacecraft's effciency for a certian iteration based off of a best fit line from file above of eff vs. power in (W).
     // Parameters:
