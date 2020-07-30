@@ -69,12 +69,12 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial)/100) {
-            stepSize = (timeFinal-timeInitial)/100;
+        if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+            stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
             maxStep++;
         }
-        else if (stepSize < ((timeFinal-timeInitial)/1000)) {
-            stepSize = (timeFinal-timeInitial)/1000;
+        else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+            stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
             minStep++;
         }
         
@@ -87,13 +87,17 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         n++;
     } //end of while 
     lastStep = n;
+    
+    std::cout << "rk4sys posDiff: " << sqrt(pow(cConstant->r_fin_ast - y_new[lastStep].r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - y_new[lastStep].r * fmod(y_new[lastStep].theta, 2 * M_PI), 2) + pow(cConstant->z_fin_ast - y_new[lastStep].z, 2)) << std::endl;
+    std::cout << "rk4sys velDiff: " << sqrt(pow(cConstant->vr_fin_ast - y_new[lastStep].vr, 2) + pow(cConstant->vtheta_fin_ast - y_new[lastStep].vtheta, 2) + pow(cConstant->vz_fin_ast - y_new[lastStep].vz, 2));
+
     //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 
     std::cout << "\nposDiff from rk4sys(): " << sqrt( pow(cConstant->r_fin_ast - u.r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - u.r * u.theta, 2) + pow(cConstant->z_fin_ast - u.z, 2) ) << std::endl;
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster <T> thrust) {
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster <T> thrust, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y_new = y0;
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
@@ -125,11 +129,11 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
 
         // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial)/100 ) {
-            stepSize = (timeFinal-timeInitial)/100;
+        if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps ) {
+            stepSize = (timeFinal-timeInitial) / cConstants->min_numsteps;
         }
-        else if (stepSize < ((timeFinal-timeInitial)/1000) ) {
-            stepSize = (timeFinal-timeInitial)/1000;
+        else if (stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps) ) {
+            stepSize = (timeFinal-timeInitial) / cConstants->max_numsteps;
         }
         // shorten the last step to end exactly at time final
         if ((curTime+stepSize) > timeFinal) {
@@ -146,7 +150,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
 }
 
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-                                   T stepSize, elements<T> & y_new, const T & absTol) {
+                                   T stepSize, elements<T> & y_new, const T & absTol, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y_new = y0;
     // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
@@ -166,11 +170,11 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize);
 
         // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize > (timeFinal-timeInitial)/100) {
-            stepSize = -(timeFinal-timeInitial)/100;
+        if (-stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
+            stepSize = -(timeFinal-timeInitial) / cConstants->min_numsteps;
         }
-        else if (-stepSize < ((timeFinal-timeInitial)/1000)) {
-            stepSize = -(timeFinal-timeInitial)/1000;
+        else if (-stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps)) {
+            stepSize = -(timeFinal-timeInitial) / cConstants->max_numsteps;
         }
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {

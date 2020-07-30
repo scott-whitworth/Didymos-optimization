@@ -138,7 +138,7 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   double timeFinal=orbitalPeriod; // Orbital period of asteroid(s)
   double deltaT; // time step
   int numSteps = 5000; // initial guess for the number of time steps, guess for the memory allocated 
-  deltaT = (timeFinal-timeInitial) / cConstants->max_numsteps; // initial guess for time step, small is preferable
+  deltaT = (timeFinal-timeInitial) / cConstants->GuessMaxPossibleSteps; // initial guess for time step, small is preferable
 
   // setup of thrust angle calculations based off of optimized coefficients
   coefficients<double> coeff;
@@ -172,7 +172,6 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   int lastStepInt;
 
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
-
 
   double lastStep = lastStepInt;
 
@@ -248,6 +247,53 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   delete [] Etot_avg;
 }
 
+// Output trajectory information to finalOptimization-[time_seed].bin
+// input: start - passed to trajectoryPrint, information also outputted to finalOptimization[-time_seed].bin file
+//        threadRank - passed to trajectoryPrint, also 
+//        thrust - passed to trajectoryPrint
+//        cConstants - access time_seed for deriving file name
+// output: file finalOptimization[-time_seed].bin is created that holds earth/ast/ and trajectory parameter values
+void writeTrajectoryToFile(double *start, int generation, thruster<double> thrust, const cudaConstants* cConstants) {
+  elements<double> yp;
+  double numStep = 0;
+  
+  trajectoryPrint(start, generation, thrust, cConstants);
+
+  //writes final optimization values to a seperate file
+  std::ofstream output;
+  // type double for consistency in binary output
+  int seed = cConstants->time_seed;
+  double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
+  output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
+  // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
+
+  output.write((char*)&cConstants->r_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->z_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+  output.write((char*)&cConstants->r_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->z_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+  output.write((char*)&cConstants->fuel_mass, sizeof(double));
+  output.write((char*)&cConstants->coast_threshold, sizeof(double));
+  output.write((char*)&gsize, sizeof(double));
+  output.write((char*)&tsize, sizeof(double));
+  output.write((char*)&csize, sizeof(double));
+
+  for (int j = 0; j < OPTIM_VARS; j++) {
+    output.write((char*)&start[j], sizeof (double));
+  }
+  
+  output.write((char*)&numStep, sizeof (double));
+
+  output.close();
+}
+
 // Record progress of individual
 // input: output - the output file stream being used
 //        rank - the positional performance of the individual
@@ -255,75 +301,80 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
 //        config - cudaConstants object for accessing thruster_type information
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
-    int seed = config->time_seed, gammaSize = GAMMA_ARRAY_SIZE, tauSize = TAU_ARRAY_SIZE, coastSize = COAST_ARRAY_SIZE;
-    double coastThreshold = config->coast_threshold;
-    std::ofstream output;
-    output.open("progressiveAnalysis.csv", std::ios_base::app);
-    output << seed << ',' << numStep << ','; 
-    output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
-    output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
-    output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
-    output << gammaSize << ',' << tauSize << ',' << coastSize << ',' << coastThreshold << ',';
-    output << std::endl;
-    output.close();
+  int seed = config->time_seed;
+  std::ofstream output;
+  output.open("progressiveAnalysis-" + std::to_string(config->time_seed) + ".csv", std::ios_base::app);
+  output << "time_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
+
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    output << "gamma" << i << ","; 
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    output << "tau" << i << ","; 
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    output << "coast" << i << ","; 
+  }
+  output << "\n";  
+
+  output << seed << ',' << numStep << ','; 
+  output << sqrt(pow(config->r_fin_ast - yp.r, 2) + pow(config->r_fin_ast * config->theta_fin_ast - yp.r * fmod(yp.theta, 2 * M_PI), 2) + pow(config->z_fin_ast - yp.z, 2)) << ',';
+  output << sqrt(pow(config->vr_fin_ast - yp.vr, 2) + pow(config->vtheta_fin_ast - yp.vtheta, 2) + pow(config->vz_fin_ast - yp.vz, 2)) << ',';
+  output << start[TRIPTIME_OFFSET] << ',' << start[ALPHA_OFFSET] << ',' << start[BETA_OFFSET] << ',' << start[ZETA_OFFSET] << ',';
+
+  for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+  for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+  for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
+    output << start[i] << ","; 
+  }
+
+  output << std::endl;
+  output.close();
 }
 
-// Initialize the .csv files
+// Initialize the .csv file with header row
 // input: cConstants - to access time_seed for deriving file name conventions and also thruster type
-// output: files BestInGenerations-[time_seed].csv, WorstInGenerations-[time_seed].csv, if thruster type is not NO_THRUST also BestThrustGens-[time_seed].csv & WorstThrustGens-[time_seed].csv, are given initial header row info
+// output: file genPerfmanceT-[time_seed].csv, is appended with initial header row info
 void initializeRecord(const cudaConstants * cConstants) {
-    // setup output of generation results over time onto a .csv file
-    std::ofstream bestExcel;
-    int seed = cConstants->time_seed;
-    bestExcel.open("BestInGenerations-"+ std::to_string(seed)+".csv");
-    // Set first row in the file be a header for the columns
-    bestExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal"
-              << "," << "vthetaFinal" << "," << "vzFinal" << "," << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial"
-              << "," << "vthetaInitial" << "," << "vzInitial" << "," << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
-    bestExcel.close();
+  std::ofstream excelFile;
+  // setting the numeric id tag as the randomization seed (when doing runs of various properties, suggested to add other values to differentiate)
+  std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
+  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-    std::ofstream worstExcel;
-    worstExcel.open("WorstInGenerations-"+ std::to_string(seed)+".csv");
-    // Set first row in the file be a header for the columns
-    worstExcel << "Gen #" << "," << "posDiff" << "," << "velDiff" << "," << "rFinal" << "," << "thetaFinal" << "," << "zFinal" << "," << "vrFinal" 
-               << "," << "vthetaFinal" << "," << "vzFinal" << "," << "rInitial" << "," << "thetaInitial" << "," << "zInitial" << ","<< "vrInitial" 
-               << "," << "vthetaInitial" << "," << "vzInitial" << "," << "alpha" << "," << "beta" << "," << "zeta" << "," << "anneal" << "," << "tripTime" << "\n";
-    worstExcel.close();
+  excelFile << "Gen,bestPosDiff,bestVelDiff,alpha,beta,zeta,triptime,";
+  
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    excelFile << "gamma" << i << ","; 
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    excelFile << "tau" << i << ","; 
+  }
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    excelFile << "coast" << i << ","; 
+  }
+  
+  
+  /*
+  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
+    excelFile << "gamma" << i << " deviation,";
+  }
+  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
+    excelFile << "tau" << i << " deviation,";
+  }
+  excelFile << "alpha deviation, beta deviation, zeta deviation, triptime deviation,";
+  
+  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
+    excelFile << "coast" << i << " deviation,";
+  }*/
 
-    // If this run is having a thruster, setup the thruster output excel files
-    if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
-        std::ofstream thrustBestExcel, thrustWorstExcel;
-
-        thrustBestExcel.open("BestThrustGens-"+ std::to_string(seed)+".csv");
-        thrustBestExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-          thrustBestExcel << "gamma" << i << ",";
-        }
-        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-          thrustBestExcel << "tau" << i << ",";
-        }
-        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-          thrustBestExcel << "coast" << i << ",";
-        }
-        thrustBestExcel << "\n";
-        thrustBestExcel.close();
-
-        thrustWorstExcel.open("WorstThrustGens-"+ std::to_string(seed)+".csv");
-        thrustWorstExcel << "gen,";
-        for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "gamma" << i << ",";
-        }
-        for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "tau" << i << ",";
-        }
-        for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-          thrustWorstExcel << "coast" << i << ",";
-        }
-        thrustWorstExcel << "\n";
-        thrustBestExcel.close();
-    }
+  excelFile << ",\n";
+  excelFile.close();
     // call setMutateFile to set it up
-    setMutateFile(cConstants);
+    // setMutateFile(cConstants);
 }
 
 // Take in the current state of the generation and appends to files
@@ -336,47 +387,40 @@ void initializeRecord(const cudaConstants * cConstants) {
 // output: files BestInGenerations/WorstInGenerations have appended information using writeIndividualToFiles method
 //         files BestThrustGens/WorstThurstGens have appended information using writeThrustFiles method
 void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize, thruster<double>& thrust) {
-  // Record
-  std::ofstream bestExcel, bestBin;
-  int seed = cConstants->time_seed;
-  bestExcel.open("BestInGenerations-"+ std::to_string(seed)+".csv", std::ios_base::app);
-  bestBin.open("BestInGenerations-"+ std::to_string(seed)+".bin", std::ios_base::app);
+  std::ofstream excelFile;
+  std::string fileId = std::to_string(static_cast<int>(cConstants->time_seed));
+  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
 
-  writeIndividualToFiles(bestExcel, bestBin, generation, pool[0], new_anneal);
+  excelFile << generation << "," << pool[0].posDiff << ",";
+  excelFile << pool[0].velDiff << ",";
 
-  bestExcel.close();
-  bestBin.close();
+  excelFile << pool[0].startParams.alpha << ",";
+  excelFile << pool[0].startParams.beta << ",";
+  excelFile << pool[0].startParams.zeta << ",";
+  excelFile << pool[0].startParams.tripTime << ",";
 
-  std::ofstream worstExcel, worstBin;
-  worstExcel.open("WorstInGenerations-"+ std::to_string(seed)+".csv", std::ios_base::app);
-  worstBin.open("WorstInGenerations-"+ std::to_string(seed)+".bin", std::ios_base::app);
-
-  writeIndividualToFiles(worstExcel, worstBin, generation, pool[poolSize-1], new_anneal);
-
-  worstExcel.close();
-  worstBin.close();
-
-  if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
-    std::ofstream bestThrusterExcel, bestThrusterBin;
-    bestThrusterExcel.open("BestThrustGens-"+ std::to_string(seed)+".csv", std::ios_base::app);
-    bestThrusterBin.open("BestThrustGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
-    
-    writeThrustToFiles(bestThrusterExcel, bestThrusterBin, generation, pool[0], cConstants);
-    
-    bestExcel.close();
-    bestBin.close();
-
-    std::ofstream worstThrusterExcel, worstThrusterBin;
-    worstExcel.open("WorstThrustGens-"+ std::to_string(seed)+".csv", std::ios_base::app);
-    worstBin.open("WorstThrustGens-"+ std::to_string(seed)+".bin", std::ios_base::app);
-
-    writeThrustToFiles(worstThrusterExcel, worstThrusterBin, generation, pool[poolSize-1], cConstants);
-    
-    worstThrusterExcel.close();
-    worstThrusterBin.close();
+  for (int i = GAMMA_OFFSET; i < GAMMA_ARRAY_SIZE + GAMMA_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.gamma[i-GAMMA_OFFSET] << ","; 
+  }
+  for (int i = TAU_OFFSET; i < TAU_ARRAY_SIZE + TAU_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.tau[i-TAU_OFFSET] << ","; 
+  }
+  for (int i = COAST_OFFSET; i < COAST_ARRAY_SIZE + COAST_OFFSET; i++) {
+    excelFile << pool[0].startParams.coeff.coast[i-COAST_OFFSET] << ","; 
   }
 
+/*
+  double * deviation_array = new double[OPTIM_VARS];
+  generationDiversity(pool, poolSize, deviation_array);
+  
+  for (int gene = 0; gene < OPTIM_VARS; gene++) {
+    excelFile << deviation_array[gene] << ",";
+  }
+  delete [] deviation_array;*/
+  excelFile << "\n"; // End of row
+  excelFile.close();
 }
+
 
 // Takes in a pool and records the parameter info on all individuals
 // input: cConstants - to access time_seed in deriving file name
@@ -450,80 +494,16 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   start[BETA_OFFSET] = pool[0].startParams.beta;
   start[ZETA_OFFSET] = pool[0].startParams.zeta;
 
+  std::cout << "Comparison\n";
+  std::cout << "CUDA posDiff: " << pool[0].posDiff << std::endl;
+  std::cout << "CUDA velDiff: " << pool[0].velDiff << std::endl;
+
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
   trajectoryPrint(start, generation, thrust, cConstants);
 
   // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
   delete [] start;
-}
-
-// Utility function to observe the trend of best individual in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing ) {
-    // Output the information to excel spreadsheet
-    ExcelOutput << static_cast<int>(currentGeneration) << ','
-                << individual.posDiff << ',' << individual.velDiff << ',' // The positional and velocity difference
-                << individual.finalPos.r << ',' << individual.finalPos.theta << ',' << individual.finalPos.z << ',' // Final position
-                << individual.finalPos.vr << ',' << individual.finalPos.vtheta << ',' << individual.finalPos.vz << ',' // Final velocity
-                << individual.startParams.y0.r << ',' << individual.startParams.y0.theta << ',' << individual.startParams.y0.z << ',' // Starting position
-                << individual.startParams.y0.vr << ',' << individual.startParams.y0.vtheta << ',' << individual.startParams.y0.vz << ',' // Starting velocity
-                << individual.startParams.alpha << ',' << individual.startParams.beta << ',' << individual.startParams.zeta << ',' // alpha, beta, zeta
-                << annealing << "," << individual.startParams.tripTime << std::endl; // Annealing value for next generation and triptime (in that order to maintain continuity with bin file)
- 
-    // Output the information to binary file for use in the MATLAB code, line breaks and spaces added to help with readibility
-    BinOutput.write( (char*)& currentGeneration, sizeof(double));
-    // posDiff and velDiff
-    BinOutput.write( (char*)& individual.posDiff, sizeof(double));
-    BinOutput.write( (char*)& individual.velDiff, sizeof(double));
-    // Position and velocity information
-    BinOutput.write( (char*)& individual.finalPos.r,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.theta,        sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.z,            sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vr,           sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vtheta,       sizeof(double));
-    BinOutput.write( (char*)& individual.finalPos.vz,           sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.r,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.theta,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.z,      sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vr,     sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vtheta, sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.y0.vz,     sizeof(double));
-    // Alpha, Beta, Zeta, Annealing, Triptime
-    BinOutput.write( (char*)& individual.startParams.alpha,  sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.beta,   sizeof(double));
-    BinOutput.write( (char*)& individual.startParams.zeta,   sizeof(double));
-    BinOutput.write((char*)& annealing, sizeof(double));
-    BinOutput.write((char*)& individual.startParams.tripTime, sizeof(double));
-}
-
-// Utility function to observe the trend of best individual's thruster information in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's thruster information and anneal value
-void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants) {
-    ExcelOutput << static_cast<int>(currentGeneration) << ',';
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.gamma[i] << ',';
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.tau[i] << ',';
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        ExcelOutput << individual.startParams.coeff.coast[i] << ',';
-    }
-    ExcelOutput << std::endl;
-
-    BinOutput.write((char*)&currentGeneration, sizeof(double));
-    for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.gamma[i], sizeof(double));
-    }
-    for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.tau[i], sizeof(double));
-    }
-    for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-        BinOutput.write((char*)&individual.startParams.coeff.coast[i], sizeof(double));
-    }
 }
 
 // method that stores information of launchCon of timeRes*24 resolution
@@ -534,7 +514,7 @@ void recordEarthData(const cudaConstants * cConstants) {
   double timeStamp = cConstants->triptime_min*SECONDS_IN_YEAR;
 
   std::ofstream earthValues;
-  earthValues.open("EarthCheckValues.csv");
+  earthValues.open("EarthCheckValues-"+ std::to_string(cConstants->time_seed) +".csv");
   // Set header row for the table to record values, with timeStamp
   earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
   while (timeStamp < cConstants->triptime_max*SECONDS_IN_YEAR) {

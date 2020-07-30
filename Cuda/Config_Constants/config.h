@@ -73,7 +73,9 @@ struct cudaConstants {
     double v_impact; // AU/s, the official DART mission data
 
     double rk_tol;       // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
-    double max_numsteps; // used for time stepping in runge_kuttaCuda.cu
+    double GuessMaxPossibleSteps; // Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp
+    double min_numsteps; // Minimum time step size in runge kutta
+    double max_numsteps; // Maximum time step size in runge kutta
 
     int num_individuals; // Number of individuals in the pool, each individual contains its own thread
     int survivor_count;  // Number of survivors selected, every pair of survivors creates 8 new individuals

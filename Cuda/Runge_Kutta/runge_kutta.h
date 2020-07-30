@@ -36,14 +36,14 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 // 2.
     // Output: writes in y the final position  of the spacecraft
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
-                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster<T> thrust);
+                                    T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, thruster<T> thrust, const cudaConstants * cConstants);
 
 //3.
     // Comment on stepsize: Expected to be negative due to reverse integration
     // Output: writes in y the initial position of earth at the time of spacecraft launch based on an optimized trip time
     // To improve efficiency, the rk4 with single returns were split into two functions to avoid "if" statements, which are not prefered in CUDA.
 template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, const elements<T> & y0, 
-                                    T stepSize, elements<T> & y_new, const T & absTol);
+                                    T stepSize, elements<T> & y_new, const T & absTol, const cudaConstants * cConstants);
 
 
 

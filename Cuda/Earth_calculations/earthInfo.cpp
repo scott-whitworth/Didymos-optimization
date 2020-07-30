@@ -62,13 +62,13 @@ elements<double> EarthInfo::getCondition(const double & currentTime) {
     int index;
     // Setting index equal to the nearest index of data based on time
     index = calcIndex(currentTime); 
-        
-    if (index < 0) {
-        std::cout << "Earth condition index being accessed is less than 0! Returning nearest index\n";
-        index = 0;
+    
+    if (index < calcIndex(startTime)) {
+        std::cout << "Earth condition index being accessed is less than startTime! Returning nearest index\n";
+        index = calcIndex(startTime);
     }
     else if (index > calcIndex(endTime)) {
-        std::cout << "Earth condition index being accessed is greater than or equal to endTime! Returning nearest valid index\n";
+        std::cout << "Earth condition index being accessed is greater than to endTime! Returning nearest valid index\n";
         index = calcIndex(endTime) - 1;
     }
 
@@ -130,7 +130,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime, c
   elements<double> yp;
 
   // Calculates the earth's launch date conditions based on timeFinal minus the optimized trip time.
-  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol);
+  rk4Reverse(timeInitial, tripTime, earth, deltaT, yp, cConstants->rk_tol, cConstants);
  
   return yp;
 }
