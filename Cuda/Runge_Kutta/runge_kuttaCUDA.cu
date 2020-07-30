@@ -90,7 +90,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         while (curTime < threadRKParameters.tripTime) {
 
-            if (cConstant->thruster_type == THRUST_TYPE::NO_THRUST) {
+            if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
                 coast = accel = 0;
             }
             else {

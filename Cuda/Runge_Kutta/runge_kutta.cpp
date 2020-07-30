@@ -29,7 +29,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     y_new[0] = y0;
     times[0] = timeInitial;
 
-    if (cConstant->thruster_type == THRUST_TYPE::NO_THRUST) {
+    if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
         gamma[0] = tau[0] = accel[0] = fuelSpent[0] = 0;
     }
     else {
@@ -50,7 +50,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
         u = y_new[n];
 
-        if (cConstant->thruster_type == THRUST_TYPE::NO_THRUST) {
+        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = massFuelSpent = 0;
         }
         else {
@@ -73,7 +73,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         //Time of iteration is set to the previous time plus the step size used within that iteration
         times[n+1] = curTime;
 
-        if (cConstant->thruster_type == THRUST_TYPE::NO_THRUST) {
+        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
             gamma[n+1] = tau[n+1] = accel[n+1] = fuelSpent[n+1] = 0;
         }
         else {
@@ -135,7 +135,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     bool coast;
     while (curTime < timeFinal) {  // iterate until time is equal to the stop time
 
-        if (cConstant->thruster_type == THRUST_TYPE::NO_THRUST) {
+        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = 0;
         }
         else {
