@@ -429,5 +429,37 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     %title('Solar orbitals')
     %hold off
     %print(b,'2DNoVec.png','-dpng','-r350'); 
+
+    figure(6)
+
+    plot3(eX,eY,eZ,'LineWidth', 1,'Color',[.61 .51 .74])
+    hold on
+    
+    r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
+    t = 0:pi/100:2*pi;
+    [m,n] = size(t);
+    
+    plot3(launchPos1(1)+r_esoi*cos(t), launchPos1(2)+r_esoi*sin(t), launchPos1(3)*ones(1,n),'LineWidth', 1)
+    hold on
+    [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
+    plot3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3),'*')
+    hold on
+    quiver3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3), sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'k','Autoscalefactor',.08,'LineWidth',1);
+    hold on
+    
+    plot3(launchPos2(1)+r_esoi*cos(t), launchPos2(2)+r_esoi*sin(t), launchPos2(3)*ones(1,n),'LineWidth', 1)
+    hold on
+    [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
+    plot3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3),'*')
+    hold on
+    quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'r','Autoscalefactor',.08,'LineWidth',1);
+    hold on
+   
+    xlabel('x (a.u.)')
+    ylabel('y (a.u.)')
+    zlabel('z (a.u.)')
+    title('Launch conditions')
+    legend({'Earth','ESOI_1','Position_1','Velocity_1','ESOI_2','Position_2','Velocity_2'})
+    hold on
     
     end
