@@ -7,12 +7,8 @@
 
 // sets starting values as given in the 2017 data excel sheet
 template <class T> struct thruster {
-    T m_Dot;    // fuel flow rate
-    int type;   // type of thruster
     T P0;       // inital power in
     T m_Dot0;   // initial m_Dot
-
-    double coastThreshold; // threshold to activate thruster
 
     // Constructor - takes cudaConstants to determine thruster type
     __host__ __device__ thruster<T>(const cudaConstants* gConfig);
@@ -30,7 +26,7 @@ template <class T> struct thruster {
     // Parameters:
     //         Pin: Given a certian value of power in to the spacecraft, a certian fuel flow rate will be set for an iteration.
     // output: spacecraft's mDot for a certian iteration
-    __host__ __device__ void calc_m_Dot(const T & Pin);
+    __host__ __device__ T calc_m_Dot(const T & Pin);
 
     // thruster type enumeration, used in readibility for the types of thrusters rather than reading hard-coded number values
     enum THRUST_TYPE {

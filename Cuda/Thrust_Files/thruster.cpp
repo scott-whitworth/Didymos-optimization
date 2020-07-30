@@ -5,7 +5,6 @@
 
 template <class T>
 thruster<T>::thruster(const cudaConstants* gConfig) {
-
     // If no thruster, set values to 0
     if (gConfig->thruster_type == THRUST_TYPE::NO_THRUST) {
         m_Dot = P0 = 0;
@@ -16,9 +15,6 @@ thruster<T>::thruster(const cudaConstants* gConfig) {
         m_Dot = m_Dot0 = NEXTm_Dot0;
         P0 = NEXTP0;
     }
-    
-    type = gConfig->thruster_type;
-    coastThreshold = gConfig->coast_threshold;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin) {
@@ -29,16 +25,16 @@ template <class T> T thruster<T>::calc_eff(const T & Pin) {
     return 0;
 }
 
-template <class T> void thruster<T>::calc_m_Dot(const T & Pin) {
+template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
     if (type == THRUST_TYPE::NEXT_C) {
         if (Pin < 2550) {
-            m_Dot = 1.99E-06;
+            return 1.99E-06;
         }
         else if (Pin < 4500) {
-            m_Dot = 4.44E-06;
+            return 4.44E-06;
         }
         else {
-            m_Dot = NEXTm_Dot0;
+            return NEXTm_Dot0;
         }
     }
 }
@@ -82,14 +78,11 @@ template <class T> __host__ __device__ T calc_accel(const T & radius, const T & 
     // The thrust power of the spacecraft is dependent upon the efficiency (calculated in thruster.cpp) and the power (in).
     Pthrust = thrusterType.calc_eff(Pin)*Pin; 
 
-    // Update thrusterType's current m_Dot based on power input
-    thrusterType.calc_m_Dot(Pin);
-
     // Thrust is calculated by power (thrust) and mDot.
-    thrust = sqrt(2 * Pthrust * thrusterType.m_Dot); 
+    thrust = sqrt(2 * Pthrust * thrusterType.calc_m_Dot(Pin)); 
 
     // Calculates the amount of fuel used throughout the duration of the trip.
-    massExpelled += thrusterType.m_Dot * deltaT;
+    massExpelled += thrusterType.calc_m_Dot(Pin) * deltaT;
     
     // the current mass of the spacecraft is equal to the fuel used minus the wetMass of the spacecraft
     // Acceleration of the spacecraft due to thrusting calculated by thrust divided by the mass of the spacecraft.
