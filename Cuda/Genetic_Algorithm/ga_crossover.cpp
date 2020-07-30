@@ -163,12 +163,12 @@ double getRand(double max, std::mt19937_64 & rng) {
 //        rng - passed to mutate()
 //        generation - passed to mutate()
 // Output: Returns rkParameter object that is new individual
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation) {
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation) {
     // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
     rkParameters<double> newInd = p1;
 
     // Only calculate values pertaining to thrust if a thruster is being used
-    if (thrust.type != thruster<double>::NO_THRUST) {
+    if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
         // Iterate through the gamma values
         for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
             if (mask[i] == PARTNER2) {
@@ -223,7 +223,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
         newInd.alpha = p1.alpha/2.0 + p2.alpha/2.0;
     }
     // Now that newInd contains crossovered parameter values, call mutate onto it
-    newInd = mutate(newInd, rng, annealing, cConstants, thrust, generation);
+    newInd = mutate(newInd, rng, annealing, cConstants, generation);
 
     return newInd;    
 }
@@ -263,7 +263,7 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate) 
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, double generation) {    
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, double generation) {    
     rkParameters<double> newInd = p1; // initially set new individual to have all parameter values from parent 1
 
     // Declare and set a mutation_mask for which gene is being mutated
@@ -362,20 +362,20 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 // Output: pool contains two newly created individuals at (poolSize - 1 - newIndCount) and (poolSize - 2 - newIndCount)
 //         mask is flipped in polarity (refer to flipMask method)
 //         newIndCount is incremented by +2
-void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation) { 
+void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, double generation) { 
     // Determine where the parents and the new individual being created are located in the pool
     int parent1Index = parentsIndex;
     int parent2Index = parentsIndex + 1;
 
     int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
     // Generate new offspring with mask
-    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation), cConstants);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, cConstants, annealing, rng, generation), cConstants);
     newIndCount++;
 
     // Get the opposite offspring from the mask by flipping the mask
     newIndividualIndex--; // Decrement newIndividualIndex value to access where the next individual must be as newIndCount has increased
     flipMask(mask);
-    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, thrust, cConstants, annealing, rng, generation), cConstants);
+    pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, cConstants, annealing, rng, generation), cConstants);
     newIndCount++;
 
     return;
@@ -391,7 +391,7 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation) {
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, std::mt19937_64 & rng, double generation) {
 
     int * mask = new int[OPTIM_VARS];
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
@@ -405,21 +405,21 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
     // Loop for wholeRandom mask
     for (int i = 0; i < numPairs; i++) {
         crossOver_wholeRandom(mask, rng);
-        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
+        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);
     }
     // Loop for averaging mask
     for (int i = 0; i < numPairs; i++) {
         crossOver_average(mask);
-        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
+        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);
     }
     // 2 loops for bundleVars mask, two seperate loops resulting from carry over of past code, also will allow easier changes in masks used (right now just using two bundleVars instead of two different ones)
     for (int i = 0; i < numPairs; i++) {
         crossOver_bundleVars(mask, rng);
-        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
+        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);
     }
     for (int i = 0; i < numPairs; i++) {
         crossOver_bundleVars(mask, rng);
-        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, thrust, generation);
+        generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);
     }
     delete [] mask;
     return newIndCount;

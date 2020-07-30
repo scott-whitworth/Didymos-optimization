@@ -40,7 +40,7 @@ void getAverageGenes(Individual * pool, int const poolSize, double * average_arr
 //         lastStep contains value last value for number of steps taken
 //         file orbitalMotion-[time_seed].bin is created that holds spacecraft RK steps and error
 //         file finalOptimization-[time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void trajectoryPrint( double x[], int generation, thruster<double> thrust, const cudaConstants* cConstants);
+void trajectoryPrint( double x[], int generation, const cudaConstants* cConstants);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
@@ -71,7 +71,7 @@ void initializeRecord(const cudaConstants * cConstants);
 //        thrust - used in conditional statement of thrust type
 // output: files BestInGenerations/WorstInGenerations have appended information using writeIndividualToFiles method
 //         files BestThrustGens/WorstThurstGens have appended information using writeThrustFiles method
-void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize, thruster<double>& thrust);
+void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize);
 
 // Method for doing recording information at the end of the optimization process
 // input: cConstants - access record_mode, if record_mode == true then call progressiveRecord method, also passed into writeTrajectoryToFile method as well as progressiveRecord
@@ -79,7 +79,7 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
 //        generation - to record the generation value 
 //        thrust - passed into progressiveRecord and writeTrajectoryToFile
 // output: writeTrajectoryToFile is called, if in record_mode then progressiveRecord is called as well
-void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation, thruster<double>& thrust);
+void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation);
 
 // input: cConstants - access time_seed to derive file name
 // output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()

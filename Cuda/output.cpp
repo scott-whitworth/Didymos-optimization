@@ -115,7 +115,7 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
 // output: yOut contains final eleement information of the spacecraft
 //         lastStep contains value last value for number of steps taken
-void trajectoryPrint( double x[], int generation, thruster<double> thrust, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], int generation, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -172,7 +172,7 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
-  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, thrust, cConstants);
+  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
   double lastStep = lastStepInt;
 
@@ -341,7 +341,7 @@ void initializeRecord(const cudaConstants * cConstants) {
 //        thrust - used in conditional statement of thrust type
 // output: files BestInGenerations/WorstInGenerations have appended information using writeIndividualToFiles method
 //         files BestThrustGens/WorstThurstGens have appended information using writeThrustFiles method
-void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize, thruster<double>& thrust) {
+void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize) {
   std::ofstream excelFile;
   int seed = cConstants->time_seed;
   std::string fileId = std::to_string(seed);
@@ -430,7 +430,7 @@ void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, i
 //        generation - to record the generation value 
 //        thrust - passed into progressiveRecord and writeTrajectoryToFile
 // output: writeTrajectoryToFile is called, if in record_mode then progressiveRecord is called as well
-void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation, thruster<double>& thrust) {
+void finalRecord(const cudaConstants* cConstants, Individual * pool, int generation) {
   // To store parameter values and pass onto writeTrajectoryToFile
   double *start = new double[OPTIM_VARS];
 
@@ -455,7 +455,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   std::cout << "CUDA velDiff: " << pool[0].velDiff << std::endl;
 
   // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
-  trajectoryPrint(start, generation, thrust, cConstants);
+  trajectoryPrint(start, generation, cConstants);
 
   // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 

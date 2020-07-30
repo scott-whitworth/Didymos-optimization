@@ -58,7 +58,7 @@ double getRand(double max, std::mt19937_64 & rng);
 //        rng - passed to mutate()
 //        generation - passed to mutate()
 // Output: Returns rkParameter object that is new individual
-rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, thruster<double>& thrust, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation);
+rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation);
 
 // Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
 // input: rng - random number generating object used to randomly generate index values
@@ -75,19 +75,7 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate);
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants * gConstant, thruster<double>& thrust, double generation);
-
-// Create a new individual, using two parents with a mask and also possible mutation occurring
-// Input: pool - pointer array to Individuals that is where the new individual is stored
-//        survivors - pointer array to Individuals to access the two parents from
-//        mask - pointer array of maskValues used to decide on which property from which parent is acquired (or average of the two)
-//        parent1Index, parent2Index - integer values for where in the survivor array to get the parents from
-//        newIndiviudalIndex - integer value for where in the pool to store the new individual
-//        annealing - If mutation is occurring, passed into mutate function
-//        rng - Random number generator that is used to determine if mutation occurs and is passed into mutate function if it is occurring
-//        cConstants - holds properties that is passed into mutate, also contains mutation_rate value that is used to determine if mutation will occur
-// Output: pool[newIndiviudalIndex] contains a newly generated individual that is combination of survivor[parent1Index] and survivor[parent2Index] with possibly slight value changes in 1,2,3 variables
-void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, int parent1Index, int parent2Index, int newIndividualIndex, double annealing, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation);
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants * gConstant, double generation);
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
 // Input: pool - pointer array to Individuals that is where the new pair of individuals are stored
@@ -102,7 +90,7 @@ void mutateNewIndividual(Individual *pool, Individual *survivors, int * mask, in
 // Output: pool contains two newly created individuals at (poolSize - 1 - newIndCount) and (poolSize - 2 - newIndCount)
 //         mask is flipped in polarity (refer to flipMask method)
 //         newIndCount is incremented by +2
-void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, thruster<double>& thrust, double generation);
+void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, double generation);
 
 // Creates the next pool to be used in the optimize function in opimization.cu
 // Input: survivors - Individual pointer array of Individuals to be used in creating new individuals
@@ -115,7 +103,7 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 //        thrust - passed onto generateChildrenPair
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
-int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, thruster<double>& thrust, std::mt19937_64 & rng, double generation );
+int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, std::mt19937_64 & rng, double generation );
 
 //sets up the mutate file
 void setMutateFile(const cudaConstants* cConstants);

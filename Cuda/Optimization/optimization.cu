@@ -44,7 +44,6 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
 double optimize(const cudaConstants* cConstants) {
-    thruster<double> thrust(cConstants);
     double calcPerS = 0;
 
     time_t timeSeed = cConstants->time_seed;
@@ -140,7 +139,7 @@ double optimize(const cudaConstants* cConstants) {
 
     // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
     do {
-        callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, thrust, cConstants); // calculate trajectories for new individuals
+        callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, cConstants); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < cConstants->num_individuals; k++) {
@@ -191,7 +190,7 @@ double optimize(const cudaConstants* cConstants) {
 
         // If in recording mode and write_freq reached, call the record method
         if (static_cast<int>(generation) % cConstants->write_freq == 0 && cConstants->record_mode == true) {
-            recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, cConstants->num_individuals, thrust);
+            recordGenerationPerformance(cConstants, inputParameters, generation, new_anneal, cConstants->num_individuals);
         }
         
         // Only call terminalDisplay every DISP_FREQ, not every single generation
@@ -203,19 +202,19 @@ double optimize(const cudaConstants* cConstants) {
         convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
 
         // Create a new generation and increment the generation counter
-        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, thrust, rng, generation);
+        newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, rng, generation);
         ++generation;
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !convergence && generation < cConstants->max_generations);
     // 
     if (cConstants->record_mode == true) {
-        recordGenerationPerformance(cConstants, inputParameters, generation, -1, cConstants->num_individuals, thrust);
+        recordGenerationPerformance(cConstants, inputParameters, generation, -1, cConstants->num_individuals);
     }
     // Only call finalRecord if the results actually converged on a solution
     if (convergence) {
         terminalDisplay(inputParameters[0], generation);
-        finalRecord(cConstants, inputParameters, static_cast<int>(generation), thrust);
+        finalRecord(cConstants, inputParameters, static_cast<int>(generation));
     }
     
 

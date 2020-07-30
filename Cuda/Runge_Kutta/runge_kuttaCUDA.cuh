@@ -9,10 +9,10 @@
 Individual* getNewStarts(Individual *prevGen);
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
-void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, thruster<double> thrust, const cudaConstants* cConstant);
+void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, const cudaConstants* cConstant);
 
 // the simple version of the runge_kutta algorithm, on GPU
-__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, thruster<double> thrust, const cudaConstants* cConstant);
+__global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, const cudaConstants* cConstant);
 
 //this is used to find distinguishable difference between two positions
 //Parameters:

@@ -11,7 +11,7 @@
 //         curTime: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: the value of the fourier series evaluated at a curTime
-template <class T> __host__ __device__ T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal, thruster<T> thrust);
+template <class T> __host__ __device__ T calc_Series(const T series[], const int series_size, const T & curTime, const T & timeFinal);
 
 // Calculates gamma (in-plane angle) at a specific time using Fourier series coefficients
 // Parameters:
@@ -21,7 +21,7 @@ template <class T> __host__ __device__ T calc_Series(const T series[], const int
 //         curTime: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and gamma Fourier series
-template <class T> __host__ __device__ T calc_gamma(const coefficients<T> & coeff,const T & curTime, const T & timeFinal, thruster<T> thrust);
+template <class T> __host__ __device__ T calc_gamma(const coefficients<T> & coeff,const T & curTime, const T & timeFinal);
 
 
 // Calculates tau (out-of-plane angle) at a specific time using Fourier series coefficients
@@ -32,7 +32,7 @@ template <class T> __host__ __device__ T calc_gamma(const coefficients<T> & coef
 //         curTime: current time (s) for calculated gamma
 //         timeFinal: end time (s), used to normalize t
 // output: in-plane angle derived from normalized time and tau Fourier series
-template <class T> __host__ __device__ T calc_tau(const coefficients<T> & coeff,const T & curTime, const T & timeFinal, thruster<T> thrust);
+template <class T> __host__ __device__ T calc_tau(const coefficients<T> & coeff,const T & curTime, const T & timeFinal);
 
 // Evaluates whether the spacecraft is accelerating or coasting for a specific iteration
 // Parameters:
@@ -45,7 +45,7 @@ template <class T> __host__ __device__ T calc_tau(const coefficients<T> & coeff,
 // output: 
 //         above the threshold: returns thrusting = 1
 //         below the threshold: returns thrusting = 0
-template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<T> thrust);
+template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal);
 
 #include "calcFourier.cpp"
 #endif
