@@ -1,7 +1,7 @@
 <h1> Config File Specifications/Information </h1>
 <i>Last Updated: July 30th, 2020</i>
 
-<h2>File format for config file</h2>
+<h2>File and variable format for config file</h2>
 
 - The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments
 - The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).  When reading values, it takes the assignment as just a numeric value using standard string to int/double for appriopriate variable types and does not currently handle operations
@@ -15,7 +15,7 @@
 - Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
 - If config file address is invalid, will output to terminal that is the case.
 
-<h2>Variables in Config/cudaConstants</h2>
+<h2>Variables in cudaConstants</h2>
 
 Table 1. Setup & General Values
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
@@ -35,6 +35,7 @@ Table 1. Setup & General Values
 Table 2. Genetic Algorithm Values
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                    |   	|
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---	|
+| best_count                 	| int        	| None  	| How many individuals must have obtained a solution before ending the algorithm, also outputs the top number of individuals up to best_count 	                                    |   	|
 | max_generations           	| int        	| None  	| Sets the maximum number of generation iterations to evaluate in the optimization loop before exiting regardless of if a valid solution was reached or not 	                    |   	|
 | run_count                    	| int        	| None  	| Set how many runs of optimize with slightly altered randomization seeds to perform with current cudaConstants                                              	                    |   	|
 | num_individuals           	| int        	| None  	| Sets the size of the population pool and number of threads used as an individual is given a thread, recommended to not change 	                                                |   	|
@@ -43,7 +44,6 @@ Table 2. Genetic Algorithm Values
 | anneal_initial             	| double     	| None  	| The initial anneal value used, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                |   	|
 | anneal_factor             	| double     	| None  	| The multiplier applied to anneal value if no change in the best individual is occurring                                                                        	                |   	|
 | change_check               	| int        	| None  	| For how many generations until it checks to see if the best individual has changed, if no change the anneal value is reduced by multiplying with anneal_factor                    |   	|
-| best_count                 	| int        	| None  	| How many individuals must have obtained a solution before ending the algorithm, also outputs the top number of individuals up to best_count 	                                    |   	|
 | mutation_rate              	| double     	| None  	| The probability of a mutations occurring when generating a new individual, checks the mutation_rate before setting a random gene to be mutated and continues checking to mutate more unique genes until the check fails |   	|
 | gamma_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for gamma values (maximum mutation for the corresponding parameter is annealing * [this scale])	                                            |   	|
 | tau_mutate_scale           	| double     	| None  	| Affects the maximum mutation range for tau values (maximum mutation for the corresponding parameter is annealing * [this scale]) 	                                                |   	|
@@ -60,7 +60,7 @@ Table 3. Mission Values
 | thruster_type                	| int        	| None  	| Determine what thruster is used, 0 for none and 1 for NEXT ion thruster 	                                                                                                        |   	|
 | dry_mass                     	| double        | kg      	| Set the mass of the spacecraft without fuel, also used in determining wet_mass 	                                                                                                |   	|
 | fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, used in determining wet_mass 	                                                                                                |   	|
-| wet_mass                     	| double        | kg      	| The total mass of the spacecraft with fuel                                                                                                                  	                    |   	|
+| wet_mass                     	| double        | kg      	| The total mass of the spacecraft with fuel, value is derived after reading the config file when dry_mass and fuel_mass have had their values read                                 |   	|
 | coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
 | v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, not in config file but rather derived from c3energy 	                        |   	|
@@ -87,11 +87,11 @@ Table 3a. Impact Position & Velocity Values
 Table 4. Random Starting Initializing Values when (random_start == true) & Triptime Range
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                |   	|
 |----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
-| gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
-| tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
-| coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|
-| triptime_max                  | double     	| Years     | The maximum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumed to be larger than triptime_min |   	|
-| triptime_min                  | double     	| Years     | The minimum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumes that it is less than triptime_max |   	|
 | alpha_random_start_range      | double     	| Radians   | The magnitude of the +/- value range for alpha random initial values 	                                                                                                        |   	|
 | beta_random_start_range       | double     	| Radians   | The magnitude of the positive only value range for beta random initial values 	                                                                                            |   	|
 | zeta_random_start_range       | double     	| Radians   | The magnitude of the +/- value range for zeta random initial values 	                                                                                                        |   	|
+| triptime_max                  | double     	| Years     | The maximum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumed to be larger than triptime_min |   	|
+| triptime_min                  | double     	| Years     | The minimum triptime, not only impacts the random starting guesses but also in deriving the time range calculation on EarthInfo and also assumes that it is less than triptime_max |   	|
+| gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
+| tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
+| coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|

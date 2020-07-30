@@ -49,12 +49,12 @@ struct Individual {
 // Compare two individuals by their positional difference values
 // input: two individuals
 // output: returns true if personB has a higher positional difference than personA
-bool BetterPosDiff(Individual personA, Individual personB);
+bool BetterPosDiff(Individual& personA, Individual& personB);
 
 // Compare two individuals by their velocity difference values
 // input: two individuals
 // output: returns true if personB has a higher velocity difference than personA
-bool BetterVelDiff(Individual personA, Individual personB);
+bool BetterVelDiff(Individual& personA, Individual& personB);
 
 #include "individuals.cpp"
 

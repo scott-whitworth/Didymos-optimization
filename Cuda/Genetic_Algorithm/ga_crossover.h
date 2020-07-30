@@ -18,11 +18,11 @@ void selectSurvivors(Individual * pool, int selectionSize, Individual* survivors
 
 // Creates a random bifurcation mask, currently not in use
 // Randomly picks one index to be the start of the '2's from mask
-void crossOver_randHalf(int mask[], std::mt19937_64 & rng);
+void crossOver_randHalf(int * mask, std::mt19937_64 & rng);
 
 // Creates a mask that is contains randomly chosen values in each index
 // Each element in a mask is randomly set to either PARTNER1 or PARTNER2
-void crossOver_wholeRandom(int mask[], std::mt19937_64 & rng);
+void crossOver_wholeRandom(int * mask, std::mt19937_64 & rng);
 
 // This crossover method randomly chooses between partners for each variable. Similar to crossOver_wholeRandom, but this keeps all parameters types (gamma, tau, coast) grouped
 // Input: int pointer array mask of size OPTIM_VARS, rng that is a constructed mt19937_64 random number generator used to derive random values between 1 and 2
@@ -37,7 +37,7 @@ void crossOver_average(int * mask);
 // Utility to flip the polarity of a mask
 // Input:  mask is an array of size OPTIM_VARS, input based on maskValue enumerations as a mask
 // Output: each PARTNER1 in mask will be reassigned to be a PARTNER2, each PARTNER2 will be reassigned PARTNER1, AVG will be unchanged
-void flipMask(int mask[]);
+void flipMask(int * mask);
 
 // Copy contents of maskIn into maskOut of size OPTIM_VARS
 // Input: maskIn an array that is the original mask, maskOut is an array that will have contents copied to
@@ -75,7 +75,7 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate);
 //        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
 //        thrust - Used to check if the thruster needs to be taken into account
 // Output: Returns rkParameter object that is the mutated version of p1
-rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants * gConstant, double generation);
+rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* gConstant, double generation);
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
 // Input: pool - pointer array to Individuals that is where the new pair of individuals are stored
@@ -104,9 +104,6 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, std::mt19937_64 & rng, double generation );
-
-//sets up the mutate file
-void setMutateFile(const cudaConstants* cConstants);
 
 #include "ga_crossover.cpp"
 #endif

@@ -25,7 +25,7 @@ struct cudaConstants {
 
     double mutation_rate; // fraction of new offspring to mutate
     
-    // Used in mutate(), affects the size of change for the respective paramater values (old code had hard-coded values)
+    // Used in mutate(), affects the size of change for the respective paramater values along with annealing
     double gamma_mutate_scale; 
     double tau_mutate_scale; 
     double coast_mutate_scale;
@@ -38,10 +38,10 @@ struct cudaConstants {
     double gamma_random_start_range;
     double tau_random_start_range;
     double coast_random_start_range;
-    double triptime_max;
-    double triptime_min;
+    double triptime_max; // Explicit bounds for valid triptime
+    double triptime_min; // Explicit bounds for valid triptime
     double alpha_random_start_range;
-    double beta_random_start_range;
+    double beta_random_start_range; // For beta, only positive side of the range is used (0 to the value assigned)
     double zeta_random_start_range;
 
     // Used in thruster construction and corresponding calculations

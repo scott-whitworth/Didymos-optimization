@@ -1,6 +1,3 @@
-#ifndef individuals_h
-#define individuals_h
-
 #include "individuals.h"
 
 // Default constructor
@@ -86,7 +83,7 @@ bool Individual::operator==(Individual &other) {
 // Compare two individuals by their positional difference values
 // input: two individuals
 // output: returns true if personB has a higher positional difference than personA
-bool BetterPosDiff(Individual personA, Individual personB) {
+bool BetterPosDiff(Individual& personA, Individual& personB) {
     if (personA.posDiff < personB.posDiff) {
         return true;
     }
@@ -99,7 +96,7 @@ bool BetterPosDiff(Individual personA, Individual personB) {
 // Compare two individuals by their velocity difference values
 // input: two individuals
 // output: returns true if personB has a lower velocity difference than personA
-bool BetterVelDiff(Individual personA, Individual personB) {
+bool BetterVelDiff(Individual& personA, Individual& personB) {
     if (personA.velDiff > personB.velDiff) {
         return true;
     }
@@ -108,4 +105,3 @@ bool BetterVelDiff(Individual personA, Individual personB) {
     }
 }
 
-#endif
