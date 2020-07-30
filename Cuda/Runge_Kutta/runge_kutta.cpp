@@ -97,7 +97,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         //     minStep++;
         // }
 
-        stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+        stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
         
         if ( (curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
