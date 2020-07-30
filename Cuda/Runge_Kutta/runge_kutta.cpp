@@ -84,18 +84,20 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         }
 
 
-        //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
+        // //Alter the step size for the next iteration
+        // stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
 
-        //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
-            stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
-            maxStep++;
-        }
-        else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
-            stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
-            minStep++;
-        }
+        // //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        // if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
+        //     maxStep++;
+        // }
+        // else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+        //     minStep++;
+        // }
+
+        stepSize = (timeFinal-timeInitial) / cConstants->max_numsteps;
         
         if ( (curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
