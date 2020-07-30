@@ -2,7 +2,7 @@
 #include "runge_kuttaCUDA.cuh"
 #include "runge_kutta.h" // used for rkCalc() and distinguishableDifference()
 #include "rkParameters.h" // the struct containing the values passed to rk4simple()
-#include "thruster.h"
+#include "../Thrust_Files/thruster.h"
 #include "../Genetic_Algorithm/ga_crossover.h" // crossover()
 #include <math.h>
 #include <iostream>
