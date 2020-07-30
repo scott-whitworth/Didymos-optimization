@@ -40,12 +40,12 @@ template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
 }
 
 
-template <class T> std::ostream & operator<<(std::ostream & Str, const thruster<T> & e) {
-    Str << std::fixed;
-    Str << std::setprecision(16); // number of decimals output into text file
-    Str << e.m_Dot << "\t" << e.P0 << "\n";
-    return Str;
-}
+// template <class T> std::ostream & operator<<(std::ostream & Str, const thruster<T> & e) {
+//     Str << std::fixed;
+//     Str << std::setprecision(16); // number of decimals output into text file
+//     Str << e.m_Dot << "\t" << e.P0 << "\n";
+//     return Str;
+// }
 
 template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass, const cudaConstants* cConstants) {
 
