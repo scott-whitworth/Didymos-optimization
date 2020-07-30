@@ -1,5 +1,5 @@
 <h1>DART Mission Optimization Project</h1>
-Last updated: July 27th, 2020
+<i>Last updated: July 30th, 2020</i>
 
 <h2>Project Background & Current Objective</h2>
 
@@ -16,7 +16,7 @@ Last updated: July 27th, 2020
   | Zeta launch angle           | Radians  	  | The out-of-plane angle of the spacecraft's initial velocity when leaving Earth's sphere of influence                                                       |   	|
   | Gamma coefficients          | None  	    | Used in a fourier series to calculate the gamma (in-plane angle in radians) angle at a given time for thruster behavior                                    |   	|
   | Tau coefficients            | None  	    | Used in a fourier series to calculate the tau (out-of-plane angle in radians) angle at a given time for thruster behavior                                  |   	|
-  | Coast coefficients          | None  	    | Determines if the thruster is activated or not (coasting) at a given time for thruster behavior                                                            |   	|
+  | Coast coefficients          | None  	    | Used in a fourier series that determines if the thruster is activated or not (coasting) at a given time for thruster behavior by comparing to coast_threshold |   	|
 
 <h2>Files & Folders Navigation Guide</h2>
 There are many folders and files in this project, so here's a short rundown of folder contents to help navigate everything;
@@ -56,7 +56,7 @@ On WU System & Personal Computers:
    - Do the same as above, but for step 3 use this command:
      `nvcc -ccbin "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\cl.exe" optimization.cu -o <nameOfOutput>`
 		
-2. To Run:
+2. To Run in VScode:
     1. Open command prompt in the VScode terminal.
     2. Navigate to the Optimization folder (input and enter "cd Cuda" then "cd Optimization").
     3. Type the .exe file name from above (don't forget to add .exe) and enter
@@ -71,14 +71,15 @@ On WU System & Personal Computers:
        8. The program is finished and so closes.
 
 3. Changing properties:
-      In Config_Constants, genetic.config holds a set of variables that can be changed before running the .exe file.  Refer to config_readme.md for specifics on how each variable impacts the program's behavior and format of the file.
-      The parameter lengths for gamma, tau, and coast can be manipulated in constants.h in lines 23-25 with the offsets handled based on those size values.
+      In Config_Constants, genetic.config holds a set of variables that can be changed before running the .exe file.  Refer to config_readme.md for specifics on how each variable impacts the program's behavior and format of the file.  The code does not need to be recompiled.
+      The parameter lengths for gamma, tau, and coast can be manipulated in constants.h in lines 23-25 with the offsets handled based on those size values. The code must be recompiled for these changes to be put into effect.
 
 4. Output Resulting Files (# refers to time_seed value used in the run)
   - EarthCheckValues#.csv (when record_mode set to true) : Recorded prior to starting the optimizing genetic algorithm, contains the position and velocity for every day of Earth (lower resolution than what is calculated which is every hour).  Used to verify that it matches with the JPL database.
-  - final-optimization#.bin and orbitalMotion-accel#.bi : For the best individual that has reached a solution, files are made of this format when the algorithm is finished to record it to then be used by PostProcessing to show the trajectory found.
+  - final-optimization#.bin and orbitalMotion-accel#.bin : For the best individual that has reached a solution, files are made of this format when the algorithm is finished to record it to then be used by PostProcessing to show the trajectory found.
   - genPerforamance#.csv (when record_mode set to true) : Output excel file used by recordPerformance method, output frequence dependent on write_freq value in config.  Contains information regard a generation such as bestPosDiff.
   - mutateFile.csv : A record of what genes are being mutated by what value every time it is called.  This may be commented out in the code due to its impact on the rate at which the algorithm can calculate a generation.
+  - errorCheck#.bin : Contains information on % error in calculations when using thruster to be used in PostProcessing
 
 <h2> Running Matlab Code </h2>
 
@@ -94,11 +95,8 @@ On WU System & Personal Computers:
 Here is how the impact data was obtained to be used in the config value.
 
 1.  Navigate to https://ssd.jpl.nasa.gov/horizons.cgi, this database is used to retrieve final position and velocity vector components for both Earth and Didymos relative to the Sun.
-
 2.  The ephemeris type should be a vector table. In table settings, select Type 2. Set the coordinate origin to the Sun's center of mass. The current impact date is 09-30-2022 19:54:55 UTC, so set an adequate time window with a resolution of 1 minute. Set the units to a.u. for position and a.u./day for velocity. Then, select Generate Ephemeris.
-
 3.  To obtain final Earth elements, change the target body to Earth-Moon barycenter and generate a new ephemeris.
-
 4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.
 
 <h2>Flowchart Overview of CUDA Code</h2>
