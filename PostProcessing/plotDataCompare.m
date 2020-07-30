@@ -1,4 +1,4 @@
-function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1,gammaCoeff1,tauCoeff1,fuelMass1,dR,sizeD,tripTime2,coast2,coast_threshold2,gammaCoeff2,tauCoeff2,fuelMass2)
+function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1,gammaCoeff1,tauCoeff1,fuelMass1,alpha1,beta1,zeta1,launchPos1,dR,sizeD,tripTime2,coast2,coast_threshold2,gammaCoeff2,tauCoeff2,fuelMass2,alpha2,beta2,zeta2,launchPos2)
     %% Data that is required
     
     au=1.49597870691E11; % conversion of m/au

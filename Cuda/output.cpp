@@ -200,6 +200,7 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   }
   output.close();
 
+
   double gsize = GAMMA_ARRAY_SIZE, tsize = TAU_ARRAY_SIZE, csize = COAST_ARRAY_SIZE;
   output.open("finalOptimization-"+std::to_string(static_cast<int>(seed))+".bin", std::ios::binary);
   // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
@@ -216,6 +217,9 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
   output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
   output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
   output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+  output.write((char*)&earth.r, sizeof(double));
+  output.write((char*)&earth.theta, sizeof(double));
+  output.write((char*)&earth.z, sizeof(double));
   output.write((char*)&cConstants->fuel_mass, sizeof(double));
   output.write((char*)&cConstants->coast_threshold, sizeof(double));
   output.write((char*)&gsize, sizeof(double));

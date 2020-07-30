@@ -1,4 +1,4 @@
-function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoeff,tauCoeff,fuelMass)
+function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoeff,tauCoeff,fuelMass,alpha,beta,zeta,launchPos)
 
     %% Data that is required
     
@@ -271,5 +271,37 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     %title('Solar orbitals')
     %hold off
     %print(b,'2DNoVec.png','-dpng','-r350'); 
+    
+    figure(6)
+    
+    r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
+    t = 0:pi/100:2*pi;
+    [m,n] = size(t);
+    
+    plot3(launchPos(1)+r_esoi*cos(t), launchPos(2)+r_esoi*sin(t), launchPos(3)*ones(1,n),'LineWidth', 1,'Color',[.61 .51 .74])
+    hold on
+    
+    [alpha_x, alpha_y, alpha_z] = pol2cart(alpha, r_esoi, 0);
+    plot3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3),'*')
+    hold on
+    
+    quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.08,'LineWidth',1);
+    hold on
+   
+    xlabel('x (a.u.)')
+    ylabel('y (a.u.)')
+    zlabel('z (a.u.)')
+    title('Launch conditions')
+    legend({'ESOI','Position','Velocity'})
+    hold on
+    
+    % figure (7)
+    % polar(t,r_esoi*ones(1,n))
+    % hold on
+    % polar(alpha,r_esoi,'r*')
+    % hold on
+    % title('Initial position')
+    % legend('ESOI','Launch')
+    % hold on
     
     end
