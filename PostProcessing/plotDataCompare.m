@@ -430,7 +430,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     %hold off
     %print(b,'2DNoVec.png','-dpng','-r350'); 
 
-    figure(6)
+    figure(8)
 
     plot3(eX,eY,eZ,'LineWidth', 1,'Color',[.61 .51 .74])
     hold on
