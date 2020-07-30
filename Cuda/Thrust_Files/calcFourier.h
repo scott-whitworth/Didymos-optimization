@@ -45,7 +45,7 @@ template <class T> __host__ __device__ T calc_tau(const coefficients<T> & coeff,
 // output: 
 //         above the threshold: returns thrusting = 1
 //         below the threshold: returns thrusting = 0
-template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal);
+template <class T> __host__ __device__ bool calc_coast(coefficients<T> & coeff, const T & curTime, const T & timeFinal, thruster<T> & thrust);
 
 #include "calcFourier.cpp"
 #endif

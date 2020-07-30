@@ -94,7 +94,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
                 coast = curAccel = 0;
             }
             else {
-                coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime);
+                coast = calc_coast(threadRKParameters.coeff, curTime, threadRKParameters.tripTime, thrust);
                 curAccel = calc_accel(curPos.r, curPos.z, thrust, massFuelSpent, stepSize, coast, static_cast<double>(cConstant->wet_mass), cConstant);
             }
 

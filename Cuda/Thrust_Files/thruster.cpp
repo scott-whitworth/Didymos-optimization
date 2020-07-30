@@ -8,7 +8,7 @@ thruster<T>::thruster(const cudaConstants* gConfig) {
     // If no thruster, set values to 0
     if (gConfig->thruster_type == THRUST_TYPE::NO_THRUST) {
         type = THRUST_TYPE::NO_THRUST;
-        p0 = 0;
+        P0 = 0;
     }
 
     // setting values (defined in header) for when type 1 is called (NEXT)
@@ -16,6 +16,7 @@ thruster<T>::thruster(const cudaConstants* gConfig) {
         type = THRUST_TYPE::NEXT_C;
         P0 = NEXTP0;
     }
+    coastThreshold = gConfig->coast_threshold;
 }
 
 template <class T> T thruster<T>::calc_eff(const T & Pin) {

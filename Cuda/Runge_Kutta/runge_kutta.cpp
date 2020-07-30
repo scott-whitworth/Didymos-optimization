@@ -38,7 +38,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         // array of tau for binary output
         tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
         // array of acceleration for binary output
-        accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal), wetMass, cConstant);
+        accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
         fuelSpent[0] = massFuelSpent;
     }
 
@@ -55,7 +55,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         }
         else {
             // defining coast using calc_coast()
-            coast = calc_coast(coeff, curTime, timeFinal);
+            coast = calc_coast(coeff, curTime, timeFinal, thrust);
             // defining acceleration using calc_accel()
             accel = calc_accel(u.r,u.z, thrust, massFuelSpent, stepSize, coast, wetMass, cConstant);
         }
@@ -74,7 +74,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         times[n+1] = curTime;
 
         if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
-            gamma[n+1] = tau[n+1] = accel[n+1] = fuelSpent[n+1] = 0;
+            gamma[n+1] = tau[n+1] = accel_output[n+1] = fuelSpent[n+1] = 0;
         }
         else {
             //array of gamma for binary output
@@ -140,7 +140,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         }
         else {
             // defining coast using calc_coast()
-            coast = calc_coast(coeff, curTime, timeFinal);
+            coast = calc_coast(coeff, curTime, timeFinal, thrust);
             // defining acceleration using calc_accel()
             accel = calc_accel(y_new.r,y_new.z, thrust, massFuelSpent, stepSize, coast, wetMass);
         }

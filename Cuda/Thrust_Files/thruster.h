@@ -9,6 +9,7 @@
 template <class T> struct thruster {
     T P0;       // inital power in
     int type;
+    T coastThreshold;
 
     // Constructor - takes cudaConstants to determine thruster type
     __host__ __device__ thruster<T>(const cudaConstants* gConfig);
