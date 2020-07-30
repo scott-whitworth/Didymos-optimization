@@ -30,7 +30,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     times[0] = timeInitial;
 
     if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
-        gamma[0] = tau[0] = accel[0] = fuelSpent[0] = 0;
+        gamma[0] = tau[0] = accel_output[0] = fuelSpent[0] = 0;
     }
     else {
         // array of gamma for binary output

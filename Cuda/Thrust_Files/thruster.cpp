@@ -23,9 +23,7 @@ template <class T> T thruster<T>::calc_eff(const T & Pin) {
     if (type == THRUST_TYPE::NEXT_C) {
         return  -1.328086e-23*pow(Pin,6) + 6.207694e-19*pow(Pin,5) - 9.991813e-15*pow(Pin,4) +  7.701266e-11*pow(Pin,3) - 3.136031e-07*pow(Pin,2) +  6.805225e-04*Pin;       // Polynomial fit
     }
-    else if (type == THRUST_TYPE::NO_THRUST) {
-        return 0;
-    }
+    else return 0;
 }
 
 template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
@@ -40,9 +38,7 @@ template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
             return NEXTm_Dot0;
         }
     }
-    else if (type == THRUST_TYPE::NO_THRUST) {
-        return 0;
-    }
+    else return 0;
 }
 
 
@@ -55,7 +51,7 @@ template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
 
 template <class T> __host__ __device__ T calc_accel(const T & radius, const T & z, thruster<T> & thrusterType, T & massExpelled, const T & deltaT, const bool & thrusting, const T & wetMass, const cudaConstants* cConstants) {
 
-    if (cConstants->thruster_type == THRUST_TYPE::NO_THRUST) {
+    if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
         return 0;
     }
 
