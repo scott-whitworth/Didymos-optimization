@@ -93,7 +93,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
     //std::cout<<"Number of steps: "<<n<<"\n"<<"Min steps :"<<minStep<<"\n"<<"Max steps: "<<maxStep<<"\n";
 
-    std::cout << "\nposDiff from rk4sys(): " << sqrt( pow(cConstant->r_fin_ast - u.r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - u.r * u.theta, 2) + pow(cConstant->z_fin_ast - u.z, 2) ) << std::endl;
+    // std::cout << "\nposDiff from rk4sys(): " << sqrt( pow(cConstant->r_fin_ast - u.r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - u.r * u.theta, 2) + pow(cConstant->z_fin_ast - u.z, 2) ) << std::endl;
 }
 
 template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, const elements<T> & y0,
