@@ -52,11 +52,6 @@ void trajectoryPrint( double x[], int generation, thruster<double> thrust, const
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config);
 
-// Utility function to observe the trend of best individual in the algorithm through the generations
-// Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
-// Output: The two streams are appended the individual's information and anneal value
-void writeIndividualToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, double& annealing);
-
 // Utility function to observe the trend of best individual's thruster information in the algorithm through the generations
 // Input: Two ofstreams (one to .csv file and another to binary), current generation number, best individual, and annealing value derived to be used in next generation crossover/mutation
 // Output: The two streams are appended the individual's thruster information and anneal value
