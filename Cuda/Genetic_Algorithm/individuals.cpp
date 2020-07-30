@@ -1,6 +1,3 @@
-#ifndef individuals_h
-#define individuals_h
-
 #include "individuals.h"
 
 // Default constructor
@@ -108,4 +105,3 @@ bool BetterVelDiff(Individual& personA, Individual& personB) {
     }
 }
 
-#endif

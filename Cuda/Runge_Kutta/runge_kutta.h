@@ -29,6 +29,8 @@
     //      gamma: an array which contains all gamma values for a given run
     //      tau: an array which contains all tau values for a given run
     //      accel_output: an array which contains all accel values for a given run
+        //      fuelSpent: output array to hold the fuel used at each time step
+    //                  TODO: What are the units here? I assume kg. Is it cumulative used? or Total used for that time step?
     // Output: A dynamic array of position and velocity sets, last entry is final conditions
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
                                 const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, const cudaConstants* cConstant);
