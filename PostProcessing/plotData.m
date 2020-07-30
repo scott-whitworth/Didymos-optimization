@@ -288,6 +288,9 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.08,'LineWidth',1);
     hold on
    
+    xlim([1.0 1.025])
+    ylim([-0.738 -0.713])
+    zlim([-0.013 0.012])
     xlabel('x (a.u.)')
     ylabel('y (a.u.)')
     zlabel('z (a.u.)')
