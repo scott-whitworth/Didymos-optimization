@@ -268,7 +268,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "\tgamma_scale: "   << object.gamma_mutate_scale    << "\ttau_m_scale: "   << object.tau_mutate_scale   << "\tcoast_m_scale: " << object.coast_mutate_scale << "\n";
     os << "\ttriptime_scale: "<< object.triptime_mutate_scale << "\talpha_m_scale: " << object.alpha_mutate_scale << "\tbeta_m_scale: "  << object.beta_mutate_scale  << "\tzeta_m_scale: " << object.zeta_mutate_scale << "\n\n";
 
-    os << "Spacecraft Info\n";
+    os << "Spacecraft Info:\n";
     os << "\tthruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n";
     os << "\tc3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\tv_impact: " << object.v_impact << "\n";
     os << "\tpos_threshold: " << object.pos_threshold << "\tcoast_threshold: "<< object.coast_threshold<< "\n\n";
