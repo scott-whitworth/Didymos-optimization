@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 24th, 2020</i>
+<i>Last Updated: July 29th, 2020</i>
 
 <h2>File format for config file</h2>
 
