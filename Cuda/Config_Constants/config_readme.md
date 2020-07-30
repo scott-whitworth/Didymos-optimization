@@ -1,17 +1,16 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 29th, 2020</i>
+<i>Last Updated: July 30th, 2020</i>
 
 <h2>File format for config file</h2>
 
 - The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments
-- The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).
-- When reading the file, the assumption is made that the config file contains valid values for all variables and will result in exception thrown if invalid value (such as string instead of double) is used
+- The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).  When reading values, it takes the assignment as just a numeric value using standard string to int/double for appriopriate variable types and does not currently handle operations
+- When reading the file, the assumption is made that the config file contains valid simple values for all variables.
 
 <h2>The cudaConstants struct</h2>
 
 - In the code, the structure that uses the config file is called <b>cudaConstants</b> and is only accessed when being constructed (therefore changing the config file during a run would have no impact).
 - An overloaded << operator for cudaConstants that outputs the object's contents with labelling/formatting for better readibility to output onto terminal screen in the main function.
-- Function compareConstants() takes in two const cudaConstants that returns true if all variables are equivalent, can be used to verify no change in cudaConstants values.
 - For changing what config file is used, the file address can be changed where cudaConstants is declared within the main function in optimization.cu. Requires re-compiling the code.
 - Default address is "genetic.config" in same folder as the .exe file, optimization.cu has address set as "../Config_Constants/genetic.config".
 - If config file address is invalid, will output to terminal that is the case.
