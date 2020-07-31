@@ -138,7 +138,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     bool coast;
     while (curTime < timeFinal) {  // iterate until time is equal to the stop time
 
-        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
+        if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = 0;
         }
         else {
