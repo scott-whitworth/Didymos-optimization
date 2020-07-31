@@ -4,8 +4,9 @@
     //Functionalized rkCaLc() which is called by all three of the runge-kutta functions.
     //Added the z component to the calcAccel() function calls
 
-#include "runge_kutta.h"
-#include "../Thrust_Files/thruster.h"
+#include <math.h>
+#define _USE_MATH_DEFINES // for use of M_PI
+
 #include <iostream> // used for cout
 #include <cmath> // used for sine, cosine, and pow functions
 

@@ -1,14 +1,8 @@
-#ifndef motion_equations_h
-#define motion_equations_h
+#ifndef MOTION_EQUATIONS_H
+#define MOTION_EQUATIONS_H
 
 #include <ostream> // used in overload of stream output for elements
 #include <iomanip> // setprecision(int)
-
-#include "elements.h"
-#include "../Thrust_Files/coefficients.h"
-#include "../Thrust_Files/calcFourier.h"
-#include "../Thrust_Files/thruster.h" // used to pass in a thruster type
-#include "../constants.h"
 
 //Calculates the corresponding k for the Runge-Kutta computation
 // Units for k

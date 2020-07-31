@@ -1,10 +1,8 @@
-#ifndef runge_kuttaCUDA_cuh
-#define runge_kuttaCUDA_cuh
+#ifndef RUNGE_KUTTA_CUDA_CUH
+#define RUNGE_KUTTA_CUDA_CUH
+
+#include "../Thrust_FIles/calcFourier.h"
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
-#include "rkParameters.h" // rkParameters struct
-#include "../Genetic_Algorithm/individuals.h"
-#include "../Thrust_Files/thruster.h" // thrust.type
-#include "../Config_Constants/config.h"
 
 Individual* getNewStarts(Individual *prevGen);
 

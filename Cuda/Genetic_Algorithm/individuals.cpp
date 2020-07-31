@@ -1,4 +1,5 @@
-#include "individuals.h"
+#include <math.h>
+#define _USE_MATH_DEFINES // for use of M_PI
 
 // Default constructor
 Individual::Individual() {

@@ -1,10 +1,8 @@
-#ifndef INDIVIDUAL_H
-#define INDIVIDUAL_H
+#ifndef INDIVIDUALS_H
+#define INDIVIDUALS_H
 
 #include "../Runge_Kutta/rkParameters.h"
-#include "../Motion_Eqns/elements.h"
 #include "../Earth_calculations/earthInfo.h"
-#include "../Config_Constants/config.h"
 
 // Individual is a structure member of the genetric algorithm's population and has set of parameters and the resulting position and velocity
 struct Individual {

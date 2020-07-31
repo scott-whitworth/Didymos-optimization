@@ -1,5 +1,3 @@
-#include "rkParameters.h"
-
 template <class T> rkParameters<T>::rkParameters(T tripTime0,T r0, T theta0, T z0, T vr0, T vtheta0, T vz0, // elements<T>
                                                  T *gamma0, T *tau0, T *coast0) {  // coefficients<T>
     tripTime = tripTime0;

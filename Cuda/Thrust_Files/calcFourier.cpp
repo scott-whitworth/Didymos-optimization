@@ -3,7 +3,6 @@
 //Tasks Completed: 
     //Created calc_coast()
 
-#include "calcFourier.h"
 #include <math.h> // used for sine and cosine functions
 #include <iostream> // used for cout
 

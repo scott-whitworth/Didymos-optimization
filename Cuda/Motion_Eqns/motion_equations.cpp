@@ -4,7 +4,6 @@
 	//No recent changes
 	
 #include <math.h> // used for sine, cosine, and pow functions
-#include "motion_equations.h"
 
 template <class T>  __host__ __device__ elements<T> calc_k(const T & h, const elements<T>  & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal) {
 	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 

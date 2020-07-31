@@ -1,10 +1,5 @@
-#ifndef earthInfo_cpp
-#define earthInfo_cpp
-
 #include <iostream>  // cout
 #include <iomanip> // setprecision(int)  
-
-#include "earthInfo.h"
 
 // Constructor used to initialize the earth calculation data
 // Input: cConstants - Used to access impact date element data and the time range needed to be calculated (triptime max and min), passed into earthInitial_incremental()
@@ -134,5 +129,3 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime, c
  
   return yp;
 }
-
-#endif

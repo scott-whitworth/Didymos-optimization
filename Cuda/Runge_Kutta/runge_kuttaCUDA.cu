@@ -1,9 +1,3 @@
-#define _USE_MATH_DEFINES // for use of M_PI
-#include "runge_kuttaCUDA.cuh"
-#include "runge_kutta.h" // used for rkCalc() and distinguishableDifference()
-#include "rkParameters.h" // the struct containing the values passed to rk4simple()
-#include "../Thrust_Files/thruster.h"
-#include "../Genetic_Algorithm/ga_crossover.h" // crossover()
 #include <math.h>
 #include <iostream>
 #include <fstream> // for outputing to .csv file

@@ -1,8 +1,8 @@
 #include <iostream> // For cout
 #include <fstream> // For file reading
 #include <string>
+#include <iomanip>
 #include <time.h> // for time(0)
-#include "config.h"
 #include <math.h>
 #include "../constants.h" // for AU
 

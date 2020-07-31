@@ -1,12 +1,7 @@
-#ifndef GA_CROSSOVER_h
-#define GA_CROSSOVER_h
+#ifndef GA_CROSSOVER_H
+#define GA_CROSSOVER_H
 
 #include <random>
-
-#include "../Runge_Kutta/rkParameters.h"
-#include "individuals.h"
-#include "../Thrust_Files/thruster.h"
-#include "../Config_Constants/config.h"
 
 // Method of determing selection of survivors that will carry properties into the new individuals of the newGeneration
 // Input: pool - a shuffled pointer array of individuals to choose from

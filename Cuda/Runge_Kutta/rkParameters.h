@@ -1,11 +1,9 @@
-#ifndef rkParameters_h
-#define rkParameters_h
+#ifndef RKPARAMETERS_H
+#define RKPARAMETERS_H
 
 //structs
-#include "../Thrust_Files/coefficients.h"
 #include "../Motion_Eqns/elements.h"
-#include "../constants.h" // for SECONDS_IN_YEAR
-#include "runge_kutta.h"//used for rk4Simple()
+#include "../Thrust_Files/coefficients.h"
 
 //struct to hold all the values required for the runge-kutta functions
 template <class T> struct rkParameters {

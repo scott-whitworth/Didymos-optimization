@@ -2,8 +2,6 @@
 #define OUTPUT_H
 
 #include <fstream>
-#include "Config_Constants/config.h"
-#include "Genetic_Algorithm/individuals.h"
 
 // Utility function to display the currently best individual onto the terminal while the algorithm is still running
 // input: Individual to be displayed (assumed to be the best individual of the pool) and the value for the current generation iterated

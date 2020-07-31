@@ -1,8 +1,8 @@
-#ifndef runge_kutta_h
-#define runge_kutta_h
-#include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
+#ifndef RUNGE_KUTTA_H
+#define RUNGE_KUTTA_H
+#include "../Thrust_Files/coefficients.h"
 #include "../Thrust_Files/thruster.h" // used to pass in a thruster type
-#include "../Config_Constants/config.h"
+
 
 // Three variations of fifth-order Runge-Kutta algorthim for system of ODEs defined in ODE45.h
 // 1. rk4sys

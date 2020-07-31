@@ -1,6 +1,3 @@
-#include "output.h"
-#include "constants.h"
-#include "Thrust_files/thruster.h"
 #include <string>
 #include <iomanip>
 #include "math.h"

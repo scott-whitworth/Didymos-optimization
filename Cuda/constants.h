@@ -1,5 +1,5 @@
-#ifndef constants_h
-#define constants_h
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 #include <math.h>
 
 #define _USE_MATH_DEFINES // for use of M_PI

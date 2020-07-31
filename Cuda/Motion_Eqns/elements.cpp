@@ -1,7 +1,5 @@
 //Didymos-Optimization_Project:
-#include "elements.h"
 #include <iomanip> // setprecision(int)
-
 
 // constructors
 

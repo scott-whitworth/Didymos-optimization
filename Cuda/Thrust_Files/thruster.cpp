@@ -1,6 +1,5 @@
 //Didymos-Optimization_Project:
 
-#include "thruster.h"
 #include <iomanip> // used for setPrecision()
 
 template <class T>

@@ -1,8 +1,9 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 #include "../Earth_calculations/earthInfo.h"
-#include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
-#include "../Config_Constants/config.h"
+#include "../Genetic_Algorithm/individuals.h"
 #include "../output.h"
+#include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
+#include "../Genetic_Algorithm/ga_crossover.h"
 
 #include <iostream> // cout
 #include <iomanip>  // used for setw(), sets spaces between values output

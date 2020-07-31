@@ -1,5 +1,5 @@
-#ifndef elements_h
-#define elements_h
+#ifndef ELEMENTS_H
+#define ELEMENTS_H
 
 #include <iostream> // used for overloading << operator
 

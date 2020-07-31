@@ -1,7 +1,3 @@
-#include "../Runge_Kutta/rkParameters.h"
-#include "../Config_Constants/config.h"
-#include "../output.h"
-#include "ga_crossover.h"
 #include <iostream>
 #include <chrono>
 #include <vector>

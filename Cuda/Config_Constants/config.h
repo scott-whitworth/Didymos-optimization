@@ -1,5 +1,5 @@
-#ifndef CUDACONSTANTS_h
-#define CUDACONSTANTS_h
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <iostream>
 #include <random>
