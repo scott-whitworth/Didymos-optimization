@@ -257,7 +257,7 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
 
     os << "Runge-Kutta Related Values:\n";
     os << "\trk_tol: " << object.rk_tol << "\ttimeRes: " << object.timeRes << "\tGuessMaxPossibleSteps: " << object.GuessMaxPossibleSteps << "\n";
-    os << "\tmax_numsteps: " << object.max_numsteps << "\tmin_numsteps: " << object.min_numsteps << "\n\n";
+    os << "\tmax_numsteps: " << object.max_numsteps << "\tmin_numsteps: " << object.min_numsteps << "\tcpu_numsteps: " << object.cpu_numsteps << "\n\n";
 
     os << "Output Variables:\n";
     os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";
