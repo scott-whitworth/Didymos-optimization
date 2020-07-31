@@ -126,7 +126,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
-    thruster<T> thrust(cConstant);
+    thruster<T> thrust(cConstants);
 
     T curTime = timeInitial; // setting time equal to the start time
 
@@ -167,7 +167,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         //     minStep++;
         // }
 
-        stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
+        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ((curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
@@ -211,7 +211,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         //     minStep++;
         // }
 
-        stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
+        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {
             stepSize = -(curTime-timeInitial);
