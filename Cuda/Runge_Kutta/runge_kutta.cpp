@@ -86,7 +86,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
 
         // //Alter the step size for the next iteration
-        // stepSize *= calc_scalingFactor(u-error,error,absTol,stepSize);
+        // stepSize *= calc_scalingFactor(u-error,error,absTol);
 
         // //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         // if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
@@ -126,7 +126,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
     elements<T> k1, k2, k3, k4, k5, k6, k7;
 
-    thruster<T> thrust(cConstant);
+    thruster<T> thrust(cConstants);
 
     T curTime = timeInitial; // setting time equal to the start time
 
@@ -138,7 +138,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     bool coast;
     while (curTime < timeFinal) {  // iterate until time is equal to the stop time
 
-        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
+        if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = 0;
         }
         else {
@@ -154,16 +154,20 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         //array of time output as t         
         curTime += stepSize;
 
-        //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol,stepSize);
+        // //Alter the step size for the next iteration
+        // stepSize *= calc_scalingFactor(y_new-error,error,absTol);
 
-        // The step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps ) {
-            stepSize = (timeFinal-timeInitial) / cConstants->min_numsteps;
-        }
-        else if (stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps) ) {
-            stepSize = (timeFinal-timeInitial) / cConstants->max_numsteps;
-        }
+        // //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        // if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
+        //     maxStep++;
+        // }
+        // else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+        //     minStep++;
+        // }
+
+        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ((curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
@@ -194,17 +198,20 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         //array of time output as t         
         curTime += stepSize;
 
-        //Alter the step size for the next iteration
-        //Expected to be negative
-        stepSize *= calc_scalingFactor(y_new-error, error,absTol,stepSize);
+        // //Alter the step size for the next iteration
+        // stepSize *= calc_scalingFactor(y_new-error,error,absTol);
 
-        // The absolute value of step size cannot exceed the total time divided by 2 and cannot be smaller than the total time divided by 1000
-        if (-stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
-            stepSize = -(timeFinal-timeInitial) / cConstants->min_numsteps;
-        }
-        else if (-stepSize < ((timeFinal-timeInitial) / cConstants->max_numsteps)) {
-            stepSize = -(timeFinal-timeInitial) / cConstants->max_numsteps;
-        }
+        // //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        // if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
+        //     maxStep++;
+        // }
+        // else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+        //     stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+        //     minStep++;
+        // }
+
+        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {
             stepSize = -(curTime-timeInitial);
@@ -273,7 +280,7 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
     error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);    
 }
 
-template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize) {
+template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol) {
     // relative total error is the total error of all coponents of y which is used in scale.
     // scale is used to determine the next step size.
     T normTotError, scale;

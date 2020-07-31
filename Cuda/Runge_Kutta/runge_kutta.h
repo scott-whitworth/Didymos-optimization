@@ -68,7 +68,7 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 //      absTol: Sets the error tolerence for Runge-Kutta
 //      stepSize: time interval between data points (s)
 // Output: Unitless scaling coefficient which changes the time step each iteration
-template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, T & stepSize);
+template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol);
 
 #include "runge_kutta.cpp"
 #endif
