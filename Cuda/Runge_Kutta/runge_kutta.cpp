@@ -209,7 +209,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {
-            stepSize = curTime-timeInitial;
+            stepSize = -(curTime-timeInitial);
         }
     } //end of while
 }
