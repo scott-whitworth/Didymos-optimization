@@ -1,6 +1,4 @@
-//Didymos-Optimization_Project:
-
-#include <iomanip> // used for setPrecision()
+// Didymos-Optimization_Project:
 
 template <class T>
 thruster<T>::thruster(const cudaConstants* gConfig) {

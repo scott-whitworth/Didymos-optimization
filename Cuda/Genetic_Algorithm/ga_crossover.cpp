@@ -267,7 +267,7 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
     mutateMask(rng, mutation_mask, cConstants->mutation_rate);
 
     // Declare a record that is to describe what genes are being changed and by how much to record into mutateFile
-    double recordLog[OPTIM_VARS];
+    // double recordLog[OPTIM_VARS];
 
     // Iterate through the mutation_mask, mutating the corresponding gene if set to true
     for (int index = 0; index < OPTIM_VARS; index++) {
@@ -276,17 +276,17 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             if ( (index >= GAMMA_OFFSET) && (index <= (GAMMA_OFFSET + GAMMA_ARRAY_SIZE-1)) ) { // Gamma value
                 double randVar = getRand(cConstants->gamma_mutate_scale * annealing, rng);
                 newInd.coeff.gamma[index-GAMMA_OFFSET] += randVar;
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
             else if ( (index >= TAU_OFFSET) && (index <= (TAU_OFFSET + TAU_ARRAY_SIZE-1))) { // Tau value 
                 double randVar = getRand(cConstants->tau_mutate_scale * annealing, rng);
                 newInd.coeff.tau[index-TAU_OFFSET] += randVar;
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
             else if (index >= COAST_OFFSET && index <= (COAST_OFFSET + COAST_ARRAY_SIZE-1)) { // Coast value
                 double randVar = getRand(cConstants->coast_mutate_scale * annealing, rng);
                 newInd.coeff.coast[index-COAST_OFFSET] += randVar;
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
             else if (index == TRIPTIME_OFFSET) { // Time final
                 double randVar = getRand(cConstants->triptime_mutate_scale * annealing, rng);
@@ -299,17 +299,17 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
                     newInd.tripTime = cConstants->triptime_max - cConstants->timeRes;
                 }
 
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
             else if (index == ZETA_OFFSET) { // Zeta
                 double randVar = getRand(cConstants->zeta_mutate_scale * annealing, rng);
                 newInd.zeta += randVar;
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
             else if (index == BETA_OFFSET) { // Beta
                 double randVar = getRand(cConstants->beta_mutate_scale * annealing, rng);
                 newInd.beta = randVar;
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
     
                 // A check to ensure beta remains in value range 0 to pi, doesn't update recordLog
                 if (newInd.beta < 0) {
@@ -322,24 +322,25 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
             else if (index == ALPHA_OFFSET) { // Alpha
                 double randVar = getRand(cConstants->alpha_mutate_scale * annealing, rng);
                 newInd.alpha += randVar;                
-                recordLog[index] = randVar;
+                // recordLog[index] = randVar;
             }
         }
-        else { // Record if the gene is not being mutated
-            recordLog[index] = 0;
-        }
+        // else { // Record if the gene is not being mutated
+        //     recordLog[index] = 0;
+        // }
     }
 
     // If in record mode, append the recordLog into the .csv file
-    if (cConstants->record_mode == true) {
-        int genesMutated = 0;
-        for (int i = 0; i < OPTIM_VARS; i++) {
-            if (mutation_mask[i] == true) {
-                genesMutated++;
-            }
-        }
-        recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
-    }
+    // if (cConstants->record_mode == true) {
+    //     int genesMutated = 0;
+    //     for (int i = 0; i < OPTIM_VARS; i++) {
+    //         if (mutation_mask[i] == true) {
+    //             genesMutated++;
+    //         }
+    //     }
+    //     recordMutateFile(cConstants, generation, annealing, genesMutated, recordLog);
+    // }
+
     delete [] mutation_mask;
     return newInd;
 }
@@ -388,7 +389,6 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 // Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
 //         Returns number of new individuals created (newIndCount)
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, std::mt19937_64 & rng, double generation) {
-
     int * mask = new int[OPTIM_VARS];
     int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
     int numPairs = survivorSize / 2; // Value for how many pairs to use and produce in each loop (as one iteration through a loop produces a new pair)

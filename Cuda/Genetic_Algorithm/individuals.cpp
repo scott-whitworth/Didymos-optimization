@@ -81,7 +81,7 @@ bool Individual::operator==(Individual &other) {
     }
 }
 
-// Compare two individuals by their positional difference values
+// Compare two individuals by their positional difference values, used in standard sort to have array contain lowest posDiff individual at start
 // input: two individuals
 // output: returns true if personB has a higher positional difference than personA
 bool BetterPosDiff(Individual& personA, Individual& personB) {
@@ -94,7 +94,7 @@ bool BetterPosDiff(Individual& personA, Individual& personB) {
 
 }
 
-// Compare two individuals by their velocity difference values
+// Compare two individuals by their velocity difference values, used in standard sort to have array contain highest velDiff individual at start
 // input: two individuals
 // output: returns true if personB has a lower velocity difference than personA
 bool BetterVelDiff(Individual& personA, Individual& personB) {

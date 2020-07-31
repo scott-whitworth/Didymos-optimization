@@ -55,12 +55,12 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
 // Output: The two streams are appended the individual's thruster information and anneal value
 void writeThrustToFiles(std::ofstream& ExcelOutput, std::ofstream& BinOutput, double &currentGeneration, Individual &individual, const cudaConstants * cConstants);
 
-// Initialize the .csv files
+// Initialize some of the files used in record mode with header rows
 // input: cConstants - to access time_seed for deriving file name conventions and also thruster type
 // output: files BestInGenerations-[time_seed].csv, WorstInGenerations-[time_seed].csv, if thruster type is not NO_THRUST also BestThrustGens-[time_seed].csv & WorstThrustGens-[time_seed].csv, are given initial header row info
 void initializeRecord(const cudaConstants * cConstants);
 
-// Take in the current state of the generation and appends to files
+// Take in the current state of the generation and appends to files that were initialized in initializeRecord()
 // input: cConstants - access time_seed to derive file name
 //        pool - passes pool[0] to writeIndividualToFiles & writeThrustToFiles
 //        generation - passed to writeIndividualToFiles & writeThrustToFiles

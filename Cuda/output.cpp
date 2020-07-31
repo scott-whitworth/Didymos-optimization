@@ -464,14 +464,14 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 //        launchCon - access elements of earth 
 // output: EarthCheckValues.csv is created and holds rows of element info on earth with timeStamp on each row
 void recordEarthData(const cudaConstants * cConstants) {
-  double timeStamp = cConstants->triptime_min*SECONDS_IN_YEAR;
+  double timeStamp = cConstants->triptime_min;
 
   int seed = cConstants->time_seed;
   std::ofstream earthValues;
   earthValues.open("EarthCheckValues-"+ std::to_string(seed) +".csv");
   // Set header row for the table to record values, with timeStamp
   earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
-  while (timeStamp < cConstants->triptime_max*SECONDS_IN_YEAR) {
+  while (timeStamp < cConstants->triptime_max) {
       earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
       timeStamp += cConstants->timeRes*24; // Increment to next day as timeRes is assumed to be set to every hour in this output
   }

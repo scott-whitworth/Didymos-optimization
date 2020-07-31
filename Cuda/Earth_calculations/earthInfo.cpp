@@ -62,8 +62,8 @@ elements<double> EarthInfo::getCondition(const double & currentTime) {
         std::cout << "Earth condition index being accessed is less than startTime! Returning nearest index\n";
         index = calcIndex(startTime);
     }
-    else if (index > calcIndex(endTime)) {
-        std::cout << "Earth condition index being accessed is greater than to endTime! Returning nearest valid index\n";
+    else if (index > calcIndex(endTime) - 1) {
+        std::cout << "Earth condition index being accessed is greater than to endTime-1! Returning nearest valid index\n";
         index = calcIndex(endTime) - 1;
     }
 

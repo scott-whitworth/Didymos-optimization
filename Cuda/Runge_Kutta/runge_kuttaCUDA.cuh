@@ -4,8 +4,6 @@
 #include "../Thrust_FIles/calcFourier.h"
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 
-Individual* getNewStarts(Individual *prevGen);
-
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, const cudaConstants* cConstant);
 

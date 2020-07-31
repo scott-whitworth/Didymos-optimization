@@ -40,7 +40,6 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     }
     // If iterated through and all were within tolerance, success
     return true;
-    // std::cout << "\nallWithinTolerance() returned a best posDiff of " << pool[0].posDiff << std::endl;
 }
 
 // The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
@@ -124,7 +123,6 @@ double optimize(const cudaConstants* cConstants) {
         }
     }
 
-
     Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
     int newInd = cConstants->num_individuals; // the whole population is new the first time through the loop
 
@@ -155,15 +153,12 @@ double optimize(const cudaConstants* cConstants) {
              }
         }
         // Note to future development, should shuffle and sort be within selectWinners method?
-        std::shuffle(inputParameters, inputParameters + cConstants->num_individuals, rng); // shuffle the Individiuals to use random members for the competition
-        selectSurvivors(inputParameters, cConstants->num_individuals, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, not necessarrily only the best ones
-        std::sort(inputParameters, inputParameters + cConstants->num_individuals); // put the individuals in order so we can replace the worst ones
+        selectSurvivors(inputParameters, cConstants->num_individuals, cConstants->survivor_count, survivors); // Choose which individuals are in survivors, current method selects half to be best posDiff and other half to be best velDiff
+        std::sort(inputParameters, inputParameters + cConstants->num_individuals); // put the individuals in order so we can replace the worst ones at the end of the array and access the best at the start
 
         // Display a '.' to the terminal to show that a generation has been performed
         // This also serves to visually seperate the generation display on the terminal screen
         std::cout << '.';
-        // std::cout << "\nGeneration " << static_cast<int>(generation) << " returned a best posDiff of " << inputParameters[0].posDiff << std::endl;
-
 
         // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
         currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
@@ -208,17 +203,16 @@ double optimize(const cudaConstants* cConstants) {
         
         // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
     } while ( !convergence && generation < cConstants->max_generations);
-    // 
+    // Call record for final generation regardless of frequency, for the annealing set to -1 (since the anneal is only relevant to the next generation and so means nothing for the last one)
     if (cConstants->record_mode == true) {
         recordGenerationPerformance(cConstants, inputParameters, generation, -1, cConstants->num_individuals);
     }
-    // Only call finalRecord if the results actually converged on a solution
+    // Only call finalRecord if the results actually converged on a solution, also display last generation onto terminal
     if (convergence) {
         terminalDisplay(inputParameters[0], generation);
         finalRecord(cConstants, inputParameters, static_cast<int>(generation));
     }
     
-
     delete [] inputParameters;
     delete [] survivors;
 
@@ -242,21 +236,21 @@ int main () {
         cConstants->time_seed = zero_seed + run*100;
 
         // Display contents of cConstants being used for this run and how many runs
-        std::cout << *cConstants << std::endl;
-        std::cout << "Performing run #" << run << " with current parameters\n";
+        std::cout << *cConstants;
+        std::cout << "\tPerforming run #" << run+1 << "\n\n";
 
         // pre-calculate a table of Earth's position within possible mission time range
         launchCon = new EarthInfo(cConstants); // a global variable to hold Earth's position over time, assigned new info for this run of parameters
 
-        // File stream for outputting values that were calculated in EarthInfo constructor
+        // File output of element values that were calculated in EarthInfo constructor for verification
         /*if (cConstants->record_mode == true) {
             recordEarthData(cConstants, run);
         }*/
-            optimize(cConstants);
+        // Call optimize with the current parameters in cConstants
+        optimize(cConstants);
 
-        delete launchCon; // Deallocate launchCon info for this run as it may be needing a different time range in the next run
+        delete launchCon; // Deallocate launchCon info for this run as it may be using a different time range in the next run
     }
-    
     // Now that the optimize function is done (assumed that optimize() also records it), deallocate memory of the cudaConstants
     delete cConstants;
     

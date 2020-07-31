@@ -134,8 +134,12 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     //set to 0 initially
     T massFuelSpent = 0;
 
+    // Setting step size to be used until the last step
+    stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
+    
     elements<T> error;
     bool coast;
+    
     while (curTime < timeFinal) {  // iterate until time is equal to the stop time
 
         if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
@@ -165,7 +169,6 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         //     stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
         // }
 
-        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ((curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);

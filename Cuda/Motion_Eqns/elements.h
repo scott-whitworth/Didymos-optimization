@@ -8,14 +8,14 @@ template <class T> struct elements {
     // All in relation to the plane of the sun in cylindrical coordinates
 
     // Positions
-    T r; //radius (in plane) - AU
+    T r;     //radius (in plane) - AU
     T theta; //angular position (in plane) - Radians
-    T z; //axial position (out-of-plane) - AU
+    T z;     //axial position (out-of-plane) - AU
 
     // Velocities
-    T vr; // Radial velocity (in plane) - AU/s
+    T vr;     // Radial velocity (in plane) - AU/s
     T vtheta; // tangential velocity (in plane) - AU/s
-    T vz; // axial velocity (out-of-plane) - AU/s
+    T vz;     // axial velocity (out-of-plane) - AU/s
 
     // Constructor which sets all the components
     __host__ __device__ elements<T>(T r0, T theta0, T z0, T vr0, T vtheta0, T vz0);
