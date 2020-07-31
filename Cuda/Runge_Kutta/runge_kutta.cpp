@@ -19,8 +19,8 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
     T curTime = timeInitial; // setting time equal to the start time
     int n = 0; // setting the initial iteration number equal to 0
-    int minStep = 0;
-    int maxStep = 0;
+    // int minStep = 0;
+    // int maxStep = 0;
 
     //mass of fuel expended (kg)
     //set to 0 initially
