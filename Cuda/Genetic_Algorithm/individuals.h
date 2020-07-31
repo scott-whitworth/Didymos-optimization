@@ -54,6 +54,14 @@ bool BetterPosDiff(Individual& personA, Individual& personB);
 // output: returns true if personB has a higher velocity difference than personA
 bool BetterVelDiff(Individual& personA, Individual& personB);
 
+//Utility to calculate the position difference between a position velocity set and the asteroid final position
+// Input: currentState - set of position and velocity coordinates
+//                       Often the final position/velocity of the spacecraft at the end of a RK run
+//        cConstants   - Configuration information, primarily using the Asteroid final position and velocity
+// Return: Root of the sum of squares
+//         posDiff = sqrt(  (ast_r - craft_r) ^ 2 + (ast_r * ast_theta - craft_r * craft_theta % 2Pi)^2 +  (ast_z - craft_z)^2  )
+__host__ __device__ double calcPosDiff(const elements<double>& currentState, const cudaConstants* cConstants);
+
 #include "individuals.cpp"
 
 #endif
