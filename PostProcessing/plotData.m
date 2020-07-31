@@ -285,7 +285,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     plot3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3),'*')
     hold on
     
-    quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.08,'LineWidth',1);
+    quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.005,'LineWidth',1);
     hold on
    
     xlim([launchPos(1)-2*r_esoi, launchPos(1)+2*r_esoi])
