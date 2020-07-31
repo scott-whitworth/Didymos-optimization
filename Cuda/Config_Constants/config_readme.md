@@ -30,7 +30,7 @@ Table 1. Setup & General Values
 | GuessMaxPossibleSteps         | int        	| None  	| Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp, should be greater than possible number of steps taken in the runge kutta methods |   	|
 | min_numsteps                 	| int        	| None  	| Minimum number of steps in the runge kutta used in the GPU and in EarthInfo's construction	                                                                                                                        |   	|
 | max_numsteps                 	| int        	| None  	| Maximum number of steps in the runge kutta used in the GPU and in EarthInfo's construction                                                                                                                       |   	|
-| cpu_numsteps                 	| int        	| None  	| Set time step size in the runge kutta used in the CPU, which is called after a set of parameters lead to convergence in the GPU and needs to be recorded in trajectoryPrint() |   	|
+| cpu_numsteps                 	| int        	| None  	| Set time step size in the runge kutta used in the CPU, which is called after a set of parameters lead to convergence in the GPU and needs to be recorded in trajectoryPrint() (should be greater than max_numsteps) |   	|
 | timeRes                    	| int        	| seconds   | The "gap" between each calculation for Earth's backward runge-kutta, for example 3600 sets every calculation to be 1 hour apart                                                   |   	|
 
 Table 2. Genetic Algorithm Values
