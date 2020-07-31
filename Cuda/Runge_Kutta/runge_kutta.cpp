@@ -198,20 +198,19 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         //array of time output as t         
         curTime += stepSize;
 
-        // //Alter the step size for the next iteration
-        // stepSize *= calc_scalingFactor(y_new-error,error,absTol);
+        //Alter the step size for the next iteration
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol);
 
-        // //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        // if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
-        //     stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
-        //     maxStep++;
-        // }
-        // else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
-        //     stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
-        //     minStep++;
-        // }
+        //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
+        if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
+            stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
+            maxStep++;
+        }
+        else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
+            stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+            minStep++;
+        }
 
-        stepSize = (timeFinal-timeInitial) / cConstants->cpu_numsteps;
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {
             stepSize = -(curTime-timeInitial);
