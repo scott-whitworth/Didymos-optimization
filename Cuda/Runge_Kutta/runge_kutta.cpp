@@ -194,7 +194,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
-        curTime += stepSize;
+        curTime -= stepSize;
 
         //Alter the step size for the next iteration
         stepSize *= calc_scalingFactor(y_new-error,error,absTol);
@@ -209,7 +209,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
         // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) < timeInitial) {
-            stepSize = -(curTime-timeInitial);
+            stepSize = curTime-timeInitial;
         }
     } //end of while
 }
