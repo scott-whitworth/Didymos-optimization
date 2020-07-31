@@ -75,10 +75,10 @@ void cudaConstants::FileRead(std::string fileName) {
                     this->zeta_random_start_range = std::stod(variableValue);
                 }
                 else if (variableName == "triptime_max") {
-                    this->triptime_max = std::stod(variableValue);
+                    this->triptime_max = std::stod(variableValue) * SECONDS_IN_YEAR;
                 }
                 else if (variableName == "triptime_min") {
-                    this->triptime_min = std::stod(variableValue);
+                    this->triptime_min = std::stod(variableValue) * SECONDS_IN_YEAR;
                 }
                 else if (variableName == "gamma_random_start_range") {
                     this->gamma_random_start_range = std::stod(variableValue);
@@ -133,7 +133,7 @@ void cudaConstants::FileRead(std::string fileName) {
                     this->coast_mutate_scale = std::stod(variableValue);
                 }
                 else if (variableName == "triptime_mutate_scale") {
-                    this->triptime_mutate_scale = std::stod(variableValue);
+                    this->triptime_mutate_scale = std::stod(variableValue) * SECONDS_IN_YEAR;
                 }
                 else if (variableName == "zeta_mutate_scale") {
                     this->zeta_mutate_scale = std::stod(variableValue);
