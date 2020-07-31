@@ -202,12 +202,12 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         stepSize *= calc_scalingFactor(y_new-error,error,absTol);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
-        if (stepSize > (timeFinal-timeInitial) / cConstant->min_numsteps) {
-            stepSize = (timeFinal-timeInitial) / cConstant->min_numsteps;
+        if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
+            stepSize = (timeFinal-timeInitial) / cConstants->min_numsteps;
             maxStep++;
         }
         else if (stepSize < ((timeFinal-timeInitial) / cConstant->max_numsteps)) {
-            stepSize = (timeFinal-timeInitial) / cConstant->max_numsteps;
+            stepSize = (timeFinal-timeInitial) / cConstants->max_numsteps;
             minStep++;
         }
 
