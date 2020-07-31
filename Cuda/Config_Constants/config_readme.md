@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: July 30th, 2020</i>
+<i>Last Updated: July 31st, 2020</i>
 
 <h2>File and variable format for config file</h2>
 
@@ -27,9 +27,10 @@ Table 1. Setup & General Values
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
 | rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
-| GuessMaxPossibleSteps         | double     	| None  	| Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp	                                                                                                                                    |   	|
-| min_numsteps                 	| double     	| None  	| Minimum time step size in runge kutta	                                                                                                                                    |   	|
-| max_numsteps                 	| double     	| None  	| Maximum time step size in runge kutta                                                                                                                                     |   	|
+| GuessMaxPossibleSteps         | double     	| None  	| Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp	                                                    |   	|
+| min_numsteps                 	| double     	| None  	| Minimum time step size in the runge kutta used in the GPU	                                                                                                                        |   	|
+| max_numsteps                 	| double     	| None  	| Maximum time step size in the runge kutta used in the GPU                                                                                                                         |   	|
+| cpu_numsteps                 	| double     	| None  	| Set time step size in the runge kutta used in the CPU, which is called after a set of parameters lead to convergence in the GPU and needs to be recorded in trajectoryPrint()     |   	|
 | timeRes                    	| int        	| seconds   | The "gap" between each calculation for Earth's backward runge-kutta, for example 3600 sets every calculation to be 1 hour apart                                                   |   	|
 
 Table 2. Genetic Algorithm Values
