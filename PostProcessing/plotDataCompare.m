@@ -168,16 +168,22 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlabel('t (s)')
     
     co = angles(cR(7,:),tripTime1,coast1);
+    coast1 = sin(co).^2 < coast_threshold1;
+    % separating the data at or above the threshold from those below
+    above1 = sin(co).^2; below1 = sin(co).^2;
+    above1(coast1) = NaN; below1(~coast1) = NaN;
     subplot(2,2,2)
-    plot(cR(7,:),sin(co).^2)
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
+    plot(cR(7,:),above1,'color','b')
+    hold on
+    plot(cR(7,:),below1,'color','k')
     hold on
     coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
     plot(cR(7,:),coast_threshold1Plot,'--','color','r')
     xlim([0 tripTime1]), ylim([0,1])
-    legend({'spacecraft 1','threshold 1'})
+    legend({'thrusting','coasting','threshold'})
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
     hold off
     
     fuelSpent1 = (fuelMass1 - cR(11,:))/fuelMass1;
@@ -208,16 +214,22 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlabel('t (s)')
     
     do = angles(dR(7,:),tripTime2,coast2);
+    coast2 = sin(do).^2 < coast_threshold2;
+    % separating the data at or above the threshold from those below
+    above2 = sin(do).^2; below2 = sin(do).^2;
+    above2(coast2) = NaN; below2(~coast2) = NaN;
     subplot(2,2,2)
-    plot(dR(7,:),sin(do).^2)
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
+    plot(dR(7,:),above2,'color','b')
+    hold on
+    plot(dR(7,:),below2,'color','k')
     hold on
     coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
     plot(dR(7,:),coast_threshold2Plot,'--','color','r')
     xlim([0 tripTime2]), ylim([0,1])
-    legend({'spacecraft 2','threshold 2'})
+    legend({'thrusting','coasting','threshold'})
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
     hold off
     
     fuelSpent2 = (fuelMass2 - dR(11,:))/fuelMass2;
