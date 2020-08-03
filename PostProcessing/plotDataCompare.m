@@ -350,7 +350,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlim([0 tripTime1])
     legend('spacecraft 1')
     title('In-plane thrust angle')
-    hold off
     
     % Tau plots
     subplot(2,3,2)
@@ -404,7 +403,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlim([0 tripTime2])
     legend('spacecraft 2')
     title('In-plane thrust angle')
-    hold off
     
     % Tau plots
     subplot(2,3,2)
@@ -413,7 +411,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlim([0 tripTime2])
     legend('spacecraft 2')
     title('Out-of-plane thrust angle')
-    hold off
     
     % Psi plots
     subplot(2,3,3)
@@ -422,7 +419,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlim([0 tripTime2])
     legend('spacecraft 2')
     title('Coast series')
-    hold off
     
     % thrust fractions
     
@@ -528,7 +524,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     hold on
     % Initial velocity vector
     quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0 1]);
-    hold on
    
     % analytical scaling
     max_x = launchPos1(1); max_y = launchPos1(2); max_z = launchPos1(3);
@@ -569,6 +564,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     zlabel('z (a.u.)')
     title('Launch conditions')
     legend({'ESOI_1','Position_1','Velocity_1','ESOI_2','Position_2','Velocity_2'})
-    hold on
+    hold off
     
     end

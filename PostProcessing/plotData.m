@@ -313,7 +313,6 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     % Initial velocity vector
     quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.005,'LineWidth',1);
-    hold on
    
     % analytical scaling
     xlim([launchPos(1)-2*r_esoi, launchPos(1)+2*r_esoi])
@@ -324,7 +323,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     zlabel('z (a.u.)')
     title('Launch conditions')
     legend({'ESOI','Position','Velocity'})
-    hold on
+    hold off
     
     % figure (7)
     % polar(t,r_esoi*ones(1,n))
