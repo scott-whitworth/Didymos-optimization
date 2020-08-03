@@ -180,7 +180,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     subplot(2,3,4)
     plot(cR(7,:), au*cR(10,:).*sin(cR(8,:)).*cos(cR(9,:)))
-    xlim([0 tripTime]), ylim([-1,1])
+    xlim([0 tripTime])
     %legend('matlab','c')
     title('Radial acceleration')
     xlabel('t (s)')
@@ -188,7 +188,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     subplot(2,3,5)
     plot(cR(7,:), au*cR(10,:).*cos(cR(8,:)).*cos(cR(9,:)))
-    xlim([0 tripTime]), ylim([-1,1])
+    xlim([0 tripTime])
     %legend('matlab','c')
     title('Tangential acceleration')
     xlabel('t (s)')
@@ -196,7 +196,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     subplot(2,3,6)
     plot(cR(7,:), au*cR(10,:).*sin(cR(9,:)))
-    xlim([0 tripTime]), ylim([-1,1])
+    xlim([0 tripTime])
     %legend('matlab','c')
     title('Axial acceleration')
     xlabel('t (s)')

@@ -267,7 +267,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,4)
     plot(cR(7,:), au*cR(10,:).*sin(cR(8,:)).*cos(cR(9,:)))
-    xlim([0 tripTime1]), ylim([-1,1])
+    xlim([0 tripTime1])
     legend({'spacecraft 1'})
     title('Radial acceleration')
     xlabel('t (s)')
@@ -275,7 +275,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,5)
     plot(cR(7,:), au*cR(10,:).*cos(cR(8,:)).*cos(cR(9,:)))
-    xlim([0 tripTime1]), ylim([-1,1])
+    xlim([0 tripTime1])
     legend({'spacecraft 1'})
     title('Tangential acceleration')
     xlabel('t (s)')
@@ -283,7 +283,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,6)
     plot(cR(7,:), au*cR(10,:).*sin(cR(9,:)))
-    xlim([0 tripTime1]), ylim([-1,1])
+    xlim([0 tripTime1])
     legend({'spacecraft 1'})
     title('Axial acceleration')
     xlabel('t (s)')
@@ -318,7 +318,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,4)
     plot(dR(7,:), au*dR(10,:).*sin(dR(8,:)).*cos(dR(9,:)))
-    xlim([0 tripTime2]), ylim([-1,1])
+    xlim([0 tripTime2])
     legend({'spacecraft 2'})
     title('Radial acceleration')
     xlabel('t (s)')
@@ -326,7 +326,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,5)
     plot(dR(7,:), au*dR(10,:).*cos(dR(8,:)).*cos(dR(9,:)))
-    xlim([0 tripTime2]), ylim([-1,1])
+    xlim([0 tripTime2])
     legend({'spacecraft 2'})
     title('Tangential acceleration')
     xlabel('t (s)')
@@ -334,7 +334,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     subplot(2,3,6)
     plot(dR(7,:), au*dR(10,:).*sin(dR(9,:)))
-    xlim([0 tripTime2]), ylim([-1,1])
+    xlim([0 tripTime2])
     legend({'spacecraft 2'})
     title('Axial acceleration')
     xlabel('t (s)')
