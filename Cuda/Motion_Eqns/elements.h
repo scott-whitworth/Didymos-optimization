@@ -29,8 +29,8 @@ template <class T> struct elements {
     // Operator overloads, used in runge kutta for the math between elements
     __host__ __device__ elements<T> operator+(const elements<T>& e) const;
     __host__ __device__ elements<T> operator-(const elements<T>& e) const;
-    __host__ __device__ elements<T> operator*(const elements<T>& e) const;
-    __host__ __device__ elements<T> operator/(const elements<T>& e) const;
+    // __host__ __device__ elements<T> operator*(const elements<T>& e) const;
+    // __host__ __device__ elements<T> operator/(const elements<T>& e) const;
 
     // Operator overloads, for scalars
     __host__ __device__ elements<T> operator*(const T& i) const;

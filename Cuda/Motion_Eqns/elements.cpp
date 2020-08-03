@@ -36,13 +36,13 @@ template <class T> elements<T> elements<T>::operator-(const elements<T> & e) con
     return elements<T>(this->r - e.r, this->theta - e.theta, this->z - e.z, this->vr - e.vr, this->vtheta - e.vtheta, this->vz - e.vz);
 }
 
-template <class T> elements<T> elements<T>::operator*(const elements<T> & e) const {
-    return elements<T>(this->r * e.r, this->theta * e.theta, this->z * e.z, this->vr * e.vr, this->vtheta * e.vtheta, this->vz * e.vz);
-}
+// template <class T> elements<T> elements<T>::operator*(const elements<T> & e) const {
+//     return elements<T>(this->r * e.r, this->theta * e.theta, this->z * e.z, this->vr * e.vr, this->vtheta * e.vtheta, this->vz * e.vz);
+// }
 
-template <class T> elements<T> elements<T>::operator/(const elements<T> & e) const {
-    return elements<T>(this->r / e.r, this->theta / e.theta, this->z / e.z, this->vr / e.vr, this->vtheta / e.vtheta, this->vz / e.vz);
-}
+// template <class T> elements<T> elements<T>::operator/(const elements<T> & e) const {
+//     return elements<T>(this->r / e.r, this->theta / e.theta, this->z / e.z, this->vr / e.vr, this->vtheta / e.vtheta, this->vz / e.vz);
+// }
 
 //constructor which takes in an scalar
 template <class T> elements<T> elements<T>::operator*(const T & i) const {
