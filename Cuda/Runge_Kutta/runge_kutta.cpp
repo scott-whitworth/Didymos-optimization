@@ -30,6 +30,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     y_new[0] = y0;
     times[0] = timeInitial;
 
+    // Check the thruster type before performing calculations
     if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
         gamma[0] = tau[0] = accel_output[0] = fuelSpent[0] = 0;
     }
@@ -40,6 +41,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
         // array of acceleration for binary output
         accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
+        // array of fuel spent for binary output
         fuelSpent[0] = massFuelSpent;
     }
 
@@ -51,6 +53,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
 
         u = y_new[n];
 
+        // Check the thruster type before performing calculations
         if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = massFuelSpent = 0;
         }
@@ -74,6 +77,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         //Time of iteration is set to the previous time plus the step size used within that iteration
         times[n+1] = curTime;
 
+        // Check the thruster type before performing calculations
         if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
             gamma[n+1] = tau[n+1] = accel_output[n+1] = fuelSpent[n+1] = 0;
         }
@@ -98,8 +102,10 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         //     minStep++;
         // }
 
+        // Choosing a constant max number of steps for high precision final output
         stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
         
+        // shorten the last step to end exactly at time final
         if ( (curTime+stepSize) > timeFinal) {
             stepSize = (timeFinal-curTime);
         }
@@ -110,6 +116,8 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     } //end of while 
     lastStep = n;
     
+    // Test outputs
+
     std::cout << "rk4sys posDiff: " << sqrt(pow(cConstant->r_fin_ast - y_new[lastStep].r, 2) + pow(cConstant->r_fin_ast * cConstant->theta_fin_ast - y_new[lastStep].r * fmod(y_new[lastStep].theta, 2 * M_PI), 2) + pow(cConstant->z_fin_ast - y_new[lastStep].z, 2)) << std::endl;
     std::cout << "rk4sys velDiff: " << sqrt(pow(cConstant->vr_fin_ast - y_new[lastStep].vr, 2) + pow(cConstant->vtheta_fin_ast - y_new[lastStep].vtheta, 2) + pow(cConstant->vz_fin_ast - y_new[lastStep].vz, 2));
 
@@ -142,6 +150,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
     
     while (curTime < timeFinal) {  // iterate until time is equal to the stop time
 
+        // Check the thruster type before performing calculations
         if (cConstants->thruster_type == thruster<double>::NO_THRUST) {
             coast = accel = 0;
         }

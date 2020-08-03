@@ -84,6 +84,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
 
         while (curTime < threadRKParameters.tripTime) {
 
+            // Check the thruster type before performing calculations
             if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
                 coast = curAccel = 0;
             }
@@ -127,6 +128,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
          // output to this thread's index
         individuals[threadId].finalPos = curPos;
 
+        // Calculate new values for this thread
         individuals[threadId].getPosDiff(cConstant);
         individuals[threadId].getVelDiff(cConstant);
         individuals[threadId].getCost(cConstant);

@@ -167,9 +167,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     ylabel('a_{thrust} (m/s^{2}')
     xlabel('t (s)')
     
-    hold off
-    
-    
     co = angles(cR(7,:),tripTime1,coast1);
     subplot(2,2,2)
     plot(cR(7,:),sin(co).^2)
@@ -209,9 +206,6 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     title('Acceleration due to thrust')
     ylabel('a_{thrust} (m/s^{2})')
     xlabel('t (s)')
-    
-    hold off
-    
     
     do = angles(dR(7,:),tripTime2,coast2);
     subplot(2,2,2)
@@ -272,28 +266,28 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
-    plot(cR(7,:),sin(cR(8,:)).*cos(cR(9,:)))
+    plot(cR(7,:), au*cR(10,:).*sin(cR(8,:)).*cos(cR(9,:)))
     xlim([0 tripTime1]), ylim([-1,1])
     legend({'spacecraft 1'})
-    title('Radial thrust fraction')
+    title('Radial acceleration')
     xlabel('t (s)')
-    ylabel('sin(\gamma)cos(\tau)')
+    ylabel('a_{r} (m/s^{2})')
     
     subplot(2,3,5)
-    plot(cR(7,:),cos(cR(8,:)).*cos(cR(9,:)))
+    plot(cR(7,:), au*cR(10,:).*cos(cR(8,:)).*cos(cR(9,:)))
     xlim([0 tripTime1]), ylim([-1,1])
     legend({'spacecraft 1'})
-    title('Tangential thrust fraction')
+    title('Tangential acceleration')
     xlabel('t (s)')
-    ylabel('cos(\gamma)cos(\tau)')
+    ylabel('a_{\theta} (m/s^{2})')
     
     subplot(2,3,6)
-    plot(cR(7,:),sin(cR(9,:)))
+    plot(cR(7,:), au*cR(10,:).*sin(cR(9,:)))
     xlim([0 tripTime1]), ylim([-1,1])
     legend({'spacecraft 1'})
-    title('Off-plane thrust fraction')
+    title('Axial acceleration')
     xlabel('t (s)')
-    ylabel('sin(\tau)')
+    ylabel('a_{z} (m/s^{2})')
     
     % only spacecraft 2
     figure(5)
@@ -323,6 +317,116 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
+    plot(dR(7,:), au*dR(10,:).*sin(dR(8,:)).*cos(dR(9,:)))
+    xlim([0 tripTime2]), ylim([-1,1])
+    legend({'spacecraft 2'})
+    title('Radial acceleration')
+    xlabel('t (s)')
+    ylabel('a_{r} (m/s^{2})')
+    
+    subplot(2,3,5)
+    plot(dR(7,:), au*dR(10,:).*cos(dR(8,:)).*cos(dR(9,:)))
+    xlim([0 tripTime2]), ylim([-1,1])
+    legend({'spacecraft 2'})
+    title('Tangential acceleration')
+    xlabel('t (s)')
+    ylabel('a_{\theta} (m/s^{2})')
+    
+    subplot(2,3,6)
+    plot(dR(7,:), au*dR(10,:).*sin(dR(9,:)))
+    xlim([0 tripTime2]), ylim([-1,1])
+    legend({'spacecraft 2'})
+    title('Axial acceleration')
+    xlabel('t (s)')
+    ylabel('a_{z} (m/s^{2})')
+
+    % Thrust angle plots (spacecraft 1)
+    figure(6)
+    
+    % Gamma plots
+    subplot(2,3,1)
+    plot(cR(7,:),mod(cR(8,:),2*pi))
+    xlabel('t (s)'), ylabel('\gamma (rad.)')
+    xlim([0 tripTime1])
+    legend('spacecraft 1')
+    title('In-plane thrust angle')
+    hold off
+    
+    % Tau plots
+    subplot(2,3,2)
+    plot(cR(7,:),cR(9,:))
+    xlabel('t (s)'), ylabel('\tau (rad.)')
+    xlim([0 tripTime1])
+    legend('spacecraft 1')
+    title('Out-of-plane thrust angle')
+    
+    % Psi plots
+    subplot(2,3,3)
+    plot(cR(7,:),co)
+    xlabel('t (s)'), ylabel('\psi')
+    xlim([0 tripTime1])
+    legend('spacecraft 1')
+    title('Coast series')
+    
+    % thrust fractions
+
+    subplot(2,3,4)
+    plot(cR(7,:),sin(cR(8,:)).*cos(cR(9,:)))
+    xlim([0 tripTime1]), ylim([-1,1])
+    legend({'spacecraft 1'})
+    title('Radial thrust fraction')
+    xlabel('t (s)')
+    ylabel('sin(\gamma)cos(\tau)')
+    
+    subplot(2,3,5)
+    plot(cR(7,:),cos(cR(8,:)).*cos(cR(9,:)))
+    xlim([0 tripTime1]), ylim([-1,1])
+    legend({'spacecraft 1'})
+    title('Tangential thrust fraction')
+    xlabel('t (s)')
+    ylabel('cos(\gamma)cos(\tau)')
+    
+    subplot(2,3,6)
+    plot(cR(7,:),sin(cR(9,:)))
+    xlim([0 tripTime1]), ylim([-1,1])
+    legend({'spacecraft 1'})
+    title('Off-plane thrust fraction')
+    xlabel('t (s)')
+    ylabel('sin(\tau)')
+
+    % Thrust angle plots (spacecraft 2)
+    figure(7)
+    
+    % Gamma plots
+    subplot(2,3,1)
+    plot(dR(7,:),mod(dR(8,:),2*pi))
+    xlabel('t (s)'), ylabel('\gamma (rad.)')
+    xlim([0 tripTime2])
+    legend('spacecraft 2')
+    title('In-plane thrust angle')
+    hold off
+    
+    % Tau plots
+    subplot(2,3,2)
+    plot(dR(7,:),dR(9,:))
+    xlabel('t (s)'), ylabel('\tau (rad.)')
+    xlim([0 tripTime2])
+    legend('spacecraft 2')
+    title('Out-of-plane thrust angle')
+    hold off
+    
+    % Psi plots
+    subplot(2,3,3)
+    plot(dR(7,:),do)
+    xlabel('t (s)'), ylabel('\psi')
+    xlim([0 tripTime2])
+    legend('spacecraft 2')
+    title('Coast series')
+    hold off
+    
+    % thrust fractions
+    
+    subplot(2,3,4)
     plot(dR(7,:),sin(dR(8,:)).*cos(dR(9,:)))
     xlim([0 tripTime2]), ylim([-1,1])
     legend({'spacecraft 2'})
@@ -345,49 +449,13 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     title('Off-plane thrust fraction')
     xlabel('t (s)')
     ylabel('sin(\tau)')
-
-    % Thrust angle plots
-    figure(6)
-    
-    % Gamma plots
-    subplot(3,1,1)
-    plot(cR(7,:),mod(cR(8,:),2*pi))
-    hold on
-    plot(dR(7,:),mod(dR(8,:),2*pi))
-    xlabel('t (s)'), ylabel('\gamma (rad.)')
-    xlim([0 maxTripTime])
-    legend('spacecraft 1', 'spacecraft 2')
-    title('In-plane thrust angle')
-    hold off
-    
-    % Tau plots
-    subplot(3,1,2)
-    plot(cR(7,:),cR(9,:))
-    hold on
-    plot(dR(7,:),dR(9,:))
-    xlabel('t (s)'), ylabel('\tau (rad.)')
-    xlim([0 maxTripTime])
-    legend('spacecraft 1', 'spacecraft 2')
-    title('Out-of-plane thrust angle')
-    hold off
-    
-    % Psi plots
-    subplot(3,1,3)
-    plot(cR(7,:),co)
-    hold on
-    plot(dR(7,:),do)
-    xlabel('t (s)'), ylabel('\psi')
-    xlim([0 maxTripTime])
-    legend('spacecraft 1', 'spacecraft 2')
-    title('Coast series')
-    hold off
     
     %% full orbital plots (vectors and no vectors)
     
     radStep1=1:15:length(cX)*1.0;
     radStep2=1:15:length(dX)*1.0;
     %a=figure(3); % plot with vectors
-    figure(7) % plot with vectors
+    figure(8) % plot with vectors
     plot3(cX,cY,cZ,'LineWidth', 3,'Color',[0.4660, 0.6740, 0.1880]	)
     hold on
     plot3(dX,dY,dZ,'LineWidth', 3,'Color',[0, 0, 1]	)
@@ -430,28 +498,39 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     %hold off
     %print(b,'2DNoVec.png','-dpng','-r350'); 
 
-    figure(8)
+    figure(9)
     
     r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
     t = 0:pi/100:2*pi;
     [m,n] = size(t);
     
+    % spacecraft 1
+    
+    % Earth's sphere of influence at launch (in-plane)
     plot3(launchPos1(1)+r_esoi*cos(t), launchPos1(2)+r_esoi*sin(t), launchPos1(3)*ones(1,n),'LineWidth',1,'Color',[1 0 0])
     hold on
+    % In-plane initial position
     [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
     plot3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3),'*','Color',[1 0 0])
     hold on
+    % Initial velocity vector
     quiver3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3), sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'Autoscalefactor',.005,'LineWidth',1,'Color',[1 0 0]);
     hold on
     
+    % spacecraft 2
+    
+    % Earth's sphere of influence at launch (in-plane)
     plot3(launchPos2(1)+r_esoi*cos(t), launchPos2(2)+r_esoi*sin(t), launchPos2(3)*ones(1,n),'LineWidth',1,'Color',[0 0 1])
     hold on
+    % In-plane initial position
     [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
     plot3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3),'*','Color',[0 0 1])
     hold on
+    % Initial velocity vector
     quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0 1]);
     hold on
    
+    % analytical scaling
     max_x = launchPos1(1); max_y = launchPos1(2); max_z = launchPos1(3);
     min_x = launchPos2(1); min_y = launchPos2(2); min_z = launchPos2(3);
     if max_x < min_x
@@ -474,14 +553,17 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     else
         diff_max = diff_z;
     end
-    scale_x = (diff_max-diff_x)/2 + 2*r_esoi; scale_y = (diff_max-diff_y)/2 + 2*r_esoi; scale_z = (diff_max-diff_z)/2 + 2*r_esoi;
-    
-    % xlim([min_x-2*r_esoi, max_x+2*r_esoi])
-    % ylim([min_y-2*r_esoi, max_y+2*r_esoi])
-    % zlim([min_z-2*r_esoi, max_z+2*r_esoi]) 
+    scale_x = (diff_max-diff_x)/2 + 2*r_esoi;
+    scale_y = (diff_max-diff_y)/2 + 2*r_esoi; 
+    scale_z = (diff_max-diff_z)/2 + 2*r_esoi;
     xlim([min_x-scale_x, max_x+scale_x])
     ylim([min_y-scale_y, max_y+scale_y])
     zlim([min_z-scale_z, max_z+scale_z])
+    % % Test limits
+    % xlim([min_x-2*r_esoi, max_x+2*r_esoi])
+    % ylim([min_y-2*r_esoi, max_y+2*r_esoi])
+    % zlim([min_z-2*r_esoi, max_z+2*r_esoi]) 
+    
     xlabel('x (a.u.)')
     ylabel('y (a.u.)')
     zlabel('z (a.u.)')

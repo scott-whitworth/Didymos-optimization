@@ -36,23 +36,28 @@ void setMutateFile(const cudaConstants* cConstants) {
 }
 
 void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau, int & lastStep, double *accel, double *fuelSpent, const double & wetMass, double *work, double *dE, double *Etot_avg, const cudaConstants* config) {
+  // Initializing storage at each time step
   double *mass = new double[lastStep];
   double *Etot = new double[lastStep];
   
   for (int i = 0; i < lastStep; i++) {
+    // total mass at each time step
     mass[i] = wetMass - fuelSpent[i];
-    // W = (F.v)dt (less accurate; implementation uses old index format without averages)
-    // work[i] = mass[i] * accel[i] * time[i] * sqrt(pow(sin(gamma[i])*cos(tau[i])*yp[i+1].vr, 2) + pow(cos(gamma[i])*cos(tau[i])*yp[i].vtheta, 2) + pow(sin(tau[i])*yp[i].vz, 2)) / pow(AU,2);
+    // total mechanical energy (K + U) at eahc time step
     Etot[i] = mass[i] * ((pow(yp[i].vr,2) + pow(yp[i].vtheta,2) + pow(yp[i].vz,2))/ 2 - constG * massSun / yp[i].r) / pow(AU,2);
     if (i) {
-      // W = F.dL (more accurate)
+      // W = F.dL (work done between time steps)
       work[i] = (mass[i] + mass[i-1])/2 * (accel[i] + accel[i-1])/2 * ((sin((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r - yp[i-1].r)) + (cos((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r + yp[i-1].r)/2*(yp[i].theta - yp[i-1].theta)) + (sin((tau[i] + tau[i-1])/2)*(yp[i].z - yp[i-1].z))) / pow(AU,2);
+      // change in mechanical energy between time steps
       dE[i] = Etot[i] - Etot[i-1];
+      // average mechanical energy between time steps
       Etot_avg[i] = (Etot[i] + Etot[i-1])/2;
     }
   }
   work[0] = dE[0] = 0;
   Etot_avg[0] = Etot[0];
+
+  // Output data is passed by reference into trajectoryPrint() and integrated into orbitalMotion-seed.bin
 
   // std::ofstream output;
   // int seed = config->time_seed;
@@ -66,6 +71,7 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
   // }
   // output.close();
 
+  // cleaning up dynamic memory
   delete [] mass;
   delete [] Etot;
 }
@@ -151,8 +157,7 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   // double Fmin = cConstants->f_min;
 
   // Initialize memory for the solution vector of the dependant solution
-  elements<double>* yp;
-  yp = new elements<double>[numSteps];
+  elements<double>* yp = new elements<double>[numSteps];
   
   double *times, *gamma, *tau, *accel_output, *fuelSpent, *work, *dE, *Etot_avg;
   times = new double[numSteps]; // Initialize memory for time array
@@ -160,31 +165,37 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   tau = new double[numSteps]; // Initialize memory for tau array
   accel_output = new double[numSteps]; // Initialize memory for acceleration array
   fuelSpent = new double[numSteps];  // Initialize memory for fuelSpent array
-  work = new double[numSteps];
-  dE = new double[numSteps];
-  Etot_avg = new double[numSteps];
+  work = new double[numSteps];  // Initialize memory for work array
+  dE = new double[numSteps];  // Initialize memory for delta-E array
+  Etot_avg = new double[numSteps];  // Initialize memory for average mechanical energy array
 
-  double accel; // Initialize memory for  acceleration
+  double accel; // Initialize memory for acceleration at the current step
 
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
+  // integrate the trajectory of the input starting conditions
   rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
+  // store the number of steps as a double for binary output
   double lastStep = lastStepInt;
 
   // gets the final y values of the spacecrafts for the cost function.
   elements<double> yOut = yp[lastStepInt];
 
+  // calculate the error in conservation of mechanical energy due to the thruster
   errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
+
+  // append this thread's info to a csv file
   progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
 
+  // binary outputs
   std::ofstream output;
   int seed = cConstants->time_seed;
   output.open("orbitalMotion-"+std::to_string(seed)+".bin", std::ios::binary);
   // output.open("orbitalMotion-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
   for(int i = 0; i <= lastStepInt; i++) {
-    //output << yp[i];
+  // Output this thread's data at each time step
     output.write((char*)&yp[i], sizeof (elements<double>));
     output.write((char*)&times[i], sizeof (double));
     output.write((char*)&gamma[i], sizeof (double));
@@ -202,38 +213,46 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   output.open("finalOptimization-"+std::to_string(seed)+".bin", std::ios::binary);
   // output.open ("finalOptimization-"+std::to_string(static_cast<int>(seed))+"-"+std::to_string(threadRank)+".bin", std::ios::binary);
 
+  // Impact conditions
   output.write((char*)&cConstants->r_fin_ast, sizeof(double));
   output.write((char*)&cConstants->theta_fin_ast, sizeof(double));
   output.write((char*)&cConstants->z_fin_ast, sizeof(double));
   output.write((char*)&cConstants->vr_fin_ast, sizeof(double));
   output.write((char*)&cConstants->vtheta_fin_ast, sizeof(double));
   output.write((char*)&cConstants->vz_fin_ast, sizeof(double));
+
   output.write((char*)&cConstants->r_fin_earth, sizeof(double));
   output.write((char*)&cConstants->theta_fin_earth, sizeof(double));
   output.write((char*)&cConstants->z_fin_earth, sizeof(double));
   output.write((char*)&cConstants->vr_fin_earth, sizeof(double));
   output.write((char*)&cConstants->vtheta_fin_earth, sizeof(double));
   output.write((char*)&cConstants->vz_fin_earth, sizeof(double));
+
+  // Launch conditions
   output.write((char*)&earth.r, sizeof(double));
   output.write((char*)&earth.theta, sizeof(double));
   output.write((char*)&earth.z, sizeof(double));
+  
+  // Thruster info
   output.write((char*)&cConstants->fuel_mass, sizeof(double));
   output.write((char*)&cConstants->coast_threshold, sizeof(double));
   output.write((char*)&gsize, sizeof(double));
   output.write((char*)&tsize, sizeof(double));
   output.write((char*)&csize, sizeof(double));
 
+  // Optimized variables
   for (int j = 0; j < OPTIM_VARS; j++) {
     output.write((char*)&x[j], sizeof (double));
   }
   
+  // Number of steps taken in final RK calculation
   output.write((char*)&lastStep, sizeof (double));
 
   output.close();
 
   // std::cout << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
   
-  // cleaning up dynamic yp, time, gamma, and tau.
+  // cleaning up dynamic memory
   delete [] yp;
   delete [] times;
   delete [] gamma;
@@ -447,15 +466,17 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   start[BETA_OFFSET] = pool[0].startParams.beta;
   start[ZETA_OFFSET] = pool[0].startParams.zeta;
 
+  // Test outputs
   std::cout << "Comparison\n";
   std::cout << "CUDA posDiff: " << pool[0].posDiff << std::endl;
   std::cout << "CUDA velDiff: " << pool[0].velDiff << std::endl;
 
-  // Could instead use a ratio between position and velocity differnce as done in comparison of Individuals
+  // Evaluate and print this solution's information to binary files
   trajectoryPrint(start, generation, cConstants);
 
   // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
+  // cleaning up dynamic memory
   delete [] start;
 }
 

@@ -14,10 +14,10 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast,fuelMass,al
         tau_size = cVector(19);
         coast_size = cVector(20);
         
-        GAMMA_OFFSET = 21; % x(21:20+gamma_size) third order fourier for in-plane angle
-        TAU_OFFSET = GAMMA_OFFSET + gamma_size; % x(21+gamma_size:2-+gamma_size+tau_size) first order fourier for out-of-plane angle
+        GAMMA_OFFSET = 21; % x(21:20+gamma_size) fourier for in-plane angle
+        TAU_OFFSET = GAMMA_OFFSET + gamma_size; % x(21+gamma_size:2-+gamma_size+tau_size) fourier for out-of-plane angle
         TRIPTIME_OFFSET = TAU_OFFSET + tau_size + 3; % x(24+gamma_size+tau_size) total duration of the trip (after tau coeffs + alpha, beta, zeta)
-        COAST_OFFSET = TRIPTIME_OFFSET + 1; % x(25+gamma_size+tau_size) second order fourier for coasting determination
+        COAST_OFFSET = TRIPTIME_OFFSET + 1; % x(25+gamma_size+tau_size) fourier for coasting determination
         
         %% Constants
         
@@ -41,6 +41,7 @@ function [tripTime,coast_threshold,y0E,y0A,gammaCoeff,tauCoeff,coast,fuelMass,al
         % -3.30528017791942E-09, 1.98791889005860E-07, -9.89458740916469E-12];
         y0E = cVector(earth_offset:launch_offset-1);
 
+        % Earth position at launch
         launchPos = cVector(launch_offset:fuel_offset-1);
         
         %% Initial Fourier components

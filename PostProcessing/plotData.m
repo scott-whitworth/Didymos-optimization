@@ -179,6 +179,54 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     ylabel('v_{z} (m/s)')
     
     subplot(2,3,4)
+    plot(cR(7,:), au*cR(10,:).*sin(cR(8,:)).*cos(cR(9,:)))
+    xlim([0 tripTime]), ylim([-1,1])
+    %legend('matlab','c')
+    title('Radial acceleration')
+    xlabel('t (s)')
+    ylabel('a_{r} (m/s^{2})')
+    
+    subplot(2,3,5)
+    plot(cR(7,:), au*cR(10,:).*cos(cR(8,:)).*cos(cR(9,:)))
+    xlim([0 tripTime]), ylim([-1,1])
+    %legend('matlab','c')
+    title('Tangential acceleration')
+    xlabel('t (s)')
+    ylabel('a_{\theta} (m/s^{2})')
+    
+    subplot(2,3,6)
+    plot(cR(7,:), au*cR(10,:).*sin(cR(9,:)))
+    xlim([0 tripTime]), ylim([-1,1])
+    %legend('matlab','c')
+    title('Axial acceleration')
+    xlabel('t (s)')
+    ylabel('a_{z} (m/s^{2})')
+    
+    % Thrust angle plots
+    figure(4)
+    
+    % Test Fourier calculation for start
+    % vpa(cR(8,1)), vpa(cR(9,1))
+    
+    subplot(2,3,1)
+    plot(cR(7,:),mod(cR(8,:),2*pi))
+    xlabel('t (s)'), ylabel('\gamma (rad.)')
+    xlim([0 tripTime])
+    title('In-plane thrust angle')
+    
+    subplot(2,3,2)
+    plot(cR(7,:),cR(9,:))
+    xlabel('t (s)'), ylabel('\tau (rad.)')
+    xlim([0 tripTime])
+    title('Out-of-plane thrust angle')
+    
+    subplot(2,3,3)
+    plot(cR(7,:),co)
+    xlabel('t (s)'), ylabel('\psi')
+    xlim([0 tripTime])
+    title('Coast series')
+    
+    subplot(2,3,4)
     plot(cR(7,:),sin(cR(8,:)).*cos(cR(9,:)))
     xlim([0 tripTime]), ylim([-1,1])
     %legend('matlab','c')
@@ -201,30 +249,6 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     title('Off-plane thrust fraction')
     xlabel('t (s)')
     ylabel('sin(\tau)')
-    
-    % Thrust angle plots
-    figure(4)
-    
-    % Test Fourier calculation for start
-    % vpa(cR(8,1)), vpa(cR(9,1))
-    
-    subplot(3,1,1)
-    plot(cR(7,:),mod(cR(8,:),2*pi))
-    xlabel('t (s)'), ylabel('\gamma (rad.)')
-    xlim([0 tripTime])
-    title('In-plane thrust angle')
-    
-    subplot(3,1,2)
-    plot(cR(7,:),cR(9,:))
-    xlabel('t (s)'), ylabel('\tau (rad.)')
-    xlim([0 tripTime])
-    title('Out-of-plane thrust angle')
-    
-    subplot(3,1,3)
-    plot(cR(7,:),co)
-    xlabel('t (s)'), ylabel('\psi')
-    xlim([0 tripTime])
-    title('Coast series')
     
     %% full orbital plots (vectors and no vectors)
     
@@ -275,19 +299,23 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     figure(6)
     
     r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
-    t = 0:pi/100:2*pi;
-    [m,n] = size(t);
+    t = 0:pi/100:2*pi; % period of a circle
+    [m,n] = size(t); % n = number of steps in t
     
+    % Earth's sphere of influence at launch (in-plane)
     plot3(launchPos(1)+r_esoi*cos(t), launchPos(2)+r_esoi*sin(t), launchPos(3)*ones(1,n),'LineWidth', 1,'Color',[.61 .51 .74])
     hold on
     
+    % In-plane initial position
     [alpha_x, alpha_y, alpha_z] = pol2cart(alpha, r_esoi, 0);
     plot3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3),'*')
     hold on
     
+    % Initial velocity vector
     quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.005,'LineWidth',1);
     hold on
    
+    % analytical scaling
     xlim([launchPos(1)-2*r_esoi, launchPos(1)+2*r_esoi])
     ylim([launchPos(2)-2*r_esoi, launchPos(2)+2*r_esoi])
     zlim([launchPos(3)-2*r_esoi, launchPos(3)+2*r_esoi])
