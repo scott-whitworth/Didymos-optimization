@@ -126,16 +126,21 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     % ylabel('coast value')
     
     co = angles(cR(7,1:sizeC),tripTime,coast);
+    coast = co < coast_threshold;
+    above = co; below = co;
+    above(coast) = NaN; below(~coast) = NaN;
     subplot(2,2,2)
-    plot(cR(7,:),sin(co).^2)
-    xlim([0 tripTime]), ylim([0,1])
-    title('Coasting function and threshold')
-    xlabel('t (s)')
-    ylabel('sin^2(\psi)')
+    plot(cR(7,:),sin(above).^2,'color','g')
+    hold on
+    plot(cR(7,:),sin(below).^2,'color','b')
     hold on
     coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
     plot(cR(7,:),coast_thresholdPlot,'--','color','r')
-    xlim([0 tripTime])
+    xlim([0 tripTime]), ylim([0,1])
+    legend('thrusting','coasting','threshold')
+    title('Coasting function and threshold')
+    xlabel('t (s)')
+    ylabel('sin^2(\psi)')
     hold off
     
     fuelSpent = (fuelMass - cR(11,:))/fuelMass;
