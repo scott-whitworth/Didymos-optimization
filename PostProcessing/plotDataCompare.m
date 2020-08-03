@@ -169,6 +169,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     co = angles(cR(7,:),tripTime1,coast1);
     coast1 = sin(co).^2 < coast_threshold1;
+    % separating the data at or above the threshold from those below
     above1 = sin(co).^2; below1 = sin(co).^2;
     above1(coast1) = NaN; below1(~coast1) = NaN;
     subplot(2,2,2)
@@ -214,6 +215,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     do = angles(dR(7,:),tripTime2,coast2);
     coast2 = sin(do).^2 < coast_threshold2;
+    % separating the data at or above the threshold from those below
     above2 = sin(do).^2; below2 = sin(do).^2;
     above2(coast2) = NaN; below2(~coast2) = NaN;
     subplot(2,2,2)

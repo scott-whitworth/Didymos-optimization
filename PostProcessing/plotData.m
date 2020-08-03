@@ -127,6 +127,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     
     co = angles(cR(7,1:sizeC),tripTime,coast);
     coast = sin(co).^2 < coast_threshold;
+    % separating the data at or above the threshold from those below
     above = sin(co).^2; below = sin(co).^2;
     above(coast) = NaN; below(~coast) = NaN;
     subplot(2,2,2)
