@@ -202,11 +202,9 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "GuessMaxPossibleSteps") {
                     this->GuessMaxPossibleSteps = std::stoi(variableValue);
                 }
-                else if (variableName == "cpu_numsteps") {
-                    this->cpu_numsteps = std::stoi(variableValue);
-                }
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stoi(variableValue);
+                    this->cpu_numsteps = this->max_numsteps;
                 }
                 else if (variableName == "min_numsteps") {
                     this->min_numsteps = std::stoi(variableValue);
