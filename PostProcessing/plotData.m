@@ -130,9 +130,9 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     above = sin(co).^2; below = sin(co).^2;
     above(coast) = NaN; below(~coast) = NaN;
     subplot(2,2,2)
-    plot(cR(7,:),above,'color','g')
+    plot(cR(7,:),above,'color','b')
     hold on
-    plot(cR(7,:),below,'color','b')
+    plot(cR(7,:),below,'color','k')
     hold on
     coast_thresholdPlot = coast_threshold*ones(1,sizeC); % creates a vector with values of coast_threshold so MATLAB can plot it as a line
     plot(cR(7,:),coast_thresholdPlot,'--','color','r')

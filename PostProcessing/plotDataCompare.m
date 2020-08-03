@@ -172,9 +172,9 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     above1 = sin(co).^2; below1 = sin(co).^2;
     above1(coast1) = NaN; below1(~coast1) = NaN;
     subplot(2,2,2)
-    plot(cR(7,:),above1,'color','g')
+    plot(cR(7,:),above1,'color','b')
     hold on
-    plot(cR(7,:),below1,'color','b')
+    plot(cR(7,:),below1,'color','k')
     hold on
     coast_threshold1Plot = coast_threshold1*ones(1,sizeC);
     plot(cR(7,:),coast_threshold1Plot,'--','color','r')
@@ -217,9 +217,9 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     above2 = sin(do).^2; below2 = sin(do).^2;
     above2(coast2) = NaN; below2(~coast2) = NaN;
     subplot(2,2,2)
-    plot(dR(7,:),above2,'color','g')
+    plot(dR(7,:),above2,'color','b')
     hold on
-    plot(dR(7,:),below2,'color','b')
+    plot(dR(7,:),below2,'color','k')
     hold on
     coast_threshold2Plot = coast_threshold2*ones(1,sizeD);
     plot(dR(7,:),coast_threshold2Plot,'--','color','r')
