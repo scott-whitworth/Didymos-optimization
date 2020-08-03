@@ -290,7 +290,7 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
     // elements<T> pmError(previous.r, previous.theta, previous.z, previous.vr,  previous.vtheta, previous.vz);
 
     // square root of sum of squares of the error from the 6 elements to determine the scale for the time step of the next iteration
-    normTotError = pow(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2),(T)1/2);
+    normTotError = sqrt(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2));
     scale = pow((absTol/normTotError),(T)1/5);
 
     return scale;   
