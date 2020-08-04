@@ -147,8 +147,11 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "coast_threshold") {
                     this->coast_threshold = std::stod(variableValue);
                 }
+                else if (variableName == "c3scale") { // Determine's not just c3energy, but also v_escape
+                    this->c3scale = std::stod(variableValue);
+                }
                 else if (variableName == "c3energy") { // Determine's not just c3energy, but also v_escape
-                    this->c3energy = std::stod(variableValue);
+                    this->c3energy = this->c3scale * std::stod(variableValue);
                     this->v_escape = sqrt(this->c3energy)/AU;
                 }
                 else if (variableName == "r_fin_ast") {

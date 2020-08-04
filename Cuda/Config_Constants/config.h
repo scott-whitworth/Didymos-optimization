@@ -51,6 +51,7 @@ struct cudaConstants {
     double wet_mass;   // Wet mass is the total mass of the spacecraft (dry mass plus fuel), thinking make this derived from fuel_mass that would be in the config (kg)
 
     double coast_threshold; // 0 results in the thruster never coasting, 1 results in always coasting
+    double c3scale;         // scalar multiplier for c3energy
     double c3energy;        // specific energy of spacecraft at earth escape (m^2/s^2), determines vEscape
     double v_escape;        // magnitude of velocity at earth escape  (au/s), this variable is not directly accessible in the config file as it is derived from c3energy
 
