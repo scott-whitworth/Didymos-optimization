@@ -58,9 +58,9 @@ template <class T> __host__ __device__ T calcRate_vtheta(const elements<T> & y, 
 // Output: vrDot
 template <class T> __host__ __device__ T calcRate_vz(const elements<T> & y, coefficients<T> & coeff, const T & accel, const T & curTime, const T & timeFinal);
 
-template <class T> __host__ __device__ T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
-template <class T> __host__ __device__ T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
-template <class T> __host__ __device__ T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal);
+template <class T> __host__ __device__ T calcRate_vrEarth(const elements<T> & y);
+template <class T> __host__ __device__ T calcRate_vthetaEarth(const elements<T> & y);
+template <class T> __host__ __device__ T calcRate_vzEarth(const elements<T> & y);
 
 #include "motion_equations.cpp"
 

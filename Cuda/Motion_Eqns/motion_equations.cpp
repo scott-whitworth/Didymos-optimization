@@ -42,14 +42,14 @@ template <class T> __host__ __device__ T calcRate_vz(const elements<T> & y, coef
 	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), 1.5)) + accel*sin(calc_tau(coeff,curTime, timeFinal));
 }
 
-template <class T> __host__ __device__ T calcRate_vrEarth(const elements<T> & y, const T & curTime, const T & timeFinal) {
+template <class T> __host__ __device__ T calcRate_vrEarth(const elements<T> & y) {
 	return (-constG * massSun * y.r / (pow(pow(y.r, 2) + pow(y.z, 2), 1.5))) + (pow(y.vtheta,2) / y.r);
 }
 
-template <class T> __host__ __device__ T calcRate_vthetaEarth(const elements<T> & y, const T & curTime, const T & timeFinal) {
+template <class T> __host__ __device__ T calcRate_vthetaEarth(const elements<T> & y) {
 	return -y.vr*y.vtheta / y.r;
 }
 
-template <class T> __host__ __device__ T calcRate_vzEarth(const elements<T> & y, const T & curTime, const T & timeFinal) {
+template <class T> __host__ __device__ T calcRate_vzEarth(const elements<T> & y) {
 	return (-constG * massSun * y.z / pow(pow(y.r, 2) + pow(y.z, 2), 1.5));
 }
