@@ -120,6 +120,9 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "anneal_initial") {
                     this->anneal_initial = std::stod(variableValue);
                 }
+                else if (variableName == "survivorRatio") {
+                    this->survivorRatio = std::stod(variableValue);
+                }
                 else if (variableName == "mutation_rate") {
                     this->mutation_rate = std::stod(variableValue);
                 }
@@ -253,7 +256,8 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << "Genetic Algorithm Related Values:\n";
     os << "\ttime_seed: "       << object.time_seed       << "\trandom_start: "   << object.random_start   << "\t\tnon_r_start_address: " << object.initial_start_file_address << "\n";
     os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "          << object.change_check << "\n";
-    os << "\tnum_individuals: " << object.num_individuals << "\tsurvivor_count: " << object.survivor_count << "\tthread_block_size: "     << object.thread_block_size << "\n";
+    os << "\tnum_individuals: " << object.num_individuals << "\tthread_block_size: "     << object.thread_block_size << "\n";
+    os << "\tsurvivor_count: " << object.survivor_count  << "\tsurvivorRatio: " << object.survivorRatio;
     os << "\tbest_count: "      << object.best_count      << "\t\tmax_generations: "<< object.max_generations<< "\trun_count: "             << object.run_count << "\n\n";
 
     os << "Runge-Kutta Related Values:\n";
@@ -274,7 +278,8 @@ std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
 
     os << "Spacecraft Info:\n";
     os << "\tthruster_type: " << object.thruster_type << "\tdry_mass: " << object.dry_mass << "\t\tfuel_mass: " << object.fuel_mass << "\t\twet_mass: " << object.wet_mass << "\n";
-    os << "\tc3energy: "      << object.c3energy      << "\tv_escape: " << object.v_escape << "\t\tv_impact: " << object.v_impact << "\n";
+    // Display the c3energy assignment, showing c3scale to help clarify that it is not directly from config
+    os << "\tc3energy (" << (object.c3scale * 100)    << "%): " << object.c3energy      << "\tv_escape: " << object.v_escape << "\t\tv_impact: " << object.v_impact << "\n";
     os << "\tpos_threshold: " << object.pos_threshold << "\tcoast_threshold: "<< object.coast_threshold<< "\n\n";
 
     os << "Asteriod Info:\n";

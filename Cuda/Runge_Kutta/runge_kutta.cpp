@@ -203,7 +203,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
     while( curTime > timeInitial) {  // iterates in reverse
         //calculate k values
-        rkCalcEarth(curTime, timeFinal, -stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
+        rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
 
         //array of time output as t         
         curTime -= stepSize;
@@ -256,10 +256,13 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);
 }
 
+// The stepSize value that is inputted is assumed to be a positive value
 template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
                                     elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7) {
     // Runge-Kutta algorithm      
     //elements<T> y_prev;
+    
+    stepSize *= -1; // Make this copy of stepSize negative as it goes backwards
 
     //calc_k multiplies all values by the stepSize internally.
     k1 = calc_kEarth(stepSize, y_new, curTime, timeFinal);        

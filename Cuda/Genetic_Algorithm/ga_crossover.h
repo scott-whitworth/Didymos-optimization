@@ -5,11 +5,11 @@
 
 // Method of determing selection of survivors that will carry properties into the new individuals of the newGeneration
 // Input: pool - a shuffled pointer array of individuals to choose from
+//        poolSize - integer number of length of the pool
 //        selectionSize - integer number of how many survivors to choose out of the pool
 //        survivors - pointer array of individuals to copy the selected individuals and store
-//        cConstants - for accessing values such as number of individuals
-// Output: pool is unchanged, survivors contains an array of size selectionSize of individuals that were quasi-randomly chosen
-void selectSurvivors(Individual * pool, int selectionSize, Individual* survivors, const cudaConstants * cConstants);
+// Output: pool is left sorted by individuals with higher velocity difference, survivors contains an array of size selectionSize of individuals to be used in generating new individuals
+void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors, const double & ratio);
 
 // Creates a random bifurcation mask, currently not in use
 // Randomly picks one index to be the start of the '2's from mask

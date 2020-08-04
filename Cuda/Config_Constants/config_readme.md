@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: August 3rd, 2020</i>
+<i>Last Updated: August 4th, 2020</i>
 
 <h2>File and variable format for config file</h2>
 
@@ -41,6 +41,7 @@ Table 2. Genetic Algorithm Values
 | run_count                    	| int        	| None  	| Set how many runs of optimize with slightly altered randomization seeds to perform with current cudaConstants                                              	                    |   	|
 | num_individuals           	| int        	| None  	| Sets the size of the population pool and number of threads used as an individual is given a thread, recommended to not change 	                                                |   	|
 | survivor_count               	| int        	| None  	| Number of individuals selected as "survivors" to produce new individuals in the next generation in the genetic algorithm, every pair produces 8 new individuals, value must be even|   	|
+| survivorRatio               	| double        | None  	| The percentage of the survivor pool that is to contain the best individuals for posDiff, the rest of the survivor pool is given individuals for best velDiff (0.5 is half and half)|   	|
 | thread_block_size           	| int        	| None  	| Number of threads per block on the GPU being used, recommended to not change 	                                                                                                    |   	|
 | anneal_initial             	| double     	| None  	| The initial anneal value used, anneal impacts the maximum possible mutation value when generating a new individual (does not impact probability) 	                                |   	|
 | anneal_factor             	| double     	| None  	| The multiplier applied to anneal value if no change in the best individual is occurring                                                                        	                |   	|
@@ -63,7 +64,7 @@ Table 3. Mission Values
 | fuel_mass                     | double        | kg      	| Sets the initial mass of fuel in the spacecraft, used in determining wet_mass 	                                                                                                |   	|
 | wet_mass                     	| double        | kg      	| The total mass of the spacecraft with fuel, value is derived after reading the config file when dry_mass and fuel_mass have had their values read                                 |   	|
 | coast_threshold             	| double     	| None  	| In a range from 0 to 1, 1 sets the spacecraft to coast at all times while 0 sets the spacecraft to always have thruster on 	                                                    |   	|
-| c3scale                     	| double     	| None 	| The scalar multiplier used to adjust c3energy by percentages for test runs 	|   	|
+| c3scale                     	| double     	| None 	    | The scalar multiplier used to adjust c3energy by percentages for test runs, current implementation assumes that c3scale is assigned a value before c3energy (in config file c3scale is set before c3energy) 	|   	|
 | c3energy                     	| double     	| m<sup>2</sup>/s<sup>2</sup>  	| The specific energy of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, determines the magnitude of the escape velocity that is stored in v_escape 	|   	|
 | v_escape                     	| double     	| AU/s  	| The magnitude of the initial velocity of the spacecraft when leaving the sphere of influence of the earth-moon center of mass, not in config file but rather derived from c3energy 	                        |   	|
 | v_impact                 	    | double     	| AU/s  	| NASA's official mission impact velocity difference the spacecraft will collide with Dimorphos, does not impact the performance of the code	                                    |   	|

@@ -24,6 +24,7 @@ struct cudaConstants {
     double anneal_initial; // initial value for annealing, meant to replace the previously used calculation involving ANNEAL_MIN and ANNEAL_MAX with something more simple
 
     double mutation_rate; // fraction of new offspring to mutate
+    double survivorRatio; // A percentage for how much of selectSurvivors chooses individuals that are bestPosDiff rather than bestVelDiff
     
     // Used in mutate(), affects the size of change for the respective paramater values along with annealing
     double gamma_mutate_scale; 
