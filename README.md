@@ -1,5 +1,5 @@
 <h1>DART Mission Optimization Project</h1>
-<i>Last updated: July 30th, 2020</i>
+<i>Last updated: August 4th, 2020</i>
 
 <h2>Project Background & Current Objective</h2>
 
@@ -31,7 +31,7 @@ There are many folders and files in this project, so here's a short rundown of f
     * Thrust_Files: Contains the code that describes the thruster and its behavior using a Fourier series to determine angles of direction. Dependent on Config_Constants/config.h
     * constants.h: Stores constant properties, such as AU unit value and optimized variable offsets for the array that stores the values, these are constants that should not be easily changed.
     * optimizedVector.bin: Binary file containing 14 parameters that can be used as initial guesses in the genetic algorithm, values derived from previous code in orbitalOptimization folder which is also based on old impact date data.
-    * output.h/.cpp: Files the contain the functions for outputting files and terminal display
+    * output.h/.cpp: Files the contain the functions for outputting files and terminal display, some methods such as recordAllIndividuals() are currently unused
   - PostProcessing: Contains MATLAB files that take in output files from the Cuda program to display results.
   - archives: Contains MATLAB code files that are considered no longer relevant to the project but shouldn't be completely discarded.
   - cuda_framework: Contains code that was used in setting up and testing usage of the CUDA platform, not actively used in finding a solution
@@ -89,18 +89,19 @@ On WU System & Personal Computers:
 4. Run the matlab script in the command window:
    - To view an individual's path, enter "filePlot(#)" with # as the UTC time seed for the run.
    - To compare different paths, replace "filePlot(#)" with "filePlotCompare(#,#)" with the # being two different time seeds.
+   - To view information from errorCheck#.bin, use command "errorCheck(#).
 5. Graphs will be generated that show the path in a three dimensional graph, coast behavior, etc. that could be exported into png format.
 
 <h2>NASA JPL Data for Impact Date Position & Velocity</h2>
 Here is how the impact data was obtained to be used in the config value.
 
-1.  Navigate to https://ssd.jpl.nasa.gov/horizons.cgi, this database is used to retrieve final position and velocity vector components for both Earth and Didymos relative to the Sun.
+1.  Navigate to https://ssd.jpl.nasa.gov/horizons.cgi, this database is used to retrieve final position and velocity vector components for both Earth and Didymos barycenter relative to the Sun.
 2.  The ephemeris type should be a vector table. In table settings, select Type 2. Set the coordinate origin to the Sun's center of mass. The current impact date is 09-30-2022 19:54:55 UTC, so set an adequate time window with a resolution of 1 minute. Set the units to a.u. for position and a.u./day for velocity. Then, select Generate Ephemeris.
 3.  To obtain final Earth elements, change the target body to Earth-Moon barycenter and generate a new ephemeris.
 4.  Using impactParams.m, DerivingImpactValues.xlsx, or some other equivalent method, convert the values to cylindrical coordinates with velocity values changed from AU/day to AU/s.
 
 <h2>Flowchart Overview of CUDA Code</h2>
-<i>Last updated on July 30th, 2020</i>
+<i>Last updated on August 4th, 2020</i>
 
 Note: Large arrows point to flowchart portion that describes that block's process
 <img src="flowchart.jpg">
