@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <time.h> // for time(0)
 #include <math.h>
-#include "../constants.h" // for AU
+#include "constants.h" // for AU
 
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
 cudaConstants::cudaConstants() {

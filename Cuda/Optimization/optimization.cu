@@ -1,7 +1,7 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
 #include "../Earth_calculations/earthInfo.h"
 #include "../Genetic_Algorithm/individuals.h"
-#include "../output.h"
+#include "../Output_Funcs/output.h"
 #include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
 #include "../Genetic_Algorithm/ga_crossover.h"
 
