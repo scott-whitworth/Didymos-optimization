@@ -13,8 +13,8 @@ template <class T>  __host__ __device__ elements<T> calc_k(const T & h, const el
 
 template <class T> __host__ __device__ elements<T> calc_kEarth(const T & h, const elements<T>  & y, const T & curTime, const T & timeFinal) {
 	return elements<T>( h*calcRate_r(y), h*calcRate_theta(y), h*calcRate_z(y), 
-						h*calcRate_vrEarth(y,curTime, timeFinal), h*calcRate_vthetaEarth(y,curTime, timeFinal),
-						h*calcRate_vzEarth(y,curTime, timeFinal));
+						h*calcRate_vrEarth(y), h*calcRate_vthetaEarth(y),
+						h*calcRate_vzEarth(y));
 }
 
 template <class T>  __host__ __device__ T calcRate_r(const elements<T> & y) {
