@@ -119,7 +119,7 @@ elements<double> earthInitial_incremental(double timeInitial, double tripTime, c
   double deltaT; 
 
   // Initial guess for time step, cannot be greater than the time resolution.
-  deltaT = -(tripTime - timeInitial)/static_cast <double> (60); 
+  deltaT = (tripTime - timeInitial)/static_cast <double> (60); 
 
   // Declaring the solution vector.
   elements<double> yp;
