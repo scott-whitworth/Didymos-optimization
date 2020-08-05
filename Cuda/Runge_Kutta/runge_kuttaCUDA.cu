@@ -137,19 +137,4 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
     }
     return;
 }
-    
-bool distinguishableDifference(double p1, double p2, double distinguishRate) {
 
-    double p1Num = trunc(p1/distinguishRate);
-    double p2Num = trunc(p2/distinguishRate);
-    
-    std:: cout << "p1Num: " << p1Num << std::endl;
-    std:: cout << "p2Num: " << p2Num << std::endl;
-
-    if(p1Num == p2Num) {
-        return true;
-    } else {
-        return false;
-    }
-
-}

@@ -10,12 +10,6 @@ void callRK(const int numThreads, const int blockThreads, Individual *generation
 // the simple version of the runge_kutta algorithm, on GPU
 __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, double *startStepSize, double *absTolInput, int n, const cudaConstants* cConstant);
 
-//this is used to find distinguishable difference between two positions
-//Parameters:
-//      p1, p2: positions that will be compared to each other
-//      distinguishRate: the rate that this will divide from p1 and p2
-//output: boolean true if there is is no distinguishable difference
-bool distinguishableDifference(double p1, double p2, double distinguishRate);
 
 #include "runge_kuttaCUDA.cu"
 #endif

@@ -232,15 +232,15 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
     k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal); 
-    k2 = calc_k(stepSize, y_new+k1*static_cast <double> (1)/static_cast <double> (5), coeff, accel, curTime+static_cast <double> (1)/static_cast <double> (5)*stepSize, timeFinal); 
-    k3 = calc_k(stepSize, y_new+k1*static_cast <double> (3)/static_cast <double> (40)+k2*static_cast <double> (9)/static_cast <double> (40), coeff, accel, curTime+static_cast <double> (3)/static_cast <double> (10)*stepSize, timeFinal);   
-    k4 = calc_k(stepSize, y_new+k1*static_cast <double> (44)/static_cast <double> (45)+k2*static_cast <double> (-56)/static_cast <double> (15)+k3*static_cast <double> (32)/static_cast <double> (9), coeff, accel, curTime+static_cast <double> (4)/static_cast <double> (5)*stepSize, timeFinal); 
-    k5 = calc_k(stepSize, y_new+k1*static_cast <double> (19372)/static_cast <double> (6561)+k2*static_cast <double> (-25360)/static_cast <double> (2187)+k3*static_cast <double> (64448)/static_cast <double> (6561)+k4*static_cast <double> (-212)/static_cast <double> (729), coeff, accel, curTime+static_cast <double> (8)/static_cast <double> (9)*stepSize, timeFinal); 
-    k6 = calc_k(stepSize, y_new+k1*static_cast <double> (9017)/static_cast <double> (3168)+k2*static_cast <double> (-355)/static_cast <double> (33)+k3*static_cast <double> (46732)/static_cast <double> (5247)+k4*static_cast <double> (49)/static_cast <double> (176)+k5*static_cast <double> (-5103)/static_cast <double> (18656), coeff, accel, curTime+stepSize, timeFinal);  
-    k7 = calc_k(stepSize, y_new+k1*static_cast <double> (35)/static_cast <double> (384)+k3*static_cast <double> (500)/static_cast <double> (1113)+k4*static_cast <double> (125)/static_cast <double> (192)+k5*static_cast <double> (-2187)/static_cast <double> (6784)+k6*static_cast <double> (11)/static_cast <double> (84), coeff, accel, curTime+stepSize, timeFinal);  
+    k2 = calc_k(stepSize, y_new+k1*(static_cast <double> (1)/static_cast <double> (5)), coeff, accel, curTime+((static_cast <double> (1)/static_cast <double> (5))*stepSize), timeFinal); 
+    k3 = calc_k(stepSize, y_new+k1*(static_cast <double> (3)/static_cast <double> (40))+k2*(static_cast <double> (9)/static_cast <double> (40)), coeff, accel, curTime+((static_cast <double> (3)/static_cast <double> (10))*stepSize), timeFinal);   
+    k4 = calc_k(stepSize, y_new+k1*(static_cast <double> (44)/static_cast <double> (45))+k2*(static_cast <double> (-56)/static_cast <double> (15))+k3*(static_cast <double> (32)/static_cast <double> (9)), coeff, accel, curTime+((static_cast <double> (4)/static_cast <double> (5))*stepSize), timeFinal); 
+    k5 = calc_k(stepSize, y_new+k1*(static_cast <double> (19372)/static_cast <double> (6561))+k2*(static_cast <double> (-25360)/static_cast <double> (2187))+k3*(static_cast <double> (64448)/static_cast <double> (6561))+k4*(static_cast <double> (-212)/static_cast <double> (729)), coeff, accel, curTime+((static_cast <double> (8)/static_cast <double> (9))*stepSize), timeFinal); 
+    k6 = calc_k(stepSize, y_new+k1*(static_cast <double> (9017)/static_cast <double> (3168))+k2*(static_cast <double> (-355)/static_cast <double> (33))+k3*(static_cast <double> (46732)/static_cast <double> (5247))+k4*(static_cast <double> (49)/static_cast <double> (176))+k5*(static_cast <double> (-5103)/static_cast <double> (18656)), coeff, accel, curTime+stepSize, timeFinal);  
+    k7 = calc_k(stepSize, y_new+k1*(static_cast <double> (35)/static_cast <double> (384))+k3*(static_cast <double> (500)/static_cast <double> (1113))+k4*(static_cast <double> (125)/static_cast <double> (192))+k5*(static_cast <double> (-2187)/static_cast <double> (6784))+k6*(static_cast <double> (11)/static_cast <double> (84)), coeff, accel, curTime+stepSize, timeFinal);  
 
     // New value
-    y_new = y_new + k1*static_cast <double> (35)/static_cast <double> (384) + k3*static_cast <double> (500)/static_cast <double> (1113) + k4*static_cast <double> (125)/static_cast <double> (192) - k5*static_cast <double> (2187)/static_cast <double> (6784) + k6*static_cast <double> (11)/static_cast <double> (84);  
+    y_new = y_new + k1*(static_cast <double> (35)/static_cast <double> (384)) + k3*(static_cast <double> (500)/static_cast <double> (1113)) + k4*(static_cast <double> (125)/static_cast <double> (192)) - k5*(static_cast <double> (2187)/static_cast <double> (6784)) + k6*(static_cast <double> (11)/static_cast <double> (84)) + k7*(static_cast <double> (0)/static_cast <double> (40));  
 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
@@ -253,7 +253,9 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
     //- k5*(17253)/(339200) + k6*(22)/(525) + k7*(-1)/(40);
 
     // Without k7 : no error between GPU and CPU
-    error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);
+
+    // Comonents of error are going to be really small. Need to make sure they are not too small to do anything with in calc_scalingFactor
+    error =  ((k1*(static_cast <double> (71)/static_cast <double> (57600))) + (k3*(static_cast <double> (-71)/static_cast <double> (16695))) + (k4*(static_cast <double> (71)/static_cast <double> (1920)))  + (k5*(static_cast <double> (-17253)/static_cast <double> (339200))) + (k6*(static_cast <double> (22)/static_cast <double> (525)))) + (k7*(static_cast <double> (-1)/static_cast <double> (40)));
 }
 
 // The stepSize value that is inputted is assumed to be a positive value
@@ -266,12 +268,12 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 
     //calc_k multiplies all values by the stepSize internally.
     k1 = calc_kEarth(stepSize, y_new, curTime, timeFinal);        
-    k2 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (1)/static_cast <double> (5), curTime+static_cast <double> (1)/static_cast <double> (5)*stepSize, timeFinal);   
-    k3 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (3)/static_cast <double> (40)+k2*static_cast <double> (9)/static_cast <double> (40), curTime+static_cast <double> (3)/static_cast <double> (10)*stepSize, timeFinal);   
-    k4 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (44)/static_cast <double> (45)+k2*static_cast <double> (-56)/static_cast <double> (15)+k3*static_cast <double> (32)/static_cast <double> (9), curTime+static_cast <double> (4)/static_cast <double> (5)*stepSize, timeFinal);    
-    k5 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (19372)/static_cast <double> (6561)+k2*static_cast <double> (-25360)/static_cast <double> (2187)+k3*static_cast <double> (64448)/static_cast <double> (6561)+k4*static_cast <double> (-212)/static_cast <double> (729), curTime+static_cast <double> (8)/static_cast <double> (9)*stepSize, timeFinal);        
-    k6 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (9017)/static_cast <double> (3168)+k2*static_cast <double> (-355)/static_cast <double> (33)+k3*static_cast <double> (46732)/static_cast <double> (5247)+k4*static_cast <double> (49)/static_cast <double> (176)+k5*static_cast <double> (-5103)/static_cast <double> (18656), curTime+stepSize, timeFinal);        
-    k7 = calc_kEarth(stepSize, y_new+k1*static_cast <double> (35)/static_cast <double> (384)+k3*static_cast <double> (500)/static_cast <double> (1113)+k4*static_cast <double> (125)/static_cast <double> (192)+k5*static_cast <double> (-2187)/static_cast <double> (6784)+k6*static_cast <double> (11)/static_cast <double> (84), curTime+stepSize, timeFinal);  
+    k2 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (1)/static_cast <double> (5))), curTime+((static_cast <double> (1)/static_cast <double> (5))*stepSize), timeFinal);   
+    k3 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (3)/static_cast <double> (40)))+(k2*(static_cast <double> (9)/static_cast <double> (40))), curTime+((static_cast <double> (3)/static_cast <double> (10))*stepSize), timeFinal);   
+    k4 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (44)/static_cast <double> (45)))+(k2*(static_cast <double> (-56)/static_cast <double> (15)))+(k3*(static_cast <double> (32)/static_cast <double> (9))), curTime+((static_cast <double> (4)/static_cast <double> (5))*stepSize), timeFinal);    
+    k5 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (19372)/static_cast <double> (6561)))+(k2*(static_cast <double> (-25360)/static_cast <double> (2187)))+(k3*(static_cast <double> (64448)/static_cast <double> (6561)))+(k4*(static_cast <double> (-212)/static_cast <double> (729))), curTime+((static_cast <double> (8)/static_cast <double> (9))*stepSize), timeFinal);        
+    k6 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (9017)/static_cast <double> (3168)))+(k2*(static_cast <double> (-355)/static_cast <double> (33)))+(k3*(static_cast <double> (46732)/static_cast <double> (5247)))+(k4*(static_cast <double> (49)/static_cast <double> (176)))+(k5*(static_cast <double> (-5103)/static_cast <double> (18656))), curTime+stepSize, timeFinal);        
+    k7 = calc_kEarth(stepSize, y_new+(k1*(static_cast <double> (35)/static_cast <double> (384)))+(k3*(static_cast <double> (500)/static_cast <double> (1113)))+(k4*(static_cast <double> (125)/static_cast <double> (192)))+(k5*(static_cast <double> (-2187)/static_cast <double> (6784)))+(k6*(static_cast <double> (11)/static_cast <double> (84))), curTime+stepSize, timeFinal);  
 
     //Error 
     //See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
@@ -279,7 +281,7 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 
     //New value
     //u = y + 35/384*k1 + 500/1113*k3 + 125/192*k4 - 2187/6784*k5 + 11/84*k6
-    y_new = y_new + k1*static_cast <double> (35)/static_cast <double> (384) + k3*static_cast <double> (500)/static_cast <double> (1113) + k4*static_cast <double> (125)/static_cast <double> (192) - k5*static_cast <double> (2187)/static_cast <double> (6784) + k6*static_cast <double> (11)/static_cast <double> (84);  
+    y_new = y_new + (k1*(static_cast <double> (35)/static_cast <double> (384))) + (k3*(static_cast <double> (500)/static_cast <double> (1113))) + (k4*(static_cast <double> (125)/static_cast <double> (192))) + (k5*(static_cast <double> (-2187)/static_cast <double> (6784))) + (k6*(static_cast <double> (11)/static_cast <double> (84)));  
 
     // Error 
     // See the original algorithm by J.R. Dormand and P.J. Prince, JCAM 1980 and its implementation in MATLAB's ode45
@@ -287,7 +289,7 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
     //y_prev = k1*5179./57600 + k3*7571./16695 + k4*393./640 - k5*92097./339200 + k6*187./2100 + k7*1./40;  
     //error = y_new-y_prev;
 
-    error = k1*static_cast <double> (71)/static_cast <double> (57600) + k3*static_cast <double> (-71)/static_cast <double> (16695) + k4*static_cast <double> (71)/static_cast <double> (1920) - k5*static_cast <double> (17253)/static_cast <double> (339200) + k6*static_cast <double> (22)/static_cast <double> (525) + k7*static_cast <double> (-1)/static_cast <double> (40);    
+    error = (k1*(static_cast <double> (71)/static_cast <double> (57600))) + (k3*(static_cast <double> (-71)/static_cast <double> (16695))) + (k4*(static_cast <double> (71)/static_cast <double> (1920))) - (k5*(static_cast <double> (17253)/static_cast <double> (339200))) + (k6*(static_cast <double> (22)/static_cast <double> (525))) + (k7*(static_cast <double> (-1)/static_cast <double> (40)));    
 }
 
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol) {
@@ -299,11 +301,34 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
     elements<T> pmError(difference.r/previous.r, difference.theta/previous.theta, difference.z/previous.z, 
     difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
 
+    if(!pmLimitCheck(pmError)){
+        //pmError is too small!
+        return 1.2; // Increase step size by 20%
+    }
+
     // elements<T> pmError(previous.r, previous.theta, previous.z, previous.vr,  previous.vtheta, previous.vz);
 
     // square root of sum of squares of the error from the 6 elements to determine the scale for the time step of the next iteration
     normTotError = sqrt(pow(pmError.r,2) + pow(pmError.theta,2) + pow(pmError.z,2) + pow(pmError.vr,2) + pow(pmError.vtheta,2) + pow(pmError.vz,2));
-    scale = pow((absTol/normTotError),(T)1/5);
+    scale = pow((absTol/normTotError),0.2);
 
     return scale;   
+}
+
+template <class T> __host__ __device__ bool pmLimitCheck(const elements<T> & pmError){
+    //It is possible this is a major resource drain. This might be faster to square everything and not use fabs (floating point abs)
+    if( (fabs(pmError.r) < 1.0e-12 ) ||
+        (fabs(pmError.theta) < 1.0e-12 ) ||
+        (fabs(pmError.z) < 1.0e-12 ) ||
+        (fabs(pmError.vr) < 1.0e-12 ) ||
+        (fabs(pmError.vtheta) < 1.0e-12 ) ||
+        (fabs(pmError.vz) < 1.0e-12 ) )
+    {
+        //Error it too small for precise calculation of step size
+        return false;
+    } else {
+        //Error is large enough that accurate step size can be computed
+        // All error values are at least within 14 orders of magnitued of their original guesses
+        return true;
+    }
 }
