@@ -11,14 +11,8 @@ M=1.98892e30;
 
 
 % gamma and tau fourier series
-gamma = gammaCoeff(1);
-for m=1:(length(gammaCoeff)-1)/2
-  gamma=gamma+gammaCoeff(2*m)*cos(m*t/tF)+gammaCoeff(2*m+1)*sin(m*t/tF);
-end
-tau = tauCoeff(1);
-for m=1:(length(tauCoeff)-1)/2
-  tau=tau+tauCoeff(2*m)*cos(m*t/tF)+tauCoeff(2*m+1)*sin(m*t/tF);
-end
+gamma = angles(t,tF,gammaCoeff);
+tau = angles(t,tF,tauCoeff);
 yp = [y(4)
     y(5)./y(1)
     y(6)
