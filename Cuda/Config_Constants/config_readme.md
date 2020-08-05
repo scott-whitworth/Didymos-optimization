@@ -1,11 +1,11 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: August 4th, 2020</i>
+<i>Last Updated: August 5th, 2020</i>
 
 <h2>File and variable format for config file</h2>
 
-- The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, currently does NOT allow in-line comments or spaces in variable assignments
-- The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).  When reading values, it takes the assignment as just a numeric value using standard string to int/double for appriopriate variable types and does not currently handle operations
-- When reading the file, the assumption is made that the config file contains valid simple values for all variables.
+- The config file allows empty rows and comments ("//" at start of comment line) for formatting the presentation of the contents, also allows in-line comments with only requirement being a space from the value assignment
+- The parsing process currently does not attempt any verification of assigning values to variables (lack of assignment nor duplications).  When reading values, it takes the assignment and uses the standard string to int/double for appriopriate variable types and does not currently handle arithmetic
+- When reading the file, the assumption is made that the config file contains valid simple values for all variables.  Also that there are no spaces until after the variable value assignment
 
 <h2>The cudaConstants struct</h2>
 
@@ -89,7 +89,7 @@ Table 3a. Impact Position & Velocity Values
 
 Table 4. Random Starting Initializing Values when (random_start == true) & Triptime Range
 | Variable Name              	| Data Type  	| Units 	| Usage                                                                                                                                                      	                |   	|
-|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+|----------------------------	|------------	|-------	|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------    |---    |
 | alpha_random_start_range      | double     	| Radians   | The magnitude of the +/- value range for alpha random initial values 	                                                                                                        |   	|
 | beta_random_start_range       | double     	| Radians   | The magnitude of the positive only value range for beta random initial values 	                                                                                            |   	|
 | zeta_random_start_range       | double     	| Radians   | The magnitude of the +/- value range for zeta random initial values 	                                                                                                        |   	|
@@ -98,3 +98,20 @@ Table 4. Random Starting Initializing Values when (random_start == true) & Tript
 | gamma_random_start_range      | double     	| None      | The magnitude of the +/- value range for gamma coefficient random initial values 	                                                                                            |   	|
 | tau_random_start_range        | double     	| None      | The magnitude of the +/- value range for tau coefficient random initial values 	                                                                                            |   	|
 | coast_random_start_range      | double     	| None      | The magnitude of the +/- value range for coast coefficient random initial values 	                                                                                            |   	|
+
+<h2>Current Recommended/Set Values</h2>
+A table to elaborate on why some variables are assigned certain values
+
+| Variable Name              	| Value  	| Reasoning 	|   |
+|-----------------------------	|-------	| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|---    |
+| mutation_rate                 | 0.5       | From test runs involving different mutation rates, 0.5 showed to be most effective at converging on a solution.  This was for singlue mutations, while mutation rates for more genes occurring after only showing no serious change.                          |       |
+| GuessMaxPossibleSteps         | 1000000   | This value must be set such that it is ensured that the data allocation size exceeds the possible number of steps occurring.  Reason why this value doesn't use scientific notation (1e6) is due to the standard string to integer method not able to correctly parse that value. |       |
+| triptime_min                  | 0         | Previously was set to 0.5, and it was found that when coast threshold is greater than 0 and less than 1 that the algorithm could not converge on a solution where the path taken had a triptime greater than 0.5.                                             |       |
+| triptime_max                  | 1.5       | Considering that the official mission (which doesn't use a thruster) is less than 1.5 years, any solution with or without a thruster is expected to have a triptime equivalent or under.  1.5 years as a max is considered sufficient for considering possibly longer trips that could be more effective given different constraints (such as lower c3energy).  |       |
+| timeRes                       | 3600      | Equivalent to 1 hour, this resolution for deriving earth location elements to store is considered sufficient.  For triptimes that fall between two indexes, the position/velocity is interpolated by a weighted average                                       |       |
+| max_generations               | 10001     | With current status of convergence rates for the algorithm in finding a valid solution being in the low thousands range, 10001 generations is considered plenty of time for the algorithm to find a solution and if it does reach this point then it won't find a solution as the annealing would become too small to lead to notable change that leads to a solution.  |       |
+| num_individuals               | 2880      | Population size is based on the number of available threads in the Tesla GPU, optimizing the rate a pool can be calculated.                                                                   |       |
+| survivor_count                | 360       | The newGeneration produces 8 new individuals out of every 2 survivors, setting the value to 360 results in half the pool (which is set to contain 2880 individuals) being replaced with new individuals.|       |
+| thread_block_size             | 32        | Based on the Tesla GPU.                                                                                                                                                                       |       |
+| random_start                  | true      | Random starting parameters allow for more diverse possible solutions, rather than a constrained initial start from a file.                                                                    |       |
+| best_count                    | 1         | It was found that in a given run, the best individuals when convergence occurs are very similar to each other, so setting more than 1 does not lead to more different solutions in a single run.|       |

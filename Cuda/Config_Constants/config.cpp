@@ -51,8 +51,7 @@ void cudaConstants::FileRead(std::string fileName) {
 
                 // With the two positions acquired, capture the varable's name and the value it is being assigned
                 std::string variableName = line.substr(0, equals_pivot   );
-                std::string variableValue = line.substr( equals_pivot + 1, end_point - equals_pivot);
-
+                std::string variableValue = line.substr( equals_pivot + 1, end_point - equals_pivot - 1);
                 // Assign variableValue to the appropriate variable based on variableName, with conversion to the right data type
                 // cudaConstant properties that are not expected in config are wet_mass, v_escape, and cpu_numsteps (those are to be derived in the constructor after this function is complete)
                 if (variableName == "pos_threshold") {
