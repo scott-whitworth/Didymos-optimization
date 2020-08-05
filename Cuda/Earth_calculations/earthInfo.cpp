@@ -5,9 +5,9 @@
 // Input: cConstants - Used to access impact date element data and the time range needed to be calculated (triptime max and min), passed into earthInitial_incremental()
 EarthInfo::EarthInfo(const cudaConstants* cConstants) {
     // Setting up initial information
-    startTime = cConstants->triptime_min; // Starting time (s)
-    endTime = cConstants->triptime_max;    // Ending time (s)
-    timeRes = cConstants->timeRes;     // Time resolution (s)
+    startTime = cConstants->triptime_min; // Starting time (s), chronogically this is closest to impact time (0 would be exactly impact date)
+    endTime = cConstants->triptime_max;   // Ending time (s), chronologically this is earliest time away from impact date
+    timeRes = cConstants->timeRes;        // Time resolution for storing data points (s)
     tolData = ((endTime-startTime)/timeRes) + 1; // Total Number of Data points in earthCon based on duration in seconds divided by resolution, plus one for the last 'section'
 
     // Alocate memory for earthCon, one entry for every data point
@@ -64,7 +64,7 @@ elements<double> EarthInfo::getCondition(const double & currentTime) {
     }
     else if (index > calcIndex(endTime) - 1) {
         std::cout << "Earth condition index being accessed is greater than to endTime-1! Returning nearest valid index\n";
-        index = calcIndex(endTime) - 1;
+        index = calcIndex(endTime) - 1; // is (index-1) because the index variable is the lower of two, the keeps from going out of bounds with the upper index value 
     }
 
     // The lower index weight is equal to the index

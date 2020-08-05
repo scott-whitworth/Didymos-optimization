@@ -17,12 +17,12 @@ enum maskValue {
 //        survivors - pointer array of individuals to copy the selected individuals and store
 // Output: pool is left sorted by individuals with higher velocity difference, survivors contains an array of size selectionSize of individuals to be used in generating new individuals
 void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors, const double & ratio) {
-    // Sort the pool by velocity difference and assign every even index of survivor to hold the individuals with best positional difference
+    // Sort the pool by velocity difference and assign the first part of the survivor array for best posDiff individuals, portion size based on the ratio percentage
     std::sort(pool, pool+poolSize, BetterPosDiff);
     for (int i = 0; i < selectionSize*ratio; i++) {
         survivors[i] = pool[i];
     }
-    // Sort the pool by velocity difference and assign every odd index of survivor to hold the individuals with best velocity difference
+    // Sort the pool by velocity difference and assign the rest of the survivor array to contain best velDiff individuals
     std::sort(pool, pool+poolSize, BetterVelDiff);
     for (int i = selectionSize*ratio; i < selectionSize; i++) {
         survivors[(i)] = pool[i];
