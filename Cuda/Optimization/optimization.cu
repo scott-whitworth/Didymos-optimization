@@ -7,9 +7,7 @@
 
 #include <iostream> // cout
 #include <iomanip>  // used for setw(), sets spaces between values output
-#include <time.h>   // for seeding the random number generator
 #include <random>
-#include <chrono>
 
 // Used to see if the best individual is changing when compared to a previous individual. 
 // Returns true if the currentBest is not equal to previousBest within a distinguishable difference

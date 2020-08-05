@@ -16,9 +16,9 @@
 #define orbitalPeriod 6.653820100923719e+07 // orbital period time of the asteroid (s)
 #define orbitalInclination 0.0594906 //orbital inclination of the asteroid (rad)
 
-
 // Starting location and sizes in the optimization array for navigation to access specific values
 // Note: array sizes must be odd, coinciding with their use in computing Fourier series
+// Reason why these 3 values are not in config is due to need for static expected memory with the GPU, as well as current structural expectations for these values in compiling (coefficiencts struct for example)
 // WARNING: As of July 6th, the file used in non-random start (optimizedVector.bin) is based on previous definition of values and so if these are changed from old sizes then it may cause issues for it
 #define GAMMA_ARRAY_SIZE 7  // Number of coefficients for gamma
 #define   TAU_ARRAY_SIZE 3  // Number of coefficients for tau

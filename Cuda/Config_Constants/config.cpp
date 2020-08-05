@@ -1,9 +1,9 @@
 #include <iostream> // For cout
 #include <fstream> // For file reading
 #include <string>
-#include <iomanip>
+#include <iomanip> // For setprecision in << operator
 #include <time.h> // for time(0)
-#include <math.h>
+#include <math.h> // for sqrt() in constructor to derive v_escape from c3energy
 #include "constants.h" // for AU
 
 // Constructors uses geneticFileRead() to set the struct's properties from a default config file located in same folder as executable
@@ -11,6 +11,11 @@ cudaConstants::cudaConstants() {
     FileRead("genetic.config");
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
+    // Now that c3scale and c3energy have been assigned values, derive the final c3energy and v_escape
+    this->c3energy *= this->c3scale;
+    this->v_escape = sqrt(this->c3energy)/AU;
+    // Assign cpu_numsteps to be equivalent to max_numsteps
+    this->cpu_numsteps = this->max_numsteps;
 }
 
 // Operates same as default, however uses configFile as address for where the config file to be used is located
@@ -18,6 +23,11 @@ cudaConstants::cudaConstants(std::string configFile) {
     FileRead(configFile);
     // Now that dry_mass and fuel_mass have been acquired, derive wet_mass
     this->wet_mass = this->dry_mass + this->fuel_mass;
+    // Now that c3scale and c3energy have been assigned values, derive the final c3energy and v_escape
+    this->c3energy *= this->c3scale;
+    this->v_escape = sqrt(this->c3energy)/AU;
+    // Assign cpu_numsteps to be equivalent to max_numsteps
+    this->cpu_numsteps = this->max_numsteps;
 }
 
 // http://www.cplusplus.com/forum/beginner/11304/ for refesher on reading line by line
@@ -31,16 +41,20 @@ void cudaConstants::FileRead(std::string fileName) {
 
     if (configFile.is_open()) {
         // Go through line by line
-        while ( std::getline(configFile, line ) ) {
-            // If line is not empty and the line is not a comment, then the line should be a variable constant being assigned 
-            if (line != "" && ( line.find("//") == std::string::npos ) && (line.find_first_of(" ") == std::string::npos) ) {
-                // Go through if statements to find what constant variable this line refers to (look at substring prior to "=") and attempt to assign the value (after "=") to the variable
+        while ( std::getline(configFile, line) ) {
+            // If line is not empty and the line is not staring as a comment, then the line is expected to be a variable constant being assigned 
+            if (line != "" && ( line.find("//") != 0 )) {
+                // Locate the "=" and use as pivot where prior is the variable name and after is variable value
+                int equals_pivot = line.find("=");
+                // Assumption made that there are no spaces from variable name to variable value, rather only occurring after a variable is assigned a value and afterwards may be an in-line comment
+                int end_point = line.find_first_of(" ");
 
-                std::string variableName = line.substr(0, line.find("=")   );
-                std::string variableValue = line.substr( line.find("=") + 1); // Currently reads variableValue to end of the line string, may want to implement an end position to allow comments appends in the file format
+                // With the two positions acquired, capture the varable's name and the value it is being assigned
+                std::string variableName = line.substr(0, equals_pivot   );
+                std::string variableValue = line.substr( equals_pivot + 1, end_point);
 
-                // Assign variableValue to the appropriate variable based on variableName, with proper conversion to the right data type
-                // Still need to add a check to ensure that variableValue is converted properly (if not valid, don't assign property to variableValue and note that in the terminal)
+                // Assign variableValue to the appropriate variable based on variableName, with conversion to the right data type
+                // cudaConstant properties that are not expected in config are wet_mass, v_escape, and cpu_numsteps (those are to be derived in the constructor after this function is complete)
                 if (variableName == "pos_threshold") {
                     this->pos_threshold = std::stod(variableValue);
                 }
@@ -150,12 +164,12 @@ void cudaConstants::FileRead(std::string fileName) {
                 else if (variableName == "coast_threshold") {
                     this->coast_threshold = std::stod(variableValue);
                 }
-                else if (variableName == "c3scale") { // Determine's not just c3energy, but also v_escape
+                else if (variableName == "c3scale") {
                     this->c3scale = std::stod(variableValue);
                 }
-                else if (variableName == "c3energy") { // Determine's not just c3energy, but also v_escape
-                    this->c3energy = this->c3scale * std::stod(variableValue);
-                    this->v_escape = sqrt(this->c3energy)/AU;
+                else if (variableName == "c3energy") {
+                    // Initially have c3energy just be the assigned value in the config, c3scale impacts c3energy (and by extension v_escape) within the constructor  
+                    this->c3energy = std::stod(variableValue);
                 }
                 else if (variableName == "r_fin_ast") {
                     this->r_fin_ast = std::stod(variableValue);
@@ -210,7 +224,6 @@ void cudaConstants::FileRead(std::string fileName) {
                 }
                 else if (variableName == "max_numsteps") {
                     this->max_numsteps = std::stoi(variableValue);
-                    this->cpu_numsteps = this->max_numsteps;
                 }
                 else if (variableName == "min_numsteps") {
                     this->min_numsteps = std::stoi(variableValue);
@@ -249,27 +262,27 @@ void cudaConstants::FileRead(std::string fileName) {
     }
 }
 
-// Output cudaConstant contents with formatting for better readibility
+// Output cudaConstant contents with formatting for better readibility when doing a run in main()
 std::ostream& operator<<(std::ostream& os, const cudaConstants& object) {
     os << std::setprecision(12);
     os << "==========CONFIG=DATA===============================================================================\n";
     os << "Genetic Algorithm Related Values:\n";
     os << "\ttime_seed: "       << object.time_seed       << "\trandom_start: "   << object.random_start   << "\t\tnon_r_start_address: " << object.initial_start_file_address << "\n";
-    os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial << "\tchange_check: "          << object.change_check << "\n";
+    os << "\tanneal_factor: "   << object.anneal_factor   << "\tanneal_initial: " << object.anneal_initial <<   "\tchange_check: "        << object.change_check << "\n";
     os << "\tnum_individuals: " << object.num_individuals << "\tthread_block_size: "     << object.thread_block_size << "\n";
-    os << "\tsurvivor_count: " << object.survivor_count  << "\tsurvivorRatio: " << object.survivorRatio;
-    os << "\tbest_count: "      << object.best_count      << "\t\tmax_generations: "<< object.max_generations<< "\trun_count: "             << object.run_count << "\n\n";
+    os << "\tsurvivor_count: "  << object.survivor_count  << "\tsurvivorRatio: "    << object.survivorRatio;
+    os << "\tbest_count: "      << object.best_count      << "\t\tmax_generations: "<< object.max_generations<< "\trun_count: " << object.run_count << "\n\n";
 
     os << "Runge-Kutta Related Values:\n";
     os << "\trk_tol: " << object.rk_tol << "\ttimeRes: " << object.timeRes << "\tGuessMaxPossibleSteps: " << object.GuessMaxPossibleSteps << "\n";
-    os << "\tmax_numsteps: " << object.max_numsteps << "\tmin_numsteps: " << object.min_numsteps << "\tcpu_numsteps: " << object.cpu_numsteps << "\n\n";
+    os << "\tmax_numsteps: " << object.max_numsteps << "\tmin_numsteps: "  << object.min_numsteps << "\tcpu_numsteps: " << object.cpu_numsteps << "\n\n";
 
     os << "Output Variables:\n";
     os << "\trecord_mode: " << object.record_mode << "\twrite_freq: " << object.write_freq << "\tdisp_freq: " << object.disp_freq << "\n\n";
 
     os << "Random Start Range Values:\n";
     os << "\tgamma: "  << object.gamma_random_start_range << "\ttau: " << object.tau_random_start_range << "\tcoast: " << object.coast_random_start_range << "\n";
-    os << "\ttriptime max - min: " << object.triptime_max << " - "  << object.triptime_min << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
+    os << "\ttriptime min - max: " << object.triptime_min << " - "  << object.triptime_max << "\talpha: " << object.alpha_random_start_range << "\tbeta: " << object.beta_random_start_range << "\tzeta: " << object.zeta_random_start_range << "\n\n";
     
     os << "Mutation & Scales:\n";
     os << "\tmutation_rate: " << object.mutation_rate << "\n";

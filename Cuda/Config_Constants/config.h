@@ -1,32 +1,31 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <iostream>
+#include <iostream> // For << operator, fileRead, and std::cout
 #include <random>
 
-// Structure that holds constant values related/used for the genetic algorithm that can be configured within genetic.config file
+// Structure that holds constant values related/used for the genetic algorithm that can be configured within a file (as of August 5th 2020, that file is hardcoded in main to be "Config_Constants/genetic.config")
 struct cudaConstants {
-    double time_seed; // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0) for genuine randomness
-    int max_generations; // Maximum number of generations to evaluate in the genetic algortihmif not reaching a solution
-    int run_count; // How many runs of the optimization algorithm want to perform with different seeds
-    bool random_start; // If set to false, the initial generation has individuals initialized from a file instead of randomly generated
-    bool record_mode; // If set to true, functions that record information onto files such as BestInGenerations.csv and MutateMask 
+    double time_seed;    // Seed used for randomization within optimize function, if it's set to NONE the seed is set to time(0)
+    int max_generations; // Maximum number of generations to evaluate in the genetic algortihm if not reaching a solution
+    int run_count;       // How many runs of the optimization algorithm to perform using incremental seeds to not just repeat the same value (the actual change in the seed occurs in main)
+    bool random_start;   // If set to false, the initial generation has individuals initialized from a file instead of randomly generated within a range
+    bool record_mode;    // If set to true, functions that record information onto files such as genPerformance.csv.  The code still records a valid solution regardless if this setting
     std::string initial_start_file_address; // If random_start is false, use file_address to find what file is being used for the initial start
     
-    double pos_threshold; // threshold for how close the spacecraft must be to the asteriod at end of its trajectory (AU)
-    double anneal_factor; // factor by which annealing is changed when there is no change in the best individual over 100 generations
+    double pos_threshold; // maximum distance for how close the spacecraft must be to the asteriod at end of its trajectory (AU) in the algorithm, also is what determines if a trajectory is considered a solution
+    int write_freq;       // Determine how many generations between calling recordGenerationPerformance() method (defined in Output_Funcs/output.cpp)
+    int disp_freq;        // Determine how many generations between calling terminalDisplay() method (defined in Output_Funcs/output.cpp)
 
-    int write_freq; // Determine how many generations between writing the progress of the best individual onto a .csv and .bin file
-    int disp_freq;  // Determine how many generations between outputing contents onto the terminal screen
-
-    int best_count; // Number of individuals that needs to be within the acceptable condition before ending the algorithm, also how many of the top individuals are recorded
-    int change_check; // How often it checks for if the best individual has changed, used in the basis of Jeremy's method of anneal value dependent on if there was no change
+    int best_count;        // Number of individuals that needs to be within the acceptable condition before ending the algorithm, also how many of the top individuals are recorded
+    int change_check;      // How often it checks for if the best individual has changed, used in the basis of Jeremy's method of anneal value dependent on if there was no change
     double anneal_initial; // initial value for annealing, meant to replace the previously used calculation involving ANNEAL_MIN and ANNEAL_MAX with something more simple
+    double anneal_factor;  // factor by which annealing is multiplied with when there is no change in the best individual over 100 generations
 
-    double mutation_rate; // fraction of new offspring to mutate
+    double mutation_rate; // The percentage for probability of mutating a gene in a new individual, called iteratively to mutate more genes until the check fails
     double survivorRatio; // A percentage for how much of selectSurvivors chooses individuals that are bestPosDiff rather than bestVelDiff
     
-    // Used in mutate(), affects the size of change for the respective paramater values along with annealing
+    // Used in mutate(), affects the scale of change for the respective paramater values along with annealing
     double gamma_mutate_scale; 
     double tau_mutate_scale; 
     double coast_mutate_scale;
@@ -39,8 +38,8 @@ struct cudaConstants {
     double gamma_random_start_range;
     double tau_random_start_range;
     double coast_random_start_range;
-    double triptime_max; // Explicit bounds for valid triptime
-    double triptime_min; // Explicit bounds for valid triptime
+    double triptime_max; // Explicit bounds for valid triptime, impacts not just an individual's parameters but also range of EarthInfo's calculations regardless of random_start setting
+    double triptime_min; // Explicit bounds for valid triptime, impacts not just an individual's parameters but also range of EarthInfo's calculations regardless of random_start setting
     double alpha_random_start_range;
     double beta_random_start_range; // For beta, only positive side of the range is used (0 to the value assigned)
     double zeta_random_start_range;
@@ -72,18 +71,18 @@ struct cudaConstants {
     double vtheta_fin_earth; // AU/s
     double vz_fin_earth;     // AU/s
 
-    double v_impact; // AU/s, the official DART mission data
+    double v_impact; // AU/s, the official DART mission data (as of August 5th 2020, has no impact on the algorithm)
 
     double rk_tol;       // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
     int GuessMaxPossibleSteps; // Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp
-    int cpu_numsteps; // Constant higher precision for final CPU RK method
-    int min_numsteps; // Minimum number of steps in runge kutta 
-    int max_numsteps; // Maximum number of steps in runge kutta 
+    int cpu_numsteps;    // Constant higher precision for final CPU RK method, set to be equal to max_numsteps
+    int min_numsteps;    // Minimum number of steps in runge kutta 
+    int max_numsteps;    // Maximum number of steps in runge kutta 
     int num_individuals; // Number of individuals in the pool, each individual contains its own thread
     int survivor_count;  // Number of survivors selected, every pair of survivors creates 8 new individuals
     int thread_block_size;
 
-    // Used in generating time range for Earth calculations (units in seconds)
+    // Used in generating time range for Earth calculations (units in seconds), distance between explicit time intervals stored
     int timeRes;
 
     // Default constructor, sets the config file path to be "genetic.config" for geneticFileRead()
