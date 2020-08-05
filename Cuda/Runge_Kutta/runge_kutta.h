@@ -70,5 +70,13 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
 // Output: Unitless scaling coefficient which changes the time step each iteration
 template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol);
 
+// Error magnitude check
+// Issue occurs when error is too small for a double to precicely represent
+// Returns true if pmError is of reasonable accuracy
+//      All components of error are within 12 orders of magnitude
+// Returns false if any of the error components are more than 12 orders of magnitude from previous
+// This is used to determine if the return of calc_scaling_factor should be calculated
+template <class T> __host__ __device__ bool pmLimitCheck(const elements<T> & pmError);
+
 #include "runge_kutta.cpp"
 #endif
