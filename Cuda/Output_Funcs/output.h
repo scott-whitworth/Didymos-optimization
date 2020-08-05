@@ -55,7 +55,7 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
 // output: files BestInGenerations-[time_seed].csv, WorstInGenerations-[time_seed].csv, if thruster type is not NO_THRUST also BestThrustGens-[time_seed].csv & WorstThrustGens-[time_seed].csv, are given initial header row info
 void initializeRecord(const cudaConstants * cConstants);
 
-// Take in the current state of the generation and appends to files that were initialized in initializeRecord()
+// Take in the current state of the generation and appends to files, assumes initializeRecord() had already been called before (therefore no need to output a header row)
 // input: cConstants - access time_seed to derive file name
 //        pool - passes pool[0] to writeIndividualToFiles & writeThrustToFiles
 //        generation - passed to writeIndividualToFiles & writeThrustToFiles

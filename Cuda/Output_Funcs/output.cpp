@@ -327,20 +327,6 @@ void initializeRecord(const cudaConstants * cConstants) {
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
     excelFile << "coast" << i << ","; 
   }
-  
-  
-  /*
-  for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-    excelFile << "gamma" << i << " deviation,";
-  }
-  for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-    excelFile << "tau" << i << " deviation,";
-  }
-  excelFile << "alpha deviation, beta deviation, zeta deviation, triptime deviation,";
-  
-  for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-    excelFile << "coast" << i << " deviation,";
-  }*/
 
   excelFile << ",\n";
   excelFile.close();
@@ -348,7 +334,7 @@ void initializeRecord(const cudaConstants * cConstants) {
     // setMutateFile(cConstants);
 }
 
-// Take in the current state of the generation and appends to files
+// Take in the current state of the generation and appends to files, assumes initializeRecord() had already been called before (therefore no need to output a header row)
 // input: cConstants - access time_seed to derive file name
 //        pool - passes pool[0] to writeIndividualToFiles & writeThrustToFiles
 //        generation - passed to writeIndividualToFiles & writeThrustToFiles
@@ -392,7 +378,6 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
   excelFile << "\n"; // End of row
   excelFile.close();
 }
-
 
 // Takes in a pool and records the parameter info on all individuals
 // input: cConstants - to access time_seed in deriving file name
@@ -439,7 +424,6 @@ void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, i
   entirePool.close();
 }
 
-
 // Method for doing recording information at the end of the optimization process
 // input: cConstants - access record_mode, if record_mode == true then call progressiveRecord method, also passed into writeTrajectoryToFile method as well as progressiveRecord
 //        pool - To access the best individual (pool[0])
@@ -473,8 +457,6 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
 
   // Evaluate and print this solution's information to binary files
   trajectoryPrint(start, generation, cConstants);
-
-  // std::cout << "\nfinalRecord() returned a best posDiff of " << pool[0].posDiff << std::endl;
 
   // cleaning up dynamic memory
   delete [] start;
