@@ -1,23 +1,31 @@
 // Didymos Optimization Project using CUDA and a genetic algorithm
-#include "../Earth_calculations/earthInfo.h"
-#include "../Genetic_Algorithm/individuals.h"
-#include "../Output_Funcs/output.h"
-#include "../Runge_Kutta/runge_kuttaCUDA.cuh" //for testing rk4simple
-#include "../Genetic_Algorithm/ga_crossover.h"
+
+//TODO: Clarify complexities of the include paths
+//TODO: What / why we are including
+#include "../Earth_calculations/earthInfo.h"  // For launchCon and EarthInfo()
+#include "../Genetic_Algorithm/individuals.h" // For individual structs, paths to rkParameters for randomParameters()
+#include "../Output_Funcs/output.h" // For terminalDisplay(), recordGenerationPerformance(), and finalRecord()
+#include "../Runge_Kutta/runge_kuttaCUDA.cuh" // for testing rk4simple
+#include "../Genetic_Algorithm/ga_crossover.h" // for selectSurvivors() and newGeneration()
 
 #include <iostream> // cout
 #include <iomanip>  // used for setw(), sets spaces between values output
-#include <random>
+#include <random>   // for std::mt19937_64 object
 
-// Used to see if the best individual is changing when compared to a previous individual. 
+// Used to see if the best individual is changing when compared to a previous individual across generations 
 // Returns true if the currentBest is not equal to previousBest within a distinguishable difference
-bool changeInBest(double previousBestPos, double previousBestVel, Individual currentBest, double distinguishRate) {
-    //truncate is used here to compare floats via the distinguguishRate, to ensure that there has been relatively no change.
+// Input: previousBestPos - Position diference at the end of RK simulation, in AU
+//        previousBestVel - Velocity difference, in AU/s (currently not implemented)
+//        currentBest     - 'best' individual from current run, based on how individuals are sorted
+//        distinguishRate - magnitude of difference
+// Called inside of optimize to see if anneal rate needs to change
+bool changeInBest(double previousBestPos, double previousBestVel, const Individual & currentBest, double distinguishRate) {
+    //truncate is used here to compare doubles via the distinguguishRate, to ensure that there has been relatively no change.
     if (trunc(previousBestPos/distinguishRate) != trunc(currentBest.posDiff/distinguishRate)) {
         return true;
     }
     else {
-        /*
+        /* //Used if Velocity should be considered
         if (trunc(previousBestVel/distinguishRate) != trunc(currentBest.velDiff/distinguishRate)) {
             return true;
         }
@@ -27,12 +35,20 @@ bool changeInBest(double previousBestPos, double previousBestVel, Individual cur
     }
 }
 
-// Assumes pool is sorted array of Individuals, used in determining if the loop continues
-// Output: Returns true if top ten individuals within the pool are within the tolerance
-bool allWithinTolerance(double tolerance, Individual * pool, unsigned int currentGeneration, const cudaConstants* cConstants) {
-    // Uses for loop to pinpoint which individual is not in tolerance and display it to the terminal
+// ** Assumes pool is sorted array of Individuals **
+// Used in determining if main optimize loop continues
+// Input: tolerance - posDiff threshold, determines max target distance
+//        pool - this generation of Individuals, defined/initilized in optimimize
+//        cConstants - struct holding config values, used for accessing best_count value
+// Output: Returns true if top best_count individuals within the pool are within the tolerance
+bool allWithinTolerance(double tolerance, Individual * pool, const cudaConstants* cConstants) {
+    // Iterate to check best_count number of 'top' individuals
     for (int i = 0; i < cConstants->best_count; i++) {
-        if(pool[i].getPosDiff(cConstants) >= tolerance) {  // This isn't ideal, Change to getCost once getCost gets fleshed out //if (pool[i].getCost() >= tolerance ) {
+        // This isn't ideal, Change to getCost once getCost gets fleshed out 
+        //if (pool[i].getCost() >= tolerance ) {
+        //For now, rely on posDiff
+        if(pool[i].getPosDiff(cConstants) >= tolerance) {
+            //One was not within tolerance
             return false;
         }
     }
@@ -40,12 +56,17 @@ bool allWithinTolerance(double tolerance, Individual * pool, unsigned int curren
     return true;
 }
 
-// The function that starts up and runs the genetic algorithm with a continous loop until the critera is met (number of individuals equal to best_count is below the threshold value)
+// Main processing function for Genetic Algorithm
+// - manages memory needs for genetic algorithm
+// - deals with processing calls to CUDA callRK
+// - exits when individuals converge on tolerance defined in Constants
 double optimize(const cudaConstants* cConstants) {
+    // Not used, previously used for reporting computational performance
     double calcPerS = 0;
 
     time_t timeSeed = cConstants->time_seed;
-    std::mt19937_64 rng(timeSeed);
+    std::mt19937_64 rng(timeSeed); // This rng object is used for generating all random numbers in the genetic algorithm, passed in to functions that need it
+    
     std::cout << "----------------------------------------------------------------------------------------------------" << std::endl;
        
     // Initialize the recording files if in record mode
@@ -53,26 +74,37 @@ double optimize(const cudaConstants* cConstants) {
         initializeRecord(cConstants);
     }
      
-    // input parameters for rk4Simple which are the same for each thread
+    // input parameters for Runge Kutta process
+    // Each parameter is the same for each thread on the GPU
     double timeInitial = 0; // the starting time of the trip is always defined as zero   
-    double absTol = cConstants->rk_tol; // the tolerance is a constant number that is shared amongst all runs
-    double stepSize = (orbitalPeriod - timeInitial) / cConstants->GuessMaxPossibleSteps; // the starting step size- same for each run- note that the current step size varies throughout each run
+    // Runge Kutta adaptive time step error tolerance
+    double absTol = cConstants->rk_tol; 
+    // the starting step size for RK run
+    // - note that the current step size varies throughout each run
+    //TODO: Should this be based on max_numsteps?
+    double stepSize = (orbitalPeriod - timeInitial) / cConstants->GuessMaxPossibleSteps; 
 
+    // Initial genetic anneal scalar
     double currentAnneal = cConstants->anneal_initial;
 
-    Individual *inputParameters = new Individual[cConstants->num_individuals]; // contains all input parameters besides those which are always common amongst every thread
+    // Main set of parameters for Genetic Algorithm
+    // contains all thread unique input parameters
+    Individual *inputParameters = new Individual[cConstants->num_individuals]; 
 
-    double previousBestPos = 0; // set to zero to ensure there is a difference between previousBest and currentBest on generation zero (see changeInBest function)
+    // set to zero to force difference in first generation
+    double previousBestPos = 0; 
     double previousBestVel = 0;
 
+    // Initilize individuals randomly or from a file
     if (cConstants->random_start) {
-        // Sets inputParameters to hold parameters that are randomly generated within a reasonable range
+        // individuals set to randomly generated, but reasonable, parameters
         for (int i = 0; i < cConstants->num_individuals; i++) { 
             inputParameters[i] = Individual(randomParameters(rng, cConstants), cConstants);
         }
     }
-    // If not a random start, read from file using cConstants initial_start_file_address to get path
+    // Read from file using cConstants initial_start_file_address to get path
     else {
+        // **Might be depreciated, not tested summer 2020**
         // Sets inputParameters to hold initial individuals based from file optimizedVector.bin
         const int numStarts = 14; // the number of different sets of starting parameters in the input file
         std::ifstream starts;
@@ -121,60 +153,103 @@ double optimize(const cudaConstants* cConstants) {
         }
     }
 
-    Individual *survivors = new Individual[cConstants->survivor_count]; // stores the winners of the head-to-head competition
-    int newInd = cConstants->num_individuals; // the whole population is new the first time through the loop
+    // Collection of individuals used in the genetic selection process
+    //  - filled in selectSurvivors, based on callRK output
+    //  - stores the winners of the head-to-head competition
+    Individual *survivors = new Individual[cConstants->survivor_count]; 
 
-    double generation = 0;    // A counter for number of generations calculated
+    // Number of individuals that need to be evaluated
+    // - the whole population is in first loop
+    // - subsequent generations only calculate *new* individuals
+    int newInd = cConstants->num_individuals;
+
+    // number of current generation
+    double generation = 0;    
     
-    double currentDistance; // Contains value for how far away the best individual is from the tolerance value
-    double tolerance = cConstants->pos_threshold; // Tolerance for what is an acceptable solution (currently just the position threshold which is furthest distance from the target allowed)
-                                                  // This could eventually take into account velocity too and become a more complex calculation
-    //dRate is used to help check for a change in anneal
+    // how far away the best individual is from the tolerance value
+    double currentDistance; 
+    // Genetic solution tolerance 
+    // - (currently just the position threshold which is furthest distance from the target allowed)
+    // - could eventually take into account velocity too and become a more complex calculation
+    double tolerance = cConstants->pos_threshold; 
+             
+    // distinguishable rate used in changeInBest()
+    //  - used to help check for a change in anneal
+    //  - Gets smaller when no change is detected
     double dRate = 1.0e-8;
 
+    // Flag for finishing the genetic process
+    // set by allWithinTolerance()
     bool convergence = false;
 
-    // A do-while loop that continues until it is determined that the pool of inputParameters has reached desired tolerance level for enough individuals (best_count)
+    // main gentic algorithm loop
+    // - continues until allWithinTolerance returns true (specific number of individuals are within threshold)
     do {
+        // each inputParameter represents an individual set of starting parameters
+        // GPU based runge kutta process determines final position and velocity based on parameters
+        // newInd - how many individuals that are *new* that need to be evaluated
+        //        - All individuals first generation
+        //        - only new individuals, from crossover, in subsequent generations
+        // (inputParameters + (cConstants->num_individuals - newInd)) value accesses the start of the section of the inputParameters array that contains new individuals
         callRK(newInd, cConstants->thread_block_size, inputParameters + (cConstants->num_individuals - newInd), timeInitial, stepSize, absTol, calcPerS, cConstants); // calculate trajectories for new individuals
 
         // if we got bad results reset the Individual to random starting values (it may still be used for crossover) and set the final position to be way off so it gets replaced by a new Individual
         for (int k = 0; k < cConstants->num_individuals; k++) {
+            //Checking each individuals final position for NaNs
             if (isnan(inputParameters[k].finalPos.r) || isnan(inputParameters[k].finalPos.theta) || isnan(inputParameters[k].finalPos.z) || isnan(inputParameters[k].finalPos.vr) || isnan(inputParameters[k].finalPos.vtheta) || isnan(inputParameters[k].finalPos.vz)) {
                 std::cout << std::endl << std::endl << "NAN FOUND" << std::endl << std::endl;
                 inputParameters[k] = Individual(randomParameters(rng, cConstants), cConstants);
-                // Set to be a bad individual
+                // Set to be a bad individual by giving it bad posDiff and velDiffs
+                // therefore also having a bad cost value
+                // won't be promoted in crossover
                 inputParameters[k].posDiff = 1.0;
                 inputParameters[k].velDiff = 0.0;
-                // calculate its new cost function
+                // calculate its new cost function based on 'bad' differences
                 inputParameters[k].getCost(cConstants);
              }
         }
-        // Note to future development, should shuffle and sort be within selectWinners method?
+        // Preparing survivor pool with individuals for the newGeneration crossover
+        // Survivor pool contains:
+        //               - individuals with best PosDiff
+        //               - individuals with best velDiffs
+        //               - depends on cConstants->survivorRatio (0.1 is 10% are best PosDiff for example)
+        // inputParameters is left sorted by individuals with best velDiffs 
         selectSurvivors(inputParameters, cConstants->num_individuals, cConstants->survivor_count, survivors, cConstants->survivorRatio); // Choose which individuals are in survivors, current method selects half to be best posDiff and other half to be best velDiff
-        std::sort(inputParameters, inputParameters + cConstants->num_individuals); // put the individuals in order so we can replace the worst ones at the end of the array and access the best at the start
+
+        // sort individuals based on overloaded relational operators
+        // gives reference of which to replace and which to carry to the next generation
+        std::sort(inputParameters, inputParameters + cConstants->num_individuals);
 
         // Display a '.' to the terminal to show that a generation has been performed
-        // This also serves to visually seperate the generation display on the terminal screen
+        // This also serves to visually seperate the terminalDisplay() calls across generations 
         std::cout << '.';
 
-        // Calculate how far the pool is from the ideal cost value (currently is the positionalDifference of the best individual)
-        currentDistance = inputParameters[0].posDiff; // Change this later to take into account more than just the best individual and its position difference
+        // Calculate how far best individual is from the ideal cost value (currently is the positionalDifference of the best individual)
+        // TODO: Change this later to take into account more than just the best individual and its position difference
+        currentDistance = inputParameters[0].posDiff; 
 
+        // Scaling anneal based on proximity to tolerance
+        // Far away: larger anneal scale, close: smaller anneal
         double new_anneal = currentAnneal * (1 - tolerance / currentDistance);
         
+        //Process to see if anneal needs to be adjusted
+        // If generations are stale, anneal drops
         Individual currentBest;
-        if (static_cast<int>(generation) % cConstants->change_check == 0) { // Compare current best individual to that from CHANGE_CHECK many generations ago. If they are the same, change size of mutations
+        // Compare current best individual to that from CHANGE_CHECK many generations ago.
+        // If they are the same, change size of mutations
+        if (static_cast<int>(generation) % cConstants->change_check == 0) { 
             currentBest = inputParameters[0];
-            //checks for Anneal to change
-            if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { // previousBest starts at 0 to ensure changeInBest = true on generation 0
-                //this ensures that changeInBest never compares two zeros, thus keeping dRate in relevance as the posDiff lowers.   
+            // checks for anneal to change
+            // previousBest starts at 0 to ensure changeInBest = true on generation 0
+            if ( !(changeInBest(previousBestPos, previousBestVel, currentBest, dRate)) ) { 
+                //this ensures that changeInBest never compares two zeros, thus keeping dRate in relevance as the posDiff lowers
                 if (trunc(currentBest.posDiff/dRate) == 0) { 
                     while (trunc(currentBest.posDiff/dRate) == 0) {
                         dRate = dRate/10; 
                     }
                     std::cout << "\nnew dRate: " << dRate << std::endl;
                 }
+                // If no change, multiply currentAnneal with anneal factor
                 currentAnneal = currentAnneal * cConstants->anneal_factor;
                 std::cout << "\nnew anneal: " << currentAnneal << std::endl;
             }
@@ -189,23 +264,29 @@ double optimize(const cudaConstants* cConstants) {
         
         // Only call terminalDisplay every DISP_FREQ, not every single generation
         if ( static_cast<int>(generation) % cConstants->disp_freq == 0) {
+            // Prints the best individual's posDiff / velDiff and cost
             terminalDisplay(inputParameters[0], generation);
         }
 
         // Before replacing new individuals, determine whether all are within tolerance
-        convergence = allWithinTolerance(tolerance, inputParameters, generation, cConstants);
+        // Determines when loop is finished
+        convergence = allWithinTolerance(tolerance, inputParameters, cConstants);
 
         // Create a new generation and increment the generation counter
+        // Genetic Crossover and mutation occur here
         newInd = newGeneration(survivors, inputParameters, cConstants->survivor_count, cConstants->num_individuals, new_anneal, cConstants, rng, generation);
         ++generation;
-        
-        // If the current distance is still higher than the tolerance we find acceptable, perform the loop again
+    
+        //Loop exits based on result of allWithinTolerance and if max_generations has been hit
     } while ( !convergence && generation < cConstants->max_generations);
-    // Call record for final generation regardless of frequency, for the annealing set to -1 (since the anneal is only relevant to the next generation and so means nothing for the last one)
+
+    // Call record for final generation regardless of frequency
+    // for the annealing argument, set to -1 (since the anneal is only relevant to the next generation and so means nothing for the last one)
     if (cConstants->record_mode == true) {
         recordGenerationPerformance(cConstants, inputParameters, generation, -1, cConstants->num_individuals);
     }
-    // Only call finalRecord if the results actually converged on a solution, also display last generation onto terminal
+    // Only call finalRecord if the results actually converged on a solution
+    // also display last generation onto terminal
     if (convergence) {
         terminalDisplay(inputParameters[0], generation);
         finalRecord(cConstants, inputParameters, static_cast<int>(generation));
@@ -225,8 +306,11 @@ int main () {
     std::cout << "- Device name: " << prop.name << std::endl << std::endl;
     cudaSetDevice(0);
     
-    cudaConstants * cConstants = new cudaConstants("../Config_Constants/genetic.config"); // Declare the genetic constants used, with file path being used to receive initial values
+    // Declare the genetic constants used, with file path being used to receive initial values
+    cudaConstants * cConstants = new cudaConstants("../Config_Constants/genetic.config"); 
 
+    // Sets run0 seed, used to change seed between runs
+    // Seed is set in cudaConstants: current time or passed in via config
     double zero_seed = cConstants->time_seed;
     // Perform the optimization with optimize function
     for (int run = 0; run < cConstants->run_count; run++) {
@@ -238,7 +322,9 @@ int main () {
         std::cout << "\tPerforming run #" << run+1 << "\n\n";
 
         // pre-calculate a table of Earth's position within possible mission time range
-        launchCon = new EarthInfo(cConstants); // a global variable to hold Earth's position over time, assigned new info for this run of parameters
+        // defined as global variable
+        // accessed on the CPU when individuals are initilized
+        launchCon = new EarthInfo(cConstants); 
 
         // File output of element values that were calculated in EarthInfo constructor for verification
         /*if (cConstants->record_mode == true) {

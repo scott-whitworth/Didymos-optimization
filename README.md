@@ -1,5 +1,5 @@
 <h1>DART Mission Optimization Project</h1>
-<i>Last updated: August 5th, 2020</i>
+<i>Last updated: August 6th, 2020</i>
 
 <h2>Project Background & Current Objective</h2>
 
@@ -33,10 +33,11 @@ There are many folders and files in this project, so here's a short rundown of f
     * Thrust_Files: Contains the code that describes the thruster and its behavior using a Fourier series to determine angles of direction. Dependent on Config_Constants/config.h
     * optimizedVector.bin: Binary file containing 14 parameters that can be used as initial guesses in the genetic algorithm, values derived from previous code in orbitalOptimization folder which is also based on old impact date data.
   - PostProcessing: Contains MATLAB files that take in output files from the Cuda program to display results.
-  - archives: Contains MATLAB code files that are considered no longer relevant to the project but shouldn't be completely discarded.
-  - cuda_framework: Contains code that was used in setting up and testing usage of the CUDA platform, not actively used in finding a solution
-  - earthPosition: Isolated version of earthInfo used in Cuda to calcualte the path of the Earth, not updated to usage of cudaConstants config file reading
-  - orbitalOptimization: 2019's non-GPU dependent optimization method that utilizes Nelder-Mead instead of a genetic algorithm, also not actively used in current appraoch to the task.
+  - Legacy: Contains currently unused code from Summer 2019 research
+    * archives: Contains MATLAB code files that are considered no longer relevant to the project but shouldn't be completely discarded.
+    * cuda_framework: Contains code that was used in setting up and testing usage of the CUDA platform, not actively used in finding a solution
+    * earthPosition: Isolated version of earthInfo used in Cuda to calcualte the path of the Earth, not updated to usage of cudaConstants config file reading
+    * orbitalOptimization: Summer 2019's non-GPU dependent optimization method that utilizes Nelder-Mead instead of a genetic algorithm, also not actively used in current appraoch to the task.
   - DerivingImpactValues.xlsx : A current (likely temporary) method of converting JPL data values from cartesian to cylindrical units by using spreadhsheet fields and computations.  The converted values are then copied and put into genetic.config to be read and used.  This does not directly impact the code.
   
 <h2> Running CUDA Code: </h2>

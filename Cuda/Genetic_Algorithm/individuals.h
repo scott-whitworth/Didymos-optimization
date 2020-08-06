@@ -4,7 +4,7 @@
 #include "../Runge_Kutta/rkParameters.h"
 #include "../Earth_calculations/earthInfo.h"
 
-// Individual is a structure member of the genetric algorithm's population and has set of parameters and the resulting position and velocity
+// Individual is a structure member of the genetic algorithm's population and has set of parameters and the resulting position and velocity
 struct Individual {
     rkParameters<double> startParams; // input parameters for the run- the unique identifiers of this individual
 

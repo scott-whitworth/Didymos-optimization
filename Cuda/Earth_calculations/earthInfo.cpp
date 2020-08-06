@@ -5,7 +5,7 @@
 // Input: cConstants - Used to access impact date element data and the time range needed to be calculated (triptime max and min), passed into earthInitial_incremental()
 EarthInfo::EarthInfo(const cudaConstants* cConstants) {
     // Setting up initial information
-    startTime = cConstants->triptime_min; // Starting time (s), chronogically this is closest to impact time (0 would be exactly impact date)
+    startTime = cConstants->triptime_min; // Starting time (s), chronologically this is closest to impact time (0 would be exactly impact date)
     endTime = cConstants->triptime_max;   // Ending time (s), chronologically this is earliest time away from impact date
     timeRes = cConstants->timeRes;        // Time resolution for storing data points (s)
     tolData = ((endTime-startTime)/timeRes) + 1; // Total Number of Data points in earthCon based on duration in seconds divided by resolution, plus one for the last 'section'

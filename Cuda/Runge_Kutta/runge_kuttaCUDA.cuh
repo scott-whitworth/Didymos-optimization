@@ -5,6 +5,7 @@
 #include "../Motion_Eqns/motion_equations.h" // Utility functions for calc_k()
 
 // sets up parameters and allocates memory for and then calls rk4SimpleCUDA()
+// Called by optimize() in optimization.cu
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, const cudaConstants* cConstant);
 
 // the simple version of the runge_kutta algorithm, on GPU

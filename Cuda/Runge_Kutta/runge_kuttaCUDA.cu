@@ -5,7 +5,7 @@
 #include <algorithm> // sort(), shuffle()
 #include <random>
 
-
+// Called by optimize() in optimization.cu
 void callRK(const int numThreads, const int blockThreads, Individual *generation, double timeInitial, double stepSize, double absTol, double & calcPerS, const cudaConstants* cConstant) {
     
     cudaEvent_t kernelStart, kernelEnd;

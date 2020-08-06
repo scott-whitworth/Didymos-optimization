@@ -96,7 +96,7 @@ rkParameters<double> randomParameters(std::mt19937_64 & rng, const cudaConstants
     double tripTime =  ( ((cConstants->triptime_max - cConstants->triptime_min) * (static_cast<double>(rng()) / rng.max())) + cConstants->triptime_min);
 
     double alpha = cConstants->alpha_random_start_range * 2 * ((static_cast<double>(rng()) / rng.max()) - 0.5);
-    double  beta = cConstants-> beta_random_start_range * ((static_cast<double>(rng()) / rng.max()));
+    double  beta = cConstants-> beta_random_start_range * ((static_cast<double>(rng()) / rng.max())); // From 0 to start range, beta cannot be negative
     double  zeta = cConstants-> zeta_random_start_range * 2 * ((static_cast<double>(rng()) / rng.max()) - 0.5); 
 
     coefficients<double> testcoeff;
@@ -110,6 +110,7 @@ rkParameters<double> randomParameters(std::mt19937_64 & rng, const cudaConstants
         testcoeff.coast[j] = cConstants->coast_random_start_range * 2 * ((static_cast<double>(rng()) / rng.max()) - 0.5);
     }
 
+    //Initialize the output parameter
     return rkParameters<double>(tripTime, alpha, beta, zeta, testcoeff); 
 }
 
@@ -131,7 +132,6 @@ template <class T> bool rkParameters<T>::compare(const rkParameters<T> & other, 
             return false;
         }
     }
-
 
     //Check Starting pos/vel
     if ( !this->y0.compare(other.y0,comp_Thresh) ) {

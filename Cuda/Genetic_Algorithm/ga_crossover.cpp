@@ -10,20 +10,20 @@ enum maskValue {
     AVG,
 };
 
-// Method of determing selection of survivors that will carry properties into the new individuals of the newGeneration
-// Input: pool - a shuffled pointer array of individuals to choose from
-//        poolSize - integer number of length of the pool
-//        selectionSize - integer number of how many survivors to choose out of the pool
-//        survivors - pointer array of individuals to copy the selected individuals and store
-// Output: pool is left sorted by individuals with higher velocity difference, survivors contains an array of size selectionSize of individuals to be used in generating new individuals
+// Determing selection of survivors that will carry properties into the new individuals of the newGeneration
 void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individual* survivors, const double & ratio) {
-    // Sort the pool by velocity difference and assign the first part of the survivor array for best posDiff individuals, portion size based on the ratio percentage
+    // Sort the pool by position difference
+    // and assign the first part of the survivor array for best posDiff individuals
+    // portion size based on the ratio percentage
     std::sort(pool, pool+poolSize, BetterPosDiff);
+    //Select survivors (starting at 0)
     for (int i = 0; i < selectionSize*ratio; i++) {
         survivors[i] = pool[i];
     }
-    // Sort the pool by velocity difference and assign the rest of the survivor array to contain best velDiff individuals
+
+    // Sort the pool by velocity difference
     std::sort(pool, pool+poolSize, BetterVelDiff);
+    //starting where first loop ended
     for (int i = selectionSize*ratio; i < selectionSize; i++) {
         survivors[(i)] = pool[i];
     }
@@ -31,11 +31,6 @@ void selectSurvivors(Individual * pool, int poolSize, int selectionSize, Individ
 }
 
 // Creates a random bifurcation mask, currently not in use
-// Randomly picks one index to be the start of the '2's from mask
-// input: rng - a constructed mt19937_64 random number generator
-// in/out: mask - all data will be overwritten
-//              - Based on random index, first selection will be PARTNER1's, last selection will be PARTNER2's
-//              - ex: [1, 1, 1, 1, 2, 2]
 void crossOver_randHalf(int * mask, std::mt19937_64 & rng) {
     int crossIndex = rng() % (OPTIM_VARS-1);
     //cout << "Random Index: " << crossIndex << endl;
@@ -50,9 +45,9 @@ void crossOver_randHalf(int * mask, std::mt19937_64 & rng) {
     return;
 }
 
-// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, allows a crossover where no mixing occurs, currently not in use
-// Input: mask - pointer integer array of length OPTIM_VARS
-// Output: mask is set to contain all PARTNER1 values
+// Sets the entire mask to be PARTNER1 for length OPTIM_VARS, 
+// allows a crossover where no mixing occurs
+// currently not in use
 void crossOver_oneParent(int * mask) {
     for (int i = 0; i < OPTIM_VARS; i++) {
         mask[i] = PARTNER1;
@@ -60,9 +55,6 @@ void crossOver_oneParent(int * mask) {
 }
 
 // Creates a random mask
-// Each element in a mask is randomly set to either PARTNER1 or PARTNER2
-// in/out : All data overwritten, set randomly
-// input: rng - a constructed mt19937_64 random number generator
 void crossOver_wholeRandom(int * mask, std::mt19937_64 & rng) {
     for (int i = 0; i < OPTIM_VARS; i++ ) {
         if (rng() % 2) { //Coin flip, either 1/0
@@ -75,9 +67,7 @@ void crossOver_wholeRandom(int * mask, std::mt19937_64 & rng) {
     return;
 }
 
-// This crossover method randomly chooses between partners for each variable. Similar to crossOver_wholeRandom, but this keeps all parameters types (gamma, tau, coast) grouped
-// Input: int pointer array mask of size OPTIM_VARS, rng that is a constructed mt19937_64 random number generator used to derive random values between 1 and 2
-// Output: mask will contain an array of values that is either 1 or 2 (equivalent to PARTNER1 or PARTNER2)
+//Generates crossover mask that maintains paramter relationships
 void crossOver_bundleVars(int * mask, std::mt19937_64 & rng) {
     int p_gamma = 1 + rng() % 2; // partners for each variable are randomly chosen between 1 and 2
     int p_tau = 1 + rng() % 2;
@@ -87,6 +77,7 @@ void crossOver_bundleVars(int * mask, std::mt19937_64 & rng) {
     int p_beta = 1 + rng() % 2;
     int p_zeta = 1 + rng() % 2;
 
+    // Copying random assignment to all of paramters
     // Gamma values
     for (int i = GAMMA_OFFSET; i < (GAMMA_OFFSET + GAMMA_ARRAY_SIZE); i++) {
         mask[i] = p_gamma;
@@ -109,8 +100,6 @@ void crossOver_bundleVars(int * mask, std::mt19937_64 & rng) {
 }
 
 // Sets the entire mask to be AVG for length OPTIM_VARS
-// Input: mask - pointer integer array of length OPTIM_VARS
-// Output: mask is set to contain all AVG values
 void crossOver_average(int * mask) {
     for (int i = 0; i < OPTIM_VARS; i++) {
         mask[i] = AVG;
@@ -119,8 +108,6 @@ void crossOver_average(int * mask) {
 }
 
 // Utility to flip the polarity of a mask
-// Input:  mask is an array of size OPTIM_VARS, input based on maskValue enumerations as a mask
-// Output: each PARTNER1 in mask will be reassigned to be a PARTNER2, each PARTNER2 will be reassigned PARTNER1, AVG will be unchanged
 void flipMask(int * mask) {
     for (int i = 0; i < OPTIM_VARS; i++) {
         if (mask[i] == PARTNER1) {
@@ -130,13 +117,12 @@ void flipMask(int * mask) {
             mask[i] = PARTNER1;
         }
         // If mask[i] is neither partner1 nor partner2 (must be avg then), leave it be
+        // To handle the average enumeration
     }
     return;
 }
 
 // Copy contents of maskIn into maskOut of size OPTIM_VARS
-// Input: maskIn an array that is the original mask, maskOut is an array that will have contents copied to
-// Output: maskIn remains unchanged, maskOut will have same contents as maskIn
 void copyMask(int * maskIn, int * maskOut) {
     for (int i = 0; i < OPTIM_VARS; i++) {
         maskOut[i] = maskIn[i];
@@ -144,25 +130,23 @@ void copyMask(int * maskIn, int * maskOut) {
 }
 
 // Utility function for mutate() to get a random double with high resolution
-// Input: max - the absolute value of the min and max(min = -max) of the range
-// Output: A double value that is between -max and +max
+// The range of the random number is from -max to +max
 double getRand(double max, std::mt19937_64 & rng) {
-    return static_cast<double>(rng()) / rng.max() * max * 2.0 - max;
+    // Example:
+    //  rng()/rng.max() is a number between 0 and 1
+    //  multipled by two becomes a value between 0 and 2
+    //  minus 1 makes it a random number between -1 and +1
+    //  If max = 1.5 for example, the returned value is ( 1.5 * (value between -1 and +1) )
+    return max * ( (static_cast<double>(rng()) / rng.max()) * 2.0 - 1);
 }
 
 // Creates a new rkParameters individual by combining properties of two parent Individuals using a mask to determine which
-// Input: two rkParameter individuals (p1 and p2) - used in creating the new individual
-//        mask - Contains maskValue values and length of OPTIM_VARS, determines how the two parent properties are merged into creating the new individual
-//        thrust - Determine if the thruster properties must be carried over
-//        cConstants - passed to mutate()
-//        annealing - passed to mutate()
-//        rng - passed to mutate()
-//        generation - passed to mutate()
-// Output: Returns rkParameter object that is new individual
 rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, const rkParameters<double> & p2, const int * mask, const cudaConstants * cConstants, double annealing, std::mt19937_64 & rng, double generation) {
-    // First set the new individual to hold traits from parent 1, then go through the mask to determine if a parameter value is to be set to parent 2 or be an average of parent 1 and 2
+    // Set the new individual to hold traits from parent 1 
     rkParameters<double> newInd = p1;
 
+
+    // Based on mask values, set parameters value is to be set to parent 2 or average of parent 1 and 2
     // Only calculate values pertaining to thrust if a thruster is being used
     if (cConstants->thruster_type != thruster<double>::NO_THRUST) {
         // Iterate through the gamma values
@@ -171,7 +155,8 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
                 newInd.coeff.gamma[i - GAMMA_OFFSET] = p2.coeff.gamma[i - GAMMA_OFFSET]; // If the mask is 2, use the value from parent 2
             }
             else if (mask[i] == AVG) {
-                newInd.coeff.gamma[i - GAMMA_OFFSET] = p2.coeff.gamma[i - GAMMA_OFFSET]/2.0 + p1.coeff.gamma[i - GAMMA_OFFSET]/2.0;// If the mask is 3, average the values from both parents
+                // If the mask is 3, average the values from both parents
+                newInd.coeff.gamma[i - GAMMA_OFFSET] = p2.coeff.gamma[i - GAMMA_OFFSET]/2.0 + p1.coeff.gamma[i - GAMMA_OFFSET]/2.0;
             }
         }
         // Iterate through tau values
@@ -193,6 +178,7 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
             }
         }
     }
+    
     // Go through other variables
     if (mask[TRIPTIME_OFFSET] == PARTNER2) { //tripTime
         newInd.tripTime = p2.tripTime;
@@ -200,40 +186,43 @@ rkParameters<double> generateNewIndividual(const rkParameters<double> & p1, cons
     else if (mask[TRIPTIME_OFFSET] == AVG) {
         newInd.tripTime = p2.tripTime/2.0 + p1.tripTime/2.0;
     }
+    
     if (mask[ZETA_OFFSET] == PARTNER2) { //zeta
         newInd.zeta = p2.zeta;
     }
     else if (mask[ZETA_OFFSET] == AVG) {
         newInd.zeta = p1.zeta/2.0 + p2.zeta/2.0;
     }
+    
     if (mask[BETA_OFFSET] == PARTNER2) { //beta
         newInd.beta = p2.beta;
     }
     else if (mask[BETA_OFFSET] == AVG) {
         newInd.beta = p2.beta/2.0 + p1.beta/2.0;
     }
+    
     if (mask[ALPHA_OFFSET] == PARTNER2) { //alpha
         newInd.alpha = p2.alpha;
     }
     else if (mask[ALPHA_OFFSET] == AVG) {
         newInd.alpha = p1.alpha/2.0 + p2.alpha/2.0;
     }
-    // Now that newInd contains crossovered parameter values, call mutate onto it
+    
+    // Crossover complete, determine mutation
     newInd = mutate(newInd, rng, annealing, cConstants, generation);
 
     return newInd;    
 }
 
 // Utility function to generate a boolean mask that determines which parameter value is mutating and how many based on mutation_rate iteratively
-// input: rng - random number generating object used to randomly generate index values
-//        mutateMask - pointer to a boolean array that is assumed length of OPTIM_VARS, sets genes being mutated to true and others to false
-//        mutation_rate - a double value  less than 1 that is the chance a gene will be mutated, called iteratively to mutate more genes
-// output: mutateMask contains false for genes that are not mutating, true for genes that are to be mutated
 void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate) {
     for (int i = 0; i < OPTIM_VARS; i++) {
+        //Reset mask
         mutateMask[i] = false;
     }
-    int geneCount = 0; // counter to make sure in the unlikely event that all genes are being mutated the code doesn't get stuck in infinite loop looking for a false spot in the array
+    
+    // counter to make sure in the unlikely event that all genes are being mutated the code doesn't get stuck in infinite loop looking for a false spot in the array
+    int geneCount = 0; 
     // Set a gene to mutate if a randomized values is less than mutation_rate, repeating everytime this is true
     while ((static_cast<double>(rng()) / rng.max()) < mutation_rate && geneCount < OPTIM_VARS) {
         bool geneSet = false; // boolean to flag if a gene was successfully selected to be set as true
@@ -252,15 +241,9 @@ void mutateMask(std::mt19937_64 & rng, bool * mutateMask, double mutation_rate) 
 }
 
 // In a given Individual's parameters, generate a mutate mask using mutateMask() and then adjust parameters based on the mask, mutation of at least one gene is not guranteed
-// mutate a gene by adding or subtracting a small, random value on a parameter property
-// Input: p1 - rkParameter that is taken to be the mutation base
-//        rng - random number generator to use
-//        annealing - a scalar value on the max random number when mutating
-//        cConstants - holds properties to use such as mutation rates and mutation scales for specific parameter property types
-//        thrust - Used to check if the thruster needs to be taken into account
-// Output: Returns rkParameter object that is the mutated version of p1
 rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & rng, double annealing, const cudaConstants* cConstants, double generation) {    
-    rkParameters<double> newInd = p1; // initially set new individual to have all parameter values from parent 1
+    // initially set new individual to have all parameter values from parent 1
+    rkParameters<double> newInd = p1;
 
     // Declare and set a mutation_mask for which gene is being mutated
     bool * mutation_mask = new bool[OPTIM_VARS];
@@ -347,24 +330,14 @@ rkParameters<double> mutate(const rkParameters<double> & p1, std::mt19937_64 & r
 
 
 // Method that creates a pair of new Individuals from a pair of other individuals and a mask
-// Input: pool - pointer array to Individuals that is where the new pair of individuals are stored
-//        survivors - pointer array to Individuals to access the two parents from
-//        mask - pointer array of maskValues used to decide on which property from which parent is acquired (or average of the two)
-//        newIndCount - value that tracks number of newly created indiviudals in the pool so far in the newGeneration process, also impacts where to put the new individuals in the pool
-//        int parentsIndex - value for determing where the pair of parent survivors are selected (parent 1 is at parentsIndex, parent 2 is offset by +1)
-//        annealing - double variable passed onto generateNewIndividual
-//        poolSize - length of the pool array
-//        rng - random number generator passed on to generateNewIndividual
-//        cConstants - passed on to generateNewIndividual
-// Output: pool contains two newly created individuals at (poolSize - 1 - newIndCount) and (poolSize - 2 - newIndCount)
-//         mask is flipped in polarity (refer to flipMask method)
-//         newIndCount is incremented by +2
 void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, int& newIndCount, int parentsIndex, double annealing, int poolSize, std::mt19937_64 & rng, const cudaConstants* cConstants, double generation) { 
     // Determine where the parents and the new individual being created are located in the pool
     int parent1Index = parentsIndex;
     int parent2Index = parentsIndex + 1;
 
-    int newIndividualIndex = poolSize - 1 - newIndCount;    // The new indiviudal is located at the end of the pool, up the number of new individuals already created
+    // The new indiviudal is located at the end of the pool
+    // up the number of new individuals already created
+    int newIndividualIndex = poolSize - 1 - newIndCount;    
     // Generate new offspring with mask
     pool[newIndividualIndex] = Individual(generateNewIndividual(survivors[parent1Index].startParams, survivors[parent2Index].startParams, mask, cConstants, annealing, rng, generation), cConstants);
     newIndCount++;
@@ -379,24 +352,23 @@ void generateChildrenPair(Individual *pool, Individual *survivors, int * mask, i
 }
 
 // Creates the next pool to be used in the optimize function in opimization.cu
-// Input: survivors - Individual pointer array of Individuals to be used in creating new individuals
-//        pool - Sorted Individual pointer array that contains current generation
-//        survivorSize - length of survivors array
-//        poolSize - length of pool array
-//        annealing - passed onto generateChildrenPair
-//        cConstants - passed onto generateChildrenPair
-//        thrust - passed onto generateChildrenPair
-// Output: lower (survivorSize * 4) portion of pool is replaced with new individuals
-//         Returns number of new individuals created (newIndCount)
 int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int poolSize, double annealing, const cudaConstants* cConstants, std::mt19937_64 & rng, double generation) {
+    //Crossover mask allocation, used for performance
     int * mask = new int[OPTIM_VARS];
-    int newIndCount = 0; // Number of new individuals created so far (initially none), used in navigating through the pool when creating new individuals and returned at end of function
-    int numPairs = survivorSize / 2; // Value for how many pairs to use and produce in each loop (as one iteration through a loop produces a new pair)
+    // Number of new individuals created so far (initially none)
+    // used in navigating through the pool when creating new individuals and returned at end of function
+    int newIndCount = 0; 
+    // Value for how many pairs to use and produce in each loop
+    // (as one iteration through a loop produces a new pair)
+    int numPairs = survivorSize / 2;
+
     // Shuffle the survivors to ensure diverse crossover
     std::shuffle(survivors, survivors+survivorSize, rng);
 
-    // Generate two offspring through each crossover method, total is 4 * survivorSize offspring in pool
-    // Every loop needs to reset the mask as it is flipped from generateChildrenPair, for ones that use randomization it also keeps from having same mask for all new pairs
+    // Generate two offspring through each crossover method
+    // total is 4 * survivorSize offspring in pool
+
+    // Every loop needs a unique mask each iteration
 
     // Loop for wholeRandom mask
     for (int i = 0; i < numPairs; i++) {
@@ -408,7 +380,9 @@ int newGeneration(Individual *survivors, Individual *pool, int survivorSize, int
         crossOver_average(mask);
         generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);
     }
-    // 2 loops for bundleVars mask, two seperate loops resulting from carry over of past code, also will allow easier changes in masks used (right now just using two bundleVars instead of two different ones)
+    // 2 loops for bundleVars mask,
+    // two seperate loops resulting from carry over of past code
+    // also will allow easier changes in masks used (right now just using two bundleVars instead of two different ones)
     for (int i = 0; i < numPairs; i++) {
         crossOver_bundleVars(mask, rng);
         generateChildrenPair(pool, survivors, mask, newIndCount, 2*i, annealing, poolSize, rng, cConstants, generation);

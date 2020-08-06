@@ -13,13 +13,14 @@ void terminalDisplay(Individual& individual, unsigned int currentGeneration) {
     std::cout << "\tcost: "    << individual.cost << std::endl;
 }
 
-// input: cConstants - access time_seed to derive file name
-// output: mutateFile[time_seed].csv is given a header row, now ready to be used for progressiveRecord()
+// mutateFile[time_seed].csv is given a header row, now ready to be used by recordMutateFile()
 void setMutateFile(const cudaConstants* cConstants) { 
+  //Set up file
   std::ofstream mutateFile;
   int seed = cConstants->time_seed;
   mutateFile.open("mutateFile-" + std::to_string(seed) + ".csv", std::ios_base::app);
 
+  //Set Headers
   mutateFile << "gen, anneal, genesToMutate,";
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
     mutateFile << "gamma" << i << ",";
@@ -40,12 +41,14 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
   double *mass = new double[lastStep];
   double *Etot = new double[lastStep];
   
+  //Iterate over all time steps
   for (int i = 0; i < lastStep; i++) {
     // total mass at each time step
     mass[i] = wetMass - fuelSpent[i];
-    // total mechanical energy (K + U) at eahc time step
+    // total mechanical energy (K + U) at each time step
     Etot[i] = mass[i] * ((pow(yp[i].vr,2) + pow(yp[i].vtheta,2) + pow(yp[i].vz,2))/ 2 - constG * massSun / yp[i].r) / pow(AU,2);
     if (i) {
+      // Ignore first time step, only calculate as a change from step to step
       // W = F.dL (work done between time steps)
       work[i] = (mass[i] + mass[i-1])/2 * (accel[i] + accel[i-1])/2 * ((sin((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r - yp[i-1].r)) + (cos((gamma[i] + gamma[i-1])/2)*cos((tau[i] + tau[i-1])/2)*(yp[i].r + yp[i-1].r)/2*(yp[i].theta - yp[i-1].theta)) + (sin((tau[i] + tau[i-1])/2)*(yp[i].z - yp[i-1].z))) / pow(AU,2);
       // change in mechanical energy between time steps
@@ -57,31 +60,14 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
   work[0] = dE[0] = 0;
   Etot_avg[0] = Etot[0];
 
-  // Output data is passed by reference into trajectoryPrint() and integrated into orbitalMotion-seed.bin
-
-  // std::ofstream output;
-  // int seed = config->time_seed;
-  // output.open("errorCheck-"+std::to_string(seed)+".bin", std::ios::binary);
-
-  // for (int i = 0; i < lastStep; i++) {
-  //   output.write((char*)&time[i], sizeof(double));
-  //   output.write((char*)&work[i], sizeof(double));
-  //   output.write((char*)&dE[i], sizeof(double));
-  //   output.write((char*)&Etot_avg[i], sizeof(double));
-  // }
-  // output.close();
+  // Output data is passed by reference into trajectoryPrint and integrated into orbitalMotion-seed.bin
 
   // cleaning up dynamic memory
   delete [] mass;
   delete [] Etot;
 }
 
-// input: cConstants - access time_seed to derive file name
-//        generation - for storing into the file, the generation that the mutation is occuring
-//        annealing - for storing into the file, the anneal value being used
-//        numGenes - the number of genes that are to be mutated
-//        recordLog[OPTIM_VARS] - a "mutate mask" that is an array corresponding to the optimization array that contains the random mutate values being applied
-// output: file mutateFile-[time_seed].csv is appended a new row containing mutate information
+// file mutateFile-[time_seed].csv is appended a new row containing mutate information
 void recordMutateFile(const cudaConstants * cConstants, double generation, double annealing, int numGenes, double recordLog[OPTIM_VARS]) {
   std::ofstream mutateFile;
   int seed = cConstants->time_seed;
@@ -109,15 +95,12 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
   mutateFile.close();
 }
 
-// Output final results of genetic algorithm
-// input: x[] - array that holds parameter values of OPTIM_VARS length
-//        lastStep - Used to store number of total steps as output
-//        threadRank - Rank of the individual element being recorded, currently (July )
-//        yOut - Used to store element informatio as output
-//        thrust - Passed into rk4sys
+// Main Output, final results of genetic algorithm
+// input: x[] - array of OPTIM_VARS for a single individual
+//        generation - generation num of individual       
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
-// output: yOut contains final eleement information of the spacecraft
-//         lastStep contains value last value for number of steps taken
+// output: file orbitalMotion-[time_seed].bin is created that holds spacecraft RK steps and error
+//         file finalOptimization-[time_seed].bin is created that holds earth/ast/ and trajectory parameter values
 void trajectoryPrint( double x[], int generation, const cudaConstants* cConstants) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
@@ -249,8 +232,6 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   output.write((char*)&lastStep, sizeof (double));
 
   output.close();
-
-  // std::cout << "\ntrajectoryPrint() returned a best posDiff of " << sqrt(pow(cConstants->r_fin_ast - yOut.r, 2) + pow(cConstants->theta_fin_ast - fmod(yOut.theta, 2 * M_PI), 2) + pow(cConstants->z_fin_ast - yOut.z, 2)) << std::endl;
   
   // cleaning up dynamic memory
   delete [] yp;
@@ -272,12 +253,14 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
 // output: output file is appended information on rank, individual values/parameter information
 void progressiveAnalysis(int generation, int numStep, double *start, elements<double> & yp, const cudaConstants *config) {
   int seed = config->time_seed;
+  //Set up file
   std::ofstream output;
   output.open("progressiveAnalysis.csv", std::ios_base::app);
   output << "\ntime_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
 
+  //Headers
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-    output << "gamma" << i << ","; 
+    output << "gamma" << i << ",";
   }
   for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
     output << "tau" << i << ","; 
@@ -308,7 +291,7 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
 
 // Initialize the .csv file with header row
 // input: cConstants - to access time_seed for deriving file name conventions and also thruster type
-// output: file genPerfmanceT-[time_seed].csv, is appended with initial header row info
+// output: file genPerformanceT-[time_seed].csv, is appended with initial header row info
 void initializeRecord(const cudaConstants * cConstants) {
   std::ofstream excelFile;
   int seed = cConstants->time_seed;
@@ -334,24 +317,17 @@ void initializeRecord(const cudaConstants * cConstants) {
     // setMutateFile(cConstants);
 }
 
-// Take in the current state of the generation and appends to files, assumes initializeRecord() had already been called before (therefore no need to output a header row)
-// input: cConstants - access time_seed to derive file name
-//        pool - passes pool[0] to writeIndividualToFiles & writeThrustToFiles
-//        generation - passed to writeIndividualToFiles & writeThrustToFiles
-//        new_anneal - passed into writeIndividualToFiles
-//        poolSize - used to access worst individual in pool by using index value poolSize-1
-//        thrust - used in conditional statement of thrust type
-// output: files BestInGenerations/WorstInGenerations have appended information using writeIndividualToFiles method
-//         files BestThrustGens/WorstThurstGens have appended information using writeThrustFiles method
+// Take in the current state of the generation and appends to excel file, assumes initializeRecord() had already been called before (no need to output a header row)
 void recordGenerationPerformance(const cudaConstants * cConstants, Individual * pool, double generation, double new_anneal, int poolSize) {
   std::ofstream excelFile;
   int seed = cConstants->time_seed;
   std::string fileId = std::to_string(seed);
   excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
-
+  // Record best individuals best posDiff and velDiff of this generation
   excelFile << generation << "," << pool[0].posDiff << ",";
   excelFile << pool[0].velDiff << ",";
 
+  // Record best individuals parameters
   excelFile << pool[0].startParams.alpha << ",";
   excelFile << pool[0].startParams.beta << ",";
   excelFile << pool[0].startParams.zeta << ",";
@@ -367,19 +343,11 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
     excelFile << pool[0].startParams.coeff.coast[i-COAST_OFFSET] << ","; 
   }
 
-/*
-  double * deviation_array = new double[OPTIM_VARS];
-  generationDiversity(pool, poolSize, deviation_array);
-  
-  for (int gene = 0; gene < OPTIM_VARS; gene++) {
-    excelFile << deviation_array[gene] << ",";
-  }
-  delete [] deviation_array;*/
   excelFile << "\n"; // End of row
   excelFile.close();
 }
 
-// Takes in a pool and records the parameter info on all individuals
+// Takes in a pool and records the parameter info on all individuals, currently unused
 // input: cConstants - to access time_seed in deriving file name
 //        pool - holds all the individuals to be stored
 //        poolSize - to use in iterating through the pool
@@ -462,22 +430,22 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   delete [] start;
 }
 
-// method that stores information of launchCon of timeRes*24 resolution
-// input: cConstants - access time range and resolution info on launchCon
-//        launchCon - access elements of earth 
-// output: EarthCheckValues.csv is created and holds rows of element info on earth with timeStamp on each row
+// Stores information of launchCon of timeRes*24 resolution in EarthCheckValues-[time_seed].csv
 void recordEarthData(const cudaConstants * cConstants) {
-  double timeStamp = cConstants->triptime_min;
-
+  double timeStamp = cConstants->triptime_min; // Start the timeStamp at the triptime min (closest to impact)
+  // seed to hold time_seed value to identify the file
   int seed = cConstants->time_seed;
+  // Open file
   std::ofstream earthValues;
   earthValues.open("EarthCheckValues-"+ std::to_string(seed) +".csv");
   // Set header row for the table to record values, with timeStamp
   earthValues << "TimeStamp, Radius, Theta, Z, vRadius, vTheta, vZ\n";
+  // Fill in rows for elements of launchCon across the time range going backwards until triptime max
   while (timeStamp < cConstants->triptime_max) {
       earthValues << timeStamp << "," << launchCon->getCondition(timeStamp);
       timeStamp += cConstants->timeRes*24; // Increment to next day as timeRes is assumed to be set to every hour in this output
   }
+  
   // Done recording earth calculations, close file
   earthValues.close();
 }
