@@ -56,12 +56,11 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 // error = y_new - y_prev, calculated analytically using k values
 // error used in calc_scalingFactor
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
-                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7);
+                                                    elements<T> & error);
 
 
 
-template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
-                                    elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7);
+template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error);
 
 
 /**********************************************************************************************************************************/
