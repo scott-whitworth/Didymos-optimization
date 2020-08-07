@@ -521,7 +521,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     % spacecraft 1
     
     % Earth's sphere of influence at launch
-    surf(launchPos1(1)+r_esoi*x, launchPos1(2)+r_esoi*y, launchPos1(3)+r_esoi*z,'Color',[0 0.5 0.5])
+    surf(launchPos1(1)+r_esoi*x, launchPos1(2)+r_esoi*y, launchPos1(3)+r_esoi*z)
     hold on
     % In-plane initial position
     [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
@@ -534,7 +534,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     % spacecraft 2
     
     % Earth's sphere of influence at launch
-    surf(launchPos2(1)+r_esoi*x, launchPos2(2)+r_esoi*y, launchPos2(3)+r_esoi*z,'Color',[0.5 0 0.5])
+    surf(launchPos2(1)+r_esoi*x, launchPos2(2)+r_esoi*y, launchPos2(3)+r_esoi*z)
     hold on
     % In-plane initial position
     [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
