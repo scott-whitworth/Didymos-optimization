@@ -152,13 +152,11 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   dE = new double[numSteps];  // Initialize memory for delta-E array
   Etot_avg = new double[numSteps];  // Initialize memory for average mechanical energy array
 
-  double accel; // Initialize memory for acceleration at the current step
-
   // used to track the cost function throughout a run via output and outputs to a binary
   int lastStepInt;
 
   // integrate the trajectory of the input starting conditions
-  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, accel, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
+  rk4sys(timeInitial, x[TRIPTIME_OFFSET] , times, spaceCraft, deltaT, yp, absTol, coeff, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, cConstants);
 
   // store the number of steps as a double for binary output
   double lastStep = lastStepInt;
