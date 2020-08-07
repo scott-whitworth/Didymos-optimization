@@ -167,8 +167,11 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
   // calculate the error in conservation of mechanical energy due to the thruster
   errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
 
+  // This function is used to compare the final best thread with other runs
   // append this thread's info to a csv file
-  progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+  if (cConstants->record_mode == true) {
+    progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
+  }
 
   // binary outputs
   std::ofstream output;
@@ -254,17 +257,44 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
   //Set up file
   std::ofstream output;
   output.open("progressiveAnalysis.csv", std::ios_base::app);
-  output << "\ntime_seed,numStep,posDiff,velDiff,Triptime,alpha,beta,zeta,";
+  output << "\ntime_seed,numStep,posDiff,velDiff,tripTime,alpha,beta,zeta,";
 
   //Headers
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-    output << "gamma" << i << ",";
+    excelFile << "gamma"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
   for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-    output << "tau" << i << ","; 
+    excelFile << "tau"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-    output << "coast" << i << ","; 
+    excelFile << "psi"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
   output << "\n";  
 
@@ -295,24 +325,49 @@ void initializeRecord(const cudaConstants * cConstants) {
   int seed = cConstants->time_seed;
   // setting the numeric id tag as the randomization seed (when doing runs of various properties, suggested to add other values to differentiate)
   std::string fileId = std::to_string(seed);
-  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
+  excelFile.open("genPerformance-" + fileId + ".csv", std::ios_base::app);
 
-  excelFile << "Gen,bestPosDiff,bestVelDiff,alpha,beta,zeta,triptime,";
+  excelFile << "gen,bestPosDiff,bestVelDiff,alpha,beta,zeta,tripTime,";
   
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-    excelFile << "gamma" << i << ","; 
+    excelFile << "gamma"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
   for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-    excelFile << "tau" << i << ","; 
+    excelFile << "tau"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-    excelFile << "coast" << i << ","; 
+    excelFile << "psi"; 
+    if (i == 0) {
+      excelFile << "_a" << i << ",";
+    }
+    else if (i % 2 == 0) {
+      excelFile << "_b" << i/2 << ",";
+    }
+    else {
+      excelFile << "_a" << (i+1)/2 << ",";
+    }
   }
 
   excelFile << ",\n";
   excelFile.close();
-    // call setMutateFile to set it up
-    // setMutateFile(cConstants);
 }
 
 // Take in the current state of the generation and appends to excel file, assumes initializeRecord() had already been called before (no need to output a header row)
@@ -320,7 +375,7 @@ void recordGenerationPerformance(const cudaConstants * cConstants, Individual * 
   std::ofstream excelFile;
   int seed = cConstants->time_seed;
   std::string fileId = std::to_string(seed);
-  excelFile.open("genPerformanceT-" + fileId + ".csv", std::ios_base::app);
+  excelFile.open("genPerformance-" + fileId + ".csv", std::ios_base::app);
   // Record best individuals best posDiff and velDiff of this generation
   excelFile << generation << "," << pool[0].posDiff << ",";
   excelFile << pool[0].velDiff << ",";
