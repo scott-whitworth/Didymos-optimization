@@ -281,7 +281,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     hold on
     [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
     velDiff = au*sqrt((y0A(4) - cR(4,1))^2 + (y0A(5) - cR(5,1))^2 + (y0A(6) - cR(6,1))^2);
-    txt = join(['tripTime: ',num2str(tripTime/(3600*24)),' days\nvelDiff: ',num2str(velDiff),' m/s']);
+    txt = join(['\leftarrow tripTime: ',num2str(tripTime/(3600*24)),' days\nvelDiff: ',num2str(velDiff),' m/s']);
     txt = compose(txt);
     text(y0Ax, y0Ay, y0Az, txt)
     title('Solar orbitals')
