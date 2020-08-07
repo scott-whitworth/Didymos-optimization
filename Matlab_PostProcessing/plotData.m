@@ -279,7 +279,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     hold on
     quiver3(cX(radStep),cY(radStep),cZ(radStep),accelX(radStep),accelY(radStep),accelZ(radStep),'k','Autoscalefactor',.08,'LineWidth',1)
     title('Solar orbitals')
-    legend('Spacecraft','Asteroid','Earth','Acceleration')
+    legend('Spacecraft','Asteroid','Earth','Thrust')
     hold off
     %print(a,'3D.png','-dpng','-r300'); 
     
