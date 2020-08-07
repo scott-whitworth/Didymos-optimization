@@ -311,12 +311,10 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     figure(6)
     
     r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
-    t = 0:pi/100:2*pi; % period of a circle
-    [m,n] = size(t); % n = number of steps in t
-    phi = -pi/2:pi/200:pi/2;
+    [x,y,z] = sphere;
     
-    % Earth's sphere of influence at launch (in-plane)
-    plot3(launchPos(1)+r_esoi*sin(t).*cos(phi), launchPos(2)+r_esoi*cos(t).*cos(phi), launchPos(3)+r_esoi*sin(phi),'LineWidth', 1,'Color',[.61 .51 .74])
+    % Earth's sphere of influence at launch
+    plot3(launchPos(1)+r_esoi*x, launchPos(2)+r_esoi*y, launchPos(3)+r_esoi*z,'LineWidth', 1,'Color',[.61 .51 .74])
     hold on
     
     % In-plane initial position
