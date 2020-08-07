@@ -1,5 +1,5 @@
 <h1> Config File Specifications/Information </h1>
-<i>Last Updated: August 5th, 2020</i>
+<i>Last Updated: August 7th, 2020</i>
 
 <h2>File and variable format for config file</h2>
 
@@ -27,6 +27,7 @@ Table 1. Setup & General Values
 | write_freq                 	| int        	| None  	| Sets number of generations to process before writing information onto files, 1 is to write every generation                                               	                    |   	|
 | disp_freq                  	| int        	| None  	| Sets number of gnerations to process before outputting to console terminal, 1 is to display output every generation                                       	                    |   	|
 | rk_tol                 	    | double     	| None  	| The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm	                                                                                        |   	|
+| doublePrecThresh              | double     	| None  	| The smallest error difference in runge kutta algorithm allowed, having the value set too small would result in differences between GPU and CPU runge-kutta due to the data types limits of precision |   	|
 | GuessMaxPossibleSteps         | int        	| None  	| Used as a large value to ensure adequete memory allocation in the arrays that record information in rk4sys() in output.cpp, should be greater than possible number of steps taken in the runge kutta methods |   	|
 | min_numsteps                 	| int        	| None  	| Minimum number of steps in the runge kutta used in the GPU and in EarthInfo's reverse runge kutta method, note that changing the numsteps but keeping same time_seed value can lead to different results due to slight variance in the results that changes the aglorithm's path to finding a solution    |   	|
 | max_numsteps                 	| int        	| None  	| Maximum number of steps in the runge kutta used in the GPU and in EarthInfo's reverse runge kutta method, note that changing the numsteps but keeping same time_seed value can lead to different results due to slight variance in the results that changes the aglorithm's path to finding a solution    |   	|
@@ -115,3 +116,4 @@ A table to elaborate on why some variables are assigned certain values
 | thread_block_size             | 32        | Based on the Tesla GPU.                                                                                                                                                                       |       |
 | random_start                  | true      | Random starting parameters allow for more diverse possible solutions, rather than a constrained initial start from a file.                                                                    |       |
 | best_count                    | 1         | It was found that in a given run, the best individuals when convergence occurs are very similar to each other, so setting more than 1 does not lead to more different solutions in a single run.|       |
+| doublePrecThresh              | 1e-12     | The double data type experiences loss in precision for differences in two elements within runge-kutta that as a result could lead to differences between the CPU and GPU computations of runge-kutta.  This value is a starting point in finding the smallest threshold for that difference. |     |

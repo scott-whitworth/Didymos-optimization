@@ -151,7 +151,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         curTime += stepSize;
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol);
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol, cConstants->doublePrecThresh);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
@@ -192,7 +192,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
         curTime -= stepSize;
 
         //Alter the step size for the next iteration
-        stepSize *= calc_scalingFactor(y_new-error,error,absTol);
+        stepSize *= calc_scalingFactor(y_new-error,error,absTol, cConstants->doublePrecThresh);
 
         //The step size cannot exceed the total time divided by 10 and cannot be smaller than the total time divided by 1000
         if (stepSize > (timeFinal-timeInitial) / cConstants->min_numsteps) {
@@ -275,7 +275,7 @@ template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize
     error = (k1*(static_cast <double> (71)/static_cast <double> (57600))) + (k3*(static_cast <double> (-71)/static_cast <double> (16695))) + (k4*(static_cast <double> (71)/static_cast <double> (1920))) - (k5*(static_cast <double> (17253)/static_cast <double> (339200))) + (k6*(static_cast <double> (22)/static_cast <double> (525))) + (k7*(static_cast <double> (-1)/static_cast <double> (40)));    
 }
 
-template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol) {
+template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & previous , const elements<T> & difference, const T & absTol, const double precThresh) {
     // relative total error is the total error of all coponents of y which is used in scale.
     // scale is used to determine the next step size.
     T normTotError, scale;
@@ -284,7 +284,7 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
     elements<T> pmError(difference.r/previous.r, difference.theta/previous.theta, difference.z/previous.z, 
     difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
 
-    if (!pmLimitCheck(pmError)) {
+    if (!pmLimitCheck(pmError, precThresh)) {
         // pmError is too small!
         // Keep time step the same
         // Complicated rational:
@@ -303,14 +303,14 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
     return scale;   
 }
 
-template <class T> __host__ __device__ bool pmLimitCheck(const elements<T> & pmError){
+template <class T> __host__ __device__ bool pmLimitCheck(const elements<T> & pmError, const double precThresh){
     //It is possible this is a major resource drain. This might be faster to square everything and not use fabs (floating point abs)
-    if( (fabs(pmError.r) < 1.0e-12 ) ||
-        (fabs(pmError.theta) < 1.0e-12 ) ||
-        (fabs(pmError.z) < 1.0e-12 ) ||
-        (fabs(pmError.vr) < 1.0e-12 ) ||
-        (fabs(pmError.vtheta) < 1.0e-12 ) ||
-        (fabs(pmError.vz) < 1.0e-12 ) )
+    if( (fabs(pmError.r) < precThresh ) ||
+        (fabs(pmError.theta) < precThresh ) ||
+        (fabs(pmError.z) < precThresh ) ||
+        (fabs(pmError.vr) < precThresh ) ||
+        (fabs(pmError.vtheta) < precThresh ) ||
+        (fabs(pmError.vz) < precThresh ) )
     {
         //Error it too small for precise calculation of step size
         return false;
