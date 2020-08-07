@@ -285,8 +285,13 @@ template <class T> __host__ __device__ T calc_scalingFactor(const elements<T> & 
     difference.vr/previous.vr,  difference.vtheta/previous.vtheta, difference.vz/previous.vz);
 
     if (!pmLimitCheck(pmError)) {
-        //pmError is too small!
-        return 1.2; // Increase step size by 20%
+        // pmError is too small!
+        // Keep time step the same
+        // Complicated rational:
+        // If error is so small the error is at the double error limit
+        //     - Could mean time step needs to be smaller, thus more presice
+        //     - Or could mean that time step needs to be longer to get a reasonable error
+        return 1.0; // Change step size by 0%
     }
 
     // elements<T> pmError(previous.r, previous.theta, previous.z, previous.vr,  previous.vtheta, previous.vz);
