@@ -261,39 +261,39 @@ void progressiveAnalysis(int generation, int numStep, double *start, elements<do
 
   //Headers
   for (int i = 0; i < GAMMA_ARRAY_SIZE; i++) {
-    excelFile << "gamma"; 
+    output << "gamma"; 
     if (i == 0) {
-      excelFile << "_a" << i << ",";
+      output << "_a" << i << ",";
     }
     else if (i % 2 == 0) {
-      excelFile << "_b" << i/2 << ",";
+      output << "_b" << i/2 << ",";
     }
     else {
-      excelFile << "_a" << (i+1)/2 << ",";
+      output << "_a" << (i+1)/2 << ",";
     }
   }
   for (int i = 0; i < TAU_ARRAY_SIZE; i++) {
-    excelFile << "tau"; 
+    output << "tau"; 
     if (i == 0) {
-      excelFile << "_a" << i << ",";
+      output << "_a" << i << ",";
     }
     else if (i % 2 == 0) {
-      excelFile << "_b" << i/2 << ",";
+      output << "_b" << i/2 << ",";
     }
     else {
-      excelFile << "_a" << (i+1)/2 << ",";
+      output << "_a" << (i+1)/2 << ",";
     }
   }
   for (int i = 0; i < COAST_ARRAY_SIZE; i++) {
-    excelFile << "psi"; 
+    output << "psi"; 
     if (i == 0) {
-      excelFile << "_a" << i << ",";
+      output << "_a" << i << ",";
     }
     else if (i % 2 == 0) {
-      excelFile << "_b" << i/2 << ",";
+      output << "_b" << i/2 << ",";
     }
     else {
-      excelFile << "_a" << (i+1)/2 << ",";
+      output << "_a" << (i+1)/2 << ",";
     }
   }
   output << "\n";  
