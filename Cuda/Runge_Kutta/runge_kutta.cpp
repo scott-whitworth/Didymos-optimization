@@ -24,7 +24,7 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     // Set the first element of the solution vector to the initial conditions
     u = y0;
 
-    while (curTime < timeFinal) { // iterate until time is equal to the stop time
+    while (curTime <= timeFinal) { // iterate until time is equal to the stop time
 
         y_new[n] = u;
 
@@ -43,6 +43,10 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
             accel_output[n] = calc_accel(u.r,u.z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
             // array of fuel spent for binary output
             fuelSpent[n] = massFuelSpent;
+        }
+
+        if (curTime == timeFinal) {
+            break;
         }
         
         //calculate new position
