@@ -518,11 +518,12 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     r_esoi = 6.211174738e-3; % radius of Earth's sphere of influence in au
     t = 0:pi/100:2*pi;
     [m,n] = size(t);
+    phi = -pi/2:pi/200:pi/2;
     
     % spacecraft 1
     
     % Earth's sphere of influence at launch (in-plane)
-    plot3(launchPos1(1)+r_esoi*cos(t), launchPos1(2)+r_esoi*sin(t), launchPos1(3)*ones(1,n),'LineWidth',1,'Color',[1 0 0])
+    plot3(launchPos1(1)+r_esoi*sin(t).*cos(phi), launchPos1(2)+r_esoi*cos(t).*cos(phi), launchPos1(3)+r_esoi*sin(phi),'LineWidth',1,'Color',[1 0 0])
     hold on
     % In-plane initial position
     [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
@@ -535,7 +536,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     % spacecraft 2
     
     % Earth's sphere of influence at launch (in-plane)
-    plot3(launchPos2(1)+r_esoi*cos(t), launchPos2(2)+r_esoi*sin(t), launchPos2(3)*ones(1,n),'LineWidth',1,'Color',[0 0 1])
+    plot3(launchPos2(1)+r_esoi*sin(t).*cos(phi), launchPos2(2)+r_esoi*cos(t).*cos(phi), launchPos2(3)+r_esoi*sin(phi),'LineWidth',1,'Color',[0 0 1])
     hold on
     % In-plane initial position
     [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
