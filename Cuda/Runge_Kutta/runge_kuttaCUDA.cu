@@ -72,8 +72,6 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
         double startTime = *timeInitial;
         double curAccel = 0;
 
-        elements<double> k1, k2, k3, k4, k5, k6, k7; // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
-
         thruster<double> thrust(cConstant);
 
         double massFuelSpent = 0; // mass of total fuel expended (kg) starts at 0
@@ -94,7 +92,7 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
             }
 
             // calculate k values and get new value of y
-            rkCalc(curTime, threadRKParameters.tripTime, stepSize, curPos, threadRKParameters.coeff, curAccel, error, k1, k2, k3, k4, k5, k6, k7); 
+            rkCalc(curTime, threadRKParameters.tripTime, stepSize, curPos, threadRKParameters.coeff, curAccel, error); 
 
             curTime += stepSize; // update the current time in the simulation
             

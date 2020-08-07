@@ -482,8 +482,15 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     quiver3(cX(radStep1),cY(radStep1),cZ(radStep1),accelX1(radStep1),accelY1(radStep1),accelZ1(radStep1),'k','Autoscalefactor',.08,'LineWidth',1,'Color',[0.4660, 0.6740, 0.1880])
     hold on
     quiver3(dX(radStep2),dY(radStep2),dZ(radStep2),accelX2(radStep2),accelY2(radStep2),accelZ2(radStep2),'k','Autoscalefactor',.08,'LineWidth',1,'Color',[0, 0, 1])
+    hold on
+    [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
+    velDiff1 = au*sqrt((y0A(4) - cR(4,1))^2 + (y0A(5) - cR(5,1))^2 + (y0A(6) - cR(6,1))^2);
+    velDiff2 = au*sqrt((y0A(4) - dR(4,1))^2 + (y0A(5) - dR(5,1))^2 + (y0A(6) - dR(6,1))^2);
+    txt = join(['tripTime 1: ',num2str(tripTime1/(3600*24)),' days\nvelDiff 1: ',num2str(velDiff1),' m/s\ntripTime 2: ',num2str(tripTime2/(3600*24)),' days\nvelDiff 2: ',num2str(velDiff2),' m/s']);
+    txt = compose(txt);
+    text(y0Ax, y0Ay, y0Az, txt)
     title('Solar orbitals')
-    legend('Spacecraft 1','Spacecraft 2','Asteroid','Earth','Acceleration 1', 'Acceleration 2')
+    legend('Spacecraft 1','Spacecraft 2','Asteroid','Earth','Thrust 1', 'Thrust 2')
     hold off
     %print(a,'3D.png','-dpng','-r300'); 
     
@@ -575,7 +582,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     ylabel('y (a.u.)')
     zlabel('z (a.u.)')
     title('Launch conditions')
-    legend({'ESOI_1','Position_1','Velocity_1','ESOI_2','Position_2','Velocity_2'})
+    legend({'ESOI 1','Position 1','Velocity 1','ESOI 2','Position 2','Velocity 2'})
     hold off
     
     end

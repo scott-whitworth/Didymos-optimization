@@ -6,9 +6,7 @@
 #include <cmath> // used for sine, cosine, and pow functions
 
 template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *times, const elements<T> & y0, T stepSize, elements<T> *y_new, 
-                               const T & absTol, coefficients<T> coeff, T & accel, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, const cudaConstants* cConstant) {
-    // k variables for Runge-Kutta calculation of y[n+1]
-    elements<T> k1, k2, k3, k4, k5, k6, k7;
+                               const T & absTol, coefficients<T> coeff, T *gamma,  T *tau, int & lastStep, T *accel_output, T *fuelSpent, const T & wetMass, const cudaConstants* cConstant) {
 
     thruster<T> thrust(cConstant);
 
@@ -19,75 +17,39 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     //set to 0 initially
     T massFuelSpent = 0;
 
-    // Set the first element of the solution vector to the initial conditions
-    y_new[0] = y0;
-    times[0] = timeInitial;
-
-    // Check the thruster type before performing calculations, at time 0
-    if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
-        gamma[0] = tau[0] = accel_output[0] = fuelSpent[0] = 0;
-    }
-    else {
-        // array of gamma for binary output
-        gamma[0] = calc_gamma(coeff, timeInitial, timeFinal);
-        // array of tau for binary output
-        tau[0] = calc_tau(coeff,timeInitial, timeFinal); 
-        // array of acceleration for binary output
-        accel_output[0] = calc_accel(y_new[0].r,y_new[0].z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
-        // array of fuel spent for binary output
-        fuelSpent[0] = massFuelSpent;
-    }
-
     // u - current position
     // error needs to be defined, but not being used
     elements<T> u, error;
 
-    bool coast;
+    // Set the first element of the solution vector to the initial conditions
+    u = y0;
 
     while (curTime < timeFinal) { // iterate until time is equal to the stop time
 
-        u = y_new[n];
+        y_new[n] = u;
 
+        times[n] = curTime;
 
-        // TODO: should these take place after rkCalc?
-        ////////////////
-
-        // Check the thruster type before performing calculations
+        // Check the thruster type before performing calculations, at time 0
         if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
-            coast = accel = massFuelSpent = 0;
+            gamma[n] = tau[n] = accel_output[n] = fuelSpent[n] = 0;
         }
         else {
-            // defining coast using calc_coast()
-            coast = calc_coast(coeff, curTime, timeFinal, thrust);
-            // defining acceleration using calc_accel()
-            accel = calc_accel(u.r,u.z, thrust, massFuelSpent, stepSize, coast, wetMass, cConstant);
+            // array of gamma for binary output
+            gamma[n] = calc_gamma(coeff, timeInitial, timeFinal);
+            // array of tau for binary output
+            tau[n] = calc_tau(coeff,timeInitial, timeFinal);
+            // array of acceleration for binary output
+            accel_output[n] = calc_accel(u.r,u.z, thrust, massFuelSpent, stepSize, calc_coast(coeff, curTime, timeFinal, thrust), wetMass, cConstant);
+            // array of fuel spent for binary output
+            fuelSpent[n] = massFuelSpent;
         }
-
-        // Record array of accel for binary output
-        accel_output[n+1] = accel;
-        // Record the updated massFuelSpent to the output array
-        fuelSpent[n+1] = massFuelSpent;
-
-        /////////////////
         
         //calculate new position
-        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7);
+        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel_output[n], error);
 
         //array of time output as t         
         curTime += stepSize;
-        //Time of iteration is set to the previous time plus the step size used within that iteration
-        times[n+1] = curTime;
-
-        // Check the thruster type before performing calculations
-        if (cConstant->thruster_type == thruster<double>::NO_THRUST) {
-            gamma[n+1] = tau[n+1] = 0;
-        }
-        else {
-            //array of gamma for binary output
-            gamma[n+1] = calc_gamma(coeff,curTime, timeFinal);
-            //array of tau for binary output
-            tau[n+1] = calc_tau(coeff,curTime, timeFinal);  
-        }
 
         // Choosing a constant max number of steps for high precision final output
         stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
@@ -97,8 +59,6 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
             stepSize = (timeFinal-curTime);
         }
 
-        //Calculates the y[n] for the next round of calculations
-        y_new[n+1] = u;   
         n++;
     } //end of while 
     lastStep = n;
@@ -113,9 +73,6 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
                                     T stepSize, elements<T> & y_new, const T & absTol, coefficients<T> coeff, T & accel, const T & wetMass, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the initial conditions of the spacecraft
     y_new = y0;
-
-    // k variables for Runge-Kutta calculation of y based off the spacecraft's final state
-    elements<T> k1, k2, k3, k4, k5, k6, k7;
 
     thruster<T> thrust(cConstants);
 
@@ -145,7 +102,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         }
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error); 
 
         //array of time output as t         
         curTime += stepSize;
@@ -179,14 +136,12 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
                                    T stepSize, elements<T> & y_new, const T & absTol, const cudaConstants * cConstants) {
     // Set the first element of the solution vector to the conditions of earth on impact date (Oct. 5, 2022)
     y_new = y0;
-    // k variables for Runge-Kutta calculation of y for earth's initial position (launch date)
-    elements<T> k1, k2, k3, k4, k5, k6, k7;
     elements<T> error;
     T curTime = timeFinal; // setting time equal to the start time
 
     while( curTime > timeInitial) {  // iterates in reverse
         //calculate k values
-        rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
+        rkCalcEarth(curTime, timeFinal, stepSize, y_new, error);
 
         //array of time output as t         
         curTime -= stepSize;
@@ -212,6 +167,8 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
                                                     elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7) {
 
+    // k variables for Runge-Kutta calculation of y_new
+    elements<T> k1, k2, k3, k4, k5, k6, k7;
     // Coefficients from MATLAB's implementation of ode45
     // Our calculation of k has the time step built into it (see motion_equations.cpp)
     k1 = calc_k(stepSize, y_new, coeff, accel, curTime, timeFinal); 
@@ -244,8 +201,9 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
 // The stepSize value that is inputted is assumed to be a positive value
 template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
                                     elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7) {
-    // Runge-Kutta algorithm      
-    //elements<T> y_prev;
+    // Runge-Kutta algorithm    
+    // k variables for Runge-Kutta calculation of y_new
+    elements<T> k1, k2, k3, k4, k5, k6, k7;
     
     stepSize *= -1; // Make this copy of stepSize negative as it goes backwards
 
