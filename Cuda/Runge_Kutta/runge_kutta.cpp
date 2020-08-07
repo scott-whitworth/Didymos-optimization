@@ -165,7 +165,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 }
 
 template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, coefficients<T> & coeff, const T & accel, 
-                                                    elements<T> & error, elements<T> k1, elements<T> k2, elements<T> k3, elements<T> k4, elements<T> k5, elements<T> k6, elements<T> k7) {
+                                                    elements<T> & error) {
 
     // k variables for Runge-Kutta calculation of y_new
     elements<T> k1, k2, k3, k4, k5, k6, k7;
@@ -199,8 +199,7 @@ template <class T> __host__ __device__ void rkCalc(T & curTime, const T & timeFi
 }
 
 // The stepSize value that is inputted is assumed to be a positive value
-template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error,elements<T> & k1,
-                                    elements<T> & k2,elements<T> & k3,elements<T> & k4,elements<T> & k5,elements<T> & k6,elements<T> & k7) {
+template <class T> void rkCalcEarth(T & curTime, const T & timeFinal, T stepSize, elements<T> & y_new, elements<T> & error) {
     // Runge-Kutta algorithm    
     // k variables for Runge-Kutta calculation of y_new
     elements<T> k1, k2, k3, k4, k5, k6, k7;
