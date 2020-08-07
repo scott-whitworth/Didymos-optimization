@@ -484,8 +484,8 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     quiver3(dX(radStep2),dY(radStep2),dZ(radStep2),accelX2(radStep2),accelY2(radStep2),accelZ2(radStep2),'k','Autoscalefactor',.08,'LineWidth',1,'Color',[0, 0, 1])
     hold on
     [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
-    velDiff1 = au*sqrt((y0A(4) - cR(4,1))^2 + (y0A(5) - cR(5,1))^2 + (y0A(6) - cR(6,1))^2);
-    velDiff2 = au*sqrt((y0A(4) - dR(4,1))^2 + (y0A(5) - dR(5,1))^2 + (y0A(6) - dR(6,1))^2);
+    velDiff1 = au*sqrt((y0A(4) - cR(4,end))^2 + (y0A(5) - cR(5,end))^2 + (y0A(6) - cR(6,end))^2);
+    velDiff2 = au*sqrt((y0A(4) - dR(4,end))^2 + (y0A(5) - dR(5,end))^2 + (y0A(6) - dR(6,end))^2);
     txt = join(['tripTime 1: ',num2str(tripTime1/(3600*24)),' days\nvelDiff 1: ',num2str(velDiff1),' m/s\ntripTime 2: ',num2str(tripTime2/(3600*24)),' days\nvelDiff 2: ',num2str(velDiff2),' m/s']);
     txt = compose(txt);
     text(y0Ax, y0Ay, y0Az, txt)
