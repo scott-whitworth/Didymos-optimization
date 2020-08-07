@@ -17,16 +17,16 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
     //set to 0 initially
     T massFuelSpent = 0;
 
-    // Set the first element of the solution vector to the initial conditions
-    y_new[0] = y0;
-
     // u - current position
     // error needs to be defined, but not being used
     elements<T> u, error;
 
+    // Set the first element of the solution vector to the initial conditions
+    u = y0;
+
     while (curTime < timeFinal) { // iterate until time is equal to the stop time
 
-        u = y_new[n];
+        y_new[n] = u;
 
         times[n] = curTime;
 
@@ -46,12 +46,10 @@ template <class T> void rk4sys(const T & timeInitial, const T & timeFinal, T *ti
         }
         
         //calculate new position
-        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel_output[n], error, k1, k2, k3, k4, k5, k6, k7);
+        rkCalc(curTime, timeFinal, stepSize, u, coeff, accel_output[n], error);
 
         //array of time output as t         
         curTime += stepSize;
-        //Time of iteration is set to the previous time plus the step size used within that iteration
-        times[n+1] = curTime;
 
         // Choosing a constant max number of steps for high precision final output
         stepSize = (timeFinal-timeInitial) / cConstant->cpu_numsteps;
@@ -104,7 +102,7 @@ template <class T> void rk4Simple(const T & timeInitial, const T & timeFinal, co
         }
 
         //calculate k values
-        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error, k1, k2, k3, k4, k5, k6, k7); 
+        rkCalc(curTime, timeFinal, stepSize, y_new, coeff, accel, error); 
 
         //array of time output as t         
         curTime += stepSize;
@@ -143,7 +141,7 @@ template <class T> void rk4Reverse(const T & timeInitial, const T & timeFinal, c
 
     while( curTime > timeInitial) {  // iterates in reverse
         //calculate k values
-        rkCalcEarth(curTime, timeFinal, stepSize, y_new, error, k1, k2, k3, k4, k5, k6, k7);
+        rkCalcEarth(curTime, timeFinal, stepSize, y_new, error);
 
         //array of time output as t         
         curTime -= stepSize;
