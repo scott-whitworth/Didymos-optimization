@@ -521,27 +521,27 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     % spacecraft 1
     
     % Earth's sphere of influence at launch
-    plot3(launchPos1(1)+r_esoi*x, launchPos1(2)+r_esoi*y, launchPos1(3)+r_esoi*z,'LineWidth',1,'Color',[1 0 0])
+    surf(launchPos1(1)+r_esoi*x, launchPos1(2)+r_esoi*y, launchPos1(3)+r_esoi*z,'Color',[0 0.5 0.5])
     hold on
     % In-plane initial position
     [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
-    plot3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3),'*','Color',[1 0 0])
+    plot3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3),'*','Color',[0 0.5 0.5])
     hold on
     % Initial velocity vector
-    quiver3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3), sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'Autoscalefactor',.005,'LineWidth',1,'Color',[1 0 0]);
+    quiver3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3), sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0.5 0.5]);
     hold on
     
     % spacecraft 2
     
     % Earth's sphere of influence at launch
-    plot3(launchPos2(1)+r_esoi*x, launchPos2(2)+r_esoi*y, launchPos2(3)+r_esoi*z,'LineWidth',1,'Color',[0 0 1])
+    surf(launchPos2(1)+r_esoi*x, launchPos2(2)+r_esoi*y, launchPos2(3)+r_esoi*z,'Color',[0.5 0 0.5])
     hold on
     % In-plane initial position
     [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
-    plot3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3),'*','Color',[0 0 1])
+    plot3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3),'*','Color',[0.5 0 0.5])
     hold on
     % Initial velocity vector
-    quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0 1]);
+    quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0.5 0 0.5]);
    
     % analytical scaling
     max_x = launchPos1(1); max_y = launchPos1(2); max_z = launchPos1(3);

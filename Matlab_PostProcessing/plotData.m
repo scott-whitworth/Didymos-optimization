@@ -314,7 +314,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     [x,y,z] = sphere;
     
     % Earth's sphere of influence at launch
-    plot3(launchPos(1)+r_esoi*x, launchPos(2)+r_esoi*y, launchPos(3)+r_esoi*z,'LineWidth', 1,'Color',[.61 .51 .74])
+    surf(launchPos(1)+r_esoi*x, launchPos(2)+r_esoi*y, launchPos(3)+r_esoi*z,'Color',[.61 .51 .74])
     hold on
     
     % In-plane initial position
