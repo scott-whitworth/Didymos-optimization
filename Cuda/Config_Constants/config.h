@@ -78,6 +78,7 @@ struct cudaConstants {
     double v_impact; // AU/s, the official DART mission data, used in cost function of individuals to sort individuals with posDiff < pos_threshold
 
     double rk_tol;       // The relative/absolute (not sure which one it is) tolerance for the runge kutta algorithm
+    double doublePrecThresh; // The smallest allowed double value for runge-kutta
     int GuessMaxPossibleSteps; // Used as a large value to ensure adequate memory allocation in the arrays that record information in rk4sys() in output.cpp
     int cpu_numsteps;    // Constant higher precision for final CPU RK method, set to be equal to max_numsteps
     int min_numsteps;    // Minimum number of steps in runge kutta 
