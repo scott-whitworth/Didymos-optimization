@@ -119,6 +119,8 @@ __global__ void rk4SimpleCUDA(Individual *individuals, double *timeInitial, doub
                 individuals[threadId].posDiff = 1.0e10;
                 individuals[threadId].velDiff =  0.0;
 
+                individuals[threadId].finalPos.r = nan("");
+
                 return;
             }
         }

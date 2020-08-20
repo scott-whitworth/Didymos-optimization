@@ -163,8 +163,8 @@ template <class T> std::ostream & operator<<(std::ostream & Str, const rkParamet
     
     Str << "Coeff: \n" << e.coeff;
     Str << "Elements:\n\t" << e.y0;
-    Str << "Final Time: " << e.tripTime << endl;
-    Str << "Launch angles:\n\tAlpha: " << e.alpha << "\n\tBeta: " << e.beta << "\n\tZeta: " << e.zeta << endl;
+    Str << "Final Time: " << e.tripTime << std::endl;
+    Str << "Launch angles:\n\tAlpha: " << e.alpha << "\n\tBeta: " << e.beta << "\n\tZeta: " << e.zeta << std::endl;
     //" WetMass: " << e.wetMass << endl;
     return Str;
 }
