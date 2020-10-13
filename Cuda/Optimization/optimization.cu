@@ -47,7 +47,7 @@ bool allWithinTolerance(double tolerance, Individual * pool, const cudaConstants
         // This isn't ideal, Change to getCost once getCost gets fleshed out 
         //if (pool[i].getCost() >= tolerance ) {
         //For now, rely on posDiff
-        if(pool[i].getPosDiff(cConstants) >= tolerance) {
+        if(pool[i].getCost(cConstants) >= tolerance) {
             //One was not within tolerance
             return false;
         }
