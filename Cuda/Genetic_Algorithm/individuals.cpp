@@ -52,15 +52,7 @@ __host__ __device__ double Individual::getVelDiff(const cudaConstants* cConstant
 // Output: Assigns and returns this individuals cost value
 // TODO: This is not final, could change / be optimized
 __host__ __device__ double Individual::getCost(const cudaConstants* cConstants) {
-    if (this->posDiff < cConstants->pos_threshold) {
-        // Magnitude of velocity, if velDiff is greater than v_impact, results in negative (lower) cost
-        // optimization is trying to minimize cost
-        // c3Energy used as a scalar for comparing velocity and position
-        this->cost = (cConstants->v_impact - this->velDiff)/cConstants->c3energy;
-    }
-    else {
-        this->cost = this->posDiff * cConstants->c3energy;
-    }
+    this->cost = this->posDiff;
     return this->cost;
 }
 
