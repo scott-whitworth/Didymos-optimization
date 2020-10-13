@@ -44,9 +44,6 @@ bool changeInBest(double previousBestPos, double previousBestVel, const Individu
 bool allWithinTolerance(double tolerance, Individual * pool, const cudaConstants* cConstants) {
     // Iterate to check best_count number of 'top' individuals
     for (int i = 0; i < cConstants->best_count; i++) {
-        // This isn't ideal, Change to getCost once getCost gets fleshed out 
-        //if (pool[i].getCost() >= tolerance ) {
-        //For now, rely on posDiff
         if(pool[i].getCost(cConstants) >= tolerance) {
             //One was not within tolerance
             return false;
