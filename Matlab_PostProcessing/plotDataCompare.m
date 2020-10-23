@@ -21,7 +21,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     
     velX1 = cR(4,:).*cos(cR(2,:))-cR(1,:).*cR(5,:).*sin(cR(2,:)) - y0A(4); % AU
     velY1 = cR(4,:).*sin(cR(2,:))+cR(1,:).*cR(5,:).*cos(cR(2,:)) - y0A(5);
-    velZ1 = cR(6,: - y0A(6));
+    velZ1 = cR(6,:) - y0A(6);
     velX2 = dR(4,:).*cos(dR(2,:))-dR(1,:).*dR(5,:).*sin(dR(2,:)) - y0A(4); % AU
     velY2 = dR(4,:).*sin(dR(2,:))+dR(1,:).*dR(5,:).*cos(dR(2,:)) - y0A(5);
     velZ2 = dR(6,:) - y0A(6);
