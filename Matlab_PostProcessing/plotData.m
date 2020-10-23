@@ -18,9 +18,9 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     % Acceleration vector in cartesian coordinates
     [accelX,accelY,accelZ] = getAccel(cR,tripTime,gammaCoeff,tauCoeff,sizeC);
     
-    velX = cR(4,:).*cos(cR(2,:))-cR(1,:).*cR(5,:).*sin(cR(2,:)); % AU
-    velY = cR(4,:).*sin(cR(2,:))+cR(1,:).*cR(5,:).*cos(cR(2,:));
-    velZ = cR(6,:);
+    velX = cR(4,:).*cos(cR(2,:))-cR(1,:).*cR(5,:).*sin(cR(2,:)) - y0A(4); % AU
+    velY = cR(4,:).*sin(cR(2,:))+cR(1,:).*cR(5,:).*cos(cR(2,:)) - y0A(5);
+    velZ = cR(6,:) - y0A(6);
     
     %% Sub Plot 1
     
@@ -283,7 +283,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     hold on
     [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
     velDiff = au*sqrt((y0A(4) - cR(4,end))^2 + (y0A(5) - cR(5,end))^2 + (y0A(6) - cR(6,end))^2);
-    txt = join(['t: ',num2str(tripTime/(3600*24)),' days\nVx: ',num2str(au*velX(end)),' m/s\nVy: ',num2str(au*velY(end)),' m/s\nVz: ',num2str(au*velZ(end)),' m/s']);
+    txt = join(['t: ',num2str(tripTime/(3600*24)),' days\n|V|: ',num2str(velDiff),' m/s\nVx: ',num2str(au*velX(end)),' m/s\nVy: ',num2str(au*velY(end)),' m/s\nVz: ',num2str(au*velZ(end)),' m/s']);
     txt = compose(txt);
     text(y0Ax, y0Ay, y0Az, txt)
     title('Solar orbitals')
