@@ -492,7 +492,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
     velDiff1 = au*sqrt((y0A(4) - cR(4,end))^2 + (y0A(5) - cR(5,end))^2 + (y0A(6) - cR(6,end))^2);
     velDiff2 = au*sqrt((y0A(4) - dR(4,end))^2 + (y0A(5) - dR(5,end))^2 + (y0A(6) - dR(6,end))^2);
-    txt = join(['tripTime1: ',num2str(tripTime1/(3600*24)),' days\n|V1|: ',num2str(velDiff1),' m/s\nVx1: ',num2str(au*velX1(end)),' m/s\nVy1: ',num2str(au*velY1(end)),' m/s\nVz1: ',num2str(au*velZ1(end)),' m/s\ntripTime2: ',num2str(tripTime2/(3600*24)),' days\n|V2|: ',num2str(velDiff2),' m/s\nVx2: ',num2str(au*velX2(end)),' m/s\nVy2: ',num2str(au*velY2(end)),' m/s\nVz1: ',num2str(au*velZ2(end)),' m/s']);
+    txt = join(['tripTime1: ',num2str(tripTime1/(3600*24)),' days\n|V1|: ',num2str(velDiff1),' m/s\nVx1: ',num2str(au*velX1(end)),' m/s\nVy1: ',num2str(au*velY1(end)),' m/s\nVz1: ',num2str(au*velZ1(end)),' m/s\ntripTime2: ',num2str(tripTime2/(3600*24)),' days\n|V2|: ',num2str(velDiff2),' m/s\nVx2: ',num2str(au*velX2(end)),' m/s\nVy2: ',num2str(au*velY2(end)),' m/s\nVz2: ',num2str(au*velZ2(end)),' m/s']);
     txt = compose(txt);
     text(y0Ax, y0Ay, y0Az, txt)
     title('Solar orbitals')
