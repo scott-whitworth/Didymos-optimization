@@ -14,6 +14,8 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     [cX,cY,cZ]= pol2cart(cR(2,1:sizeC),cR(1,1:sizeC),cR(3,1:sizeC));
     [dX,dY,dZ]= pol2cart(dR(2,1:sizeD),dR(1,1:sizeD),dR(3,1:sizeD));
     [eX,eY,eZ]= pol2cart(yE(:,2),yE(:,1),yE(:,3));
+    [eX_launch1,eY_launch1,eZ_launch1]= pol2cart(launchPos1(2),launchPos1(1),launchPos1(3));
+    [eX_launch2,eY_launch2,eZ_launch2]= pol2cart(launchPos2(2),launchPos2(1),launchPos2(3));
     [aX,aY,aZ]= pol2cart(yA(:,2),yA(:,1),yA(:,3));
     % Acceleration vector in cartesian coordinates
     [accelX1,accelY1,accelZ1] = getAccel(cR,tripTime1,gammaCoeff1,tauCoeff1,sizeC);
@@ -527,42 +529,42 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     % spacecraft 1
     
     % Earth's sphere of influence at launch
-    surf(launchPos1(1)+r_esoi*x, launchPos1(2)+r_esoi*y, launchPos1(3)+r_esoi*z)
+    surf(eX_launch1+r_esoi*x, eY_launch1+r_esoi*y, eZ_launch1+r_esoi*z)
     hold on
     % In-plane initial position
     [alpha_x1, alpha_y1, alpha_z1] = pol2cart(alpha1, r_esoi, 0);
-    plot3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3),'*','Color',[0 0.5 0.5])
+    plot3(alpha_x1+eX_launch1, alpha_y1+eY_launch1, alpha_z1+eZ_launch1,'*','Color',[0 0.5 0.5])
     hold on
     % Initial velocity vector
-    quiver3(alpha_x1+launchPos1(1), alpha_y1+launchPos1(2), alpha_z1+launchPos1(3), sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0.5 0.5]);
+    quiver3(alpha_x1+eX_launch1, alpha_y1+eY_launch1, alpha_z1+eZ_launch1, sin(beta1)*cos(zeta1), cos(beta1)*cos(zeta1), sin(zeta1),'Autoscalefactor',.005,'LineWidth',1,'Color',[0 0.5 0.5]);
     hold on
     
     % spacecraft 2
     
     % Earth's sphere of influence at launch
-    surf(launchPos2(1)+r_esoi*x, launchPos2(2)+r_esoi*y, launchPos2(3)+r_esoi*z)
+    surf(eX_launch2+r_esoi*x, eY_launch2+r_esoi*y, eZ_launch2+r_esoi*z)
     hold on
     % In-plane initial position
     [alpha_x2, alpha_y2, alpha_z2] = pol2cart(alpha2, r_esoi, 0);
-    plot3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3),'*','Color',[0.5 0 0.5])
+    plot3(alpha_x2+eX_launch2, alpha_y2+eY_launch2, alpha_z2+eZ_launch2,'*','Color',[0.5 0 0.5])
     hold on
     % Initial velocity vector
-    quiver3(alpha_x2+launchPos2(1), alpha_y2+launchPos2(2), alpha_z2+launchPos2(3), sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0.5 0 0.5]);
+    quiver3(alpha_x2+eX_launch2, alpha_y2+eY_launch2, alpha_z2+eZ_launch2, sin(beta2)*cos(zeta2), cos(beta2)*cos(zeta2), sin(zeta2),'Autoscalefactor',.005,'LineWidth',1,'Color',[0.5 0 0.5]);
    
     % analytical scaling
-    max_x = launchPos1(1); max_y = launchPos1(2); max_z = launchPos1(3);
-    min_x = launchPos2(1); min_y = launchPos2(2); min_z = launchPos2(3);
+    max_x = eX_launch1; max_y = eY_launch1; max_z = eZ_launch1;
+    min_x = eX_launch2; min_y = eY_launch2; min_z = eZ_launch2;
     if max_x < min_x
-        max_x = launchPos2(1);
-        min_x = launchPos1(1);
+        max_x = eX_launch2;
+        min_x = eX_launch1;
     end
     if max_y < min_y
-        max_y = launchPos2(2);
-        min_y = launchPos1(2);
+        max_y = eY_launch2;
+        min_y = eY_launch1;
     end
     if max_z < min_z
-        max_z = launchPos2(3);
-        min_z = launchPos1(3);
+        max_z = eZ_launch2;
+        min_z = eZ_launch1;
     end
     diff_x = max_x - min_x; diff_y = max_y - min_y; diff_z = max_z - min_z;
     if diff_x > diff_y && diff_x > diff_z
