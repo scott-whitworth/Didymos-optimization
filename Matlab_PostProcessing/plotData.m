@@ -14,11 +14,14 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     % Transform to cartesian coordinates for position and velocity of asteroid and earth
     [cX,cY,cZ]= pol2cart(cR(2,:),cR(1,:),cR(3,:));
     [eX,eY,eZ]= pol2cart(yE(:,2),yE(:,1),yE(:,3));
+    [eX_launch,eY_launch,eZ_launch]= pol2cart(launchPos(2),launchPos(1),launchPos(3));
     [aX,aY,aZ]= pol2cart(yA(:,2),yA(:,1),yA(:,3));
     % Acceleration vector in cartesian coordinates
     [accelX,accelY,accelZ] = getAccel(cR,tripTime,gammaCoeff,tauCoeff,sizeC);
     
-    
+    velX = cR(4,:).*cos(cR(2,:))-cR(1,:).*cR(5,:).*sin(cR(2,:)) - y0A(4); % AU
+    velY = cR(4,:).*sin(cR(2,:))+cR(1,:).*cR(5,:).*cos(cR(2,:)) - y0A(5);
+    velZ = cR(6,:) - y0A(6);
     
     %% Sub Plot 1
     
@@ -281,7 +284,7 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     hold on
     [y0Ax, y0Ay, y0Az] = pol2cart(y0A(2), y0A(1), y0A(3));
     velDiff = au*sqrt((y0A(4) - cR(4,end))^2 + (y0A(5) - cR(5,end))^2 + (y0A(6) - cR(6,end))^2);
-    txt = join(['tripTime: ',num2str(tripTime/(3600*24)),' days\nvelDiff: ',num2str(velDiff),' m/s']);
+    txt = join(['t: ',num2str(tripTime/(3600*24)),' days\n|V|: ',num2str(velDiff),' m/s\nVx: ',num2str(au*velX(end)),' m/s\nVy: ',num2str(au*velY(end)),' m/s\nVz: ',num2str(au*velZ(end)),' m/s']);
     txt = compose(txt);
     text(y0Ax, y0Ay, y0Az, txt)
     title('Solar orbitals')
@@ -314,21 +317,21 @@ function [] = plotData(cR,y0A,y0E,sizeC,tripTime,coast,coast_threshold,gammaCoef
     [x,y,z] = sphere;
     
     % Earth's sphere of influence at launch
-    surf(launchPos(1)+r_esoi*x, launchPos(2)+r_esoi*y, launchPos(3)+r_esoi*z)
+    surf(eX_launch+r_esoi*x, eY_launch+r_esoi*y, eZ_launch+r_esoi*z)
     hold on
     
     % In-plane initial position
     [alpha_x, alpha_y, alpha_z] = pol2cart(alpha, r_esoi, 0);
-    plot3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3),'*')
+    plot3(alpha_x+eX_launch, alpha_y+eY_launch, alpha_z+eZ_launch,'*')
     hold on
     
     % Initial velocity vector
-    quiver3(alpha_x+launchPos(1), alpha_y+launchPos(2), alpha_z+launchPos(3), sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.005,'LineWidth',1);
+    quiver3(alpha_x+eX_launch, alpha_y+eY_launch, alpha_z+eZ_launch, sin(beta)*cos(zeta), cos(beta)*cos(zeta), sin(zeta),'k','Autoscalefactor',.005,'LineWidth',1);
    
     % analytical scaling
-    xlim([launchPos(1)-2*r_esoi, launchPos(1)+2*r_esoi])
-    ylim([launchPos(2)-2*r_esoi, launchPos(2)+2*r_esoi])
-    zlim([launchPos(3)-2*r_esoi, launchPos(3)+2*r_esoi])
+    xlim([eX_launch-2*r_esoi, eX_launch+2*r_esoi])
+    ylim([eY_launch-2*r_esoi, eY_launch+2*r_esoi])
+    zlim([eZ_launch-2*r_esoi, eZ_launch+2*r_esoi])
     xlabel('x (a.u.)')
     ylabel('y (a.u.)')
     zlabel('z (a.u.)')
