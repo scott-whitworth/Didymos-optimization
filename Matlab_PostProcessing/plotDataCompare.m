@@ -172,7 +172,7 @@ function [] = plotDataCompare(cR,y0A,y0E,sizeC,tripTime1,coast1,coast_threshold1
     xlim([0 tripTime1])
     legend({'spacecraft 1'})
     title('Acceleration due to thrust')
-    ylabel('a_{thrust} (m/s^{2}')
+    ylabel('a_{thrust} (m/s^{2})')
     xlabel('t (s)')
     
     co = angles(cR(7,:),tripTime1,coast1);
