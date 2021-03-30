@@ -30,9 +30,10 @@ void errorCheck(double *time, elements<double> *yp,  double *gamma,  double *tau
 // input: x[] - array of OPTIM_VARS for a single individual
 //        generation - generation num of individual        
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
+//        best - To access the best individual (pool[0])
 // output: file orbitalMotion-[time_seed].bin is created that holds spacecraft RK steps and error
 //         file finalOptimization-[time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void trajectoryPrint(double x[], int generation, const cudaConstants* cConstants);
+void trajectoryPrint(double x[], int generation, const cudaConstants* cConstants, Individual best);
 
 // Record progress of individual
 // Called if record_mode is true at end of optimize process
@@ -94,6 +95,14 @@ void recordEarthData(const cudaConstants * cConstants);
 //        generation - used in deriving file name
 // output: file generation#[generation]-[time_seed].csv is created with each row holding parameter values of individuals
 void recordAllIndividuals(const cudaConstants * cConstants, Individual * pool, int poolSize, int generation);
+
+// Record initial and final fuel masses along with tripTime and relative velocity at impact
+// input: cConstants - access config constants
+//        solution - best individual parameters from the final pool
+//        fuelSpent - total fuel spent
+//        best - To access the best individual (pool[0])
+// output: fuelOutput.csv - output file holding fuel consumption and impact data
+void recordFuelOutput(const cudaConstants* cConstants, double solution[], double fuelSpent, Individual best);
 
 #include "output.cpp"
 
