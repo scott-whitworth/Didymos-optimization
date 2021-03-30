@@ -99,9 +99,10 @@ void recordMutateFile(const cudaConstants * cConstants, double generation, doubl
 // input: x[] - array of OPTIM_VARS for a single individual
 //        generation - generation num of individual       
 //        cConstants - Access constants info such as target element, earth element, derive spaceCraft element, also other values such as rk_tol
+//        best - To access the best individual (pool[0])
 // output: file orbitalMotion-[time_seed].bin is created that holds spacecraft RK steps and error
 //         file finalOptimization-[time_seed].bin is created that holds earth/ast/ and trajectory parameter values
-void trajectoryPrint( double x[], int generation, const cudaConstants* cConstants) {
+void trajectoryPrint( double x[], int generation, const cudaConstants* cConstants, Individual best) {
   /*set the asteroid and inital conditions for the earth and spacecraft:
   constructor takes in radial position(au), angluar position(rad), axial position(au),
   radial velocity(au/s), tangential velocity(au/s), axial velocity(au/s)*/
@@ -166,6 +167,12 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
 
   // calculate the error in conservation of mechanical energy due to the thruster
   errorCheck(times, yp, gamma, tau, lastStepInt, accel_output, fuelSpent, wetMass, work, dE, Etot_avg, cConstants);
+
+
+  
+
+  // Record initial and final fuel masses along with tripTime and relative velocity at impact
+  recordFuelOutput(cConstants, x, fuelSpent[lastStepInt], best);
 
   // This function is used to compare the final best thread with other runs
   // append this thread's info to a csv file
@@ -477,7 +484,7 @@ void finalRecord(const cudaConstants* cConstants, Individual * pool, int generat
   std::cout << "CUDA velDiff: " << pool[0].velDiff << std::endl;
 
   // Evaluate and print this solution's information to binary files
-  trajectoryPrint(start, generation, cConstants);
+  trajectoryPrint(start, generation, cConstants, pool[0]);
 
   // cleaning up dynamic memory
   delete [] start;
@@ -501,4 +508,26 @@ void recordEarthData(const cudaConstants * cConstants) {
   
   // Done recording earth calculations, close file
   earthValues.close();
+}
+
+// Record initial and final fuel masses along with tripTime and relative velocity at impact
+// input: cConstants - access config constants
+//        solution - best individual parameters from the final pool
+//        fuelSpent - total fuel spent
+//        best - To access the best individual (pool[0])
+// output: fuelOutput.csv - output file holding fuel consumption and impact data
+void recordFuelOutput(const cudaConstants* cConstants, double solution[], double fuelSpent, Individual best) {
+
+  std::ofstream excelFile;
+  excelFile.open("fuelOutput.csv", std::ios_base::app);
+  
+  excelFile << "\nSeed,Initial fuel (kg),Spent fuel (kg),Trip time (days),Impact speed (m/s)\n";
+
+  excelFile << cConstants->time_seed << ",";
+  excelFile << cConstants->fuel_mass << ",";
+  excelFile << fuelSpent << ",";
+  excelFile << solution[TRIPTIME_OFFSET]/(3600*24) << ",";
+  excelFile << best.velDiff*AU << "\n";
+
+  excelFile.close();
 }
