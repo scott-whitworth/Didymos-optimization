@@ -171,12 +171,12 @@ void trajectoryPrint( double x[], int generation, const cudaConstants* cConstant
 
   
 
-  // Record initial and final fuel masses along with tripTime and relative velocity at impact
-  recordFuelOutput(cConstants, x, fuelSpent[lastStepInt], best);
 
   // This function is used to compare the final best thread with other runs
   // append this thread's info to a csv file
   if (cConstants->record_mode == true) {
+    // Record initial and final fuel masses along with tripTime and relative velocity at impact
+    recordFuelOutput(cConstants, x, fuelSpent[lastStepInt], best);
     progressiveAnalysis(generation, lastStepInt, x, yOut, cConstants);
   }
 
