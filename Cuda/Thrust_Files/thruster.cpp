@@ -26,7 +26,10 @@ template <class T> T thruster<T>::calc_eff(const T & Pin) {
 
 template <class T> T thruster<T>::calc_m_Dot(const T & Pin) {
     if (type == THRUST_TYPE::NEXT_C) {
-        if (Pin < 2550) {
+        if (Pin < 640) {
+            return 0;
+        }
+        else if (Pin < 2550) {
             return 1.99E-06;
         }
         else if (Pin < 4500) {
